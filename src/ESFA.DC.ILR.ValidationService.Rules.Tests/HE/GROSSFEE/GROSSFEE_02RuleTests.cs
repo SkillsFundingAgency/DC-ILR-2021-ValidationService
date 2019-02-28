@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -64,6 +60,31 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.GROSSFEE
 
         [Fact]
         public void Validate_NoError()
+        {
+            var testLearner = new TestLearner()
+            {
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "2A2345",
+                        LearningDeliveryHEEntity = new TestLearningDeliveryHE()
+                        {
+                            NETFEENullable = 3,
+                            GROSSFEENullable = 5
+                        }
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandler: validationErrorHandlerMock.Object).Validate(testLearner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_LearningDeliveryHENull()
         {
             var testLearner = new TestLearner()
             {

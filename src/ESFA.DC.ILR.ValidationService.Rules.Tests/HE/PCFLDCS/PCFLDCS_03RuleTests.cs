@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -147,6 +143,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCFLDCS
                     new TestLearningDelivery()
                     {
                         LearnAimRef = "12345678",
+                        LearningDeliveryHEEntity = new TestLearningDeliveryHE()
+                        {
+                            PCFLDCSNullable = null
+                        }
+                    }
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock
+                .Setup(ldsm => ldsm.LearnDirectClassSystemCode1MatchForLearnAimRef(It.IsAny<string>()))
+                .Returns(false);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(larsDataServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void ValidateNoError_LearningDeliveryHENull()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "12345678",
+                        LearningDeliveryHEEntity = null
                     }
                 }
             };

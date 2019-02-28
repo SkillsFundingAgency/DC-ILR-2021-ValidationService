@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -27,12 +24,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.PCFLDCS
         {
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (ConditionMet(learningDelivery.LearnAimRef, learningDelivery.LearningDeliveryHEEntity))
+                if (learningDelivery.LearningDeliveryHEEntity != null
+                        && ConditionMet(
+                            learningDelivery.LearnAimRef,
+                            learningDelivery.LearningDeliveryHEEntity))
                 {
                     HandleValidationError(
                         objectToValidate.LearnRefNumber,
                         learningDelivery.AimSeqNumber,
-                        BuildErrorMessageParameters(learningDelivery.LearningDeliveryHEEntity.PCFLDCSNullable));
+                        BuildErrorMessageParameters(
+                            learningDelivery.LearningDeliveryHEEntity.PCFLDCSNullable));
                 }
             }
         }

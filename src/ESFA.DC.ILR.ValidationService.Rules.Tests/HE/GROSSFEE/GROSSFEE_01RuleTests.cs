@@ -87,6 +87,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.GROSSFEE
         }
 
         [Fact]
+        public void Validate_NoError_LearningDeliveryHENull()
+        {
+            var testLearner = new TestLearner()
+            {
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "2A2345",
+                        LearningDeliveryHEEntity = null
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandler: validationErrorHandlerMock.Object).Validate(testLearner);
+            }
+        }
+
+        [Fact]
         public void BuildErrorMessageParameters()
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();

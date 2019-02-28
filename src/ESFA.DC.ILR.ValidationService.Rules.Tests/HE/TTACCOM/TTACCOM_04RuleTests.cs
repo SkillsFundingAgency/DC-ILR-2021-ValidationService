@@ -27,12 +27,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
         }
 
         [Fact]
-        public void LearnerHEConditionMet_True_NullEntity()
-        {
-            NewRule().LearnerHEConditionMet(null).Should().BeTrue();
-        }
-
-        [Fact]
         public void LearnerHEConditionMet_False()
         {
             TestLearnerHE learningDeliveryHE = new TestLearnerHE()
@@ -52,12 +46,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
             };
 
             NewRule().LearningDeliveryHEConditionMet(learningDeliveryHE).Should().BeFalse();
-        }
-
-        [Fact]
-        public void LearningDeliveryHEConditionMet_False_NullEntity()
-        {
-            NewRule(NewDD06()).LearningDeliveryHEConditionMet(null).Should().BeFalse();
         }
 
         [Fact]
@@ -154,8 +142,35 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
             }
         }
 
+        [Theory]
+        [InlineData(1, 2, "2013-8-1")]
+        [InlineData(null, 2, "2013-8-1")]
+        [InlineData(null, 2, "2013-7-31")]
+        public void Validate_NoErrors(int? ttACCOM, int mODESTUD, string learnStartDateString)
+        {
+            DateTime learnStartDate = DateTime.Parse(learnStartDateString);
+
+            var learner = new TestLearner()
+            {
+                LearnerHEEntity = new TestLearnerHE() { TTACCOMNullable = ttACCOM },
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnStartDate = learnStartDate,
+                        LearningDeliveryHEEntity = new TestLearningDeliveryHE() { MODESTUD = mODESTUD }
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(NewDD06(), validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
         [Fact]
-        public void Validate_Errors_NoLearnerHE()
+        public void Validate_NoErrors_NoLearnerHE()
         {
             var learner = new TestLearner()
             {
@@ -172,31 +187,33 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
             var dd06Mock = new Mock<IDerivedData_06Rule>();
 
             dd06Mock.Setup(dd => dd.Derive(learner.LearningDeliveries)).Returns(new DateTime(2013, 08, 01));
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
                 NewRule(dd06Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
         [Fact]
-        public void Validate_NoErrors()
+        public void Validate_NoErrors_NoLearningDeliveryHE()
         {
             var learner = new TestLearner()
             {
-                LearnerHEEntity = new TestLearnerHE() { TTACCOMNullable = 1 },
                 LearningDeliveries = new List<TestLearningDelivery>()
                 {
                     new TestLearningDelivery()
                     {
-                        LearnStartDate = new DateTime(2013, 8, 1),
-                        LearningDeliveryHEEntity = new TestLearningDeliveryHE() { MODESTUD = 2 }
+                        LearnStartDate = new DateTime(2013, 08, 1),
+                        LearningDeliveryHEEntity = null
                     }
                 }
             };
 
+            var dd06Mock = new Mock<IDerivedData_06Rule>();
+
+            dd06Mock.Setup(dd => dd.Derive(learner.LearningDeliveries)).Returns(new DateTime(2013, 08, 01));
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(NewDD06(), validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(dd06Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -211,7 +228,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
             validationErrorHandlerMock.Verify();
         }
 
-        private TTACCOM_04Rule NewRule(IDerivedData_06Rule dd06 = null, IValidationErrorHandler validationErrorHandler = null)
+        private TTACCOM_04Rule NewRule(
+            IDerivedData_06Rule dd06 = null,
+            IValidationErrorHandler validationErrorHandler = null)
         {
             return new TTACCOM_04Rule(dd06, validationErrorHandler);
         }

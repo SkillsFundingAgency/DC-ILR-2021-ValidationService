@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
@@ -56,12 +53,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCSLDCS
             };
 
             NewRule().LearningDeliveryHEConditionMet(testLearningDeliveryHE).Should().BeTrue();
-        }
-
-        [Fact]
-        public void LearningDeliveryHEConditionMet_Null()
-        {
-            NewRule().LearningDeliveryHEConditionMet(null).Should().BeTrue();
         }
 
         [Fact]
@@ -163,6 +154,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCSLDCS
                         LearnAimRef = "456",
                         LearnStartDate = new DateTime(2010, 08, 02),
                         LearningDeliveryHEEntity = testLearningDeliveryHE
+                    }
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+
+            larsDataServiceMock.Setup(lds => lds.LearnDirectClassSystemCode2MatchForLearnAimRef("456")).Returns(false);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandler: validationErrorHandlerMock.Object, larsDataService: larsDataServiceMock.Object).Validate(testLearner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_LearningDeliveryHENull()
+        {
+            ILearner testLearner = new TestLearner()
+            {
+                LearnRefNumber = "456Learner",
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "456",
+                        LearnStartDate = new DateTime(2010, 08, 02),
+                        LearningDeliveryHEEntity = null
                     }
                 }
             };

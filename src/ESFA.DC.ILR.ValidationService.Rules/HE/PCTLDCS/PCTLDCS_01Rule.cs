@@ -66,8 +66,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.PCTLDCS
         /// <param name="deliveryHE">The delivery he.</param>
         /// <returns>
         ///   <c>true</c> if [has qualifying PCTLDCS] [the specified delivery he]; otherwise, <c>false</c>.</returns>
-        public bool HasQualifyingPCTLDCS(ILearningDeliveryHE deliveryHE) =>
-            It.Has(deliveryHE?.PCTLDCSNullable);
+        public bool HasQualifyingPCTLDCSNull(ILearningDeliveryHE deliveryHE) =>
+            deliveryHE != null && deliveryHE.PCTLDCSNullable == null;
 
         /// <summary>
         /// Determines whether [is not valid] [the specified delivery].
@@ -79,7 +79,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.PCTLDCS
         public bool IsNotValid(ILearningDelivery delivery) =>
             _check.HasQualifyingStart(delivery, FirstViableDate)
                 && HasKnownLDCSCode(delivery)
-                && !HasQualifyingPCTLDCS(delivery.LearningDeliveryHEEntity);
+                && HasQualifyingPCTLDCSNull(delivery.LearningDeliveryHEEntity);
 
         /// <summary>
         /// Validates the specified object.

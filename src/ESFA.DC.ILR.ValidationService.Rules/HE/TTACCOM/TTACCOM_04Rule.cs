@@ -22,40 +22,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
         public void Validate(ILearner objectToValidate)
         {
             if (objectToValidate.LearningDeliveries != null
+                && objectToValidate.LearnerHEEntity != null
                 && LearnStartDateConditionMet(objectToValidate.LearningDeliveries)
                 && LearnerHEConditionMet(objectToValidate.LearnerHEEntity))
             {
                 foreach (var learningDelivery in objectToValidate.LearningDeliveries)
                 {
-                    if (ConditionMet(learningDelivery.LearningDeliveryHEEntity))
+                    if (learningDelivery.LearningDeliveryHEEntity != null
+                        && ConditionMet(learningDelivery.LearningDeliveryHEEntity))
                     {
-                        HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.LearningDeliveryHEEntity.MODESTUD));
+                        HandleValidationError(
+                            objectToValidate.LearnRefNumber,
+                            learningDelivery.AimSeqNumber,
+                            BuildErrorMessageParameters(
+                                learningDelivery.LearningDeliveryHEEntity.MODESTUD));
                     }
                 }
             }
         }
 
-        public bool ConditionMet(ILearningDeliveryHE learningDeliveryHE)
-        {
-            return LearningDeliveryHEConditionMet(learningDeliveryHE);
-        }
+        public bool ConditionMet(ILearningDeliveryHE learningDeliveryHE) =>
+            LearningDeliveryHEConditionMet(learningDeliveryHE);
 
-        public bool LearnerHEConditionMet(ILearnerHE learnerHE)
-        {
-            return learnerHE == null
-                || (learnerHE != null && !learnerHE.TTACCOMNullable.HasValue);
-        }
+        public bool LearnerHEConditionMet(ILearnerHE learnerHE) =>
+            !learnerHE.TTACCOMNullable.HasValue;
 
-        public bool LearningDeliveryHEConditionMet(ILearningDeliveryHE learningDeliveryHE)
-        {
-            return learningDeliveryHE != null
-                && learningDeliveryHE.MODESTUD == TypeOfMODESTUD.FullTimeAndSandwich;
-        }
+        public bool LearningDeliveryHEConditionMet(ILearningDeliveryHE learningDeliveryHE) =>
+            learningDeliveryHE.MODESTUD == TypeOfMODESTUD.FullTimeAndSandwich;
 
-        public bool LearnStartDateConditionMet(IEnumerable<ILearningDelivery> learningDeliveries)
-        {
-            return _dd06.Derive(learningDeliveries) >= _augustFirst2013;
-        }
+        public bool LearnStartDateConditionMet(IEnumerable<ILearningDelivery> learningDeliveries) =>
+            _dd06.Derive(learningDeliveries) >= _augustFirst2013;
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int modeSTUD)
         {

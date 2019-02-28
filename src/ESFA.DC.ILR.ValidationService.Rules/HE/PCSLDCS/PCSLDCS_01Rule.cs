@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -27,19 +24,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.PCSLDCS
 
         public void Validate(ILearner objectToValidate)
         {
-            if (objectToValidate == null)
+            if (objectToValidate?.LearningDeliveries == null)
             {
                 return;
             }
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (ConditionMet(
-                    learningDelivery.LearnStartDate,
-                    learningDelivery.LearningDeliveryHEEntity,
-                    learningDelivery.LearnAimRef))
+                if (learningDelivery.LearningDeliveryHEEntity != null
+                    && ConditionMet(
+                        learningDelivery.LearnStartDate,
+                        learningDelivery.LearningDeliveryHEEntity,
+                        learningDelivery.LearnAimRef))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.LearnStartDate));
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(learningDelivery.LearnStartDate));
                 }
             }
         }
@@ -54,22 +55,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.PCSLDCS
                 && LARSConditionMet(learnAimRef);
         }
 
-        public bool LARSConditionMet(string learnAimRef)
-        {
-            return _lARSDataService.LearnDirectClassSystemCode2MatchForLearnAimRef(learnAimRef);
-        }
+        public bool LARSConditionMet(string learnAimRef) =>
+            _lARSDataService.LearnDirectClassSystemCode2MatchForLearnAimRef(learnAimRef);
 
-        public bool LearningDeliveryHEConditionMet(ILearningDeliveryHE learningDeliveryHEEntity)
-        {
-            return learningDeliveryHEEntity == null
-                || (learningDeliveryHEEntity != null
-                    && learningDeliveryHEEntity.PCSLDCSNullable == null);
-        }
+        public bool LearningDeliveryHEConditionMet(ILearningDeliveryHE learningDeliveryHEEntity) =>
+            learningDeliveryHEEntity.PCSLDCSNullable == null;
 
-        public bool StartDateConditionMet(DateTime learnStartDate)
-        {
-            return learnStartDate >= _firstAugust2009;
-        }
+        public bool StartDateConditionMet(DateTime learnStartDate) =>
+            learnStartDate >= _firstAugust2009;
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate)
         {

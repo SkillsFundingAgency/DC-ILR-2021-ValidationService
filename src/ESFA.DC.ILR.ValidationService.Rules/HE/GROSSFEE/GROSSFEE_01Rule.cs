@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
@@ -26,17 +23,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.GROSSFEE
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (ConditionMet(learningDelivery.LearningDeliveryHEEntity?.NETFEENullable, learningDelivery.LearningDeliveryHEEntity?.GROSSFEENullable))
+                if (learningDelivery.LearningDeliveryHEEntity != null
+                    && ConditionMet(
+                        learningDelivery.LearningDeliveryHEEntity.NETFEENullable,
+                        learningDelivery.LearningDeliveryHEEntity.GROSSFEENullable))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.LearningDeliveryHEEntity?.GROSSFEENullable));
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(
+                            learningDelivery.LearningDeliveryHEEntity?.GROSSFEENullable));
                 }
             }
         }
 
-        public bool ConditionMet(int? nETFEENullable, int? gROSSFEENullable)
-        {
-            return nETFEENullable.HasValue && !gROSSFEENullable.HasValue;
-        }
+        public bool ConditionMet(int? nETFEENullable, int? gROSSFEENullable) =>
+            nETFEENullable.HasValue && !gROSSFEENullable.HasValue;
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? gROSSFEENullable)
         {

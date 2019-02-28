@@ -180,14 +180,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
         {
             // arrange
             var sut = NewRule();
+            decimal? pCTLDCSValue = null;
 
             var mockHE = new Mock<ILearningDeliveryHE>();
+            mockHE
+                .SetupGet(x => x.PCTLDCSNullable)
+                .Returns(pCTLDCSValue);
 
             // act
-            var result = sut.HasQualifyingPCTLDCS(mockHE.Object);
+            var result = sut.HasQualifyingPCTLDCSNull(mockHE.Object);
 
             // assert
-            Assert.False(result);
+            Assert.True(result);
         }
 
         /// <summary>
@@ -200,7 +204,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
             var sut = NewRule();
 
             // act
-            var result = sut.HasQualifyingPCTLDCS(null);
+            var result = sut.HasQualifyingPCTLDCSNull(null);
 
             // assert
             Assert.False(result);
@@ -226,10 +230,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Returns((decimal)candidate);
 
             // act
-            var result = sut.HasQualifyingPCTLDCS(mockHE.Object);
+            var result = sut.HasQualifyingPCTLDCSNull(mockHE.Object);
 
             // assert
-            Assert.True(result);
+            Assert.False(result);
         }
 
         /// <summary>
