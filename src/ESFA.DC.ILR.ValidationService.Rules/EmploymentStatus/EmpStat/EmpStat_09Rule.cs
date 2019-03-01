@@ -108,7 +108,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         ///   <c>true</c> if [has qualifying employment status] [the specified e status]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasAQualifyingEmploymentStatus(ILearnerEmploymentStatus eStatus, DateTime learningStartDate) =>
-            eStatus.DateEmpStatApp <= learningStartDate;
+            eStatus.DateEmpStatApp < learningStartDate;
 
         /// <summary>
         /// Determines whether [has a qualifying employment status] [the specified learner].
