@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
                     TenderSpecReference = r.TenderSpecReference,
                     MinAge = r.MinAge,
                     MaxAge = r.MaxAge,
-                    Benefits = r.Benefits ?? false,
+                    Benefits = r.Benefits,
                     MinLengthOfUnemployment = r.MinLengthOfUnemployment,
                     MaxLengthOfUnemployment = r.MaxLengthOfUnemployment,
                     EmploymentStatuses = r.EsfEligibilityRuleEmploymentStatuses

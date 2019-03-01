@@ -9,7 +9,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.FCS.Model
 
         public string LotReference { get; set; }
 
-        public bool Benefits { get; set; }
+        public bool? Benefits { get; set; }
 
         public int? MinAge { get; set; }
 
