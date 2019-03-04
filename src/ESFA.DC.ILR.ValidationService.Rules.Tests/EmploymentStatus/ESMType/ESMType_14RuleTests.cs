@@ -231,7 +231,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData(false, true, false)]
         [InlineData(true, false, false)]
         [InlineData(false, false, true)]
-        public void HasMatchingBenefitsIndicatorMeetsExpectation(bool eligibilty, bool derivedResult, bool expectation)
+        [InlineData(null, false, true)]
+        [InlineData(null, true, true)]
+        public void HasMatchingBenefitsIndicatorMeetsExpectation(bool? eligibilty, bool derivedResult, bool expectation)
         {
             // arrange
             var mockItem = new Mock<IEsfEligibilityRule>();
@@ -345,7 +347,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [Theory]
         [InlineData("testConRef1", true, true)]
         [InlineData("testConRef2", false, false)]
-        public void ValidItemDoesNotRaiseValidationMessage(string contractRef, bool eligibilty, bool derivedResult)
+        [InlineData("testConRef2", null, false)]
+        public void ValidItemDoesNotRaiseValidationMessage(string contractRef, bool? eligibilty, bool derivedResult)
         {
             // arrange
             const string LearnRefNumber = "123456789X";
