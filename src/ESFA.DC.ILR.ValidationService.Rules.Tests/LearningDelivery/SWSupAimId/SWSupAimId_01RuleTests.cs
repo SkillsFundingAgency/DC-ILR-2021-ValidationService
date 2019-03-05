@@ -108,8 +108,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.SWSupAimId
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(TypeOfAim.References.IndustryPlacement, false)]
-        [InlineData("550e8400-e29b-41d4-a716-446655440000", true)]
-        [InlineData("550e8400e29b41d4a716446655440000", true)]
+        [InlineData("550e8400_e29b_41d4_a716_446655440000", true)]
+        [InlineData("|550e8400e29b41d4a716446655440000", true)]
         [InlineData("w;oraeijwq rf;oiew ", false)]
         [InlineData(null, false)]
         public void IsValidGuidMeetsExpectation(string candidate, bool expectation)
@@ -118,7 +118,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.SWSupAimId
             var sut = NewRule();
 
             // act
-            var result = sut.IsValidGuid(candidate);
+            var result = sut.IsValidGuid(candidate?.Replace('_', '-').Replace("|", string.Empty));
 
             // assert
             Assert.Equal(expectation, result);
@@ -181,14 +181,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.SWSupAimId
         /// </summary>
         /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData("550e8400-e29b-41d4-a716-446655440000")]
-        [InlineData("550e8400e29b41d4a716446655440000")]
+        [InlineData("550e8400_e29b_41d4_a716_446655440000")]
+        [InlineData("|550e8400e29b41d4a716446655440000")]
         public void ValidItemDoesNotRaiseAValidationMessage(string candidate)
         {
             // arrange
             const string LearnRefNumber = "123456789X";
+			candidate = candidate?.Replace('_', '-').Replace("|", string.Empty);
 
-            var mockDelivery = new Mock<ILearningDelivery>();
+			var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.SWSupAimId)
                 .Returns(candidate);
