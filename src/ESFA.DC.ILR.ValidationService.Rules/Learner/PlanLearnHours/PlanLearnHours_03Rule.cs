@@ -17,6 +17,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 
         public void Validate(ILearner objectToValidate)
         {
+            if (!objectToValidate.PlanLearnHoursNullable.HasValue)
+            {
+                return;
+            }
+
             if (!LearnerConditionMet(objectToValidate.PlanLearnHoursNullable, objectToValidate.PlanEEPHoursNullable)
                 || objectToValidate.LearningDeliveries == null)
             {

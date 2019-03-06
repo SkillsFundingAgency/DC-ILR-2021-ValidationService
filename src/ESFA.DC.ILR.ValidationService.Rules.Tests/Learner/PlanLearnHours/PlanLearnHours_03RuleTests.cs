@@ -121,6 +121,31 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
         }
 
         [Fact]
+        public void Validate_NoError_NullPlanLearnHours()
+        {
+            var learner = new TestLearner()
+            {
+                PlanEEPHoursNullable = 6,
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        FundModel = TypeOfFunding.AdultSkills
+                    },
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 0
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void BuildErrorMessageParameters()
         {
             int? planLearnHours = 0;
