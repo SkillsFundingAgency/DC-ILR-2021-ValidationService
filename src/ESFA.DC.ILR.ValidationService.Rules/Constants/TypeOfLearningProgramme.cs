@@ -50,12 +50,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
         /// <summary>
         /// Gets the maximum traning duration.
         /// </summary>
-        public static TimeSpan MaximumTrainingDuration => new TimeSpan(182, 0, 0, 0);
+        public static int MaximumTrainingDuration => -6; // 6 months
 
         /// <summary>
         /// Gets the maximum open duration for training.
         /// </summary>
-        public static TimeSpan MaximumOpenTrainingDuration => new TimeSpan(243, 0, 0, 0);
+        public static int MaximumOpenTrainingDuration => -8; // 8 months
 
         /// <summary>
         /// Gets the mininum viable training start date.
@@ -87,23 +87,35 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
         public static bool IsViableApprenticeship(DateTime forThisStart) => forThisStart >= MininumViableTrainingStartDate;
 
         /// <summary>
-        /// Within maxmimum training duration (6 months, 182 dyas).
+        /// Within maxmimum training duration (6 months, 182 days(ish)).
         /// </summary>
         /// <param name="fromStart">From start.</param>
         /// <param name="toFinish">To finish.</param>
         /// <returns>
         ///   <c>true</c> if [within maxmimum training duration] [from start to finish]; otherwise, <c>false</c>.
         /// </returns>
-        public static bool WithinMaxmimumTrainingDuration(DateTime fromStart, DateTime toFinish) => (toFinish - fromStart) <= MaximumTrainingDuration;
+        public static bool WithinMaxmimumTrainingDuration(DateTime fromStart, DateTime toFinish) =>
+            (toFinish - fromStart) <= MonthsDiffernential(toFinish, MaximumTrainingDuration);
 
         /// <summary>
-        /// Within (the) maximum open training duration (8 months, 243 days).
+        /// Within (the) maximum open training duration (8 months, 243 days(ish)).
         /// </summary>
         /// <param name="fromStart">From start (the file preparation date).</param>
         /// <param name="toFinish">To finish (the start of the learning).</param>
         /// <returns>
         ///   <c>true</c> if [within maxmimum training duration] [from start to finish]; otherwise, <c>false</c>.
         /// </returns>
-        public static bool WithinMaxmimumOpenTrainingDuration(DateTime fromStart, DateTime toFinish) => (toFinish - fromStart) <= MaximumOpenTrainingDuration;
+        public static bool WithinMaxmimumOpenTrainingDuration(DateTime fromStart, DateTime toFinish) =>
+            (toFinish - fromStart) <= MonthsDiffernential(toFinish, MaximumOpenTrainingDuration);
+
+        /// <summary>
+        /// Months differnential.
+        /// expect hte offsete to be a negative number...
+        /// </summary>
+        /// <param name="usingDate">The using date.</param>
+        /// <param name="offset">The offset.</param>
+        /// <returns>the calculated timespan</returns>
+        public static TimeSpan MonthsDiffernential(DateTime usingDate, int offset) =>
+            usingDate - usingDate.AddMonths(offset);
     }
 }
