@@ -37,6 +37,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.MathGrade
         [InlineData("")]
         [InlineData(" ")]
         [InlineData("NONE")]
+        [InlineData("None")]
+        [InlineData("none")]
         public void MathGradeConditionMet_False(string mathGrade)
         {
             NewRule().MathGradeConditionMet(mathGrade).Should().BeFalse();
