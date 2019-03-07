@@ -24,6 +24,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             return (end - start).TotalDays;
         }
 
+        public double WholeDaysBetween(DateTime start, DateTime end)
+        {
+            return Math.Abs((end - start).TotalDays) + 1;
+        }
+
         [Obsolete("Please use YearsBetween instead")]
         public int AgeAtGivenDate(DateTime dateOfBirth, DateTime givenDate)
         {

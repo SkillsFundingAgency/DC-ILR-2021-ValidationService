@@ -10,6 +10,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
 
         double DaysBetween(DateTime start, DateTime end);
 
+        double WholeDaysBetween(DateTime start, DateTime end);
+
         int AgeAtGivenDate(DateTime dateOfBirth, DateTime givenDate);
     }
 }
