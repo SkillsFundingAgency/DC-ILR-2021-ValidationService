@@ -74,6 +74,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
                     continue;
                 }
 
+                var validPostcodes = localAuthorities
+                    .Join(onsPostCode, eli => eli.Code.ToUpper(), pc => pc.LocalAuthority.ToUpper(), (eli, pc) => pc);
+
+                if (!validPostcodes.Any())
+                {
+                    continue;
+                }
+
+                if (PostcodesContainValidPostcode(latestLearningStart, validPostcodes))
+                {
+                    continue;
+                }
+
                 if (localAuthorities
                     .Join(onsPostCode, eli => eli.Code.ToUpper(), pc => pc.LocalAuthority.ToUpper(), (eli, pc) => pc)?
                     .Any(p => CheckQualifyingPeriod(latestLearningStart, p)) ?? false)
@@ -84,6 +97,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
                         BuildErrorMessageParameters(learningDelivery));
                 }
             }
+        }
+
+        public bool PostcodesContainValidPostcode(DateTime? latestLearningStart, IEnumerable<IONSPostcode> onsPostcodes)
+        {
+            return onsPostcodes.Count() > 1
+                   && onsPostcodes.Any(vp => latestLearningStart >= vp.EffectiveFrom
+                                             && latestLearningStart < (vp.EffectiveTo ?? DateTime.MaxValue)
+                                             && latestLearningStart < (vp.Termination ?? DateTime.MaxValue));
         }
 
         public bool CheckQualifyingPeriod(DateTime? latestLearningStart, IONSPostcode onsPostCode) =>
