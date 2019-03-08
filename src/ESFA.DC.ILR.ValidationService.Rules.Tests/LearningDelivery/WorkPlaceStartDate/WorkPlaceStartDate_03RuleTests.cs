@@ -26,16 +26,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         [InlineData(TypeOfAim.References.WorkPlacement500PlusHours)]
         [InlineData(TypeOfAim.References.SupportedInternship16To19)]
         [InlineData(TypeOfAim.References.WorkExperience)]
-        [InlineData(TypeOfAim.References.IndustryPlacement)]
+        [InlineData("zwrkx002")]
         public void LearnAimRefConditionMet_False(string learnAimRef)
         {
             NewRule().LearnAimRefConditionMet(learnAimRef).Should().BeFalse();
         }
 
-        [Fact]
-        public void LearnAimRefConditionMet_True()
+        [Theory]
+        [InlineData(TypeOfAim.References.ESFLearnerStartandAssessment)]
+        [InlineData("zesf0001")]
+        public void LearnAimRefConditionMet_True(string learnAimRef)
         {
-            NewRule().LearnAimRefConditionMet(TypeOfAim.References.ESFLearnerStartandAssessment).Should().BeTrue();
+            NewRule().LearnAimRefConditionMet(learnAimRef).Should().BeTrue();
         }
 
         [Fact]
