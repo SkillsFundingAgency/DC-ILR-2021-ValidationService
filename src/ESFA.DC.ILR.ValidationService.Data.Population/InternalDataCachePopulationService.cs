@@ -136,7 +136,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
         /// <param name="addToCache">add to cache.</param>
         public void AddLookups(TypeOfStringCodedLookup forThisKey, XElement usingSource, InternalDataCache addToCache)
         {
-            var lookups = BuildListLookups<string>(usingSource, $"{forThisKey}");
+            var lookups = BuildStringListLookups(usingSource, $"{forThisKey}");
 
             addToCache.StringLookups.Add(forThisKey, lookups);
         }
@@ -173,7 +173,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
         /// <typeparam name="T">the domain type for the lookup list</typeparam>
         /// <param name="lookups">The lookups.</param>
         /// <param name="type">The type.</param>
-        /// <returns>a distinct key set of lookups (case insensitive when necessary)</returns>
+        /// <returns>a distinct key set of lookups</returns>
         private IContainThis<T> BuildListLookups<T>(XElement lookups, string type)
         {
             return lookups
@@ -181,6 +181,22 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
                 .Descendants("option")
                 .Attributes("code")
                 .Select(c => (T)Convert.ChangeType(c.Value, typeof(T)))
+                .AsSafeDistinctKeySet();
+        }
+
+        /// <summary>
+        /// Builds the string list lookups.
+        /// </summary>
+        /// <param name="lookups">The lookups.</param>
+        /// <param name="type">The type.</param>
+        /// <returns>a distinct key set of case insensitive lookups</returns>
+        private IContainThis<string> BuildStringListLookups(XElement lookups, string type)
+        {
+            return lookups
+                .Descendants(type)
+                .Descendants("option")
+                .Attributes("code")
+                .Select(c => c.Value)
                 .AsSafeDistinctKeySet();
         }
 

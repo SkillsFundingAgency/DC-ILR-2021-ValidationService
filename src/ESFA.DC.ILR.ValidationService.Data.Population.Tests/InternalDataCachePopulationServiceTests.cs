@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Internal;
 using FluentAssertions;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -138,6 +137,38 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
 
             Assert.True(internalDataCache.ListItemLookups.ContainsKey(thisKey));
             Assert.Equal(expectedCount, internalDataCache.ListItemLookups[thisKey].Count);
+        }
+
+        [Theory]
+        [InlineData(TypeOfStringCodedLookup.AppFinRecord, "TNP")]
+        [InlineData(TypeOfStringCodedLookup.AppFinRecord, "tnp")]
+        [InlineData(TypeOfStringCodedLookup.AppFinRecord, "tnP")]
+        [InlineData(TypeOfStringCodedLookup.Domicile, "BQ")]
+        [InlineData(TypeOfStringCodedLookup.Domicile, "bq")]
+        [InlineData(TypeOfStringCodedLookup.Domicile, "bQ")]
+        [InlineData(TypeOfStringCodedLookup.Sex, "F")]
+        [InlineData(TypeOfStringCodedLookup.Sex, "f")]
+        [InlineData(TypeOfStringCodedLookup.Sex, "M")]
+        [InlineData(TypeOfStringCodedLookup.Sex, "m")]
+        [InlineData(TypeOfStringCodedLookup.ESMType, "LOE")]
+        [InlineData(TypeOfStringCodedLookup.ESMType, "loe")]
+        [InlineData(TypeOfStringCodedLookup.ESMType, "lOe")]
+        [InlineData(TypeOfStringCodedLookup.OutGrade, "**d")]
+        [InlineData(TypeOfStringCodedLookup.OutGrade, "**D")]
+        [InlineData(TypeOfStringCodedLookup.OutGrade, "***d")]
+        [InlineData(TypeOfStringCodedLookup.OutGrade, "***D")]
+        [InlineData(TypeOfStringCodedLookup.OutGrade, "02")]
+        public void TypeOfStringCodedLookupMeetsCasingExpectation(TypeOfStringCodedLookup thisKey, string candidate)
+        {
+            // arrange
+            var sut = NewService();
+            var cache = sut.Create();
+
+            // act
+            var result = cache.StringLookups[thisKey].Contains(candidate);
+
+            // assert
+            Assert.True(result);
         }
 
         private InternalDataCachePopulationService NewService(IInternalDataCache internalDataCache = null)
