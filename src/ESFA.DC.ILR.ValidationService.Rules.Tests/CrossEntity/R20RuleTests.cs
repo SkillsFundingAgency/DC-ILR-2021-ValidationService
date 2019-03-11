@@ -120,26 +120,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Theory]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, TypeOfLearningProgramme.ApprenticeshipStandard, "ZESF98765", "2015-07-02", "2015-12-01", true)]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, TypeOfLearningProgramme.ApprenticeshipStandard, "ZESF98765", "2015-07-02", null, false)]
         [InlineData(TypeOfAim.ComponentAimInAProgramme, TypeOfLearningProgramme.HigherApprenticeshipLevel4, "ZESF98765", "2015-07-02", "2015-01-01", false)]
         [InlineData(TypeOfAim.AimNotPartOfAProgramme, TypeOfLearningProgramme.HigherApprenticeshipLevel4, "ZESF98765", "2015-07-02", "2015-01-01", false)]
         public void ConditionMet_False(int aimType, int? progType, string learnAimRef, string learnStartDateString, string learnActEndDateString, bool firstRecord)
         {
             DateTime learnStartDate = DateTime.Parse(learnStartDateString);
             DateTime? learnActEndDate = string.IsNullOrEmpty(learnActEndDateString) ? (DateTime?)null : DateTime.Parse(learnActEndDateString);
-            HashSet<int?> frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
 
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-
-            dd07Mock.Setup(d => d.IsApprenticeship(TypeOfLearningProgramme.ApprenticeshipStandard)).Returns(false);
-            larsDataServiceMock.Setup(e => e.FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, frameWorkComponentTypes)).Returns(false);
-
-            NewRule(
-                larsDataService: larsDataServiceMock.Object,
-                dd07: dd07Mock.Object)
-                .ConditionMet(aimType, progType, learnAimRef, learnStartDate, learnActEndDate, firstRecord)
+            NewRule()
+                .ConditionMet(learnStartDate, learnActEndDate, firstRecord)
                 .Should().BeFalse();
         }
 
@@ -148,23 +137,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [InlineData("ZESF98765", TypeOfLearningProgramme.HigherApprenticeshipLevel4, "2015-07-02", "2015-12-01", false)]
         public void ConditionMet_True(string learnAimRef, int progType, string learnStartDateString, string learnActEndDateString, bool firstRecord)
         {
-            HashSet<int?> frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
             DateTime learnStartDate = DateTime.Parse(learnStartDateString);
             DateTime? learnActEndDate = string.IsNullOrEmpty(learnActEndDateString) ? (DateTime?)null : DateTime.Parse(learnActEndDateString);
 
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-
-            dd07Mock.Setup(d => d.IsApprenticeship(progType)).Returns(true);
-            larsDataServiceMock.Setup(e => e.FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, frameWorkComponentTypes)).Returns(true);
-
-            NewRule(
-                larsDataService: larsDataServiceMock.Object,
-                dd07: dd07Mock.Object)
+            NewRule()
                 .ConditionMet(
-                    TypeOfAim.ComponentAimInAProgramme,
-                    progType,
-                    learnAimRef,
                     learnStartDate,
                     learnActEndDate,
                     firstRecord)
