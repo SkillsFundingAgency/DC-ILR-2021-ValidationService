@@ -442,6 +442,54 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
             NewRule().CheckQualifyingPeriod(learnStartDate, onsPostCode).Should().BeTrue();
         }
 
+        [Fact]
+        public void PostcodesContainValidPostcode_False()
+        {
+            DateTime learnStartDate = new DateTime(2018, 06, 01);
+
+            var onsPostCodes = new List<ONSPostcode>()
+            {
+                new ONSPostcode()
+                {
+                    EffectiveFrom = new DateTime(2018, 01, 01),
+                    EffectiveTo = new DateTime(2018, 05, 01),
+                    Termination = new DateTime(2018, 05, 01)
+                },
+                new ONSPostcode()
+                {
+                    EffectiveFrom = new DateTime(2017, 01, 01),
+                    EffectiveTo = new DateTime(2018, 01, 01),
+                    Termination = new DateTime(2018, 01, 01)
+                },
+            };
+
+            NewRule().PostcodesContainValidPostcode(learnStartDate, onsPostCodes).Should().BeFalse();
+        }
+
+        [Fact]
+        public void PostcodesContainValidPostcode_True()
+        {
+            DateTime learnStartDate = new DateTime(2018, 06, 01);
+
+            var onsPostCodes = new List<ONSPostcode>()
+            {
+                new ONSPostcode()
+                {
+                    EffectiveFrom = new DateTime(2018, 01, 01),
+                    EffectiveTo = new DateTime(2018, 07, 01),
+                    Termination = new DateTime(2018, 07, 01)
+                },
+                new ONSPostcode()
+                {
+                    EffectiveFrom = new DateTime(2017, 01, 01),
+                    EffectiveTo = new DateTime(2018, 01, 01),
+                    Termination = new DateTime(2018, 01, 01)
+                },
+            };
+
+            NewRule().PostcodesContainValidPostcode(learnStartDate, onsPostCodes).Should().BeTrue();
+        }
+
         private DelLocPostCode_15Rule NewRule(
             IValidationErrorHandler validationErrorHandler = null,
             IFCSDataService fcsDataService = null,
