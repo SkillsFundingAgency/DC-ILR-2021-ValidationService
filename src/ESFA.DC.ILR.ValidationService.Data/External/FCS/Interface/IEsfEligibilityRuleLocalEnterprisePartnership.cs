@@ -3,8 +3,11 @@
     /// <summary>
     /// the ESF eligibility rule enterprise partnership
     /// </summary>
-    public interface IEsfEligibilityRuleLocalEnterprisePartnership : IEsfEligibilityRuleReferences
+    /// <seealso cref="IEsfEligibilityRuleReferences" />
+    /// <seealso cref="Interface.IEsfEligibilityRuleCode{string}" />
+    public interface IEsfEligibilityRuleLocalEnterprisePartnership :
+        IEsfEligibilityRuleReferences,
+        IEsfEligibilityRuleCode<string>
     {
-        string Code { get; }
     }
 }

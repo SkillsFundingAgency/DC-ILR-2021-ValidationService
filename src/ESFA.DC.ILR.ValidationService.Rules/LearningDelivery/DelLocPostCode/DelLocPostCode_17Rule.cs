@@ -26,9 +26,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
             IValidationErrorHandler validationErrorHandler,
             IProvideRuleCommonOperations commonChecks,
             IFCSDataService fcsData,
-            IPostcodesDataService postcodesData,
-            IDerivedData_22Rule derivedData22)
-            : base(validationErrorHandler, commonChecks, fcsData, postcodesData, derivedData22, RuleNameConstants.DelLocPostCode_17)
+            IPostcodesDataService postcodesData)
+            : base(validationErrorHandler, commonChecks, fcsData, postcodesData, RuleNameConstants.DelLocPostCode_17)
         {
         }
 
@@ -41,18 +40,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
             FcsData.GetEligibilityRuleLocalAuthoritiesFor(delivery.ConRefNumber).AsSafeReadOnlyList();
 
         /// <summary>
-        /// Determines whether [has qualifying eligibility] [the specified postcode].
+        /// Determines whether [has any qualifying eligibility] [the specified delivery].
         /// </summary>
-        /// <param name="delivery">The latest learnstartdate delivery.</param>
+        /// <param name="delivery">The delivery.</param>
         /// <param name="postcodes">The postcodes.</param>
-        /// <param name="eligibilities">The eligibilities.</param>
+        /// <param name="eligibilityCodes">The eligibility codes.</param>
         /// <returns>
-        ///   <c>true</c> if [has qualifying eligibility] [the specified postcode]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [has any qualifying eligibility] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public override bool HasQualifyingEligibility(ILearningDelivery delivery, IReadOnlyCollection<IONSPostcode> postcodes, IReadOnlyCollection<IEsfEligibilityRuleLocalAuthority> eligibilities) =>
-            It.Has(postcodes)
-            && It.Has(eligibilities)
-            && It.Has(delivery)
-            && (eligibilities.Join(postcodes, eli => eli.Code.ToUpper(), pc => pc.LocalAuthority.ToUpper(), (eli, pc) => pc)?.Any(p => InQualifyingPeriod(delivery, p)) ?? false);
+        public override bool HasAnyQualifyingEligibility(ILearningDelivery delivery, IReadOnlyCollection<IONSPostcode> postcodes, IContainThis<string> eligibilityCodes) =>
+            postcodes.Any(x => eligibilityCodes.Contains(x.LocalAuthority) && InQualifyingPeriod(delivery, x));
     }
 }
