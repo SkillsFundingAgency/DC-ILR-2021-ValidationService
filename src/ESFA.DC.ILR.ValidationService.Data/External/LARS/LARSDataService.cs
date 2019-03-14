@@ -348,18 +348,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
                     && learnStartDate > f.EffectiveTo);
         }
 
-        // TODO: this should happen in the rule, and it's now improperly named...
-        public bool DD04DateGreaterThanFrameworkAimEffectiveTo(DateTime dd04Date, string learnAimRef, int? progType, int? fworkCode, int? pwayCode)
-        {
-            var frameworkAims = GetFrameworkAimsFor(learnAimRef);
-
-            return frameworkAims.Any(
-                fa => fa.ProgType == progType
-                && fa.FworkCode == fworkCode
-                && fa.PwayCode == pwayCode
-                && !fa.IsCurrent(dd04Date));
-        }
-
         // TODO: this should happen in the rule
         public bool OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(DateTime origLearnStartDate, string learnAimRef, string validityCategory)
         {

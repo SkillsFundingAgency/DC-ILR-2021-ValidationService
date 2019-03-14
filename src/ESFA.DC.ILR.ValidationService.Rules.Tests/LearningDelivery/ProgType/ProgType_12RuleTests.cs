@@ -784,13 +784,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
             larsMock.Setup(e => e.BasicSkillsTypeMatchForLearnAimRef(It.IsAny<IEnumerable<int>>(), learnAimRef)).Returns(false);
 
             var dd04Mock = new Mock<IDerivedData_04Rule>();
-            dd04Mock.Setup(x => x.Derive(It.IsAny<IEnumerable<ILearningDelivery>>(), It.IsAny<ILearningDelivery>()))
+            dd04Mock.Setup(x => x.GetEarliesStartDateFor(It.IsAny<ILearningDelivery>(), It.IsAny<IReadOnlyCollection<ILearningDelivery>>()))
                                     .Returns(dd04Date);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
                 NewRule(
-                        dd04:dd04Mock.Object,
+                        dd04: dd04Mock.Object,
                         larsDataService: larsMock.Object,
                         learningDeliveryFamQueryService: famQueryServiceMock.Object,
                         validationErrorHandler: validationErrorHandlerMock.Object)
@@ -844,7 +844,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
             larsMock.Setup(e => e.BasicSkillsTypeMatchForLearnAimRef(It.IsAny<IEnumerable<int>>(), learnAimRef)).Returns(false);
 
             var dd04Mock = new Mock<IDerivedData_04Rule>();
-            dd04Mock.Setup(x => x.Derive(It.IsAny<IEnumerable<ILearningDelivery>>(), It.IsAny<ILearningDelivery>()))
+            dd04Mock.Setup(x => x.GetEarliesStartDateFor(It.IsAny<ILearningDelivery>(), It.IsAny<IReadOnlyCollection<ILearningDelivery>>()))
                                     .Returns(dd04Date);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())

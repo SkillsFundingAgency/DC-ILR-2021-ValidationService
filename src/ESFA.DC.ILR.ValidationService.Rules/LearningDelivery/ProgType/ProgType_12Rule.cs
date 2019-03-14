@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                DateTime? dd04Date = _dd04.Derive(objectToValidate.LearningDeliveries, learningDelivery);
+                DateTime? dd04Date = _dd04.GetEarliesStartDateFor(learningDelivery, objectToValidate.LearningDeliveries);
 
                 if (ConditionMet(
                     learningDelivery.LearnAimRef,
