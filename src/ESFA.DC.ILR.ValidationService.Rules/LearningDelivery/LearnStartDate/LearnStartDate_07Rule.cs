@@ -146,7 +146,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         ///   <c>true</c> if [has qualifying framework aim] [this delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasQualifyingFrameworkAim(IReadOnlyCollection<ILARSFrameworkAim> frameworkAims, DateTime earliestStart) =>
-            frameworkAims.Any(fa => fa.IsCurrent(earliestStart));
+            IsOutOfScope(frameworkAims) || frameworkAims.Any(fa => fa.IsCurrent(earliestStart));
+
+        /// <summary>
+        /// Determines whether [is out of scope] [the specified framework aims].
+        /// if the <paramref name="frameworkAims"/> come back empty after being filtered then it is
+        ///  assumed the delivery aim is a framework common commponent
+        /// </summary>
+        /// <param name="frameworkAims">The framework aims.</param>
+        /// <returns>
+        ///   <c>true</c> if [is out of scope] [the specified framework aims]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsOutOfScope(IReadOnlyCollection<ILARSFrameworkAim> frameworkAims) =>
+            It.IsEmpty(frameworkAims);
 
         /// <summary>
         /// Raises the validation message.

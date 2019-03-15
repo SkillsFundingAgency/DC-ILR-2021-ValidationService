@@ -331,6 +331,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             Assert.Contains(result, x => x == frameworkAim.Object);
         }
 
+        /// <summary>
+        /// Has qualifying framework aim with empty frameworks meets expectation
+        /// an empty framework set signifies the delivery aim being a framework common component
+        /// </summary>
+        [Fact]
+        public void HasQualifyingFrameworkAimWithEmptyFrameworksMeetsExpectation()
+        {
+            // arrange
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.HasQualifyingFrameworkAim(new ILARSFrameworkAim[] { }, DateTime.Today);
+
+            // assert
+            Assert.True(result);
+        }
+
         [Theory]
         [InlineData("2016-08-02", "2016-04-01", "2017-04-01", true)] // inside
         [InlineData("2016-04-01", "2016-04-01", "2017-04-01", true)] // lower limit
