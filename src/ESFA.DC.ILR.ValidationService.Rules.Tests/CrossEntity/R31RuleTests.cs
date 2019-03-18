@@ -41,6 +41,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 1,
                         PwayCodeNullable = 1
+                    },
+                    new TestLearningDelivery
+                    {
+                        AimType = 1,
+                        ProgTypeNullable = 2,
+                        FworkCodeNullable = 2,
+                        PwayCodeNullable = 2
+                    },
+                    new TestLearningDelivery
+                    {
+                        AimType = 5,
+                        ProgTypeNullable = 2,
+                        FworkCodeNullable = 2,
+                        PwayCodeNullable = 2
                     }
                 }
             };
@@ -59,6 +73,42 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery
                     {
                         AimType = 1,
+                        ProgTypeNullable = 1,
+                        FworkCodeNullable = 1,
+                        PwayCodeNullable = 1
+                    }
+                }
+            };
+
+            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            validationErrorHandlerMock.Verify(h => h.Handle(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long?>(), It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+        }
+
+        [Fact]
+        public void ValidationFails()
+        {
+            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
+            var testLearner = new TestLearner
+            {
+                LearningDeliveries = new List<ILearningDelivery>
+                {
+                    new TestLearningDelivery
+                    {
+                        AimType = 1,
+                        ProgTypeNullable = 1,
+                        FworkCodeNullable = 1,
+                        PwayCodeNullable = 1
+                    },
+                    new TestLearningDelivery
+                    {
+                        AimType = 6,
+                        ProgTypeNullable = 1,
+                        FworkCodeNullable = 1,
+                        PwayCodeNullable = 1
+                    },
+                    new TestLearningDelivery
+                    {
+                        AimType = 4,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 1,
                         PwayCodeNullable = 1
@@ -146,3 +196,4 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
     }
 }
+
