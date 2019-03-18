@@ -74,23 +74,37 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Fact]
         public void LarsComponentTypeConditionMet_True()
         {
+            string learnAimRef = "ZESF98765";
+            var progType = 3;
+            var fworkCode = 445;
+            var pwayCode = 1;
+            var learnStartDate = new DateTime(2019, 01, 01);
+            HashSet<int?> frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
+
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.FrameWorkComponentTypeExistsInFrameworkAims(It.IsAny<string>(), It.IsAny<HashSet<int?>>()))
+                .Setup(ldsm => ldsm.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate))
                 .Returns(true);
 
-            NewRule(larsDataService: larsDataServiceMock.Object).LarsComponentTypeConditionMet("XYZ").Should().BeTrue();
+            NewRule(larsDataService: larsDataServiceMock.Object).LarsComponentTypeConditionMet(learnAimRef, progType, fworkCode, pwayCode, learnStartDate).Should().BeTrue();
         }
 
         [Fact]
         public void LarsComponentTypeConditionMet_False()
         {
+            string learnAimRef = "ZESF98765";
+            var progType = 3;
+            var fworkCode = 445;
+            var pwayCode = 1;
+            var learnStartDate = new DateTime(2019, 01, 01);
+            HashSet<int?> frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
+
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.FrameWorkComponentTypeExistsInFrameworkAims(It.IsAny<string>(), It.IsAny<HashSet<int?>>()))
+                .Setup(ldsm => ldsm.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate))
                 .Returns(false);
 
-            NewRule(larsDataService: larsDataServiceMock.Object).LarsComponentTypeConditionMet("XYZ").Should().BeFalse();
+            NewRule(larsDataService: larsDataServiceMock.Object).LarsComponentTypeConditionMet(learnAimRef, progType, fworkCode, pwayCode, learnStartDate).Should().BeFalse();
         }
 
         [Fact]
@@ -289,7 +303,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.FrameWorkComponentTypeExistsInFrameworkAims(It.IsAny<string>(), It.IsAny<HashSet<int?>>()))
+                .Setup(ldsm => ldsm.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<HashSet<int?>>(), It.IsAny<DateTime>()))
                 .Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
