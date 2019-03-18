@@ -1996,6 +1996,159 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                 .Should().Be(null);
         }
 
+        [Fact]
+        public void FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes_True()
+        {
+            var learnAimRef = "LearnAimRef";
+            var progType = 3;
+            var fworkCode = 445;
+            var pwayCode = 1;
+            var frameWorkComponentTypes = new HashSet<int?>() { 2, 3 };
+            var learnStartDate = new DateTime(2019, 01, 01);
+
+            var learningDeliveriesDictionary = new Dictionary<string, LearningDelivery>
+            {
+                [learnAimRef] = new LearningDelivery
+                {
+                    LearnAimRef = learnAimRef,
+                    FrameworkAims = new List<FrameworkAim>
+                    {
+                        new FrameworkAim()
+                        {
+                            ProgType = 2,
+                            FworkCode = 445,
+                            PwayCode = 1,
+                            FrameworkComponentType = 2
+                        },
+                        new FrameworkAim()
+                        {
+                            ProgType = 2,
+                            FworkCode = 445,
+                            PwayCode = 3,
+                            FrameworkComponentType = 1
+                        },
+                        new FrameworkAim()
+                        {
+                            ProgType = 3,
+                            FworkCode = 445,
+                            PwayCode = 1,
+                            FrameworkComponentType = 2
+                        }
+                    }
+                }
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
+
+            NewService(externalDataCacheMock.Object).FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate)
+                .Should()
+                .BeTrue();
+        }
+
+        [Fact]
+        public void FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes_False()
+        {
+            var learnAimRef = "LearnAimRef";
+            var progType = 3;
+            var fworkCode = 445;
+            var pwayCode = 1;
+            var frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
+            var learnStartDate = new DateTime(2019, 01, 01);
+
+            var learningDeliveriesDictionary = new Dictionary<string, LearningDelivery>
+            {
+                [learnAimRef] = new LearningDelivery
+                {
+                    LearnAimRef = learnAimRef,
+                    FrameworkAims = new List<FrameworkAim>
+                    {
+                        new FrameworkAim()
+                        {
+                            ProgType = 2,
+                            FworkCode = 445,
+                            PwayCode = 1,
+                            FrameworkComponentType = 2
+                        },
+                        new FrameworkAim()
+                        {
+                            ProgType = 2,
+                            FworkCode = 445,
+                            PwayCode = 3,
+                            FrameworkComponentType = 1
+                        },
+                        new FrameworkAim()
+                        {
+                            ProgType = 3,
+                            FworkCode = 445,
+                            PwayCode = 1,
+                            FrameworkComponentType = 2
+                        }
+                    }
+                }
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
+
+            NewService(externalDataCacheMock.Object).FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate)
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public void FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes_False_Nulls()
+        {
+            var learnAimRef = "LearnAimRef";
+            int? progType = null;
+            int? fworkCode = null;
+            int? pwayCode = null;
+            var frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
+            var learnStartDate = new DateTime(2019, 01, 01);
+
+            var learningDeliveriesDictionary = new Dictionary<string, LearningDelivery>
+            {
+                [learnAimRef] = new LearningDelivery
+                {
+                    LearnAimRef = learnAimRef,
+                    FrameworkAims = new List<FrameworkAim>
+                    {
+                        new FrameworkAim()
+                        {
+                            ProgType = 2,
+                            FworkCode = 445,
+                            PwayCode = 1,
+                            FrameworkComponentType = 2
+                        },
+                        new FrameworkAim()
+                        {
+                            ProgType = 2,
+                            FworkCode = 445,
+                            PwayCode = 3,
+                            FrameworkComponentType = 1
+                        },
+                        new FrameworkAim()
+                        {
+                            ProgType = 3,
+                            FworkCode = 445,
+                            PwayCode = 1,
+                            FrameworkComponentType = 2
+                        }
+                    }
+                }
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
+
+            NewService(externalDataCacheMock.Object).FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate)
+                .Should()
+                .BeFalse();
+        }
+
         private LARSDataService NewService(IExternalDataCache externalDataCache = null)
         {
             return new LARSDataService(externalDataCache);

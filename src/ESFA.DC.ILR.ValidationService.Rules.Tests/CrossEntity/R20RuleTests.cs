@@ -74,26 +74,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         public void LARSConditionMet_False()
         {
             string learnAimRef = "ZESF98765";
+            var progType = 3;
+            var fworkCode = 445;
+            var pwayCode = 1;
+            var learnStartDate = new DateTime(2019, 01, 01);
             HashSet<int?> frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
 
             var larsMock = new Mock<ILARSDataService>();
 
-            larsMock.Setup(e => e.FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, frameWorkComponentTypes)).Returns(false);
+            larsMock.Setup(e => e.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate)).Returns(false);
 
-            NewRule(larsDataService: larsMock.Object).LARSConditionMet(learnAimRef).Should().BeFalse();
+            NewRule(larsDataService: larsMock.Object).LARSConditionMet(learnAimRef, progType, fworkCode, pwayCode, learnStartDate).Should().BeFalse();
         }
 
         [Fact]
         public void LARSConditionMet_True()
         {
             string learnAimRef = "ZESF98765";
+            var progType = 3;
+            var fworkCode = 445;
+            var pwayCode = 1;
+            var learnStartDate = new DateTime(2019, 01, 01);
             HashSet<int?> frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
 
             var larsMock = new Mock<ILARSDataService>();
 
-            larsMock.Setup(e => e.FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, frameWorkComponentTypes)).Returns(true);
+            larsMock.Setup(e => e.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate)).Returns(true);
 
-            NewRule(larsDataService: larsMock.Object).LARSConditionMet(learnAimRef).Should().BeTrue();
+            NewRule(larsDataService: larsMock.Object).LARSConditionMet(learnAimRef, progType, fworkCode, pwayCode, learnStartDate).Should().BeTrue();
         }
 
         [Theory]
@@ -153,6 +161,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         public void Validate_Error()
         {
             HashSet<int?> frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
+            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var fworkCode = 445;
+            var pwayCode = 1;
+            var learnStartDate = new DateTime(2019, 01, 01);
             string learnAimRef = "ZESF98765";
             var testLearner = new TestLearner()
             {
@@ -164,7 +176,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimType = TypeOfAim.AimNotPartOfAProgramme,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 01),
-                        LearnActEndDateNullable = new DateTime(2017, 02, 28)
+                        LearnActEndDateNullable = new DateTime(2017, 02, 28),
+                        FworkCodeNullable = fworkCode,
+                        PwayCodeNullable = pwayCode
                     },
                     new TestLearningDelivery()
                     {
@@ -172,7 +186,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimType = TypeOfAim.ComponentAimInAProgramme,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 24),
-                        LearnActEndDateNullable = new DateTime(2017, 03, 01)
+                        LearnActEndDateNullable = new DateTime(2017, 03, 01),
+                        FworkCodeNullable = fworkCode,
+                        PwayCodeNullable = pwayCode
                     },
                     new TestLearningDelivery()
                     {
@@ -180,7 +196,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimType = TypeOfAim.AimNotPartOfAProgramme,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 25),
-                        LearnActEndDateNullable = new DateTime(2017, 10, 25)
+                        LearnActEndDateNullable = new DateTime(2017, 10, 25),
+                        FworkCodeNullable = fworkCode,
+                        PwayCodeNullable = pwayCode
                     },
                     new TestLearningDelivery()
                     {
@@ -188,7 +206,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimType = TypeOfAim.ComponentAimInAProgramme,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 26),
-                        LearnActEndDateNullable = new DateTime(2017, 11, 25)
+                        LearnActEndDateNullable = new DateTime(2017, 11, 25),
+                        FworkCodeNullable = fworkCode,
+                        PwayCodeNullable = pwayCode
                     }
                 }
             };
@@ -197,7 +217,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var dd07Mock = new Mock<IDerivedData_07Rule>();
 
             dd07Mock.Setup(d => d.IsApprenticeship(2)).Returns(true);
-            larsDataServiceMock.Setup(e => e.FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, frameWorkComponentTypes)).Returns(true);
+            larsDataServiceMock.Setup(e => e.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, It.IsAny<DateTime>())).Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {

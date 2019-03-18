@@ -202,6 +202,19 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             return frameworkAims.Any(fa => frameworkTypeComponents.Contains(fa.FrameworkComponentType));
         }
 
+        public bool FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(string learnAimRef, int? progType, int? fworkCode, int? pwayCode, HashSet<int?> frameworkTypeComponents, DateTime startDate)
+        {
+            var frameworkAims = GetFrameworkAimsFor(learnAimRef);
+
+            return frameworkAims.Any(
+                fa => fa.ProgType == progType
+                      && fa.FworkCode == fworkCode
+                      && fa.PwayCode == pwayCode
+                      && frameworkTypeComponents.Contains(fa.FrameworkComponentType)
+                      && startDate >= fa.StartDate
+                      && (!fa.EndDate.HasValue || startDate <= fa.EndDate));
+        }
+
         // TODO: needs to be thought out, this isn't right either...
         public bool FrameworkCodeExistsForCommonComponent(string learnAimRef, int? progType, int? fworkCode, int? pwayCode)
         {

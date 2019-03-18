@@ -33,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 ld => DD07ConditionMet(ld.ProgTypeNullable)
                       && ApprenticeshipStandardsConditionMet(ld.ProgTypeNullable)
                       && ComponentAimTypeConditionMet(ld.AimType)
-                      && LARSConditionMet(ld.LearnAimRef));
+                      && LARSConditionMet(ld.LearnAimRef, ld.ProgTypeNullable, ld.FworkCodeNullable, ld.PwayCodeNullable, ld.LearnStartDate));
 
             if (learningDeliveries == null || learningDeliveries.Count() < 2)
             {
@@ -88,7 +88,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ComponentAimTypeConditionMet(int aimType) => aimType == TypeOfAim.ComponentAimInAProgramme;
 
-        public bool LARSConditionMet(string learnAimRef) => _lARSDataService.FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, _frameWorkComponentTypes);
+        public bool LARSConditionMet(string learnAimRef, int? progType, int? fworkCode, int? pwayCode, DateTime startDate) => _lARSDataService.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, _frameWorkComponentTypes, startDate);
 
         public bool ApprenticeshipStandardsConditionMet(int? progTypeNullable) => progTypeNullable.HasValue
                 && progTypeNullable != TypeOfLearningProgramme.ApprenticeshipStandard;
