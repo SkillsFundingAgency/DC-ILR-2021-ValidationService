@@ -26,7 +26,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var group in groups)
             {
-                if (group.Any(d => d.AimType == TypeOfAim.ProgrammeAim && d.LearnActEndDateNullable == null) && group.All(d => d.AimType != TypeOfAim.ComponentAimInAProgramme))
+                if (group.Any(d => d.AimType == TypeOfAim.ProgrammeAim && d.LearnActEndDateNullable == null) &&
+                    group.All(d => d.AimType != TypeOfAim.ComponentAimInAProgramme) &&
+                    group.All(d => d.AimType != TypeOfAim.CoreAim16To19ExcludingApprenticeships))
                 {
                     var delivery = group.First(d => d.AimType == TypeOfAim.ProgrammeAim && d.LearnActEndDateNullable == null);
                     HandleValidationError(
