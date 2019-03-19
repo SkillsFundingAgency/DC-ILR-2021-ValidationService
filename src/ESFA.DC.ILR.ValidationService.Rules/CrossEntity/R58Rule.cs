@@ -26,11 +26,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 return;
             }
 
-            var learnActEndDate = LearnActEndDateForOverlappingCoreAims(coreAims);
+            var learnActEndDateTuple = LearnActEndDateForOverlappingCoreAims(coreAims);
 
-            if (learnActEndDate != null)
+            if (learnActEndDateTuple.Item1 == true)
             {
-                HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(_aimType, learnActEndDate));
+                HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(_aimType, learnActEndDateTuple.Item2));
             }
         }
 
@@ -42,8 +42,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 : true;
         }
 
-        public DateTime? LearnActEndDateForOverlappingCoreAims(IEnumerable<ILearningDelivery> learningDeliveries)
+        public Tuple<bool, DateTime?> LearnActEndDateForOverlappingCoreAims(IEnumerable<ILearningDelivery> learningDeliveries)
         {
+            var defaultResult = new Tuple<bool, DateTime?>(false, null);
+
             if (learningDeliveries != null)
             {
                 var coreAims = learningDeliveries.OrderBy(ld => ld.LearnStartDate).ToArray();
@@ -56,21 +58,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 {
                     var errorConditionMet =
                         coreAims[i - 1].LearnActEndDateNullable == null
-                        ? false
+                        ? true
                         : coreAims[i - 1].LearnActEndDateNullable >= coreAims[i].LearnStartDate;
 
                     if (errorConditionMet)
                     {
-                        return coreAims[i - 1].LearnActEndDateNullable;
+                        return new Tuple<bool, DateTime?>(true, coreAims[i - 1].LearnActEndDateNullable);
                     }
 
                     i++;
                 }
 
-                return null;
+                return defaultResult;
             }
 
-            return null;
+            return defaultResult;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, DateTime? learnActEndDate)
