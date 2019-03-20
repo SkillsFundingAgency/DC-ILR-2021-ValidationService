@@ -28,9 +28,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             var learnActEndDateTuple = LearnActEndDateForOverlappingCoreAims(coreAims);
 
-            if (learnActEndDateTuple.Item1 == true)
+            if (learnActEndDateTuple.Invalid)
             {
-                HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(_aimType, learnActEndDateTuple.Item2));
+                HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(_aimType, learnActEndDateTuple.LearnActEndDate));
             }
         }
 
@@ -42,10 +42,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 : true;
         }
 
-        public Tuple<bool, DateTime?> LearnActEndDateForOverlappingCoreAims(IEnumerable<ILearningDelivery> learningDeliveries)
+        public(bool Invalid, DateTime? LearnActEndDate) LearnActEndDateForOverlappingCoreAims(IEnumerable<ILearningDelivery> learningDeliveries)
         {
-            var defaultResult = new Tuple<bool, DateTime?>(false, null);
-
             if (learningDeliveries != null)
             {
                 var coreAims = learningDeliveries.OrderBy(ld => ld.LearnStartDate).ToArray();
@@ -63,16 +61,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
                     if (errorConditionMet)
                     {
-                        return new Tuple<bool, DateTime?>(true, coreAims[i - 1].LearnActEndDateNullable);
+                        return (true, coreAims[i - 1].LearnActEndDateNullable);
                     }
 
                     i++;
                 }
-
-                return defaultResult;
             }
 
-            return defaultResult;
+            return (false, null);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, DateTime? learnActEndDate)

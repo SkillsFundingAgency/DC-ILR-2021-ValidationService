@@ -77,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be(new Tuple<bool, DateTime?>(true, new DateTime(2018, 8, 10)));
+            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be((true, new DateTime(2018, 8, 10)));
         }
 
         [Fact]
@@ -104,13 +104,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be(new Tuple<bool, DateTime?>(true, new DateTime(2018, 8, 20)));
+            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be((true, new DateTime(2018, 8, 20)));
         }
 
         [Fact]
         public void LearnActEndDateForOverlappingCoreAims_ReturnsNull_NoDeliveries()
         {
-            NewRule().LearnActEndDateForOverlappingCoreAims(null).Should().Be(new Tuple<bool, DateTime?>(false, null));
+            NewRule().LearnActEndDateForOverlappingCoreAims(null).Should().Be((false, null));
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be(new Tuple<bool, DateTime?>(false, null));
+            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be((false, null));
         }
 
         [Fact]
@@ -162,7 +162,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be(new Tuple<bool, DateTime?>(true, null));
+            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be((true, null));
         }
 
         [Fact]
@@ -188,7 +188,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be(new Tuple<bool, DateTime?>(true, null));
+            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be((true, null));
         }
 
         [Fact]
