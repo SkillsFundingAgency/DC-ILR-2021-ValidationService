@@ -1,12 +1,10 @@
-﻿using System.Globalization;
-using ESFA.DC.ILR.Tests.Model;
+﻿using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
+using System.Globalization;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAMType
 {
-    using System;
-    using System.Collections.Generic;
     using ESFA.DC.ILR.Model.Interface;
     using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
     using ESFA.DC.ILR.ValidationService.Interface;
@@ -16,6 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
     using ESFA.DC.ILR.ValidationService.Utility;
     using FluentAssertions;
     using Moq;
+    using System;
     using Xunit;
 
     public class LearnDelFAMType_60RuleTests
@@ -29,27 +28,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void LastInviableStartDateMeetsExpectation()
         {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.LastInviableStartDate;
-
-            // assert
-            Assert.Equal(DateTime.Parse("2016-07-31"), result);
+            // arrange / act / assert
+            Assert.Equal(DateTime.Parse("2016-08-01"), LearnDelFAMType_60Rule.FirstViableDate);
         }
 
         [Fact]
         public void LastInviableEndDateMeetsExpectation()
         {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.LastInviableEndDate;
-
-            // assert
-            Assert.Equal(DateTime.Parse("2017-08-01"), result);
+            // arrange  / act / assert
+            Assert.Equal(DateTime.Parse("2017-07-31"), LearnDelFAMType_60Rule.LastViableDate);
         }
 
         [Theory]
@@ -214,7 +201,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void IsAdultFundedUnemployedWithBenefitsMeetsExpectation(bool expectation)
         {
             // arrange
-            var mockItem = new Mock<ILearner>();
+            var delivery = new Mock<ILearningDelivery>();
+            var learner = new Mock<ILearner>();
+
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
@@ -225,13 +214,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
 
             mockDDRule28
-                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(mockItem.Object))
+                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(delivery.Object, learner.Object))
                 .Returns(expectation);
 
             var sut = new LearnDelFAMType_60Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object, organisationDataService.Object, fileDataService.Object);
 
             // act
-            var result = sut.IsAdultFundedUnemployedWithBenefits(mockItem.Object);
+            var result = sut.IsAdultFundedUnemployedWithBenefits(delivery.Object, learner.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -542,40 +531,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
-        public void IsExcludedForAdultFundedUnemployedWithBenefits()
-        {
-            // arrange
-            var mockItem = new Mock<ILearner>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var mockDDRule07 = new Mock<IDerivedData_07Rule>();
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>();
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>();
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>();
-            var organisationDataService = new Mock<IOrganisationDataService>();
-            var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
-
-            mockDDRule28
-                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(mockItem.Object))
-                .Returns(true);
-
-            var sut = new LearnDelFAMType_60Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object, organisationDataService.Object, fileDataService.Object);
-
-            // act
-            var result = sut.IsExcluded(mockItem.Object);
-
-            // assert
-            Assert.True(result);
-            handler.VerifyAll();
-            service.VerifyAll();
-            mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
-            mockDDRule29.VerifyAll();
-        }
-
-        [Fact]
         public void IsExcludedForInflexibleElementOfTrainingAim()
         {
             // arrange
@@ -734,6 +689,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
+            mockDDRule28
+                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(mockDelivery.Object, mockLearner.Object))
+                .Returns(false);
+
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
             var organisationDataService = new Mock<IOrganisationDataService>(MockBehavior.Strict);
             var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
@@ -825,6 +784,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
+            mockDDRule28
+                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(mockDelivery.Object, mockLearner.Object))
+                .Returns(false);
+
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
 
             var organisationDataService = new Mock<IOrganisationDataService>(MockBehavior.Strict);

@@ -1,6 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
@@ -17,14 +18,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         IDerivedData_28Rule
     {
         /// <summary>
-        /// Determines whether [is adult skills] [the specified delivery].
+        /// The check (rule common operations provider)
         /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is adult skills] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsAdultSkills(ILearningDelivery delivery) =>
-                    delivery.FundModel == TypeOfFunding.AdultSkills;
+        private IProvideRuleCommonOperations _check;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DerivedData_28Rule"/> class.
+        /// </summary>
+        /// <param name="commonOperations">The common operations.</param>
+        public DerivedData_28Rule(IProvideRuleCommonOperations commonOperations)
+        {
+            It.IsNull(commonOperations)
+                .AsGuard<ArgumentNullException>(nameof(commonOperations));
+
+            _check = commonOperations;
+        }
 
         /// <summary>
         /// In receipt of employment support.
@@ -36,6 +44,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 $"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}",
                 Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance,
                 Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance);
+
+        /// <summary>
+        /// Determines whether [is in receipt of employment support] [the specified employment monitorings].
+        /// </summary>
+        /// <param name="employmentMonitorings">The employment monitorings.</param>
+        /// <returns>
+        ///   <c>true</c> if [is in receipt of employment support] [the specified employment monitorings]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool InReceiptOfEmploymentSupport(IReadOnlyCollection<IEmploymentStatusMonitoring> employmentMonitorings) =>
+            employmentMonitorings.SafeAny(InReceiptOfEmploymentSupport);
 
         /// <summary>
         /// Determines whether [has valid employment status] [the specified candidate].
@@ -53,37 +71,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 TypeOfEmploymentStatus.NotKnownProvided);
 
         /// <summary>
-        /// Determines whether [is valid with employment support] [the specified candidates].
-        /// </summary>
-        /// <param name="candidates">The candidates.</param>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is valid with employment support] [the specified candidates]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsValidWithEmploymentSupport(IReadOnlyCollection<ILearnerEmploymentStatus> candidates, ILearningDelivery delivery)
-        {
-            var candidate = candidates
-                    .Where(x => x.DateEmpStatApp <= delivery.LearnStartDate)
-                    .OrderByDescending(x => x.DateEmpStatApp)
-                    .FirstOrDefault();
-
-            var esms = candidate?.EmploymentStatusMonitorings.AsSafeReadOnlyList();
-            return HasValidEmploymentStatus(candidate) && esms.SafeAny(InReceiptOfEmploymentSupport);
-        }
-
-        /// <summary>
         /// Determines whether [is valid with employment support] [the specified candidate].
         /// </summary>
         /// <param name="candidate">The candidate.</param>
         /// <returns>
         ///   <c>true</c> if [is valid with employment support] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsValidWithEmploymentSupport(ILearner candidate)
+        public bool IsValidWithEmploymentSupport(ILearnerEmploymentStatus candidate)
         {
-            var lds = candidate.LearningDeliveries.AsSafeReadOnlyList();
-            var les = candidate.LearnerEmploymentStatuses.AsSafeReadOnlyList();
-
-            return lds.Any(d => IsAdultSkills(d) && IsValidWithEmploymentSupport(les, d));
+            return HasValidEmploymentStatus(candidate)
+                && InReceiptOfEmploymentSupport(candidate.EmploymentStatusMonitorings);
         }
 
         /// <summary>
@@ -96,6 +93,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 $"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}",
                 Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit,
                 Monitoring.EmploymentStatus.InReceiptOfUniversalCredit);
+
+        /// <summary>
+        /// Determines whether [is in receipt of credits] [the specified employment monitorings].
+        /// </summary>
+        /// <param name="employmentMonitorings">The employment monitorings.</param>
+        /// <returns>
+        ///   <c>true</c> if [is in receipt of credits] [the specified employment monitorings]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool InReceiptOfCredits(IReadOnlyCollection<IEmploymentStatusMonitoring> employmentMonitorings) =>
+            employmentMonitorings.SafeAny(InReceiptOfCredits);
 
         /// <summary>
         /// Determines whether [is not employed] [the specified candidate].
@@ -119,19 +126,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         /// </returns>
         public bool IsNotEmployedWithBenefits(ILearnerEmploymentStatus candidate)
         {
-            var esms = candidate.EmploymentStatusMonitorings.AsSafeReadOnlyList();
-            return IsNotEmployed(candidate) && esms.Any(InReceiptOfCredits);
+            return IsNotEmployed(candidate)
+                && InReceiptOfCredits(candidate.EmploymentStatusMonitorings);
         }
-
-        /// <summary>
-        /// Determines whether [is not employed with benefits] [the specified candidate].
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>
-        ///   <c>true</c> if [is not employed with benefits] [the specified candidate]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsNotEmployedWithBenefits(ILearner candidate) =>
-            candidate.LearnerEmploymentStatuses.SafeAny(IsNotEmployedWithBenefits);
 
         /// <summary>
         /// Determines whether [is working short hours] [the specified monitor].
@@ -148,6 +145,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 Monitoring.EmploymentStatus.EmployedFor11To20HoursPW);
 
         /// <summary>
+        /// Determines whether [is working short hours] [the specified employment monitorings].
+        /// </summary>
+        /// <param name="employmentMonitorings">The employment monitorings.</param>
+        /// <returns>
+        ///   <c>true</c> if [is working short hours] [the specified employment monitorings]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsWorkingShortHours(IReadOnlyCollection<IEmploymentStatusMonitoring> employmentMonitorings) =>
+            employmentMonitorings.SafeAny(IsWorkingShortHours);
+
+        /// <summary>
         /// Determines whether the specified candidate is employed.
         /// </summary>
         /// <param name="candidate">The candidate.</param>
@@ -162,35 +169,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         /// </summary>
         /// <param name="candidate">The candidate.</param>
         /// <returns>
-        ///   <c>true</c> if [is employed with benefits] [the specified candidate]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is employed with support] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsEmployedWithsupport(ILearnerEmploymentStatus candidate)
+        public bool IsEmployedWithSupport(ILearnerEmploymentStatus candidate)
         {
-            var esms = candidate.EmploymentStatusMonitorings.AsSafeReadOnlyList();
-            return IsEmployed(candidate) && esms.Any(IsWorkingShortHours) && esms.Any(InReceiptOfCredits);
+            return IsEmployed(candidate)
+                && IsWorkingShortHours(candidate.EmploymentStatusMonitorings)
+                && InReceiptOfCredits(candidate.EmploymentStatusMonitorings);
         }
 
         /// <summary>
-        /// Determines whether [is employed with support] [the specified candidate].
+        /// Determines whether [is adult skills unemployed with benefits] [this delivery].
         /// </summary>
-        /// <param name="candidate">The candidate.</param>
+        /// <param name="thisDelivery">This delivery.</param>
+        /// <param name="forThisCandidate">For this candidate.</param>
         /// <returns>
-        ///   <c>true</c> if [is employed with benefits] [the specified candidate]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is adult skills unemployed with benefits] [this delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsEmployedWithSupport(ILearner candidate) =>
-            candidate.LearnerEmploymentStatuses.SafeAny(IsEmployedWithsupport);
-
-        /// <summary>
-        /// Determines whether [is adult skills unemployed with benefits] [the specified candidate].
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>
-        ///   <c>true</c> if [is adult skills unemployed with benefits] [the specified candidate]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsAdultFundedUnemployedWithBenefits(ILearner candidate)
+        public bool IsAdultFundedUnemployedWithBenefits(ILearningDelivery thisDelivery, ILearner forThisCandidate)
         {
-            It.IsNull(candidate)
-                .AsGuard<ArgumentNullException>(nameof(candidate));
+            It.IsNull(thisDelivery)
+                .AsGuard<ArgumentNullException>(nameof(thisDelivery));
+            It.IsNull(forThisCandidate)
+                .AsGuard<ArgumentNullException>(nameof(forThisCandidate));
 
             /*
                 if
@@ -214,9 +215,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                         otherwise set to N
              */
 
-            return IsValidWithEmploymentSupport(candidate)
-                || IsNotEmployedWithBenefits(candidate)
-                || IsEmployedWithSupport(candidate);
+            var employment = _check.GetEmploymentStatusOn(thisDelivery.LearnStartDate, forThisCandidate.LearnerEmploymentStatuses);
+
+            return _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.AdultSkills)
+                && It.Has(employment)
+                && (IsValidWithEmploymentSupport(employment)
+                || IsNotEmployedWithBenefits(employment)
+                || IsEmployedWithSupport(employment));
         }
     }
 }
