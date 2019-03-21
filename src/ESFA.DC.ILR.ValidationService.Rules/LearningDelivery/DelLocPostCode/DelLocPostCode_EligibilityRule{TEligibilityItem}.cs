@@ -148,9 +148,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         /// <returns>
         ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsNotValid(ILearningDelivery delivery) =>
-            _check.HasQualifyingStart(delivery, FirstViableDate)
-                && !HasQualifyingEligibility(delivery, GetONSPostcodes(delivery), GetEligibilityItemsFor(delivery));
+        public bool IsNotValid(ILearningDelivery delivery)
+        {
+            var eligibilities = GetEligibilityItemsFor(delivery);
+
+            return _check.HasQualifyingStart(delivery, FirstViableDate)
+                   && eligibilities.Select(x => x.Code).Any()
+                   && !HasQualifyingEligibility(delivery, GetONSPostcodes(delivery), eligibilities);
+        }
 
         /// <summary>
         /// Validates this learner.
