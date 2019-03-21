@@ -353,7 +353,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [InlineData("2016-08-02", "2016-04-01", "2017-04-01", true)] // inside
         [InlineData("2016-04-01", "2016-04-01", "2017-04-01", true)] // lower limit
         [InlineData("2017-04-01", "2016-04-01", "2017-04-01", true)] // upper limit
-        [InlineData("2016-03-31", "2016-04-01", "2017-04-01", false)] // outside lower limit
+        [InlineData("2016-03-31", "2016-04-01", "2017-04-01", false, Skip = "no lower range checks till next year (19/20)")] // outside lower limit
         [InlineData("2017-04-02", "2016-04-01", "2017-04-01", false)] // outside upper limit
         [InlineData("2016-04-01", "2016-04-01", "2016-03-31", false)] // withdrawn lower limit
         [InlineData("2017-04-01", "2016-04-01", "2016-03-31", false)] // withdrawn upper limit
@@ -381,7 +381,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         /// <param name="start">The start.</param>
         /// <param name="end">The end.</param>
         [Theory]
-        [InlineData("2016-03-31", "2016-04-01", "2017-04-01")] // outside lower limit
+        [InlineData("2016-03-31", "2016-04-01", "2017-04-01", Skip = "no lower range checks till next year (19/20)")] // outside lower limit
         [InlineData("2017-04-02", "2016-04-01", "2017-04-01")] // outside upper limit
         [InlineData("2016-04-01", "2016-04-01", "2016-03-31")] // withdrawn lower limit
         [InlineData("2017-04-01", "2016-04-01", "2016-03-31")] // withdrawn upper limit
