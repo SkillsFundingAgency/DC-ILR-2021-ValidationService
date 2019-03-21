@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ESFA.DC.ILR.Model.Interface;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
-    public class LearnDelFAMType_61Rule : AbstractRule, IRule<ILearner>
+    public class LearnDelFAMType_61Rule :
+        AbstractRule,
+        IRule<ILearner>
     {
-        public const string MessagePropertyName = "LearnDelFAMType";
-        public const string Name = "LearnDelFAMType_61";
-        private readonly IValidationErrorHandler _messageHandler;
         private readonly ILARSDataService _larsData;
         private readonly IDerivedData_07Rule _derivedData07;
         private readonly IDerivedData_21Rule _derivedData21;
@@ -31,7 +30,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             IDerivedData_29Rule derivedData29)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_61)
         {
-            _messageHandler = validationErrorHandler;
             _larsData = larsData;
             _derivedData07 = derivedData07;
             _derivedData21 = derivedData21;
@@ -39,32 +37,43 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _derivedData29 = derivedData29;
         }
 
-        public DateTime LastInviableDate => new DateTime(2017, 07, 31);
+        /// <summary>
+        /// Gets the last inviable date.
+        /// </summary>
+        public static DateTime LastInviableDate => new DateTime(2017, 07, 31);
 
-        public TimeSpan MinimumViableAge => new TimeSpan(6940, 0, 0, 0); // 19 years
+        /// <summary>
+        /// Gets the minimum viable age.
+        /// </summary>
+        public static int MinimumViableAge => 19; // years
 
-        public TimeSpan MaximumViableAge => new TimeSpan(8401, 0, 0, 0); // 23 years
+        /// <summary>
+        /// Gets the maximum viable age.
+        /// </summary>
+        public static int MaximumViableAge => 23; // years
 
-        public bool IsLearnerInCustody(ILearningDeliveryFAM monitor)
-        {
-            return It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.OLASSOffendersInCustody);
-        }
+        /// <summary>
+        /// Determines whether [is within viable age group] [the specified candidate].
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="reference">The reference.</param>
+        /// <returns>
+        ///   <c>true</c> if [is within viable age group] [the specified candidate]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool WithinViableAgeGroup(DateTime candidate, DateTime reference) =>
+            It.IsBetween(candidate, reference.AddYears(-MaximumViableAge), reference.AddYears(-MinimumViableAge));
 
-        public bool IsReleasedOnTemporaryLicence(ILearningDeliveryFAM monitor)
-        {
-            return It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.ReleasedOnTemporaryLicence);
-        }
+        public bool IsLearnerInCustody(ILearningDeliveryFAM monitor) =>
+            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.OLASSOffendersInCustody);
 
-        public bool IsRestart(ILearningDeliveryFAM monitor)
-        {
-            return It.IsInRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.Restart);
-        }
+        public bool IsReleasedOnTemporaryLicence(ILearningDeliveryFAM monitor) =>
+            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.ReleasedOnTemporaryLicence);
 
-        public bool IsSteelWorkerRedundancyTrainingOrIsInReceiptOfLowWages(ILearningDeliveryFAM monitor)
-        {
-            return It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.SteelIndustriesRedundancyTraining)
-                || It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.InReceiptOfLowWages);
-        }
+        public bool IsRestart(ILearningDeliveryFAM monitor) =>
+            It.IsInRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.Restart);
+
+        public bool IsSteelWorkerRedundancyTrainingOrIsInReceiptOfLowWages(ILearningDeliveryFAM monitor) =>
+            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.SteelIndustriesRedundancyTraining, Monitoring.Delivery.InReceiptOfLowWages);
 
         public bool IsBasicSkillsLearner(ILearningDelivery delivery)
         {
@@ -75,61 +84,47 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 && annualValues.Any(IsBasicSkillsLearner);
         }
 
-        public bool IsBasicSkillsLearner(ILARSAnnualValue monitor)
-        {
-            return It.IsInRange(monitor.BasicSkillsType, TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
-        }
+        public bool IsBasicSkillsLearner(ILARSAnnualValue monitor) =>
+            It.IsInRange(monitor.BasicSkillsType, TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
 
-        public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearner candidate)
-        {
-            return _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(candidate);
-        }
+        public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearner candidate) =>
+            _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(candidate);
 
-        public bool IsAdultFundedUnemployedWithBenefits(ILearner candidate)
-        {
-            return _derivedData28.IsAdultFundedUnemployedWithBenefits(candidate);
-        }
+        /// <summary>
+        /// Determines whether [is adult funded unemployed with benefits] [this delivery for candidate].
+        /// </summary>
+        /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="forCandidate">For candidate.</param>
+        /// <returns>
+        ///   <c>true</c> if [is adult funded unemployed with benefits] [this delivery for candidate]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsAdultFundedUnemployedWithBenefits(ILearningDelivery thisDelivery, ILearner forCandidate) =>
+            _derivedData28.IsAdultFundedUnemployedWithBenefits(thisDelivery, forCandidate);
 
-        public bool IsInflexibleElementOfTrainingAim(ILearner candidate)
-        {
-            return _derivedData29.IsInflexibleElementOfTrainingAim(candidate);
-        }
+        public bool IsInflexibleElementOfTrainingAim(ILearner candidate) =>
+            _derivedData29.IsInflexibleElementOfTrainingAim(candidate);
 
-        public bool IsApprenticeship(ILearningDelivery delivery)
-        {
-            return _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
-        }
+        public bool IsApprenticeship(ILearningDelivery delivery) =>
+            _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
 
-        public bool CheckDeliveryFAMs(ILearningDelivery delivery, Func<ILearningDeliveryFAM, bool> matchCondition)
-        {
-            return delivery.LearningDeliveryFAMs.SafeAny(matchCondition);
-        }
+        public bool CheckDeliveryFAMs(ILearningDelivery delivery, Func<ILearningDeliveryFAM, bool> matchCondition) =>
+            delivery.LearningDeliveryFAMs.SafeAny(matchCondition);
 
-        public bool CheckLearningDeliveries(ILearner candidate, Func<ILearningDelivery, bool> matchCondition)
-        {
-            return candidate.LearningDeliveries.SafeAny(matchCondition);
-        }
+        public bool CheckLearningDeliveries(ILearner candidate, Func<ILearningDelivery, bool> matchCondition) =>
+            candidate.LearningDeliveries.SafeAny(matchCondition);
 
-        public bool IsAdultFunding(ILearningDelivery delivery)
-        {
-            return delivery.FundModel == TypeOfFunding.AdultSkills;
-        }
+        public bool IsAdultFunding(ILearningDelivery delivery) =>
+            delivery.FundModel == TypeOfFunding.AdultSkills;
 
-        public bool IsViableStart(ILearningDelivery delivery)
-        {
-            return delivery.LearnStartDate > LastInviableDate;
-        }
+        public bool IsViableStart(ILearningDelivery delivery) =>
+            delivery.LearnStartDate > LastInviableDate;
 
-        public bool IsTargetAgeGroup(ILearner learner, ILearningDelivery delivery)
-        {
-            return It.Has(learner.DateOfBirthNullable) && It.IsBetween(
-                       delivery.LearnStartDate - learner.DateOfBirthNullable.Value, MinimumViableAge, MaximumViableAge);
-        }
+        public bool IsTargetAgeGroup(ILearner learner, ILearningDelivery delivery) =>
+            It.Has(learner.DateOfBirthNullable)
+            && WithinViableAgeGroup(learner.DateOfBirthNullable.Value, delivery.LearnStartDate);
 
-        public bool IsFullyFundedLearningAim(ILearningDeliveryFAM monitor)
-        {
-            return It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.FullyFundedLearningAim);
-        }
+        public bool IsFullyFundedLearningAim(ILearningDeliveryFAM monitor) =>
+            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.FullyFundedLearningAim);
 
         public bool IsLevel2Nvq(ILearningDelivery delivery)
         {
@@ -145,9 +140,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             return !larsDelivery.Categories.SafeAny(category => category.CategoryRef == TypeOfLARSCategory.LegalEntitlementLevel2);
         }
 
-        public bool IsV2NotionalLevel2(ILARSLearningDelivery delivery)
+        public bool IsV2NotionalLevel2(ILARSLearningDelivery delivery) =>
+            delivery.NotionalNVQLevelv2 == LARSNotionalNVQLevelV2.Level2;
+
+        /// <summary>
+        /// Runs the checks for.
+        /// </summary>
+        /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="learner">The learner.</param>
+        /// <param name="doAction">do action.</param>
+        public void RunChecksFor(ILearningDelivery thisDelivery, ILearner learner, Action<ILearningDeliveryFAM> doAction)
         {
-            return delivery.NotionalNVQLevelv2 == LARSNotionalNVQLevelV2.Level2;
+            if (!IsAdultFundedUnemployedWithBenefits(thisDelivery, learner)
+                && IsViableStart(thisDelivery)
+                && IsAdultFunding(thisDelivery)
+                && IsTargetAgeGroup(learner, thisDelivery)
+                && IsLevel2Nvq(thisDelivery)
+                && IsNotEntitled(thisDelivery))
+            {
+                thisDelivery.LearningDeliveryFAMs.ForAny(IsFullyFundedLearningAim, doAction);
+            }
         }
 
         public bool IsExcluded(ILearner candidate)
@@ -168,7 +180,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             */
 
             return IsAdultFundedUnemployedWithOtherStateBenefits(candidate)
-                || IsAdultFundedUnemployedWithBenefits(candidate)
                 || IsInflexibleElementOfTrainingAim(candidate)
                 || CheckLearningDeliveries(candidate, IsApprenticeship)
                 || CheckLearningDeliveries(candidate, IsBasicSkillsLearner)
@@ -195,8 +206,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public void ValidateDeliveries(ILearner learner)
         {
-            var learnRefNumber = learner.LearnRefNumber;
-
             /*
               LearningDelivery.LearnStartDate > 2017 - 07 - 31                                                  <= for a delivery after the given date
               and LearningDelivery.FundModel = 35                                                               <= that is adult skills
@@ -207,33 +216,37 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
              */
 
-            foreach (var learningDelivery in learner.LearningDeliveries
-                .SafeWhere(x => IsViableStart(x)
-                                && IsAdultFunding(x)
-                                && IsTargetAgeGroup(learner, x)
-                                && IsLevel2Nvq(x)
-                                && IsNotEntitled(x)
-                                && x.LearningDeliveryFAMs != null))
-            {
-                foreach (var learningDeliveryFam in learningDelivery.LearningDeliveryFAMs)
-                {
-                    if (IsFullyFundedLearningAim(learningDeliveryFam))
-                    {
-                       HandleValidationError(learnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery, learningDeliveryFam, learner));
-                    }
-                }
-            }
+            learner.LearningDeliveries
+                .ForEach(x => RunChecksFor(x, learner, y => RaiseValidationMessage(x, learner, y)));
         }
 
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(ILearningDelivery learningDelivery, ILearningDeliveryFAM learningDeliveryFam, ILearner learner)
+        /// <summary>
+        /// Raises the validation message.
+        /// </summary>
+        /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="thisLearner">this learner.</param>
+        /// <param name="andMonitor">and monitor.</param>
+        public void RaiseValidationMessage(ILearningDelivery thisDelivery, ILearner thisLearner, ILearningDeliveryFAM andMonitor)
+        {
+            HandleValidationError(thisLearner.LearnRefNumber, thisDelivery.AimSeqNumber, BuildMessageParametersFor(thisDelivery, thisLearner, andMonitor));
+        }
+
+        /// <summary>
+        /// Builds the message parameters for.
+        /// </summary>
+        /// <param name="thisDelivery">The this delivery.</param>
+        /// <param name="thisLearner">The this learner.</param>
+        /// <param name="andMonitor">The and monitor.</param>
+        /// <returns>a collection of message parameters</returns>
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery thisDelivery, ILearner thisLearner, ILearningDeliveryFAM andMonitor)
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.FundModel, learningDelivery.FundModel),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, learningDeliveryFam.LearnDelFAMType),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, learningDeliveryFam.LearnDelFAMCode),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learningDelivery.LearnStartDate),
-                BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, learner.DateOfBirthNullable)
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, thisDelivery.FundModel),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, andMonitor.LearnDelFAMType),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, andMonitor.LearnDelFAMCode),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, thisDelivery.LearnStartDate),
+                BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, thisLearner.DateOfBirthNullable)
             };
         }
     }
