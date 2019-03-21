@@ -139,6 +139,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         /// <summary>
         /// Determines whether [has qualifying framework aim] [this delivery].
+        /// TODO: back log item => restore full date range checks for 19/20 rollover processing
+        /// IsOutOfScope(frameworkAims) || frameworkAims.Any(fa => fa.IsCurrent(earliestStart));
         /// </summary>
         /// <param name="frameworkAims">The framework aims.</param>
         /// <param name="earliestStart">The earliest start.</param>
@@ -146,7 +148,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         ///   <c>true</c> if [has qualifying framework aim] [this delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasQualifyingFrameworkAim(IReadOnlyCollection<ILARSFrameworkAim> frameworkAims, DateTime earliestStart) =>
-            IsOutOfScope(frameworkAims) || frameworkAims.Any(fa => fa.IsCurrent(earliestStart));
+            IsOutOfScope(frameworkAims) || frameworkAims.Any(fa => It.IsBetween(earliestStart, DateTime.MinValue, fa.EndDate ?? DateTime.MaxValue));
 
         /// <summary>
         /// Determines whether [is out of scope] [the specified framework aims].
