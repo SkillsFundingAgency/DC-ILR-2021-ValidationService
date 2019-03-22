@@ -94,5 +94,17 @@ namespace ESFA.DC.ILR.ValidationService.Data.Interface
         ///   <c>true</c> if the specified lookup key is current; otherwise, <c>false</c>.
         /// </returns>
         bool IsCurrent(TypeOfLimitedLifeLookup lookupKey, string candidate, DateTime referenceDate);
+
+        /// <summary>
+        /// Determines whether [is vaguely cuurrent] [the specified lookup].
+        /// a loose check for things with a bottomless beginning
+        /// </summary>
+        /// <param name="lookupKey">The lookup key.</param>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="referenceDate">The reference date.</param>
+        /// <returns>
+        ///   <c>true</c> if [is vaguely current] [the specified lookup key]; otherwise, <c>false</c>.
+        /// </returns>
+        bool IsVaguelyCurrent(TypeOfLimitedLifeLookup lookupKey, string candidate, DateTime referenceDate);
     }
 }

@@ -15,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
     public class LearnDelFAMType_06RuleTests
     {
         /// <summary>
-        /// New rule with null message handler throws.
+        /// New rule with null meessage handler throws.
         /// </summary>
         [Fact]
         public void NewRuleWithNullMessageHandlerThrows()
@@ -184,7 +184,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var lookups = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             lookups
-                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.LearningDeliveryFAM, candidate, referenceDate))
+                .Setup(x => x.IsVaguelyCurrent(TypeOfLimitedLifeLookup.LearningDeliveryFAM, candidate, referenceDate))
                 .Returns(!expectation);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
@@ -263,7 +263,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var lookups = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             lookups
-                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.LearningDeliveryFAM, candidate, referenceDate))
+                .Setup(x => x.IsVaguelyCurrent(TypeOfLimitedLifeLookup.LearningDeliveryFAM, candidate, referenceDate))
                 .Returns(false);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
@@ -335,7 +335,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var lookups = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             lookups
-                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.LearningDeliveryFAM, candidate, referenceDate))
+                .Setup(x => x.IsVaguelyCurrent(TypeOfLimitedLifeLookup.LearningDeliveryFAM, candidate, referenceDate))
                 .Returns(true);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
