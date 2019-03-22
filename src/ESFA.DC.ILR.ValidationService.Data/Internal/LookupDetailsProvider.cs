@@ -152,5 +152,22 @@ namespace ESFA.DC.ILR.ValidationService.Data
                 && InternalCache.LimitedLifeLookups[lookupKey].TryGetValue(candidate, out var value)
                 && IsBetween(value.ValidFrom, value.ValidTo, referenceDate);
         }
+
+        /// <summary>
+        /// Determines whether [is vaguely cuurrent] [the specified lookup key].
+        /// a loose check for things with a bottomless beginning
+        /// </summary>
+        /// <param name="lookupKey">The lookup key.</param>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="referenceDate">The reference date.</param>
+        /// <returns>
+        /// <c>true</c> if [is vaguely current] [the specified lookup key]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsVaguelyCurrent(TypeOfLimitedLifeLookup lookupKey, string candidate, DateTime referenceDate)
+        {
+            return Contains(lookupKey, candidate)
+                && InternalCache.LimitedLifeLookups[lookupKey].TryGetValue(candidate, out var value)
+                && IsBetween(DateTime.MinValue, value.ValidTo, referenceDate);
+        }
     }
 }
