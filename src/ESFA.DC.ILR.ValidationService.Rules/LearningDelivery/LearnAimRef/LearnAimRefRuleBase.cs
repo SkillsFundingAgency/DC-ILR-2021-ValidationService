@@ -63,26 +63,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// Determines whether [is not valid] [the specified delivery].
         /// </summary>
         /// <param name="delivery">The delivery.</param>
-        /// <param name="learner">The learner.</param>
+        /// <param name="branchResult">The branch result.</param>
         /// <returns>
         ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsNotValid(ILearningDelivery delivery, ILearner learner) =>
-            !PassesConditions(delivery, _actionProvider.GetBranchingResultFor(delivery, learner));
+        public bool IsNotValid(ILearningDelivery delivery, IBranchResult branchResult) =>
+            !PassesConditions(delivery, branchResult);
 
         /// <summary>
-        /// Validates the specified object.
+        /// Validates this learner.
         /// </summary>
-        /// <param name="objectToValidate">The object to validate.</param>
-        public void Validate(ILearner objectToValidate)
+        /// <param name="thisLearner">this learner.</param>
+        public void Validate(ILearner thisLearner)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            It.IsNull(thisLearner)
+                .AsGuard<ArgumentNullException>(nameof(thisLearner));
 
-            var learnRefNumber = objectToValidate.LearnRefNumber;
+            var learnRefNumber = thisLearner.LearnRefNumber;
+            IBranchResult expected = null;
 
-            objectToValidate.LearningDeliveries
-                .ForAny(x => IsNotValid(x, objectToValidate), x => RaiseValidationMessage(learnRefNumber, x));
+            thisLearner.LearningDeliveries
+                .ForAny(x => IsNotValid(x, expected = _actionProvider.GetBranchingResultFor(x, thisLearner)), x => RaiseValidationMessage(learnRefNumber, x, expected));
         }
 
         /// <summary>
@@ -90,23 +91,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// </summary>
         /// <param name="learnRefNumber">The learn reference number.</param>
         /// <param name="thisDelivery">this delivery.</param>
-        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)
+        /// <param name="expected">The expected category.</param>
+        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery, IBranchResult expected)
         {
-            HandleValidationError(learnRefNumber, thisDelivery.AimSeqNumber, BuildMessageParametersFor(thisDelivery));
+            HandleValidationError(learnRefNumber, thisDelivery.AimSeqNumber, BuildMessageParametersFor(thisDelivery, expected));
         }
 
         /// <summary>
         /// Builds the message parameters for.
         /// </summary>
         /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="andExpected">and expected category.</param>
         /// <returns>
-        /// returns a list of message parameters
+        /// a collection of message parameters
         /// </returns>
-        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery thisDelivery)
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery thisDelivery, IBranchResult andExpected)
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, thisDelivery.LearnAimRef)
+                BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, thisDelivery.LearnAimRef),
+                BuildErrorMessageParameter("Expected Category", andExpected.Category)
             };
         }
     }
