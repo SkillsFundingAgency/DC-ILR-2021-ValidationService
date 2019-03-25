@@ -191,14 +191,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             It.IsInRange(monitor.BasicSkillsType, TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
 
         /// <summary>
-        /// Determines whether [is adult funded unemployed with other state benefits] [the specified candidate].
+        /// Determines whether [is adult funded unemployed with other state benefits] [this delivery for candidate].
         /// </summary>
-        /// <param name="candidate">The candidate.</param>
+        /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="forCandidate">For candidate.</param>
         /// <returns>
-        ///   <c>true</c> if [is adult funded unemployed with other state benefits] [the specified candidate]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is adult funded unemployed with other state benefits] [this delivery for candidate]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearner candidate) =>
-            _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(candidate);
+        public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearningDelivery thisDelivery, ILearner forCandidate) =>
+            _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, forCandidate);
 
         /// <summary>
         /// Determines whether [is adult funded unemployed with benefits] [this delivery for candidate].
@@ -318,8 +319,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// </returns>
         public bool IsExcluded(ILearner candidate)
         {
-            return IsAdultFundedUnemployedWithOtherStateBenefits(candidate)
-                || IsInflexibleElementOfTrainingAim(candidate)
+            return IsInflexibleElementOfTrainingAim(candidate)
                 || CheckLearningDeliveries(candidate, IsApprenticeship)
                 || CheckLearningDeliveries(candidate, IsBasicSkillsLearner)
                 || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsLearnerInCustody))
@@ -346,8 +346,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             ValidateDeliveries(objectToValidate);
         }
 
+        /// <summary>
+        /// Determines whether [is not valid] [the specified delivery].
+        /// </summary>
+        /// <param name="delivery">The delivery.</param>
+        /// <param name="learner">The learner.</param>
+        /// <returns>
+        ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsNotValid(ILearningDelivery delivery, ILearner learner) =>
             !IsAdultFundedUnemployedWithBenefits(delivery, learner)
+                && !IsAdultFundedUnemployedWithOtherStateBenefits(delivery, learner)
                 && IsAdultFunding(delivery)
                 && IsViableStart(delivery)
                 && IsTargetAgeGroup(learner, delivery)

@@ -187,9 +187,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.SWSupAimId
         {
             // arrange
             const string LearnRefNumber = "123456789X";
-			candidate = candidate?.Replace('_', '-').Replace("|", string.Empty);
+            candidate = candidate?.Replace('_', '-').Replace("|", string.Empty);
 
-			var mockDelivery = new Mock<ILearningDelivery>();
+            var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.SWSupAimId)
                 .Returns(candidate);

@@ -9,12 +9,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
     public interface IDerivedData_21Rule
     {
         /// <summary>
-        /// Determines whether [is adult funded unemployed with other state benefits] [the specified candidate].
+        /// Determines whether [is adult funded unemployed with other state benefits] [this delivery].
         /// </summary>
-        /// <param name="candidate">The candidate.</param>
+        /// <param name="thisDelivery">This delivery.</param>
+        /// <param name="forThisCandidate">For this candidate.</param>
         /// <returns>
-        ///   <c>true</c> if [is adult funded unemployed with other state benefits] [the specified candidate]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is adult funded unemployed with other state benefits] [this delivery]; otherwise, <c>false</c>.
         /// </returns>
-        bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearner candidate);
+        bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearningDelivery thisDelivery, ILearner forThisCandidate);
     }
 }

@@ -1,23 +1,18 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.External.EPAOrganisation;
 using ESFA.DC.ILR.ValidationService.Data.External.EPAOrganisation.Model;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
-using System;
-using System.Collections.Generic;
 using FluentAssertions;
 using Moq;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 {
     public class EPAOrganisationDataServiceTests
     {
-        [Theory]
-        [InlineData("EpaOrg1", 1, "2019-08-01")]
-        [InlineData("EpaOrg1`", 1, "2020-09-01")]
-        [InlineData("EpaOrg2", 2, "2018-08-01")]
-        [InlineData("EpaOrg2", 3, "2018-08-01")]
-        [InlineData("EpaOrg2", 3, "2020-08-01")]
-        public void IsValidEpaOrg_True(string epaOrgId, int? stdCode, string learnPlanEndDate)
+        [Fact]
+        public void IsValidEpaOrg_True()
         {
             var epaOrganisations = new Dictionary<string, List<EPAOrganisations>>()
             {

@@ -87,8 +87,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsBasicSkillsLearner(ILARSAnnualValue monitor) =>
             It.IsInRange(monitor.BasicSkillsType, TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
 
-        public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearner candidate) =>
-            _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(candidate);
+        /// <summary>
+        /// Determines whether [is adult funded unemployed with other state benefits] [this delivery for candidate].
+        /// </summary>
+        /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="forCandidate">For candidate.</param>
+        /// <returns>
+        ///   <c>true</c> if [is adult funded unemployed with other state benefits] [this delivery for candidate]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearningDelivery thisDelivery, ILearner forCandidate) =>
+            _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, forCandidate);
 
         /// <summary>
         /// Determines whether [is adult funded unemployed with benefits] [this delivery for candidate].
@@ -152,6 +160,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public void RunChecksFor(ILearningDelivery thisDelivery, ILearner learner, Action<ILearningDeliveryFAM> doAction)
         {
             if (!IsAdultFundedUnemployedWithBenefits(thisDelivery, learner)
+                && !IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, learner)
                 && IsViableStart(thisDelivery)
                 && IsAdultFunding(thisDelivery)
                 && IsTargetAgeGroup(learner, thisDelivery)
@@ -179,8 +188,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             Learners in receipt of low wages(LearningDeliveryFAM.LearnDelFAMType = LDM and LearningDeliveryFAM.LearnDelFAMCode = 363)
             */
 
-            return IsAdultFundedUnemployedWithOtherStateBenefits(candidate)
-                || IsInflexibleElementOfTrainingAim(candidate)
+            return IsInflexibleElementOfTrainingAim(candidate)
                 || CheckLearningDeliveries(candidate, IsApprenticeship)
                 || CheckLearningDeliveries(candidate, IsBasicSkillsLearner)
                 || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsLearnerInCustody))

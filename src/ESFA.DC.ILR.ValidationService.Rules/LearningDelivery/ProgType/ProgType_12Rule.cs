@@ -18,21 +18,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         private readonly IDerivedData_04Rule _dd04;
         private readonly ILARSDataService _larsDataService;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFamQueryService;
-        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { TypeOfFunding.AdultSkills, TypeOfFunding.ApprenticeshipsFrom1May2017 };
-        private readonly HashSet<int?> _componentTypes = new HashSet<int?>() { 1, 2, 3 };
-        private readonly IEnumerable<int> _basicSkillTypes = new HashSet<int>()
-                                                                           {
-                                                                                TypeOfLARSBasicSkill.NotApplicable,
-                                                                                TypeOfLARSBasicSkill.Unknown,
-                                                                                TypeOfLARSBasicSkill.GCSE_EnglishLanguage,
-                                                                                TypeOfLARSBasicSkill.GCSE_Mathematics,
-                                                                                TypeOfLARSBasicSkill.FunctionalSkillsMathematics,
-                                                                                TypeOfLARSBasicSkill.FunctionalSkillsEnglish,
-                                                                                TypeOfLARSBasicSkill.InternationalGCSEEnglishLanguage,
-                                                                                TypeOfLARSBasicSkill.InternationalGCSEMathematics
-                                                                            };
+        private readonly IEnumerable<int> _fundModels = new HashSet<int>
+        {
+            TypeOfFunding.AdultSkills,
+            TypeOfFunding.ApprenticeshipsFrom1May2017
+        };
 
-        public DateTime LastViableStartDate => new DateTime(2014, 09, 01);
+        private readonly HashSet<int?> _componentTypes = new HashSet<int?> { 1, 2, 3 };
+        private readonly IEnumerable<int> _basicSkillTypes = new HashSet<int>
+        {
+            TypeOfLARSBasicSkill.NotApplicable,
+            TypeOfLARSBasicSkill.Unknown,
+            TypeOfLARSBasicSkill.GCSE_EnglishLanguage,
+            TypeOfLARSBasicSkill.GCSE_Mathematics,
+            TypeOfLARSBasicSkill.FunctionalSkillsMathematics,
+            TypeOfLARSBasicSkill.FunctionalSkillsEnglish,
+            TypeOfLARSBasicSkill.InternationalGCSEEnglishLanguage,
+            TypeOfLARSBasicSkill.InternationalGCSEMathematics
+        };
 
         public ProgType_12Rule(
             IDerivedData_04Rule dd04,
@@ -45,6 +48,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
             _larsDataService = larsDataService;
             _learningDeliveryFamQueryService = learningDeliveryFamQueryService;
         }
+
+        public DateTime LastViableStartDate => new DateTime(2014, 09, 01);
 
         public void Validate(ILearner objectToValidate)
         {
