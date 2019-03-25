@@ -339,7 +339,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         public void HasQualifyingFrameworkAimWithEmptyFrameworksMeetsExpectation()
         {
             // arrange
-
             var sut = NewRule();
 
             // act

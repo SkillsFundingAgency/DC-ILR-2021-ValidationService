@@ -127,10 +127,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             NewRule().LearnStartDateConditionMet(learnStartDate, learnActEndDate, firstRecord).Should().BeTrue();
         }
 
+        // [InlineData(TypeOfAim.ComponentAimInAProgramme, TypeOfLearningProgramme.HigherApprenticeshipLevel4, "ZESF98765", "2015-07-02", "2015-01-01", false)]
+        // [InlineData(TypeOfAim.AimNotPartOfAProgramme, TypeOfLearningProgramme.HigherApprenticeshipLevel4, "ZESF98765", "2015-07-02", "2015-01-01", false)]
+        // [InlineData("2015-07-02", "2015-01-01", false)]
         [Theory]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, TypeOfLearningProgramme.HigherApprenticeshipLevel4, "ZESF98765", "2015-07-02", "2015-01-01", false)]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, TypeOfLearningProgramme.HigherApprenticeshipLevel4, "ZESF98765", "2015-07-02", "2015-01-01", false)]
-        public void ConditionMet_False(int aimType, int? progType, string learnAimRef, string learnStartDateString, string learnActEndDateString, bool firstRecord)
+        [InlineData("2015-07-02", "2015-01-01", false)]
+        public void ConditionMet_False(string learnStartDateString, string learnActEndDateString, bool firstRecord)
         {
             DateTime learnStartDate = DateTime.Parse(learnStartDateString);
             DateTime? learnActEndDate = string.IsNullOrEmpty(learnActEndDateString) ? (DateTime?)null : DateTime.Parse(learnActEndDateString);
@@ -140,10 +142,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Should().BeFalse();
         }
 
+        // [InlineData("ZESF98765", TypeOfLearningProgramme.HigherApprenticeshipLevel4, "2015-07-02", null, true)]
+        // [InlineData("ZESF98765", TypeOfLearningProgramme.HigherApprenticeshipLevel4, "2015-07-02", "2015-12-01", false)]
         [Theory]
-        [InlineData("ZESF98765", TypeOfLearningProgramme.HigherApprenticeshipLevel4, "2015-07-02", null, true)]
-        [InlineData("ZESF98765", TypeOfLearningProgramme.HigherApprenticeshipLevel4, "2015-07-02", "2015-12-01", false)]
-        public void ConditionMet_True(string learnAimRef, int progType, string learnStartDateString, string learnActEndDateString, bool firstRecord)
+        [InlineData("2015-07-02", null, true)]
+        [InlineData("2015-07-02", "2015-12-01", false)]
+        public void ConditionMet_True(string learnStartDateString, string learnActEndDateString, bool firstRecord)
         {
             DateTime learnStartDate = DateTime.Parse(learnStartDateString);
             DateTime? learnActEndDate = string.IsNullOrEmpty(learnActEndDateString) ? (DateTime?)null : DateTime.Parse(learnActEndDateString);

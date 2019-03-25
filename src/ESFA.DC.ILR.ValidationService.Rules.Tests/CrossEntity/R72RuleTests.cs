@@ -210,7 +210,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     },
                     new TestLearningDelivery()
                     {
-                        StdCodeNullable = 20,
+                        StdCodeNullable = standardCode,
                         AimType = aimType,
                         ProgTypeNullable = progType,
                         FundModel = fundModel

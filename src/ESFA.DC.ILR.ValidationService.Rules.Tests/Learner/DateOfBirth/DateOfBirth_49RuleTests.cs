@@ -43,16 +43,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void ConditionMet_True()
         {
             var nvqLevels = new List<string> { "3", "4", "5", "6", "7", "8", "H" };
-            var categoryRef = 19;
-            var orgType = LegalOrgTypeConstants.USDC;
-
             var fundModel = 35;
-            var progType = 24;
             var dateOfBirth = new DateTime(1990, 10, 1);
             var learnStartDate = new DateTime(2016, 10, 1);
             var learnAimRef = "LearnAimRef";
-            var ukprn = 1;
-
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
@@ -76,15 +70,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void ConditionMet_False()
         {
             var nvqLevels = new List<string> { "3", "4", "5", "6", "7", "8", "H" };
-            var orgType = LegalOrgTypeConstants.USDC;
-
             var fundModel = 36;
-            var progType = 24;
             var dateOfBirth = new DateTime(1990, 10, 1);
             var learnStartDate = new DateTime(2016, 10, 1);
             var learnAimRef = "LearnAimRef";
-            var ukprn = 1;
-
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
