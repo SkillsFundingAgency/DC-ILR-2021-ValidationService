@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
@@ -29,18 +28,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         private readonly IPostcodesDataService _postcodesData;
 
         /// <summary>
-        /// The derived data 22 (rule)
-        /// </summary>
-        private readonly IDerivedData_22Rule _derivedData22;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="DelLocPostCode_EligibilityRule{TEligibilityItem}" /> class.
         /// </summary>
         /// <param name="validationErrorHandler">The validation error handler.</param>
         /// <param name="commonChecks">The common checks.</param>
         /// <param name="fcsData">The FCS data.</param>
         /// <param name="postcodesData">The postcodes data.</param>
-        /// <param name="derivedData22">The derived data22.</param>
         /// <param name="ruleName">Name of the rule.</param>
         public DelLocPostCode_EligibilityRule(
             IValidationErrorHandler validationErrorHandler,

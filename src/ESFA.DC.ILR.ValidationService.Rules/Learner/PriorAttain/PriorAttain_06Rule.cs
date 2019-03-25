@@ -11,8 +11,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
 {
     public class PriorAttain_06Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IFCSDataService _fcsDataService;
-
         private static readonly Dictionary<string, int> _eligibilityRulePriorAttainValuesMapping = new Dictionary<string, int>
         {
             { "99", 1 },
@@ -41,6 +39,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
             { 12, 11 },
             { 13, 12 },
         };
+
+        private readonly IFCSDataService _fcsDataService;
 
         public PriorAttain_06Rule(
             IValidationErrorHandler validationErrorHandler,
