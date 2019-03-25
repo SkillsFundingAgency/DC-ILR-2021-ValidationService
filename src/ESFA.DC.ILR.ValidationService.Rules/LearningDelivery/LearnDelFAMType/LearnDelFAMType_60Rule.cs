@@ -156,14 +156,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _derivedData28.IsAdultFundedUnemployedWithBenefits(thisDelivery, forCandidate);
 
         /// <summary>
-        /// Determines whether [is adult funded unemployed with other state benefits] [the specified candidate].
+        /// Determines whether [is adult funded unemployed with other state benefits] [this delivery for candidate].
         /// </summary>
-        /// <param name="candidate">The candidate.</param>
+        /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="forCandidate">For candidate.</param>
         /// <returns>
-        ///   <c>true</c> if [is adult funded unemployed with other state benefits] [the specified candidate]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is adult funded unemployed with other state benefits] [this delivery for candidate]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearner candidate) =>
-            _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(candidate);
+        public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearningDelivery thisDelivery, ILearner forCandidate) =>
+            _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, forCandidate);
 
         /// <summary>
         /// Determines whether the specified monitor is restart.
@@ -286,6 +287,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public void RunChecksFor(ILearningDelivery thisDelivery, ILearner learner, Action<ILearningDeliveryFAM> doAction)
         {
             if (!IsAdultFundedUnemployedWithBenefits(thisDelivery, learner)
+                && !IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, learner)
                 && IsViableStart(thisDelivery)
                 && IsAdultFunding(thisDelivery)
                 && IsTargetAgeGroup(learner, thisDelivery)
@@ -324,7 +326,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 || IsInflexibleElementOfTrainingAim(candidate)
                 || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsLearnerInCustody))
                 || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsReleasedOnTemporaryLicence))
-                || IsAdultFundedUnemployedWithOtherStateBenefits(candidate)
                 || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsRestart))
                 || CheckLearningDeliveries(candidate, IsBasicSkillsLearner)
                 || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsSteelWorkerRedundancyTraining) || IsLegalOrgTypeMatchForUkprn());

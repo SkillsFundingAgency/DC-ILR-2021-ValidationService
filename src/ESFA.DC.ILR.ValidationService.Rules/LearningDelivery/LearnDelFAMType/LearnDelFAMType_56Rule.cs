@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ESFA.DC.ILR.Model.Interface;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
@@ -11,6 +8,8 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using System;
+using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
@@ -79,8 +78,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-               if (ConditionMet(learningDelivery, learner.DateOfBirthNullable, learner.PriorAttainNullable) &&
-                   !IsLearningDeliveryExcluded(learner, learningDelivery))
+                if (ConditionMet(learningDelivery, learner.DateOfBirthNullable, learner.PriorAttainNullable) &&
+                    !IsLearningDeliveryExcluded(learner, learningDelivery))
                 {
                     HandleValidationError(
                         learner.LearnRefNumber,
@@ -185,7 +184,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 return true;
             }
 
-            if (_derivedDataRule21.IsAdultFundedUnemployedWithOtherStateBenefits(learner))
+            if (_derivedDataRule21.IsAdultFundedUnemployedWithOtherStateBenefits(learningDelivery, learner))
             {
                 return true;
             }

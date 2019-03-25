@@ -13,8 +13,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     {
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
-        public DateTime LastViableLearnStartDate => new DateTime(2018, 01, 01);
-
         public LearnDelFAMType_70Rule(
             IValidationErrorHandler validationErrorHandler,
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
@@ -22,6 +20,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
+
+        public DateTime LastViableLearnStartDate => new DateTime(2018, 01, 01);
 
         public void Validate(ILearner objectToValidate)
         {

@@ -1,6 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
 using System;
 using Xunit;
@@ -9,6 +10,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 {
     public class DerivedData_21RuleTests
     {
+        /// <summary>
+        /// Is adult skills funded unemployed learner with null delivery throws
+        /// </summary>
+        [Fact]
+        public void IsAdultSkillsFundedUnemployedLearnerWithNullDeliveryThrows()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => sut.IsAdultFundedUnemployedWithOtherStateBenefits(null, new Mock<ILearner>().Object));
+        }
+
         /// <summary>
         /// Determines whether [is adult skills funded unemployed learner with null learner throws].
         /// </summary>
@@ -19,37 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var sut = NewRule();
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.IsAdultFundedUnemployedWithOtherStateBenefits(null));
-        }
-
-        /// <summary>
-        /// Determines whether [is adult skills meets expectation] [the specified candidate].
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, true)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, false)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, false)]
-        [InlineData(TypeOfFunding.CommunityLearning, false)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, false)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, false)]
-        [InlineData(TypeOfFunding.Other16To19, false)]
-        [InlineData(TypeOfFunding.OtherAdult, false)]
-        public void IsAdultSkillsMeetsExpectation(int candidate, bool expectation)
-        {
-            // arrange
-            var sut = NewRule();
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.FundModel)
-                .Returns(candidate);
-
-            // act
-            var result = sut.IsAdultSkills(mockDelivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
+            Assert.Throws<ArgumentNullException>(() => sut.IsAdultFundedUnemployedWithOtherStateBenefits(new Mock<ILearningDelivery>().Object, null));
         }
 
         /// <summary>
@@ -242,7 +226,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         /// <returns>a constructed and mocked up derived data rule</returns>
         public DerivedData_21Rule NewRule()
         {
-            return new DerivedData_21Rule();
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            return new DerivedData_21Rule(commonOps.Object);
         }
     }
 }
