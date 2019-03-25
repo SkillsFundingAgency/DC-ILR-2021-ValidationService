@@ -15,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface
         {
             [AcademicYearDates.Commencement] = new AcademicYearDateDefinition(8, 1, x => x.Month > 8 ? x.Year : x.Year - 1),
             [AcademicYearDates.PreviousYearEnd] = new AcademicYearDateDefinition(7, 31, x => x.Month > 8 ? x.Year : x.Year - 1),
-            [AcademicYearDates.August31] = new AcademicYearDateDefinition(8, 31, x => x.Month > 8 ? x.Year : x.Year - 1),
+            [AcademicYearDates.August31] = new AcademicYearDateDefinition(8, 31, x => x.Month > 7 ? x.Year : x.Year - 1),
             [AcademicYearDates.CurrentYearEnd] = new AcademicYearDateDefinition(7, 31, x => x.Month < 8 ? x.Year : x.Year + 1),
             [AcademicYearDates.NextYearCommencement] = new AcademicYearDateDefinition(8, 1, x => x.Month < 8 ? x.Year : x.Year + 1),
         };
