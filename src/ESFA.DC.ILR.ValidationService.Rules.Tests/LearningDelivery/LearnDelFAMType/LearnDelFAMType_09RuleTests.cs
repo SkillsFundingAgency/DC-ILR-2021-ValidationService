@@ -95,42 +95,57 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void FaultyFAMCodeMeetsExpectation()
         {
             // arrange / act / assert
-            Assert.Equal("105", LearnDelFAMType_09Rule.FaultyFAMCode);
+            Assert.Equal("105", LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
         }
 
         /// <summary>
         /// Has esfa adult funding meets expectation
         /// </summary>
-        /// <param name="candidate">The candidate.</param>
+        /// <param name="famType">The Learning Delivery FAM Type.</param>
+        /// <param name="famCode">The Learning Delivery FAM Code.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData("LDM034", false)] // Monitoring.Delivery.OLASSOffendersInCustody
-        [InlineData("FFI1", false)] // Monitoring.Delivery.FullyFundedLearningAim
-        [InlineData("FFI2", false)] // Monitoring.Delivery.CoFundedLearningAim
-        [InlineData("LDM363", false)] // Monitoring.Delivery.InReceiptOfLowWages
-        [InlineData("LDM318", false)] // Monitoring.Delivery.MandationToSkillsTraining
-        [InlineData("LDM328", false)] // Monitoring.Delivery.ReleasedOnTemporaryLicence
-        [InlineData("LDM347", false)] // Monitoring.Delivery.SteelIndustriesRedundancyTraining
-        [InlineData("SOF1", false)] // Monitoring.Delivery.HigherEducationFundingCouncilEngland
-        [InlineData("SOF107", false)] // Monitoring.Delivery.ESFA16To19Funding
-        [InlineData("SOF105", true)] // Monitoring.Delivery.ESFAAdultFunding
-        public void HasESFAAdultFundingMeetsExpectation(string candidate, bool expectation)
+        [InlineData("LDM", "034", false)] // Monitoring.Delivery.OLASSOffendersInCustody
+        [InlineData("FFI", "1", false)] // Monitoring.Delivery.FullyFundedLearningAim
+        [InlineData("FFI", "2", false)] // Monitoring.Delivery.CoFundedLearningAim
+        [InlineData("LDM", "363", false)] // Monitoring.Delivery.InReceiptOfLowWages
+        [InlineData("LDM", "318", false)] // Monitoring.Delivery.MandationToSkillsTraining
+        [InlineData("LDM", "328", false)] // Monitoring.Delivery.ReleasedOnTemporaryLicence
+        [InlineData("LDM", "347", false)] // Monitoring.Delivery.SteelIndustriesRedundancyTraining
+        [InlineData("SOF", "1", true)] // Monitoring.Delivery.HigherEducationFundingCouncilEngland
+        [InlineData("SOF", "107", true)] // Monitoring.Delivery.ESFA16To19Funding
+        [InlineData("SOF", "105", false)] // Monitoring.Delivery.ESFAAdultFunding
+        public void HasESFAAdultFundingMeetsExpectation(string famType, string famCode, bool expectation)
         {
             // arrange
             var sut = NewRule();
             var mockItem = new Mock<ILearningDeliveryFAM>();
             mockItem
                 .SetupGet(y => y.LearnDelFAMType)
-                .Returns(candidate.Substring(0, 3));
+                .Returns(famType);
             mockItem
                 .SetupGet(y => y.LearnDelFAMCode)
-                .Returns(candidate.Substring(3));
+                .Returns(famCode);
 
             // act
             var result = sut.HasESFAAdultFunding(mockItem.Object);
 
             // assert
             Assert.Equal(expectation, result);
+        }
+
+        [Fact]
+        public void HasESFAAdultFundingMeetsExpectation_NullCheck()
+        {
+            // arrange
+            var sut = NewRule();
+            ILearningDeliveryFAM learningDeliverFAM = null;
+
+            // act
+            var result = sut.HasESFAAdultFunding(learningDeliverFAM);
+
+            // assert
+            Assert.False(result);
         }
 
         /// <summary>
@@ -213,6 +228,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDelivery
                 .SetupGet(y => y.FundModel)
                 .Returns(candidate);
+            mockDelivery
+                .SetupGet(y => y.AimSeqNumber)
+                .Returns(0);
 
             var deliveries = new ILearningDelivery[] { mockDelivery.Object };
 
@@ -250,7 +268,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(true);
             commonOps
                 .Setup(x => x.CheckDeliveryFAMs(mockDelivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
-                .Returns(false);
+                .Returns(true);
 
             var sut = new LearnDelFAMType_09Rule(handler.Object, commonOps.Object);
 
@@ -312,7 +330,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             commonOps
                 .Setup(x => x.CheckDeliveryFAMs(mockDelivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
-                .Returns(true);
+                .Returns(false);
 
             var sut = new LearnDelFAMType_09Rule(handler.Object, commonOps.Object);
 
