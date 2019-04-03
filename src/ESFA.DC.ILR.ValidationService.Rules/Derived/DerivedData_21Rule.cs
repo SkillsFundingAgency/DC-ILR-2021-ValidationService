@@ -74,8 +74,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         ///   <c>true</c> if [in receipt of benefits] [the specified learner employment status]; otherwise, <c>false</c>.
         /// </returns>
         public bool InReceiptOfBenefits(ILearnerEmploymentStatus learnerEmploymentStatus) =>
-            learnerEmploymentStatus.EmploymentStatusMonitorings.SafeAny(InReceiptOfAnotherBenefit)
-            || learnerEmploymentStatus.EmploymentStatusMonitorings.SafeAny(InReceiptOfUniversalCredit);
+            learnerEmploymentStatus.EmploymentStatusMonitorings.SafeAny(InReceiptOfAnotherBenefit);
+
+        /// <summary>
+        /// Determines whether [in receipt of universal credits] [the specified learner employment status].
+        /// </summary>
+        /// <param name="learnerEmploymentStatus">The learner employment status.</param>
+        /// <returns>
+        ///   <c>true</c> if [in receipt of credites] [the specified learner employment status]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool InReceiptOfCredits(ILearnerEmploymentStatus learnerEmploymentStatus) =>
+            learnerEmploymentStatus.EmploymentStatusMonitorings.SafeAny(InReceiptOfUniversalCredit);
 
         /// <summary>
         /// Determines whether the specified FAM is (learning dleivery) monitored.
@@ -155,9 +164,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             return _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.AdultSkills)
                 && It.Has(employment)
                 && IsNotEmployed(employment)
-                && InReceiptOfBenefits(employment)
-                && IsMonitored(thisDelivery.LearningDeliveryFAMs)
-                && !MandatedToSkillsTraining(thisDelivery.LearningDeliveryFAMs);
+                && (InReceiptOfBenefits(employment)
+                    || (InReceiptOfCredits(employment)
+                        && IsMonitored(thisDelivery.LearningDeliveryFAMs)
+                        && !MandatedToSkillsTraining(thisDelivery.LearningDeliveryFAMs)));
         }
     }
 }
