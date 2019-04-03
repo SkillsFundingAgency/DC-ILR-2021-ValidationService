@@ -168,6 +168,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Theory]
         [InlineData("FTP1", "2016-09-04", true)]
         [InlineData("FTP2", "2016-09-05", false)]
+        [InlineData("LDM358", "2099-12-31", true)]
+        [InlineData("LDM358", "2018-03-31", false)]
         public void IsNotCurrentMeetsExpectation(string candidate, string testDate, bool expectation)
         {
             // arrange
