@@ -1,9 +1,12 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using FluentAssertions;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
@@ -34,6 +37,140 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
             // act / assert
             Assert.Throws<ArgumentNullException>(() => sut.IsAdultFundedUnemployedWithOtherStateBenefits(new Mock<ILearningDelivery>().Object, null));
+        }
+
+        [Theory]
+        [InlineData("LDM", "318", 11, "BSI", 3)]
+        [InlineData("LDM", "318", 12, "BSI", 3)]
+        [InlineData("LDM", "034", 11, "BSI", 4)]
+        [InlineData("LDM", "034", 12, "BSI", 4)]
+        public void IsAdultFundedUnemployedWithOtherStateBenefits_True(
+            string learnDelFAMType,
+            string learnDelFAMCode,
+            int empStatus,
+            string eSMType,
+            int eSMCode)
+        {
+            DateTime learnStartDate = new DateTime(2016, 08, 01);
+
+            var learninDelivery = new TestLearningDelivery()
+            {
+                AimSeqNumber = 1001,
+                CompStatus = 1,
+                FundModel = 35,
+                LearnStartDate = learnStartDate,
+                LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+                {
+                    new TestLearningDeliveryFAM()
+                    {
+                         LearnDelFAMType = learnDelFAMType,
+                         LearnDelFAMCode = learnDelFAMCode
+                    }
+                }
+            };
+
+            var testLearnerEmploymentStatus = new TestLearnerEmploymentStatus()
+            {
+                EmpStat = empStatus,
+                EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
+                        {
+                            new TestEmploymentStatusMonitoring()
+                            {
+                                ESMType = eSMType,
+                                ESMCode = eSMCode
+                            }
+                        }
+            };
+
+            var testLearner = new TestLearner()
+            {
+                LearnRefNumber = "1A001",
+                LearnerEmploymentStatuses = new TestLearnerEmploymentStatus[]
+                {
+                    testLearnerEmploymentStatus
+                },
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    learninDelivery
+                }
+            };
+
+            var providerRuleMock = new Mock<IProvideRuleCommonOperations>();
+
+            providerRuleMock.Setup(x => x.GetEmploymentStatusOn(learnStartDate, testLearner.LearnerEmploymentStatuses)).Returns(testLearnerEmploymentStatus);
+            providerRuleMock.Setup(x => x.HasQualifyingFunding(learninDelivery, 35)).Returns(true);
+
+            NewRule(providerRuleMock.Object).IsAdultFundedUnemployedWithOtherStateBenefits(learninDelivery, testLearner).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(35, true, "LDM", "318", 11, "BSI", 4)]
+        [InlineData(35, true, "LDM", "318", 13, "BSI", 3)]
+        [InlineData(35, true, "LDM", "318", 13, "LOE", 3)]
+        [InlineData(35, true, "LDM", "034", 12, "BSI", 5)]
+        [InlineData(70, false, "LDM", "318", 11, "BSI", 3)]
+        [InlineData(25, false, "LDM", "318", 12, "BSI", 3)]
+        [InlineData(10, false, "LDM", "034", 11, "BSI", 4)]
+        [InlineData(36, false, "LDM", "034", 12, "BSI", 4)]
+        public void IsAdultFundedUnemployedWithOtherStateBenefits_False(
+            int fundModel,
+            bool fundModelExpecedResult,
+            string learnDelFAMType,
+            string learnDelFAMCode,
+            int empStatus,
+            string eSMType,
+            int eSMCode)
+        {
+            DateTime learnStartDate = new DateTime(2016, 08, 01);
+
+            var learninDelivery = new TestLearningDelivery()
+            {
+                AimSeqNumber = 1001,
+                CompStatus = 1,
+                FundModel = fundModel,
+                LearnStartDate = learnStartDate,
+                LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+                {
+                    new TestLearningDeliveryFAM()
+                    {
+                         LearnDelFAMType = learnDelFAMType,
+                         LearnDelFAMCode = learnDelFAMCode
+                    }
+                }
+            };
+
+            var testLearnerEmploymentStatus = new TestLearnerEmploymentStatus()
+            {
+                EmpStat = empStatus,
+                EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
+                        {
+                            new TestEmploymentStatusMonitoring()
+                            {
+                                ESMType = eSMType,
+                                ESMCode = eSMCode
+                            }
+                        }
+            };
+
+            var testLearner = new TestLearner()
+            {
+                LearnRefNumber = "1A001",
+                LearnerEmploymentStatuses = new TestLearnerEmploymentStatus[]
+                {
+                    testLearnerEmploymentStatus
+                },
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    learninDelivery
+                }
+            };
+
+            var providerRuleMock = new Mock<IProvideRuleCommonOperations>();
+
+            providerRuleMock.Setup(x => x.GetEmploymentStatusOn(learnStartDate, testLearner.LearnerEmploymentStatuses)).Returns(testLearnerEmploymentStatus);
+            providerRuleMock.Setup(x => x.HasQualifyingFunding(learninDelivery, fundModel)).Returns(fundModelExpecedResult);
+
+            NewRule(providerRuleMock.Object).IsAdultFundedUnemployedWithOtherStateBenefits(learninDelivery, testLearner).Should().BeFalse();
         }
 
         /// <summary>
@@ -224,11 +361,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         /// New rule.
         /// </summary>
         /// <returns>a constructed and mocked up derived data rule</returns>
-        public DerivedData_21Rule NewRule()
+        public DerivedData_21Rule NewRule(IProvideRuleCommonOperations commonOperations = null)
         {
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            return new DerivedData_21Rule(commonOps.Object);
+            return new DerivedData_21Rule(commonOperations == null ? commonOps.Object : commonOperations);
         }
     }
 }
