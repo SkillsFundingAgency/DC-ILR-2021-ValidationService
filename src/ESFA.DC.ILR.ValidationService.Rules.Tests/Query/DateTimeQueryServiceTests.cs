@@ -37,6 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         [InlineData("2018-3-10", "2018-3-11", 1)]
         [InlineData("2018-3-10", "2018-3-29", 19)]
         [InlineData("2018-3-11", "2018-3-10", -1)]
+        [InlineData("2017-9-4", "2018-9-3", 364)]
         public void DaysBetween(string start, string end, double days)
         {
             new DateTimeQueryService().DaysBetween(DateTime.Parse(start), DateTime.Parse(end)).Should().Be(days);
@@ -48,6 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         [InlineData("2018-3-10", "2018-3-11", 2)]
         [InlineData("2018-3-10", "2018-3-29", 20)]
         [InlineData("2018-3-10", "2018-3-09", 2)]
+        [InlineData("2017-9-4", "2018-9-3", 365)]
         public void WholeDaysBetween(string start, string end, double days)
         {
             new DateTimeQueryService().WholeDaysBetween(DateTime.Parse(start), DateTime.Parse(end)).Should().Be(days);

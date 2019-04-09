@@ -49,10 +49,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                     learningDelivery.LearningDeliveryFAMs))
                 {
                     HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(
-                        learningDelivery.AimType,
-                        learningDelivery.FundModel,
-                        learningDelivery.OutcomeNullable,
-                        LearningDeliveryFAMTypeConstants.RES,
                         learningDelivery.LearnStartDate,
                         learningDelivery.LearnActEndDateNullable));
                 }
@@ -90,24 +86,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool DD07ConditionMet(int? progType)
         {
             return progType.HasValue
-                && progType != 25
+                && progType != TypeOfLearningProgramme.ApprenticeshipStandard
                 && _dd07.IsApprenticeship(progType);
         }
 
         public bool AimTypeConditionMet(int aimType)
         {
-            return aimType == 1;
+            return aimType == TypeOfAim.ProgrammeAim;
         }
 
         public bool LearnActEndDateConditionMet(DateTime learnStartDate, DateTime? learnActEndDate)
         {
             return learnActEndDate.HasValue
-                && _dateTimeQueryService.DaysBetween(learnStartDate, learnActEndDate.Value) < 365;
+                && _dateTimeQueryService.WholeDaysBetween(learnStartDate, learnActEndDate.Value) < 365;
         }
 
         public bool CompStatusConditionMet(int compStatus)
         {
-            return compStatus == 2;
+            return compStatus == CompletionState.HasCompleted;
         }
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
@@ -115,14 +111,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);
         }
 
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, int fundModel, int? outCome, string learnDelFAMType, DateTime learnStartDate, DateTime? learnActEndDate)
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, DateTime? learnActEndDate)
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.AimType, aimType),
-                BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
-                BuildErrorMessageParameter(PropertyNameConstants.Outcome, outCome),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, learnDelFAMType),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learnStartDate),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, learnActEndDate)
             };
