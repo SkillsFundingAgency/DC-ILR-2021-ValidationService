@@ -93,8 +93,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         /// <returns>
         ///   <c>true</c> if the specified fam is monitored; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsMonitored(ILearningDeliveryFAM fam) =>
-            It.IsInRange(fam.LearnDelFAMType, Monitoring.Delivery.Types.Learning);
+        public bool NotIsMonitored(ILearningDeliveryFAM fam) =>
+            !It.IsInRange(fam.LearnDelFAMType, Monitoring.Delivery.Types.Learning);
 
         /// <summary>
         /// Determines whether (any of) the specified fams are monitored.
@@ -103,8 +103,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         /// <returns>
         ///   <c>true</c> if the specified fams are (learning delivery) monitored; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsMonitored(IReadOnlyCollection<ILearningDeliveryFAM> fams) =>
-            fams.SafeAny(IsMonitored);
+        public bool NotIsMonitored(IReadOnlyCollection<ILearningDeliveryFAM> fams) =>
+            fams.SafeAny(NotIsMonitored);
 
         /// <summary>
         /// Mandateds to skills training.
@@ -166,8 +166,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 && IsNotEmployed(employment)
                 && (InReceiptOfBenefits(employment)
                     || (InReceiptOfCredits(employment)
-                        && IsMonitored(thisDelivery.LearningDeliveryFAMs)
-                        && !MandatedToSkillsTraining(thisDelivery.LearningDeliveryFAMs)));
+                        && (NotIsMonitored(thisDelivery.LearningDeliveryFAMs)
+                            || !MandatedToSkillsTraining(thisDelivery.LearningDeliveryFAMs))));
         }
     }
 }

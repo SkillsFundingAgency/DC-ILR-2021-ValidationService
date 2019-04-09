@@ -44,6 +44,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         [InlineData("LDM", "318", 12, "BSI", 3)]
         [InlineData("LDM", "034", 11, "BSI", 4)]
         [InlineData("LDM", "034", 12, "BSI", 4)]
+        [InlineData("ALD", "034", 11, "BSI", 4)]
+        [InlineData("ALD", "034", 12, "BSI", 4)]
+        [InlineData("ALD", "318", 11, "BSI", 4)]
+        [InlineData("ALD", "318", 12, "BSI", 4)]
         public void IsAdultFundedUnemployedWithOtherStateBenefits_True(
             string learnDelFAMType,
             string learnDelFAMCode,
@@ -300,22 +304,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.AdvancedLearnerLoan, false)]
-        [InlineData(Monitoring.Delivery.Types.ApprenticeshipContract, false)]
-        [InlineData(Monitoring.Delivery.Types.CommunityLearningProvision, false)]
-        [InlineData(Monitoring.Delivery.Types.EligibilityForEnhancedApprenticeshipFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.FamilyEnglishMathsAndLanguage, false)]
-        [InlineData(Monitoring.Delivery.Types.FullOrCoFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.HEMonitoring, false)]
-        [InlineData(Monitoring.Delivery.Types.HouseholdSituation, false)]
-        [InlineData(Monitoring.Delivery.Types.Learning, true)]
-        [InlineData(Monitoring.Delivery.Types.LearningSupportFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.NationalSkillsAcademy, false)]
-        [InlineData(Monitoring.Delivery.Types.PercentageOfOnlineDelivery, false)]
-        [InlineData(Monitoring.Delivery.Types.Restart, false)]
-        [InlineData(Monitoring.Delivery.Types.SourceOfFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.WorkProgrammeParticipation, false)]
+        [InlineData(Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding, true)]
+        [InlineData(Monitoring.Delivery.Types.AdvancedLearnerLoan, true)]
+        [InlineData(Monitoring.Delivery.Types.ApprenticeshipContract, true)]
+        [InlineData(Monitoring.Delivery.Types.CommunityLearningProvision, true)]
+        [InlineData(Monitoring.Delivery.Types.EligibilityForEnhancedApprenticeshipFunding, true)]
+        [InlineData(Monitoring.Delivery.Types.FamilyEnglishMathsAndLanguage, true)]
+        [InlineData(Monitoring.Delivery.Types.FullOrCoFunding, true)]
+        [InlineData(Monitoring.Delivery.Types.HEMonitoring, true)]
+        [InlineData(Monitoring.Delivery.Types.HouseholdSituation, true)]
+        [InlineData(Monitoring.Delivery.Types.Learning, false)]
+        [InlineData(Monitoring.Delivery.Types.LearningSupportFunding, true)]
+        [InlineData(Monitoring.Delivery.Types.NationalSkillsAcademy, true)]
+        [InlineData(Monitoring.Delivery.Types.PercentageOfOnlineDelivery, true)]
+        [InlineData(Monitoring.Delivery.Types.Restart, true)]
+        [InlineData(Monitoring.Delivery.Types.SourceOfFunding, true)]
+        [InlineData(Monitoring.Delivery.Types.WorkProgrammeParticipation, true)]
         public void IsMonitoredMeetsExpectation(string candidate, bool expectation)
         {
             // arrange
@@ -326,7 +330,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 .Returns(candidate);
 
             // act
-            var result = sut.IsMonitored(mockItem.Object);
+            var result = sut.NotIsMonitored(mockItem.Object);
 
             // assert
             Assert.Equal(expectation, result);
