@@ -52,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
         [Fact]
         public void AFinRecordWithDateMoreThanLearnActEndDate_ReturnsEntity()
         {
-            DateTime? learnActEndDate = new DateTime(2018, 8, 1);
+            DateTime learnActEndDate = new DateTime(2017, 8, 1);
 
             var appFinRecord = new TestAppFinRecord
             {
@@ -69,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
         [InlineData("2018-08-01")]
         public void AFinRecordWithDateMoreThanLearnActEndDate_ReturnsNull(string aFinDateString)
         {
-            DateTime? learnActEndDate = new DateTime(2018, 8, 1);
+            DateTime learnActEndDate = new DateTime(2018, 8, 1);
 
             var appFinRecord = new TestAppFinRecord
             {
@@ -78,20 +78,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                 AFinDate = DateTime.Parse(aFinDateString)
             };
 
-            NewRule().AFinRecordWithDateGreaterThanLearnActEndDate(learnActEndDate, appFinRecord).Should().BeNull();
-        }
-
-        [Fact]
-        public void AFinRecordWithDateMoreThanLearnActEndDate_ReturnsNull_NoLearnActEndDate()
-        {
-            DateTime? learnActEndDate = null;
-
-            var appFinRecord = new TestAppFinRecord
-            {
-                AFinType = "TNP",
-                AFinCode = 1,
-                AFinDate = new DateTime(2019, 9, 1)
-            };
             NewRule().AFinRecordWithDateGreaterThanLearnActEndDate(learnActEndDate, appFinRecord).Should().BeNull();
         }
 
@@ -107,7 +93,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                     new TestLearningDelivery()
                     {
                         AimType = 1,
-                        LearnActEndDateNullable = new DateTime(2018, 8, 1),
+                        LearnActEndDateNullable = new DateTime(2017, 8, 1),
                         ProgTypeNullable = progType,
                         AppFinRecords = new List<TestAppFinRecord>
                         {
@@ -134,7 +120,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                     new TestLearningDelivery()
                     {
                         AimType = 1,
-                        LearnActEndDateNullable = new DateTime(2018, 8, 1),
+                        LearnActEndDateNullable = new DateTime(2017, 8, 1),
                         ProgTypeNullable = progType,
                         AppFinRecords = new List<TestAppFinRecord>
                         {
@@ -183,7 +169,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                     new TestLearningDelivery()
                     {
                         AimType = 1,
-                        LearnActEndDateNullable = new DateTime(2018, 8, 1),
+                        LearnActEndDateNullable = new DateTime(2017, 8, 1),
                         ProgTypeNullable = progType,
                         AppFinRecords = new List<TestAppFinRecord>
                         {
@@ -210,7 +196,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                     new TestLearningDelivery()
                     {
                         AimType = 1,
-                        LearnActEndDateNullable = new DateTime(2018, 8, 1),
+                        LearnActEndDateNullable = new DateTime(2017, 8, 1),
                         ProgTypeNullable = progType,
                         AppFinRecords = new List<TestAppFinRecord>
                         {
@@ -259,7 +245,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                     new TestLearningDelivery()
                     {
                         AimType = 1,
-                        LearnActEndDateNullable = new DateTime(2018, 8, 1),
+                        LearnActEndDateNullable = new DateTime(2017, 8, 1),
                         ProgTypeNullable = progType,
                         AppFinRecords = new List<TestAppFinRecord>
                         {
@@ -286,7 +272,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                     new TestLearningDelivery()
                     {
                         AimType = 1,
-                        LearnActEndDateNullable = new DateTime(2018, 8, 1),
+                        LearnActEndDateNullable = new DateTime(2017, 8, 1),
                         ProgTypeNullable = progType,
                         AppFinRecords = new List<TestAppFinRecord>
                         {
