@@ -84,7 +84,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
                 .ForEach(x =>
                 {
                     var failedValidation = !x.AppFinRecords
-                        .SafeWhere(afr => afr.AFinType.ComparesWith(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice))
+                        .SafeWhere(afr => afr.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice))
                         .Any(y => ConditionMet(x, y));
 
                     if (failedValidation)
