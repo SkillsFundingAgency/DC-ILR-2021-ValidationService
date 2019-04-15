@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
@@ -83,7 +84,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
                 .ForEach(x =>
                 {
                     var failedValidation = !x.AppFinRecords
-                        .SafeWhere(afr => afr.AFinType == ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice)
+                        .SafeWhere(afr => afr.AFinType.ComparesWith(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice))
                         .Any(y => ConditionMet(x, y));
 
                     if (failedValidation)
