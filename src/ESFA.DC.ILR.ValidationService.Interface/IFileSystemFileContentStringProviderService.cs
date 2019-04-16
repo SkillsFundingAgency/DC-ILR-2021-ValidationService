@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface IMessageStreamProviderService
+    public interface IFileSystemFileContentStringProviderService
     {
         Task<Stream> Provide(CancellationToken cancellationToken);
     }

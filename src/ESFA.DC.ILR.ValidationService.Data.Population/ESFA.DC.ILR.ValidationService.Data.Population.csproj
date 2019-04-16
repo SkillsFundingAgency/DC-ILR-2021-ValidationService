@@ -71,8 +71,11 @@
     <Reference Include="ESFA.DC.Data.ULN.Model, Version=0.1.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.Data.ULN.Model.0.1.3-beta0001\lib\net461\ESFA.DC.Data.ULN.Model.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.4-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.5-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
+    </Reference>
+    <Reference Include="ESFA.DC.ILR.ReferenceDataService.Model, Version=0.1.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR.ReferenceDataService.Model.0.1.7\lib\netstandard2.0\ESFA.DC.ILR.ReferenceDataService.Model.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.ReferenceData.Employers.Model, Version=0.1.124.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ReferenceData.Employers.Model.0.1.124\lib\netstandard2.0\ESFA.DC.ReferenceData.Employers.Model.dll</HintPath>
@@ -203,6 +206,7 @@
     <Compile Include="Interface\ILARSStandardValidityDataRetrievalService.cs" />
     <Compile Include="Interface\ILARSFrameworkDataRetrievalService.cs" />
     <Compile Include="Interface\ILARSLearningDeliveryDataRetrievalService.cs" />
+    <Compile Include="Interface\IReferenceDataCachePopulationService.cs" />
     <Compile Include="Interface\IMessageCachePopulationService.cs" />
     <Compile Include="Interface\IEPAOrganisationsDataRetrievalService.cs" />
     <Compile Include="Interface\IOrganisationsDataRetrievalService.cs" />
@@ -213,6 +217,7 @@
     <Compile Include="Interface\IValidationErrorsDataRetrievalService.cs" />
     <Compile Include="InternalDataCachePopulationService.cs" />
     <Compile Include="Keys\FrameworkKey.cs" />
+    <Compile Include="ReferenceDataCachePopulationService.cs" />
     <Compile Include="MessageCachePopulationService.cs" />
     <Compile Include="PreValidationPopulationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
