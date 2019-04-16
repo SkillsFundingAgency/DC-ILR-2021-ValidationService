@@ -35,6 +35,8 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
                         {
                             JobId = jobContextMessage.JobId.ToString(),
                             Input = jobContextMessage.KeyValuePairs[JobContextMessageKey.Filename].ToString(),
+                            Container = jobContextMessage.KeyValuePairs[JobContextMessageKey.Container].ToString(),
+                            IlrReferenceDataKey = jobContextMessage.KeyValuePairs[JobContextMessageKey.IlrReferenceData].ToString(),
                             InvalidLearnRefNumbersKey = jobContextMessage
                                 .KeyValuePairs[JobContextMessageKey.InvalidLearnRefNumbers].ToString(),
                             ValidLearnRefNumbersKey =

@@ -2,6 +2,7 @@
 using Autofac;
 using Autofac.Features.AttributeFilters;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.Population;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -23,6 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Stateless
             builder.RegisterType<PreValidationOrchestrationSfService<IValidationError>>().As<IPreValidationOrchestrationService<IValidationError>>().InstancePerLifetimeScope();
 
             builder.RegisterType<MessageFileProviderService>().As<IValidationItemProviderService<IMessage>>().InstancePerLifetimeScope();
+            builder.RegisterType<IlrReferenceDataFileProviderService>().As<IValidationItemProviderService<ReferenceDataRoot>>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationOutputService>().As<IValidationOutputService>().WithAttributeFiltering().InstancePerLifetimeScope();
             builder.RegisterType<LearnerPerActorProviderService>().As<ILearnerPerActorProviderService>().InstancePerLifetimeScope();
             builder.RegisterType<LearnerDPPerActorProviderService>().As<ILearnerDPPerActorProviderService>().InstancePerLifetimeScope();
@@ -37,8 +39,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Stateless
             builder.RegisterType<LearnerProviderService>().As<IValidationItemProviderService<IEnumerable<ILearner>>>().InstancePerLifetimeScope();
             builder.RegisterType<LearnerDPProviderService>().As<IValidationItemProviderService<IEnumerable<ILearnerDestinationAndProgression>>>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationErrorHandler>().As<IValidationErrorHandler>().InstancePerLifetimeScope();
-
-            builder.RegisterType<AzureStorageFileContentStringProviderService>().As<IMessageStreamProviderService>();
         }
     }
 }

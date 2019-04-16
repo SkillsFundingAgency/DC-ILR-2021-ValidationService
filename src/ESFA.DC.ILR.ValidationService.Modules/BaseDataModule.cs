@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using ESFA.DC.DateTimeProvider.Interface;
+using ESFA.DC.FileService;
+using ESFA.DC.FileService.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population;
 using ESFA.DC.ILR.ValidationService.Data.Population.External;
@@ -15,6 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Modules
         {
             builder.RegisterType<FileDataCachePopulationService>().As<IFileDataCachePopulationService>().InstancePerLifetimeScope();
 
+            builder.RegisterType<ReferenceDataCachePopulationService>().As<IReferenceDataCachePopulationService>().InstancePerLifetimeScope();
             builder.RegisterType<MessageCachePopulationService>().As<IMessageCachePopulationService>().InstancePerLifetimeScope();
             builder.RegisterType<ErrorLookupPopulationService>().As<IErrorLookupPopulationService>().InstancePerLifetimeScope();
             builder.RegisterType<InternalDataCachePopulationService>().As<ICreateInternalDataCache>().InstancePerLifetimeScope();
@@ -22,6 +25,8 @@ namespace ESFA.DC.ILR.ValidationService.Modules
             builder.RegisterType<DateTimeProvider.DateTimeProvider>().As<IDateTimeProvider>().InstancePerLifetimeScope();
 
             builder.RegisterType<DictionaryKeyValuePersistenceService>().As<IKeyValuePersistenceService>().InstancePerLifetimeScope();
+
+            builder.RegisterType<AzureStorageFileService>().As<IFileService>().InstancePerLifetimeScope();
 
             builder.RegisterModule<CacheModule>();
             builder.RegisterModule<DataServiceModule>();
