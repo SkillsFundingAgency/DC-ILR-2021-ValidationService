@@ -8,8 +8,6 @@ using ESFA.DC.ILR.ValidationService.Data.Population;
 using ESFA.DC.ILR.ValidationService.Data.Population.Configuration;
 using ESFA.DC.ILR.ValidationService.Data.Population.Configuration.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
-using ESFA.DC.ReferenceData.EPA.Model;
-using ESFA.DC.ReferenceData.EPA.Model.Interface;
 using ESFA.DC.ReferenceData.FCS.Model;
 using ESFA.DC.ReferenceData.FCS.Model.Interface;
 using ESFA.DC.ReferenceData.Organisations.Model;
@@ -44,7 +42,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Stateless
             }).As<IOrganisationsContext>().InstancePerLifetimeScope();
 
             builder.Register(c => new FcsContext(c.Resolve<IReferenceDataOptions>().FCSConnectionString)).As<IFcsContext>().InstancePerLifetimeScope();
-            builder.Register(c => new EpaContext(c.Resolve<IReferenceDataOptions>().EPAConnectionString)).As<IEpaContext>().InstancePerLifetimeScope();
             builder.Register(c => new ValidationErrors(c.Resolve<IReferenceDataOptions>().ValidationErrorsConnectionString)).As<IValidationErrors>().InstancePerLifetimeScope();
 
             base.Load(builder);

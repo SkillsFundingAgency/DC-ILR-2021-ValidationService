@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.ReferenceDataService.Model.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
@@ -14,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 
         public IReadOnlyCollection<string> MapPostcodes(IReadOnlyCollection<Postcode> postcodes)
         {
-            return postcodes.Select(p => p.PostCode).ToList();
+            return new HashSet<string>(postcodes.Select(p => p.PostCode).ToList(), StringComparer.OrdinalIgnoreCase);
         }
 
         public IReadOnlyCollection<ONSPostcode> MapONSPostcodes(IReadOnlyCollection<Postcode> postcodes)
