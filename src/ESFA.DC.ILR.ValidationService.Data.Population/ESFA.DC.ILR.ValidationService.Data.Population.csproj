@@ -71,9 +71,6 @@
     <Reference Include="ESFA.DC.ILR.ReferenceDataService.Model, Version=0.1.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.ReferenceDataService.Model.0.1.7\lib\netstandard2.0\ESFA.DC.ILR.ReferenceDataService.Model.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ReferenceData.FCS.Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ReferenceData.FCS.Model.0.1.95\lib\net461\ESFA.DC.ReferenceData.FCS.Model.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.EntityFrameworkCore, Version=2.2.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.EntityFrameworkCore.2.2.1\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
     </Reference>
@@ -176,13 +173,13 @@
     <Compile Include="External\LARSStandardDataRetrievalService.cs" />
     <Compile Include="External\LARSStandardValidityDataRetrievalService.cs" />
     <Compile Include="External\OrganisationsDataRetrievalService.cs" />
-    <Compile Include="External\FCSDataRetrievalService.cs" />
     <Compile Include="External\ValidationErrorsDataRetrievalService.cs" />
     <Compile Include="FileDataCachePopulationService.cs" />
     <Compile Include="Interface\ICampusIdentifierDataRetrievalService.cs" />
     <Compile Include="Interface\IErrorLookupPopulationService.cs" />
     <Compile Include="Interface\IExternalDataCachePopulationService.cs" />
     <Compile Include="Interface\IExternalDataRetrievalService.cs" />
+    <Compile Include="Interface\IFcsDataMapper.cs" />
     <Compile Include="Interface\IFileDataCachePopulationService.cs" />
     <Compile Include="Interface\IInternalDataCachePopulationService.cs" />
     <Compile Include="Interface\ILARSStandardDataRetrievalService.cs" />
@@ -193,7 +190,6 @@
     <Compile Include="Interface\IMessageCachePopulationService.cs" />
     <Compile Include="Interface\IOrganisationsDataRetrievalService.cs" />
     <Compile Include="Interface\IPopulationService.cs" />
-    <Compile Include="Interface\IFCSDataRetrievalService.cs" />
     <Compile Include="Interface\IEmployersDataMapper.cs" />
     <Compile Include="Interface\IEpaOrgDataMapper.cs" />
     <Compile Include="Interface\IUlnDataMapper.cs" />
@@ -203,6 +199,7 @@
     <Compile Include="Keys\FrameworkKey.cs" />
     <Compile Include="Mappers\EmployersDataMapper.cs" />
     <Compile Include="Mappers\EpaOrgDataMapper.cs" />
+    <Compile Include="Mappers\FcsDataMapper.cs" />
     <Compile Include="Mappers\PostcodesDataMapper.cs" />
     <Compile Include="Mappers\UlnDataMapper.cs" />
     <Compile Include="ReferenceDataCachePopulationService.cs" />
