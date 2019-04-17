@@ -3,8 +3,6 @@ using ESFA.DC.Data.ILR.ValidationErrors.Model;
 using ESFA.DC.Data.ILR.ValidationErrors.Model.Interfaces;
 using ESFA.DC.Data.LARS.Model;
 using ESFA.DC.Data.LARS.Model.Interfaces;
-using ESFA.DC.Data.Postcodes.Model;
-using ESFA.DC.Data.Postcodes.Model.Interfaces;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population;
 using ESFA.DC.ILR.ValidationService.Data.Population.Configuration.Interface;
@@ -30,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Console
             builder.RegisterType<MessageCachePopulationService>().As<IMessageCachePopulationService>().InstancePerLifetimeScope();
 
             builder.RegisterType<LARS>().As<ILARS>().InstancePerLifetimeScope();
-            builder.RegisterType<Postcodes>().As<IPostcodes>().InstancePerLifetimeScope();
+
             builder.Register(c =>
             {
                 DbContextOptions<OrganisationsContext> options = new DbContextOptionsBuilder<OrganisationsContext>()
