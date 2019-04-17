@@ -16,7 +16,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules
             builder.RegisterType<LARSFrameworkDataRetrievalService>().As<ILARSFrameworkDataRetrievalService>().InstancePerLifetimeScope();
             builder.RegisterType<OrganisationsDataRetrievalService>().As<IOrganisationsDataRetrievalService>().InstancePerLifetimeScope();
             builder.RegisterType<CampusIdentiferDataRetrievalService>().As<ICampusIdentifierDataRetrievalService>().InstancePerLifetimeScope();
-            builder.RegisterType<FCSDataRetrievalService>().As<IFCSDataRetrievalService>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationErrorsDataRetrievalService>().As<IValidationErrorsDataRetrievalService>().InstancePerLifetimeScope();
         }
     }

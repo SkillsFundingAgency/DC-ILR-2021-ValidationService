@@ -7,8 +7,6 @@ using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population;
 using ESFA.DC.ILR.ValidationService.Data.Population.Configuration.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
-using ESFA.DC.ReferenceData.FCS.Model;
-using ESFA.DC.ReferenceData.FCS.Model.Interface;
 using ESFA.DC.ReferenceData.Organisations.Model;
 using ESFA.DC.ReferenceData.Organisations.Model.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +34,7 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Console
 
                 return new OrganisationsContext(options);
             }).As<IOrganisationsContext>().InstancePerLifetimeScope();
-            builder.RegisterType<FcsContext>().As<IFcsContext>().InstancePerLifetimeScope();
+
             builder.RegisterType<ValidationErrors>().As<IValidationErrors>().InstancePerLifetimeScope();
 
             builder.RegisterModule<ExternalDataCachePopulationServiceModule>();
