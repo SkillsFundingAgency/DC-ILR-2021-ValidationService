@@ -70,9 +70,6 @@
     <Reference Include="ESFA.DC.Data.LARS.Model, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.Data.LARS.Model.0.1.4-beta0001\lib\net461\ESFA.DC.Data.LARS.Model.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.Data.Organisations.Model, Version=0.1.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.Data.Organisations.Model.0.1.11-beta0001\lib\netstandard2.0\ESFA.DC.Data.Organisations.Model.dll</HintPath>
-    </Reference>
     <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.5-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
     </Reference>
@@ -200,7 +197,6 @@
     <Compile Include="External\LARSFrameworkDataRetrievalServiceTests.cs" />
     <Compile Include="External\LARSLearningDeliveryDataRetrievalServiceTests.cs" />
     <Compile Include="External\LARSStandardDataRetrievalServiceTests.cs" />
-    <Compile Include="External\OrganisationsDataRetrievalServiceTests.cs" />
     <Compile Include="External\ValidationErrorsDataRetrievalServiceTests.cs" />
     <Compile Include="FileDataCachePopulationServiceTests.cs" />
     <Compile Include="IEnumerableExtensions.cs" />
@@ -209,6 +205,7 @@
     <Compile Include="Mappers\EmployersDataMapperTests.cs" />
     <Compile Include="Mappers\FcsDataMapperTests.cs" />
     <Compile Include="Mappers\EpaOrgDataMapperTests.cs" />
+    <Compile Include="Mappers\OrganisationsDataMapperTests.cs" />
     <Compile Include="Mappers\PostcodesDataMapperTests.cs" />
     <Compile Include="Mappers\UlnDataMapperTests.cs" />
     <Compile Include="ReferenceDataCachePopulationServiceTests.cs" />

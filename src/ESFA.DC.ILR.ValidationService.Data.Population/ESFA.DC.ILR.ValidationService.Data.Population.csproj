@@ -62,9 +62,6 @@
     <Reference Include="ESFA.DC.Data.LARS.Model, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.Data.LARS.Model.0.1.4-beta0001\lib\net461\ESFA.DC.Data.LARS.Model.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.Data.Organisations.Model, Version=0.1.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.Data.Organisations.Model.0.1.11-beta0001\lib\netstandard2.0\ESFA.DC.Data.Organisations.Model.dll</HintPath>
-    </Reference>
     <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.5-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
     </Reference>
@@ -165,17 +162,14 @@
     <Compile Include="External\AbstractEpaOrganisationsDataRetrievalService.cs" />
     <Compile Include="External\AbstractOrganisationsDataRetrievalService.cs" />
     <Compile Include="External\AbstractLARSDataRetrievalService.cs" />
-    <Compile Include="External\CampusIdentiferDataRetrievalService.cs" />
     <Compile Include="External\ErrorLookupPopulationService.cs" />
     <Compile Include="External\ExternalDataCachePopulationService.cs" />
     <Compile Include="External\LARSFrameworkDataRetrievalService.cs" />
     <Compile Include="External\LARSLearningDeliveryDataRetrievalService.cs" />
     <Compile Include="External\LARSStandardDataRetrievalService.cs" />
     <Compile Include="External\LARSStandardValidityDataRetrievalService.cs" />
-    <Compile Include="External\OrganisationsDataRetrievalService.cs" />
     <Compile Include="External\ValidationErrorsDataRetrievalService.cs" />
     <Compile Include="FileDataCachePopulationService.cs" />
-    <Compile Include="Interface\ICampusIdentifierDataRetrievalService.cs" />
     <Compile Include="Interface\IErrorLookupPopulationService.cs" />
     <Compile Include="Interface\IExternalDataCachePopulationService.cs" />
     <Compile Include="Interface\IExternalDataRetrievalService.cs" />
@@ -186,9 +180,9 @@
     <Compile Include="Interface\ILARSStandardValidityDataRetrievalService.cs" />
     <Compile Include="Interface\ILARSFrameworkDataRetrievalService.cs" />
     <Compile Include="Interface\ILARSLearningDeliveryDataRetrievalService.cs" />
+    <Compile Include="Interface\IOrganisationsDataMapper.cs" />
     <Compile Include="Interface\IReferenceDataCachePopulationService.cs" />
     <Compile Include="Interface\IMessageCachePopulationService.cs" />
-    <Compile Include="Interface\IOrganisationsDataRetrievalService.cs" />
     <Compile Include="Interface\IPopulationService.cs" />
     <Compile Include="Interface\IEmployersDataMapper.cs" />
     <Compile Include="Interface\IEpaOrgDataMapper.cs" />
@@ -200,6 +194,7 @@
     <Compile Include="Mappers\EmployersDataMapper.cs" />
     <Compile Include="Mappers\EpaOrgDataMapper.cs" />
     <Compile Include="Mappers\FcsDataMapper.cs" />
+    <Compile Include="Mappers\OrganisationsDataMapper.cs" />
     <Compile Include="Mappers\PostcodesDataMapper.cs" />
     <Compile Include="Mappers\UlnDataMapper.cs" />
     <Compile Include="ReferenceDataCachePopulationService.cs" />
