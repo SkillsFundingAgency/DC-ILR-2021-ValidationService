@@ -76,9 +76,6 @@
     <Reference Include="ESFA.DC.Data.Postcodes.Model, Version=0.1.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.Data.Postcodes.Model.0.1.3-beta0001\lib\net461\ESFA.DC.Data.Postcodes.Model.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.Data.ULN.Model, Version=0.1.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.Data.ULN.Model.0.1.3-beta0001\lib\net461\ESFA.DC.Data.ULN.Model.dll</HintPath>
-    </Reference>
     <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.5-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
     </Reference>
@@ -220,12 +217,12 @@
     <Compile Include="External\OrganisationsDataRetrievalServiceTests.cs" />
     <Compile Include="External\PostcodesDataRetrievalServiceTests.cs" />
     <Compile Include="External\FCSDataRetrievalServiceTests.cs" />
-    <Compile Include="External\ULNDataRetrievalServiceTests.cs" />
     <Compile Include="External\ValidationErrorsDataRetrievalServiceTests.cs" />
     <Compile Include="FileDataCachePopulationServiceTests.cs" />
     <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="InternalDataCachePopulationServiceTests.cs" />
     <Compile Include="IQueryableExtensionsTests.cs" />
+    <Compile Include="Mappers\UlnDataMapperTests.cs" />
     <Compile Include="ReferenceDataCachePopulationServiceTests.cs" />
     <Compile Include="MessageCachePopulationServiceTests.cs" />
     <Compile Include="PreValidationPopulationServiceTests.cs" />

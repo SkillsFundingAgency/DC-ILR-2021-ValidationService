@@ -1,4 +1,5 @@
-﻿using ESFA.DC.ILR.ValidationService.Data.Extensions;
+﻿using ESFA.DC.ILR.ReferenceDataService.Model;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
@@ -11,11 +12,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
     public class ExternalDataCachePopulationService : IExternalDataCachePopulationService
     {
         private readonly IExternalDataCache _externalDataCache;
+        private readonly ICache<ReferenceDataRoot> _referenceDataCache;
         private readonly ILARSStandardDataRetrievalService _larsStandardDataRetrievalService;
         private readonly ILARSStandardValidityDataRetrievalService _larsStandardValidityDataRetrievalService;
         private readonly ILARSLearningDeliveryDataRetrievalService _larsLearningDeliveryDataRetrievalService;
         private readonly ILARSFrameworkDataRetrievalService _larsFrameworkDataRetrievalService;
-        private readonly IULNDataRetrievalService _ulnDataRetrievalService;
+        private readonly IUlnDataMapper _ulnDataMapper;
         private readonly IPostcodesDataRetrievalService _postcodesDataRetrievalService;
         private readonly IOrganisationsDataRetrievalService _organisationsDataRetrievalService;
         private readonly IEPAOrganisationsDataRetrievalService _epaOrganisationsDataRetrievalService;
@@ -25,11 +27,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
 
         public ExternalDataCachePopulationService(
             IExternalDataCache externalDataCache,
+            ICache<ReferenceDataRoot> referenceDataCache,
             ILARSStandardDataRetrievalService larsStandardDataRetrievalService,
             ILARSStandardValidityDataRetrievalService larsStandardValidityDataRetrievalService,
             ILARSLearningDeliveryDataRetrievalService larsLearningDeliveryDataRetrievalService,
             ILARSFrameworkDataRetrievalService larsFrameworkDataRetrievalService,
-            IULNDataRetrievalService ulnDataRetrievalService,
+            IUlnDataMapper ulnDataMapper,
             IPostcodesDataRetrievalService postcodesDataRetrievalService,
             IOrganisationsDataRetrievalService organisationsDataRetrievalService,
             IEPAOrganisationsDataRetrievalService epaOrganisationsDataRetrievalService,
@@ -38,11 +41,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
             IEmployersDataRetrievalService employersDataRetrievalService)
         {
             _externalDataCache = externalDataCache;
+            _referenceDataCache = referenceDataCache;
             _larsStandardDataRetrievalService = larsStandardDataRetrievalService;
             _larsStandardValidityDataRetrievalService = larsStandardValidityDataRetrievalService;
             _larsLearningDeliveryDataRetrievalService = larsLearningDeliveryDataRetrievalService;
             _larsFrameworkDataRetrievalService = larsFrameworkDataRetrievalService;
-            _ulnDataRetrievalService = ulnDataRetrievalService;
+            _ulnDataMapper = ulnDataMapper;
             _postcodesDataRetrievalService = postcodesDataRetrievalService;
             _organisationsDataRetrievalService = organisationsDataRetrievalService;
             _epaOrganisationsDataRetrievalService = epaOrganisationsDataRetrievalService;
@@ -54,13 +58,14 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
         public async Task PopulateAsync(CancellationToken cancellationToken)
         {
             var externalDataCache = (ExternalDataCache)_externalDataCache;
+            var referenceDataCache = _referenceDataCache.Item;
 
             externalDataCache.Standards = await _larsStandardDataRetrievalService.RetrieveAsync(cancellationToken);
             externalDataCache.StandardValidities = await _larsStandardValidityDataRetrievalService.RetrieveAsync(cancellationToken);
             externalDataCache.LearningDeliveries = await _larsLearningDeliveryDataRetrievalService.RetrieveAsync(cancellationToken);
             externalDataCache.Frameworks = await _larsFrameworkDataRetrievalService.RetrieveAsync(cancellationToken);
 
-            externalDataCache.ULNs = new HashSet<long>(await _ulnDataRetrievalService.RetrieveAsync(cancellationToken));
+            externalDataCache.ULNs = _ulnDataMapper.MapUlns(referenceDataCache.ULNs);
 
             externalDataCache.Postcodes = (await _postcodesDataRetrievalService.RetrieveAsync(cancellationToken)).ToCaseInsensitiveHashSet();
             externalDataCache.ONSPostcodes = await _postcodesDataRetrievalService.RetrieveONSPostcodesAsync(cancellationToken);
