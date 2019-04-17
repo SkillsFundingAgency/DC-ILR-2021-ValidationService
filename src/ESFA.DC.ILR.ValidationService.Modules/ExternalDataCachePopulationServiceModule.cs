@@ -20,7 +20,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules
             builder.RegisterType<FCSDataRetrievalService>().As<IFCSDataRetrievalService>().InstancePerLifetimeScope();
             builder.RegisterType<EPAOrganisationsDataRetrievalService>().As<IEPAOrganisationsDataRetrievalService>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationErrorsDataRetrievalService>().As<IValidationErrorsDataRetrievalService>().InstancePerLifetimeScope();
-            builder.RegisterType<EmployersDataRetrievalService>().As<IEmployersDataRetrievalService>().InstancePerLifetimeScope();
         }
     }
 }

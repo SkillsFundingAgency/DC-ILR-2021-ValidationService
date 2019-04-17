@@ -10,8 +10,6 @@ using ESFA.DC.ILR.ValidationService.Data.Population;
 using ESFA.DC.ILR.ValidationService.Data.Population.Configuration;
 using ESFA.DC.ILR.ValidationService.Data.Population.Configuration.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
-using ESFA.DC.ReferenceData.Employers.Model;
-using ESFA.DC.ReferenceData.Employers.Model.Interface;
 using ESFA.DC.ReferenceData.EPA.Model;
 using ESFA.DC.ReferenceData.EPA.Model.Interface;
 using ESFA.DC.ReferenceData.FCS.Model;
@@ -47,14 +45,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Stateless
 
                 return new OrganisationsContext(options);
             }).As<IOrganisationsContext>().InstancePerLifetimeScope();
-
-            builder.Register(c =>
-            {
-                DbContextOptions<EmployersContext> options = new DbContextOptionsBuilder<EmployersContext>()
-                    .UseSqlServer(c.Resolve<IReferenceDataOptions>().EmployersConnectionString).Options;
-
-                return new EmployersContext(options);
-            }).As<IEmployersContext>().InstancePerLifetimeScope();
 
             builder.Register(c => new FcsContext(c.Resolve<IReferenceDataOptions>().FCSConnectionString)).As<IFcsContext>().InstancePerLifetimeScope();
             builder.Register(c => new EpaContext(c.Resolve<IReferenceDataOptions>().EPAConnectionString)).As<IEpaContext>().InstancePerLifetimeScope();

@@ -13,6 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<EmployersDataMapper>().As<IEmployersDataMapper>().InstancePerLifetimeScope();
             builder.RegisterType<UlnDataMapper>().As<IUlnDataMapper>().InstancePerLifetimeScope();
         }
     }

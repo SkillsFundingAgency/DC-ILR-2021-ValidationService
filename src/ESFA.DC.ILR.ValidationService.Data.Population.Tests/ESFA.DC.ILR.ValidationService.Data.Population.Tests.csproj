@@ -85,9 +85,6 @@
     <Reference Include="ESFA.DC.ILR.Tests.Model, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.1819.Tests.Model.0.1.4-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Tests.Model.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ReferenceData.Employers.Model, Version=0.1.124.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ReferenceData.Employers.Model.0.1.124\lib\netstandard2.0\ESFA.DC.ReferenceData.Employers.Model.dll</HintPath>
-    </Reference>
     <Reference Include="ESFA.DC.ReferenceData.EPA.Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ReferenceData.EPA.Model.0.1.105\lib\net461\ESFA.DC.ReferenceData.EPA.Model.dll</HintPath>
     </Reference>
@@ -209,7 +206,6 @@
     <Compile Include="DbAsync\TestDbAsyncEnumerable.cs" />
     <Compile Include="DbAsync\TestDbAsyncEnumerator.cs" />
     <Compile Include="DbAsync\TestDbAsyncQueryProvider.cs" />
-    <Compile Include="External\EmployersDataRetrievalServiceTests.cs" />
     <Compile Include="External\LARSFrameworkDataRetrievalServiceTests.cs" />
     <Compile Include="External\LARSLearningDeliveryDataRetrievalServiceTests.cs" />
     <Compile Include="External\LARSStandardDataRetrievalServiceTests.cs" />
@@ -222,6 +218,7 @@
     <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="InternalDataCachePopulationServiceTests.cs" />
     <Compile Include="IQueryableExtensionsTests.cs" />
+    <Compile Include="Mappers\EmployersDataMapperTests.cs" />
     <Compile Include="Mappers\UlnDataMapperTests.cs" />
     <Compile Include="ReferenceDataCachePopulationServiceTests.cs" />
     <Compile Include="MessageCachePopulationServiceTests.cs" />
