@@ -20,10 +20,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
         private readonly IEmployersDataMapper _employersDataMapper;
         private readonly IEpaOrgDataMapper _epaOrgDataMapper;
         private readonly IFcsDataMapper _fcsDataMapper;
+        private readonly IOrganisationsDataMapper _organisationsDataMapper;
         private readonly IPostcodesDataMapper _postcodesDataMapper;
         private readonly IUlnDataMapper _ulnDataMapper;
-        private readonly IOrganisationsDataRetrievalService _organisationsDataRetrievalService;
-        private readonly ICampusIdentifierDataRetrievalService _campusIdentifierDataRetrievalService;
 
         public ExternalDataCachePopulationService(
             IExternalDataCache externalDataCache,
@@ -35,10 +34,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
             IEmployersDataMapper employersDataMapper,
             IEpaOrgDataMapper epaOrgDataMapper,
             IFcsDataMapper fcsDataMapper,
+            IOrganisationsDataMapper organisationsDataMapper,
             IPostcodesDataMapper postcodesDataMapper,
-            IUlnDataMapper ulnDataMapper,
-            IOrganisationsDataRetrievalService organisationsDataRetrievalService,
-            ICampusIdentifierDataRetrievalService campusIdentifierDataRetrievalService)
+            IUlnDataMapper ulnDataMapper)
         {
             _externalDataCache = externalDataCache;
             _referenceDataCache = referenceDataCache;
@@ -49,10 +47,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
             _employersDataMapper = employersDataMapper;
             _epaOrgDataMapper = epaOrgDataMapper;
             _fcsDataMapper = fcsDataMapper;
+            _organisationsDataMapper = organisationsDataMapper;
             _postcodesDataMapper = postcodesDataMapper;
             _ulnDataMapper = ulnDataMapper;
-            _organisationsDataRetrievalService = organisationsDataRetrievalService;
-            _campusIdentifierDataRetrievalService = campusIdentifierDataRetrievalService;
         }
 
         public async Task PopulateAsync(CancellationToken cancellationToken)
@@ -70,8 +67,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
             externalDataCache.Postcodes = _postcodesDataMapper.MapPostcodes(referenceDataCache.Postcodes);
             externalDataCache.ONSPostcodes = _postcodesDataMapper.MapONSPostcodes(referenceDataCache.Postcodes);
 
-            externalDataCache.Organisations = await _organisationsDataRetrievalService.RetrieveAsync(cancellationToken);
-            externalDataCache.CampusIdentifiers = await _campusIdentifierDataRetrievalService.RetrieveAsync(cancellationToken);
+            externalDataCache.Organisations = _organisationsDataMapper.MapOrganisations(referenceDataCache.Organisations);
+            externalDataCache.CampusIdentifiers = _organisationsDataMapper.MapCampusIdentifiers(referenceDataCache.Organisations);
 
             externalDataCache.EPAOrganisations = _epaOrgDataMapper.MapEpaOrganisations(referenceDataCache.EPAOrganisations);
 

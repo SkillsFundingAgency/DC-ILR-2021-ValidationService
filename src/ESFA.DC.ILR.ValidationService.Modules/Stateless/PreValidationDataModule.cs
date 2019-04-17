@@ -8,10 +8,7 @@ using ESFA.DC.ILR.ValidationService.Data.Population;
 using ESFA.DC.ILR.ValidationService.Data.Population.Configuration;
 using ESFA.DC.ILR.ValidationService.Data.Population.Configuration.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
-using ESFA.DC.ReferenceData.Organisations.Model;
-using ESFA.DC.ReferenceData.Organisations.Model.Interface;
 using ESFA.DC.ServiceFabric.Helpers;
-using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.ILR.ValidationService.Modules.Stateless
 {
@@ -30,14 +27,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Stateless
             builder.RegisterType<InternalDataCachePopulationService>().As<ICreateInternalDataCache>().InstancePerLifetimeScope();
 
             builder.Register(c => new LARS(c.Resolve<IReferenceDataOptions>().LARSConnectionString)).As<ILARS>().InstancePerLifetimeScope();
-
-            builder.Register(c =>
-            {
-                DbContextOptions<OrganisationsContext> options = new DbContextOptionsBuilder<OrganisationsContext>()
-                    .UseSqlServer(c.Resolve<IReferenceDataOptions>().OrganisationsConnectionString).Options;
-
-                return new OrganisationsContext(options);
-            }).As<IOrganisationsContext>().InstancePerLifetimeScope();
 
             builder.Register(c => new ValidationErrors(c.Resolve<IReferenceDataOptions>().ValidationErrorsConnectionString)).As<IValidationErrors>().InstancePerLifetimeScope();
 
