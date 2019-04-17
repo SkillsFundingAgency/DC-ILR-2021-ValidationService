@@ -26,16 +26,18 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
                 Container = "Container"
             };
 
-            MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("Stream"));
-            var message = new Message();
+            using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("Stream")))
+            {
+                var message = new Message();
 
-            var fileServiceeMock = new Mock<IFileService>();
-            fileServiceeMock.Setup(sps => sps.OpenReadStreamAsync(preValidationContext.Input, preValidationContext.Container, cancellationToken)).ReturnsAsync(memoryStream);
-            
-            var xmlSerializationService = new Mock<IXmlSerializationService>();
-            xmlSerializationService.Setup(s => s.Deserialize<Message>(memoryStream)).Returns(message);
+                var fileServiceeMock = new Mock<IFileService>();
+                fileServiceeMock.Setup(sps => sps.OpenReadStreamAsync(preValidationContext.Input, preValidationContext.Container, cancellationToken)).ReturnsAsync(memoryStream);
 
-            (await NewService(xmlSerializationService.Object, preValidationContext, fileServiceeMock.Object).ProvideAsync(cancellationToken)).Should().BeSameAs(message);
+                var xmlSerializationService = new Mock<IXmlSerializationService>();
+                xmlSerializationService.Setup(s => s.Deserialize<Message>(memoryStream)).Returns(message);
+
+                (await NewService(xmlSerializationService.Object, preValidationContext, fileServiceeMock.Object).ProvideAsync(cancellationToken)).Should().BeSameAs(message);
+            }
         }
 
         private MessageFileProviderService NewService(
