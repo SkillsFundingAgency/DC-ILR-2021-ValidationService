@@ -18,6 +18,8 @@ namespace ESFA.DC.ILR.ValidationService.Modules
             builder.RegisterType<FileDataCache>().As<IFileDataCache>().InstancePerLifetimeScope();
             builder.RegisterType<Cache<ReferenceDataRoot>>().As<ICache<ReferenceDataRoot>>().InstancePerLifetimeScope();
             builder.RegisterType<Cache<IMessage>>().As<ICache<IMessage>>().InstancePerLifetimeScope();
+
+            builder.RegisterModule<DataCacheMapperModule>();
         }
     }
 }
