@@ -162,15 +162,12 @@
     <Compile Include="External\AbstractEpaOrganisationsDataRetrievalService.cs" />
     <Compile Include="External\AbstractOrganisationsDataRetrievalService.cs" />
     <Compile Include="External\AbstractLARSDataRetrievalService.cs" />
-    <Compile Include="External\ErrorLookupPopulationService.cs" />
     <Compile Include="External\ExternalDataCachePopulationService.cs" />
     <Compile Include="External\LARSFrameworkDataRetrievalService.cs" />
     <Compile Include="External\LARSLearningDeliveryDataRetrievalService.cs" />
     <Compile Include="External\LARSStandardDataRetrievalService.cs" />
     <Compile Include="External\LARSStandardValidityDataRetrievalService.cs" />
-    <Compile Include="External\ValidationErrorsDataRetrievalService.cs" />
     <Compile Include="FileDataCachePopulationService.cs" />
-    <Compile Include="Interface\IErrorLookupPopulationService.cs" />
     <Compile Include="Interface\IExternalDataCachePopulationService.cs" />
     <Compile Include="Interface\IExternalDataRetrievalService.cs" />
     <Compile Include="Interface\IFcsDataMapper.cs" />
@@ -187,8 +184,8 @@
     <Compile Include="Interface\IEmployersDataMapper.cs" />
     <Compile Include="Interface\IEpaOrgDataMapper.cs" />
     <Compile Include="Interface\IUlnDataMapper.cs" />
-    <Compile Include="Interface\IValidationErrorsDataRetrievalService.cs" />
     <Compile Include="Interface\IPostcodesDataMapper.cs" />
+    <Compile Include="Interface\IValidationErrorsDataMapper.cs" />
     <Compile Include="InternalDataCachePopulationService.cs" />
     <Compile Include="Keys\FrameworkKey.cs" />
     <Compile Include="Mappers\EmployersDataMapper.cs" />
@@ -197,6 +194,7 @@
     <Compile Include="Mappers\OrganisationsDataMapper.cs" />
     <Compile Include="Mappers\PostcodesDataMapper.cs" />
     <Compile Include="Mappers\UlnDataMapper.cs" />
+    <Compile Include="Mappers\ValidationErrorsDataMapper.cs" />
     <Compile Include="ReferenceDataCachePopulationService.cs" />
     <Compile Include="MessageCachePopulationService.cs" />
     <Compile Include="PreValidationPopulationService.cs" />
