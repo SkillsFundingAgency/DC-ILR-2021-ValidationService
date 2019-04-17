@@ -19,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Console
                 .As<IPreValidationOrchestrationService<IValidationError>>()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<FileSystemFileContentStringProviderService>().As<IMessageStreamProviderService>().InstancePerLifetimeScope();
+            builder.RegisterType<FileSystemFileContentStringProviderService>().As<IFileSystemFileContentStringProviderService>().InstancePerLifetimeScope();
             builder.RegisterType<MessageFileProviderService>().As<IValidationItemProviderService<IMessage>>().InstancePerLifetimeScope();
             builder.RegisterType<RuleSetOrchestrationService<IMessage, IValidationError>>().As<IRuleSetOrchestrationService<IMessage, IValidationError>>();
             builder.RegisterType<AutoFacRuleSetResolutionService<IMessage>>().As<IRuleSetResolutionService<IMessage>>();

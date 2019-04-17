@@ -8,6 +8,10 @@ namespace ESFA.DC.ILR.ValidationService.Interface
 
         string Output { get; }
 
+        string Container { get; set; }
+
+        string IlrReferenceDataKey { get; }
+
         string InvalidLearnRefNumbersKey { get; }
 
         string ValidLearnRefNumbersKey { get; }
