@@ -70,9 +70,6 @@
     <Reference Include="ESFA.DC.Data.Organisations.Model, Version=0.1.11.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.Data.Organisations.Model.0.1.11-beta0001\lib\netstandard2.0\ESFA.DC.Data.Organisations.Model.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.Data.Postcodes.Model, Version=0.1.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.Data.Postcodes.Model.0.1.3-beta0001\lib\net461\ESFA.DC.Data.Postcodes.Model.dll</HintPath>
-    </Reference>
     <Reference Include="ESFA.DC.DateTimeProvider, Version=0.1.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.DateTimeProvider.0.1.6-beta0001\lib\netstandard2.0\ESFA.DC.DateTimeProvider.dll</HintPath>
     </Reference>

@@ -3,8 +3,6 @@ using ESFA.DC.Data.ILR.ValidationErrors.Model;
 using ESFA.DC.Data.ILR.ValidationErrors.Model.Interfaces;
 using ESFA.DC.Data.LARS.Model;
 using ESFA.DC.Data.LARS.Model.Interfaces;
-using ESFA.DC.Data.Postcodes.Model;
-using ESFA.DC.Data.Postcodes.Model.Interfaces;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population;
 using ESFA.DC.ILR.ValidationService.Data.Population.Configuration;
@@ -36,7 +34,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Stateless
             builder.RegisterType<InternalDataCachePopulationService>().As<ICreateInternalDataCache>().InstancePerLifetimeScope();
 
             builder.Register(c => new LARS(c.Resolve<IReferenceDataOptions>().LARSConnectionString)).As<ILARS>().InstancePerLifetimeScope();
-            builder.Register(c => new Postcodes(c.Resolve<IReferenceDataOptions>().PostcodesConnectionString)).As<IPostcodes>().InstancePerLifetimeScope();
 
             builder.Register(c =>
             {
