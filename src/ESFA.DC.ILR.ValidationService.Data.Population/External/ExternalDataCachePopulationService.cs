@@ -23,6 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
         private readonly IOrganisationsDataMapper _organisationsDataMapper;
         private readonly IPostcodesDataMapper _postcodesDataMapper;
         private readonly IUlnDataMapper _ulnDataMapper;
+        private readonly IValidationErrorsDataMapper _validationErrorsDataMapper;
 
         public ExternalDataCachePopulationService(
             IExternalDataCache externalDataCache,
@@ -36,7 +37,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
             IFcsDataMapper fcsDataMapper,
             IOrganisationsDataMapper organisationsDataMapper,
             IPostcodesDataMapper postcodesDataMapper,
-            IUlnDataMapper ulnDataMapper)
+            IUlnDataMapper ulnDataMapper,
+            IValidationErrorsDataMapper validationErrorsDataMapper)
         {
             _externalDataCache = externalDataCache;
             _referenceDataCache = referenceDataCache;
@@ -50,6 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
             _organisationsDataMapper = organisationsDataMapper;
             _postcodesDataMapper = postcodesDataMapper;
             _ulnDataMapper = ulnDataMapper;
+            _validationErrorsDataMapper = validationErrorsDataMapper;
         }
 
         public async Task PopulateAsync(CancellationToken cancellationToken)
@@ -75,6 +78,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
             externalDataCache.FCSContractAllocations = _fcsDataMapper.MapFcsContractAllocations(referenceDataCache.FCSContractAllocations);
 
             externalDataCache.ERNs = _employersDataMapper.MapEmployers(referenceDataCache.Employers);
+
+            externalDataCache.ValidationErrors = _validationErrorsDataMapper.MapValidationErrors(referenceDataCache.MetaDatas.ValidationErrors);
         }
     }
 }

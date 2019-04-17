@@ -197,7 +197,6 @@
     <Compile Include="External\LARSFrameworkDataRetrievalServiceTests.cs" />
     <Compile Include="External\LARSLearningDeliveryDataRetrievalServiceTests.cs" />
     <Compile Include="External\LARSStandardDataRetrievalServiceTests.cs" />
-    <Compile Include="External\ValidationErrorsDataRetrievalServiceTests.cs" />
     <Compile Include="FileDataCachePopulationServiceTests.cs" />
     <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="InternalDataCachePopulationServiceTests.cs" />
@@ -206,6 +205,7 @@
     <Compile Include="Mappers\FcsDataMapperTests.cs" />
     <Compile Include="Mappers\EpaOrgDataMapperTests.cs" />
     <Compile Include="Mappers\OrganisationsDataMapperTests.cs" />
+    <Compile Include="Mappers\ValidationErrorsDataMapperTests.cs" />
     <Compile Include="Mappers\PostcodesDataMapperTests.cs" />
     <Compile Include="Mappers\UlnDataMapperTests.cs" />
     <Compile Include="ReferenceDataCachePopulationServiceTests.cs" />
