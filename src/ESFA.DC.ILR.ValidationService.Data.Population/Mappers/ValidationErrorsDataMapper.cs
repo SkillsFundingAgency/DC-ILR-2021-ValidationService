@@ -16,7 +16,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 
         public IReadOnlyDictionary<string, ValidationError> MapValidationErrors(IReadOnlyCollection<ReferenceDataService.Model.MetaData.ValidationError> validationErrors)
         {
-            return validationErrors
+            return validationErrors?
                 .ToDictionary(
                 ve => ve.RuleName,
                 ve => new ValidationError

@@ -13,8 +13,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 
         public IReadOnlyDictionary<long, Organisation> MapOrganisations(IReadOnlyCollection<ReferenceDataService.Model.Organisations.Organisation> organisations)
         {
-            return organisations.
-                ToDictionary(
+            return organisations?
+                .ToDictionary(
                 u => (long)u.UKPRN,
                 o => new Organisation
                 {

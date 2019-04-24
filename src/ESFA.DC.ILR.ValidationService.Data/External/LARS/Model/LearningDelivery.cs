@@ -30,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Model
         /// <summary>
         /// The frameworks
         /// </summary>
-        private IReadOnlyCollection<ILARSFrameworkAim> _frameworks;
+        private IReadOnlyCollection<ILARSFramework> _frameworks;
 
         /// <summary>
         /// Gets or sets the learn aim reference.
@@ -128,9 +128,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Model
         /// <summary>
         /// Gets or sets the framework aims.
         /// </summary>
-        public IReadOnlyCollection<ILARSFrameworkAim> FrameworkAims
+        public IReadOnlyCollection<ILARSFramework> Frameworks
         {
-            get => _frameworks ?? (_frameworks = Collection.EmptyAndReadOnly<ILARSFrameworkAim>());
+            get => _frameworks ?? (_frameworks = Collection.EmptyAndReadOnly<ILARSFramework>());
             set => _frameworks = value;
         }
 
