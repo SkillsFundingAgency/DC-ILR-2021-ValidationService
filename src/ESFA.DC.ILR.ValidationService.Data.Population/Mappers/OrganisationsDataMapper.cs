@@ -2,10 +2,11 @@
 using System.Linq;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Model;
+using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 {
-    public class OrganisationsDataMapper
+    public class OrganisationsDataMapper : IOrganisationsDataMapper
     {
         public OrganisationsDataMapper()
         {
