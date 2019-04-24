@@ -9,16 +9,6 @@
     <Parameter Name="LoggerConnectionstring" Value="__LoggerConnectionString__" />
     <Parameter Name="TopicName" Value="__TopicName__" />
     <Parameter Name="SubscriptionName" Value="__SubscriptionName__" />
-    <Parameter Name="LARSConnectionString" Value="__LARSConnectionString__" />
-    <Parameter Name="OrganisationsConnectionString" Value="__OrganisationsConnectionString_EFCore_RO__" />
-    <Parameter Name="PostcodesConnectionString" Value="__PostcodesConnectionString__" />
-    <Parameter Name="ULNConnectionstring" Value="__ULNConnectionstring__" />
-    <Parameter Name="FCSConnectionString" Value="__FCSDbConnectionString__" />
-    <Parameter Name="EPAConnectionString" Value="__EpaDbConnectionStringRO__" />
-    <Parameter Name="EmployersConnectionString" Value="__EmployersDbConnectionStringRO__" />
-    <Parameter Name="RedisCacheConnectionString" Value="__RedisCacheConnectionString__" />
-    <Parameter Name="LargeEmployersConnectionString" Value="__LargeEmployerDbConnectionString__ " />
-    <Parameter Name="ValidationErrorsConnectionString" Value="__ValidationErrorsConnectionString__" />
     <Parameter Name="ProcessingServicePlacementConstraints" Value="__ProcessingServicePlacementConstraints__" />
     <Parameter Name="ServiceReleaseVersion" Value="__ServiceReleaseVersion__" />
     <Parameter Name="ServiceReleaseDateTime" Value="__ServiceReleaseDateTime__" />
