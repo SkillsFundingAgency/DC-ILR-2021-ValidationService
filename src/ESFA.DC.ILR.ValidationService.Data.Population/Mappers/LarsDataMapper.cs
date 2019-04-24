@@ -20,7 +20,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                 EffectiveTo = ls.EffectiveTo,
                 NotionalEndLevel = ls.NotionalEndLevel,
                 StandardSectorCode = ls.StandardSectorCode,
-                StandardsFunding = ls.LARSStandardFundings.Select(lsf => new Data.External.LARS.Model.LARSStandardFunding
+                StandardsFunding = ls.LARSStandardFundings?
+                .Select(lsf => new Data.External.LARS.Model.LARSStandardFunding
                 {
                     CoreGovContributionCap = lsf.CoreGovContributionCap,
                     EffectiveFrom = lsf.EffectiveFrom,
@@ -32,7 +33,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
         public IReadOnlyCollection<ILARSStandardValidity> MapLarsStandardValidities(IReadOnlyCollection<ReferenceDataService.Model.LARS.LARSStandard> larsStandards)
         {
             return
-                larsStandards?.SelectMany(ls => ls.LARSStandardValidities
+                larsStandards?
+                .Where(ls => ls.LARSStandardValidities != null)
+                .SelectMany(ls => ls.LARSStandardValidities?
                 .Select(lsv => new Data.External.LARS.Model.LARSStandardValidity
                 {
                     StandardCode = ls.StandardCode,
@@ -64,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                     LearnDirectClassSystemCode3 = new LearnDirectClassSystemCode(ld.LearnDirectClassSystemCode3),
                     SectorSubjectAreaTier1 = ld.SectorSubjectAreaTier1,
                     SectorSubjectAreaTier2 = ld.SectorSubjectAreaTier2,
-                    AnnualValues = ld.LARSAnnualValues
+                    AnnualValues = ld.LARSAnnualValues?
                         .Select(av => new AnnualValue()
                         {
                             LearnAimRef = ld.LearnAimRef,
@@ -76,7 +79,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                             EffectiveFrom = av.EffectiveFrom,
                             EffectiveTo = av.EffectiveTo,
                         }).ToList(),
-                    Categories = ld.LARSLearningDeliveryCategories
+                    Categories = ld.LARSLearningDeliveryCategories?
                         .Select(ldc => new LearningDeliveryCategory()
                         {
                             LearnAimRef = ld.LearnAimRef,
@@ -84,7 +87,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                             EffectiveFrom = ldc.EffectiveFrom,
                             EffectiveTo = ldc.EffectiveTo,
                         }).ToList(),
-                    Frameworks = ld.LARSFrameworks.Select(lf => new Framework
+                    Frameworks = ld.LARSFrameworks?
+                    .Select(lf => new Framework
                     {
                         FworkCode = lf.FworkCode,
                         ProgType = lf.ProgType,
@@ -93,11 +97,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                         EffectiveTo = lf.EffectiveTo,
                         FrameworkAim = new FrameworkAim
                         {
+                            FworkCode = lf.FworkCode,
+                            ProgType = lf.ProgType,
+                            PwayCode = lf.PwayCode,
+                            LearnAimRef = ld.LearnAimRef,
                             FrameworkComponentType = lf.LARSFrameworkAim.FrameworkComponentType,
                             EffectiveFrom = lf.LARSFrameworkAim.EffectiveFrom,
                             EffectiveTo = lf.LARSFrameworkAim.EffectiveTo
                         },
-                        FrameworkCommonComponents = lf.LARSFrameworkCommonComponents.Select(lfc => new FrameworkCommonComponent
+                        FrameworkCommonComponents = lf.LARSFrameworkCommonComponents?
+                        .Select(lfc => new FrameworkCommonComponent
                         {
                             FworkCode = lf.FworkCode,
                             ProgType = lf.ProgType,
@@ -107,7 +116,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                             EffectiveTo = lfc.EffectiveTo
                         })
                     }).ToList(),
-                    Validities = ld.LARSValidities
+                    Validities = ld.LARSValidities?
                         .Select(ldc => new LARSValidity
                         {
                             LearnAimRef = ld.LearnAimRef,
