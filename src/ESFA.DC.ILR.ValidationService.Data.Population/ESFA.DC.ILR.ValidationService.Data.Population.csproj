@@ -149,8 +149,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\Interface\IReferenceDataOptions.cs" />
-    <Compile Include="Configuration\ReferenceDataOptions.cs" />
     <Compile Include="Extensions\IQueryableExtensions.cs" />
     <Compile Include="External\ExternalDataCachePopulationService.cs" />
     <Compile Include="FileDataCachePopulationService.cs" />
