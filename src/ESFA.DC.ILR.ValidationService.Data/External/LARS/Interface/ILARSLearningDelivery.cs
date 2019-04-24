@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
         /// <summary>
         /// Gets the framework aims.
         /// </summary>
-        IReadOnlyCollection<ILARSFrameworkAim> FrameworkAims { get; }
+        IReadOnlyCollection<ILARSFramework> Frameworks { get; }
 
         /// <summary>
         /// Gets the annual values.

@@ -15,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 
         public IReadOnlyDictionary<string, IFcsContractAllocation> MapFcsContractAllocations(IReadOnlyCollection<ReferenceDataService.Model.FCS.FcsContractAllocation> fcsContractAllocations)
         {
-            return fcsContractAllocations
+            return fcsContractAllocations?
                 .ToDictionary(
                 ca => ca.ContractAllocationNumber,
                 f => new FcsContractAllocation

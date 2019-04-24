@@ -15,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 
         public IReadOnlyCollection<string> MapPostcodes(IReadOnlyCollection<Postcode> postcodes)
         {
-            return new HashSet<string>(postcodes.Select(p => p.PostCode).ToList(), StringComparer.OrdinalIgnoreCase);
+            return new HashSet<string>(postcodes?.Select(p => p.PostCode).ToList(), StringComparer.OrdinalIgnoreCase);
         }
 
         public IReadOnlyCollection<ONSPostcode> MapONSPostcodes(IReadOnlyCollection<Postcode> postcodes)
@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 
             foreach (var postcode in postcodes.Where(o => o.ONSData != null))
             {
-                onsPostcodes.AddRange(postcode.ONSData.Select(o => new ONSPostcode
+                onsPostcodes.AddRange(postcode?.ONSData?.Select(o => new ONSPostcode
                 {
                     Postcode = postcode.PostCode,
                     EffectiveFrom = o.EffectiveFrom,

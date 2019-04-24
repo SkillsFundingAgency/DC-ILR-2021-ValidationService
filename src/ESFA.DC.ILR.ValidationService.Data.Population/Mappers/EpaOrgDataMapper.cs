@@ -15,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 
         public IReadOnlyDictionary<string, List<EPAOrganisations>> MapEpaOrganisations(IReadOnlyCollection<EPAOrganisation> epaOrganisations)
         {
-            return epaOrganisations
+            return epaOrganisations?
                 .GroupBy(e => e.ID)
                 .ToDictionary(
                 k => k.Key,

@@ -1,11 +1,9 @@
-﻿using ESFA.DC.ILR.ReferenceDataService.Model;
-using ESFA.DC.ILR.ValidationService.Data.Extensions;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.External
 {
@@ -13,13 +11,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
     {
         private readonly IExternalDataCache _externalDataCache;
         private readonly ICache<ReferenceDataRoot> _referenceDataCache;
-        private readonly ILARSStandardDataRetrievalService _larsStandardDataRetrievalService;
-        private readonly ILARSStandardValidityDataRetrievalService _larsStandardValidityDataRetrievalService;
-        private readonly ILARSLearningDeliveryDataRetrievalService _larsLearningDeliveryDataRetrievalService;
-        private readonly ILARSFrameworkDataRetrievalService _larsFrameworkDataRetrievalService;
         private readonly IEmployersDataMapper _employersDataMapper;
         private readonly IEpaOrgDataMapper _epaOrgDataMapper;
         private readonly IFcsDataMapper _fcsDataMapper;
+        private readonly ILarsDataMapper _larsDataMapper;
         private readonly IOrganisationsDataMapper _organisationsDataMapper;
         private readonly IPostcodesDataMapper _postcodesDataMapper;
         private readonly IUlnDataMapper _ulnDataMapper;
@@ -28,13 +23,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
         public ExternalDataCachePopulationService(
             IExternalDataCache externalDataCache,
             ICache<ReferenceDataRoot> referenceDataCache,
-            ILARSStandardDataRetrievalService larsStandardDataRetrievalService,
-            ILARSStandardValidityDataRetrievalService larsStandardValidityDataRetrievalService,
-            ILARSLearningDeliveryDataRetrievalService larsLearningDeliveryDataRetrievalService,
-            ILARSFrameworkDataRetrievalService larsFrameworkDataRetrievalService,
             IEmployersDataMapper employersDataMapper,
             IEpaOrgDataMapper epaOrgDataMapper,
             IFcsDataMapper fcsDataMapper,
+            ILarsDataMapper larsDataMapper,
             IOrganisationsDataMapper organisationsDataMapper,
             IPostcodesDataMapper postcodesDataMapper,
             IUlnDataMapper ulnDataMapper,
@@ -42,13 +34,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
         {
             _externalDataCache = externalDataCache;
             _referenceDataCache = referenceDataCache;
-            _larsStandardDataRetrievalService = larsStandardDataRetrievalService;
-            _larsStandardValidityDataRetrievalService = larsStandardValidityDataRetrievalService;
-            _larsLearningDeliveryDataRetrievalService = larsLearningDeliveryDataRetrievalService;
-            _larsFrameworkDataRetrievalService = larsFrameworkDataRetrievalService;
             _employersDataMapper = employersDataMapper;
             _epaOrgDataMapper = epaOrgDataMapper;
             _fcsDataMapper = fcsDataMapper;
+            _larsDataMapper = larsDataMapper;
             _organisationsDataMapper = organisationsDataMapper;
             _postcodesDataMapper = postcodesDataMapper;
             _ulnDataMapper = ulnDataMapper;
@@ -60,10 +49,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
             var externalDataCache = (ExternalDataCache)_externalDataCache;
             var referenceDataCache = _referenceDataCache.Item;
 
-            externalDataCache.Standards = await _larsStandardDataRetrievalService.RetrieveAsync(cancellationToken);
-            externalDataCache.StandardValidities = await _larsStandardValidityDataRetrievalService.RetrieveAsync(cancellationToken);
-            externalDataCache.LearningDeliveries = await _larsLearningDeliveryDataRetrievalService.RetrieveAsync(cancellationToken);
-            externalDataCache.Frameworks = await _larsFrameworkDataRetrievalService.RetrieveAsync(cancellationToken);
+            externalDataCache.Standards = _larsDataMapper.MapLarsStandards(referenceDataCache.LARSStandards);
+            externalDataCache.StandardValidities = _larsDataMapper.MapLarsStandardValidities(referenceDataCache.LARSStandards);
+            externalDataCache.LearningDeliveries = _larsDataMapper.MapLarsLearningDeliveries(referenceDataCache.LARSLearningDeliveries);
 
             externalDataCache.ULNs = _ulnDataMapper.MapUlns(referenceDataCache.ULNs);
 
@@ -79,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.External
 
             externalDataCache.ERNs = _employersDataMapper.MapEmployers(referenceDataCache.Employers);
 
-            externalDataCache.ValidationErrors = _validationErrorsDataMapper.MapValidationErrors(referenceDataCache.MetaDatas.ValidationErrors);
+            externalDataCache.ValidationErrors = _validationErrorsDataMapper.MapValidationErrors(referenceDataCache.MetaDatas?.ValidationErrors);
         }
     }
 }

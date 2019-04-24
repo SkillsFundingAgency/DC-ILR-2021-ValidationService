@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 
-namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
+namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Model
 {
     public class LARSStandardFunding : ILARSStandardFunding
     {

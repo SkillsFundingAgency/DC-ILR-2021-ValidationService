@@ -9,11 +9,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<ExternalDataCachePopulationService>().As<IExternalDataCachePopulationService>().InstancePerLifetimeScope();
-
-            builder.RegisterType<LARSStandardDataRetrievalService>().As<ILARSStandardDataRetrievalService>().InstancePerLifetimeScope();
-            builder.RegisterType<LARSStandardValidityDataRetrievalService>().As<ILARSStandardValidityDataRetrievalService>().InstancePerLifetimeScope();
-            builder.RegisterType<LARSLearningDeliveryDataRetrievalService>().As<ILARSLearningDeliveryDataRetrievalService>().InstancePerLifetimeScope();
-            builder.RegisterType<LARSFrameworkDataRetrievalService>().As<ILARSFrameworkDataRetrievalService>().InstancePerLifetimeScope();
         }
     }
 }
