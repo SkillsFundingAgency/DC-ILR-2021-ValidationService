@@ -6,7 +6,7 @@
     <Parameter Name="AuditQueueName" DefaultValue="audit-queue" />
     <Parameter Name="TopicName" DefaultValue="TopicName" />
     <Parameter Name="SubscriptionName" DefaultValue="" />
-    <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
+    <Parameter Name="ServiceBusConnectionSconnectiontring" DefaultValue="" />
     <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
     <Parameter Name="LoggerConnectionstring" DefaultValue="Server=localhost;Database=logs;User Id=loguser;" />
     <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
@@ -15,7 +15,6 @@
     <Parameter Name="ValidationActorService_MinReplicaSetSize" DefaultValue="1" />
     <Parameter Name="ValidationActorService_TargetReplicaSetSize" DefaultValue="1" />
     <Parameter Name="ProcessingServicePlacementConstraints" DefaultValue="" />
-    <Parameter Name="OrganisationsConnectionString" DefaultValue="" />
     <Parameter Name="ValidationDPActorService_PartitionCount" DefaultValue="100" />
     <Parameter Name="ValidationDPActorService_MinReplicaSetSize" DefaultValue="1" />
     <Parameter Name="ValidationDPActorService_TargetReplicaSetSize" DefaultValue="1" />
