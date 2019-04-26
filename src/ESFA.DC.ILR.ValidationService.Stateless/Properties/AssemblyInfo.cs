@@ -38,4 +38,4 @@ using Microsoft.ServiceFabric.Services.Remoting.FabricTransport;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: FabricTransportServiceRemotingProvider(MaxMessageSize = 5368709120, RemotingListener = RemotingListener.V2Listener, RemotingClient = RemotingClient.V2Client)]
+[assembly: FabricTransportServiceRemotingProvider(MaxMessageSize = 5368709120, RemotingListenerVersion = RemotingListenerVersion.V2, RemotingClientVersion = RemotingClientVersion.V2)]

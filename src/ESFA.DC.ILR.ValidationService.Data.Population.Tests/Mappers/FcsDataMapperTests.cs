@@ -146,6 +146,18 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         }
                     }
                 },
+                {
+                    "ConRef3",
+                    new FcsContractAllocation
+                    {
+                        ContractAllocationNumber = "ConRef3",
+                        DeliveryUKPRN = 1,
+                        StartDate = new DateTime(2018, 8, 1),
+                        FundingStreamPeriodCode = "FundingStreamPeriodCode",
+                        TenderSpecReference = "TenderSpecReference",
+                        LotReference = "LotReference"
+                    }
+                }
             };
 
             NewMapper().MapFcsContractAllocations(fcsContractAllocations).Should().BeEquivalentTo(expectedFcsContractAllocations);
@@ -260,6 +272,15 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                             }
                         }
                     }
+                },
+                new ReferenceDataService.Model.FCS.FcsContractAllocation
+                {
+                    ContractAllocationNumber = "ConRef3",
+                    DeliveryUKPRN = 1,
+                    StartDate = new DateTime(2018, 8, 1),
+                    FundingStreamPeriodCode = "FundingStreamPeriodCode",
+                    TenderSpecReference = "TenderSpecReference",
+                    LotReference = "LotReference"
                 }
             };
         }

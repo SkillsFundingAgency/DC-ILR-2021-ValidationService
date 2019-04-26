@@ -4,7 +4,6 @@ using ESFA.DC.FileService;
 using ESFA.DC.FileService.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population;
-using ESFA.DC.ILR.ValidationService.Data.Population.External;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using ESFA.DC.IO.Dictionary;
 using ESFA.DC.IO.Interfaces;
