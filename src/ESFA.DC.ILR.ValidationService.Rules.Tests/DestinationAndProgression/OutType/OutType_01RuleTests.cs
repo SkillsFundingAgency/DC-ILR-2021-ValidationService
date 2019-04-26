@@ -57,7 +57,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
 
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
-            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutTypedCode, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(false);
+            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutType, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(false);
 
             NewRule(lookupsMock.Object).OutCodeConditionMet(dpOutcome).Should().BeTrue();
         }
@@ -73,7 +73,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
 
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
-            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutTypedCode, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(true);
+            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutType, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(true);
 
             NewRule(lookupsMock.Object).OutCodeConditionMet(dpOutcome).Should().BeFalse();
         }
@@ -91,7 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
 
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
-            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutTypedCode, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(false);
+            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutType, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(false);
 
             NewRule(lookupsMock.Object).ConditionMet(dpOutcome).Should().BeTrue();
         }
@@ -109,7 +109,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
 
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
-            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutTypedCode, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(true);
+            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutType, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(true);
 
             NewRule(lookupsMock.Object).ConditionMet(dpOutcome).Should().BeFalse();
         }
@@ -135,7 +135,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
 
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
-            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutTypedCode, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(false);
+            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutType, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
@@ -164,7 +164,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
 
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
-            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutTypedCode, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(true);
+            lookupsMock.Setup(ds => ds.Contains(TypeOfLimitedLifeLookup.OutType, $"{dpOutcome.OutType}{dpOutcome.OutCode}")).Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {

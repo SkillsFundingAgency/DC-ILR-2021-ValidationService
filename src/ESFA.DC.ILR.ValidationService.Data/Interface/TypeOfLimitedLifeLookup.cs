@@ -14,7 +14,7 @@
         /// <summary>
         /// employment status monitor (typed code)
         /// </summary>
-        EmploymentStatusMonitoring,
+        ESMType,
 
         /// <summary>
         /// funding completion (code)
@@ -34,7 +34,7 @@
         /// <summary>
         /// Outcome Type
         /// </summary>
-        OutTypedCode,
+        OutType,
 
         /// <summary>
         /// highest qualification on entry

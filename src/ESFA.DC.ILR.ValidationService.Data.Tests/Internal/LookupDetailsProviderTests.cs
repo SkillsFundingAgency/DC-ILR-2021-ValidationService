@@ -73,7 +73,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
             var sut = NewService();
 
             // act
-            var result = sut.Contains(TypeOfIntegerCodedLookup.FINTYPE, candidate);
+            var result = sut.Contains(TypeOfIntegerCodedLookup.AimType, candidate);
 
             // assert
             Assert.Equal(expectation, result);
@@ -87,7 +87,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
         [Theory]
         [InlineData("TNP", true)]
         [InlineData("AMP", false)]
-        [InlineData("ME", true)]
+        [InlineData("PMR", true)]
         [InlineData("UOY", false)]
         public void ProviderContainsCodedValueMatchesExpectation(string candidate, bool expectation)
         {
@@ -95,7 +95,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
             var sut = NewService();
 
             // act
-            var result = sut.Contains(TypeOfStringCodedLookup.AppFinRecord, candidate);
+            var result = sut.Contains(TypeOfStringCodedLookup.AppFinType, candidate);
 
             // assert
             Assert.Equal(expectation, result);
@@ -143,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
             var sut = NewService();
 
             // act
-            var result = sut.Contains(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, $"{keyCandidate}{valueCandidate}");
+            var result = sut.Contains(TypeOfStringCodedLookup.AppFinType, $"{keyCandidate}{valueCandidate}");
 
             // assert
             Assert.Equal(expectation, result);
@@ -155,10 +155,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
         /// <returns>a <seealso cref="LookupDetailsProvider"/></returns>
         public LookupDetailsProvider NewService()
         {
-            var cacheFactory = new Mock<ICreateInternalDataCache>();
-            var cache = new InternalDataCache();
-            var finTypes = new DistinctKeySet<int> { 1, 2, 4, 5, 6, 9, 24, 25, 29, 45 };
-            var codedTypes = new CaseInsensitiveDistinctKeySet { "TNP", "PMR", "AEC", "UI", "OT", "ME", "YOU" };
+            var aimTypes = new DistinctKeySet<int> { 1, 2, 4, 5, 6, 9, 24, 25, 29, 45 };
 
             var tTAccomItems = new Dictionary<string, ValidityPeriods>()
             {
@@ -170,26 +167,26 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
                 ["9"] = new ValidityPeriods(DateTime.Parse("2000-02-01"), DateTime.Parse("2008-08-26")),
             };
 
-            var qualent3s = new Dictionary<string, ValidityPeriods>()
+            var apprenticeshipFinancialRecords = new CaseInsensitiveDistinctKeySet { "PMR", "TNP" };
+
+            var cache = new InternalDataCache
             {
-                ["C20"] = new ValidityPeriods(DateTime.MinValue, DateTime.MaxValue),
-                ["P69"] = new ValidityPeriods(DateTime.MinValue, DateTime.Parse("2013-07-31")),
-                ["P70"] = new ValidityPeriods(DateTime.MinValue, DateTime.Parse("2013-07-31"))
+                IntegerLookups = new Dictionary<TypeOfIntegerCodedLookup, IReadOnlyCollection<int>>
+                {
+                    { TypeOfIntegerCodedLookup.AimType, aimTypes }
+                },
+                StringLookups = new Dictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>>
+                {
+                    { TypeOfStringCodedLookup.AppFinType, apprenticeshipFinancialRecords }
+                },
+                LimitedLifeLookups = new Dictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>>
+                {
+                    { TypeOfLimitedLifeLookup.TTAccom, tTAccomItems }
+                },
+                ListItemLookups = new Dictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>>()
             };
 
-            var apprenticeshipFinancialRecords = new CaseInsensitiveDistinctKeySet { "TNP1", "TNP2", "TNP3", "TNP4", "PMR1", "PMR2", "PMR3" };
-
-            cache.IntegerLookups.Add(TypeOfIntegerCodedLookup.FINTYPE, finTypes);
-            cache.StringLookups.Add(TypeOfStringCodedLookup.AppFinRecord, codedTypes);
-            cache.StringLookups.Add(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, apprenticeshipFinancialRecords);
-            cache.LimitedLifeLookups.Add(TypeOfLimitedLifeLookup.TTAccom, tTAccomItems);
-            cache.LimitedLifeLookups.Add(TypeOfLimitedLifeLookup.QualEnt3, qualent3s);
-
-            cacheFactory
-                .Setup(c => c.Create())
-                .Returns(cache);
-
-            return new LookupDetailsProvider(cacheFactory.Object);
+            return new LookupDetailsProvider(cache);
         }
     }
 }

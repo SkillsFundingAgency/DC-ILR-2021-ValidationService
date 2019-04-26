@@ -11,7 +11,6 @@ using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Population.External;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using Moq;
 using Xunit;

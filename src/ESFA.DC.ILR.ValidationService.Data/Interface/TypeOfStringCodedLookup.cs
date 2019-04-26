@@ -6,7 +6,7 @@
     /// </summary>
     public enum TypeOfStringCodedLookup
     {
-        AppFinRecord,
+        AppFinType,
         ContPrefType,
         Domicile,
         GCSEGrade,

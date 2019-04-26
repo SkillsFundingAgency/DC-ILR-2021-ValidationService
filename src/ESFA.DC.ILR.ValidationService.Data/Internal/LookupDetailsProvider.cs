@@ -1,39 +1,18 @@
-﻿using ESFA.DC.ILR.ValidationService.Data.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.ValidationService.Data.Interface;
+using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Data
 {
-    /// <summary>
-    /// the lookup details provider
-    /// </summary>
-    /// <seealso cref="IProvideLookupDetails" />
-    public sealed class LookupDetailsProvider :
-        IProvideLookupDetails
+    public sealed class LookupDetailsProvider : IProvideLookupDetails
     {
-        private readonly ICreateInternalDataCache _cacheFactory;
         private IInternalDataCache _internalCache;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LookupDetailsProvider " /> class.
-        /// </summary>
-        /// <param name="cacheFactory">The cache factory.</param>
-        public LookupDetailsProvider(ICreateInternalDataCache cacheFactory)
+        public LookupDetailsProvider(IInternalDataCache internalCache)
         {
-            _cacheFactory = cacheFactory;
-        }
-
-        /// <summary>
-        /// Gets the internal cache.
-        /// </summary>
-        public IInternalDataCache InternalCache
-        {
-            get
-            {
-                return _internalCache
-                    ?? (_internalCache = _cacheFactory.Create());
-            }
+            _internalCache = internalCache;
         }
 
         /// <summary>
@@ -48,10 +27,10 @@ namespace ESFA.DC.ILR.ValidationService.Data
         public bool IsBetween(DateTime fromDate, DateTime toDate, DateTime candidate) => (candidate >= fromDate) && (candidate <= toDate);
 
         public IReadOnlyCollection<int> Get(TypeOfIntegerCodedLookup lookupKey) =>
-            InternalCache.IntegerLookups[lookupKey];
+            _internalCache.IntegerLookups[lookupKey];
 
         public IReadOnlyCollection<string> Get(TypeOfStringCodedLookup lookupKey) =>
-            InternalCache.StringLookups[lookupKey];
+            _internalCache.StringLookups[lookupKey];
 
         /// <summary>
         /// Determines whether [the specified lookup key] [contains] the value.
@@ -63,7 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Data
         /// </returns>
         public bool Contains(TypeOfIntegerCodedLookup lookupKey, int candidate)
         {
-            return InternalCache.IntegerLookups[lookupKey].Contains(candidate);
+            return _internalCache.IntegerLookups[lookupKey].Contains(candidate);
         }
 
         /// <summary>
@@ -77,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Data
         public bool Contains(TypeOfStringCodedLookup lookupKey, string candidate)
         {
             return It.Has(candidate)
-                && InternalCache.StringLookups[lookupKey].Contains(candidate);
+                && _internalCache.StringLookups[lookupKey].Contains(candidate);
         }
 
         /// <summary>
@@ -104,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Data
         public bool Contains(TypeOfLimitedLifeLookup lookupKey, string keyCandidate)
         {
             return It.Has(keyCandidate)
-                && InternalCache.LimitedLifeLookups[lookupKey].ContainsKey(keyCandidate);
+                && _internalCache.LimitedLifeLookups[lookupKey].ContainsKey(keyCandidate);
         }
 
         /// <summary>
@@ -119,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Data
         public bool Contains(TypeOfListItemLookup lookupKey, string keyCandidate, string valueCandidate)
         {
             return !string.IsNullOrEmpty(keyCandidate)
-                && InternalCache.ListItemLookups[lookupKey].TryGetValue(keyCandidate, out var value)
+                && _internalCache.ListItemLookups[lookupKey].TryGetValue(keyCandidate, out var value)
                 && value.Contains(valueCandidate);
         }
 
@@ -149,7 +128,7 @@ namespace ESFA.DC.ILR.ValidationService.Data
         public bool IsCurrent(TypeOfLimitedLifeLookup lookupKey, string candidate, DateTime referenceDate)
         {
             return Contains(lookupKey, candidate)
-                && InternalCache.LimitedLifeLookups[lookupKey].TryGetValue(candidate, out var value)
+                && _internalCache.LimitedLifeLookups[lookupKey].TryGetValue(candidate, out var value)
                 && IsBetween(value.ValidFrom, value.ValidTo, referenceDate);
         }
 
@@ -166,7 +145,7 @@ namespace ESFA.DC.ILR.ValidationService.Data
         public bool IsVaguelyCurrent(TypeOfLimitedLifeLookup lookupKey, string candidate, DateTime referenceDate)
         {
             return Contains(lookupKey, candidate)
-                && InternalCache.LimitedLifeLookups[lookupKey].TryGetValue(candidate, out var value)
+                && _internalCache.LimitedLifeLookups[lookupKey].TryGetValue(candidate, out var value)
                 && IsBetween(DateTime.MinValue, value.ValidTo, referenceDate);
         }
     }

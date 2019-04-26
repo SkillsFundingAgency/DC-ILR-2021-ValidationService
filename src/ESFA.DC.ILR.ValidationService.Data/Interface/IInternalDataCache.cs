@@ -1,7 +1,6 @@
-﻿using ESFA.DC.ILR.ValidationService.Data.Internal.Model;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System.Collections.Generic;
-using IAcademicYear = ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface.IAcademicYear;
+﻿using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Internal.Model;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Interface
 {
@@ -12,12 +11,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.Interface
         /// <summary>
         /// Gets the simple lookups.
         /// </summary>
-        IDictionary<TypeOfIntegerCodedLookup, IContainThis<int>> IntegerLookups { get; }
+        IDictionary<TypeOfIntegerCodedLookup, IReadOnlyCollection<int>> IntegerLookups { get; }
 
         /// <summary>
         /// Gets the coded lookups.
         /// </summary>
-        IDictionary<TypeOfStringCodedLookup, IContainThis<string>> StringLookups { get; }
+        IDictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>> StringLookups { get; }
 
         /// <summary>
         /// Gets the time restricted lookups.
@@ -27,6 +26,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Interface
         /// <summary>
         /// Gets the list item lookups.
         /// </summary>
-        IDictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IContainThis<string>>> ListItemLookups { get; }
+        IDictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> ListItemLookups { get; }
     }
 }

@@ -11,13 +11,10 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Console
         {
             builder.RegisterType<PreValidationPopulationService>().As<IPopulationService>().InstancePerLifetimeScope();
 
-            builder.RegisterType<InternalDataCachePopulationService>().As<IInternalDataCachePopulationService>().InstancePerLifetimeScope();
-            builder.RegisterType<InternalDataCachePopulationService>().As<ICreateInternalDataCache>().InstancePerLifetimeScope();
-
+            builder.RegisterType<InternalDataCachePopulationService>().As<IInternalDataCache>().InstancePerLifetimeScope();
+            builder.RegisterType<ExternalDataCachePopulationService>().As<IExternalDataCachePopulationService>().InstancePerLifetimeScope();
             builder.RegisterType<FileDataCachePopulationService>().As<IFileDataCachePopulationService>().InstancePerLifetimeScope();
             builder.RegisterType<MessageCachePopulationService>().As<IMessageCachePopulationService>().InstancePerLifetimeScope();
-
-            builder.RegisterModule<ExternalDataCachePopulationServiceModule>();
         }
     }
 }

@@ -193,6 +193,7 @@
     <Compile Include="IEnumerableExtensions.cs" />
     <Compile Include="InternalDataCachePopulationServiceTests.cs" />
     <Compile Include="IQueryableExtensionsTests.cs" />
+    <Compile Include="Mappers\LookupsDataMapperTests.cs" />
     <Compile Include="Mappers\EmployersDataMapperTests.cs" />
     <Compile Include="Mappers\FcsDataMapperTests.cs" />
     <Compile Include="Mappers\EpaOrgDataMapperTests.cs" />
