@@ -4,6 +4,8 @@ using System.Threading;
 using Autofac;
 using Autofac.Integration.ServiceFabric;
 using ESFA.DC.Auditing.Interface;
+using ESFA.DC.FileService.Config;
+using ESFA.DC.ILR.ReferenceDataService.Modules;
 using ESFA.DC.ILR.ValidationService.Interface.Enum;
 using ESFA.DC.ILR.ValidationService.Modules;
 using ESFA.DC.ILR.ValidationService.Modules.Stateless;
@@ -24,6 +26,7 @@ using ESFA.DC.Mapping.Interface;
 using ESFA.DC.Queueing;
 using ESFA.DC.Queueing.Interface;
 using ESFA.DC.Serialization.Interfaces;
+using ESFA.DC.ServiceFabric.Common.Config;
 using ESFA.DC.ServiceFabric.Helpers;
 
 namespace ESFA.DC.ILR.ValidationService.Stateless
@@ -178,6 +181,12 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             containerBuilder.RegisterType<JobContextMessage>().As<IJobContextMessage>().InstancePerLifetimeScope();
 
             Console.WriteLine($"BuildContainer:20");
+            var serviceFabricConfigurationService = new ServiceFabricConfigurationService();
+
+            var azureStorageFileServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<AzureStorageFileServiceConfiguration>("AzureStorageFileServiceConfiguration");
+            var ioConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<IOConfiguration>("IOConfiguration");
+
+            containerBuilder.RegisterModule(new IOModule(azureStorageFileServiceConfiguration, ioConfiguration));
 
             return containerBuilder;
         }

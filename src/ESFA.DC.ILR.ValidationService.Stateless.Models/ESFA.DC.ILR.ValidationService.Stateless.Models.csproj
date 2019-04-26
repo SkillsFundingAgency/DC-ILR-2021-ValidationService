@@ -52,8 +52,8 @@
     <CodeAnalysisRuleSet>ESFA.DC.ILR.ValidationService.Stateless.Models.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.4-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.5-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.IO.AzureStorage, Version=0.1.14.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.IO.AzureStorage.0.1.14-beta0001\lib\netstandard2.0\ESFA.DC.IO.AzureStorage.dll</HintPath>

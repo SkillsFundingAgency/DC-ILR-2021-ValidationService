@@ -6,7 +6,7 @@
     <Parameter Name="AuditQueueName" DefaultValue="audit-queue" />
     <Parameter Name="TopicName" DefaultValue="TopicName" />
     <Parameter Name="SubscriptionName" DefaultValue="" />
-    <Parameter Name="ServiceBusConnectionSconnectiontring" DefaultValue="" />
+    <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
     <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
     <Parameter Name="LoggerConnectionstring" DefaultValue="Server=localhost;Database=logs;User Id=loguser;" />
     <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
@@ -76,9 +76,16 @@
             <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
             <Parameter Name="AzureBlobContainerName" Value="[AzureBlobContainerName]" />
           </Section>
+          <Section Name="AzureStorageFileServiceConfiguration">
+            <Parameter Name="ConnectionString" Value="[AzureBlobConnectionString]" />
+          </Section>
+          <Section Name="IOConfiguration">
+            <Parameter Name="ConnectionString" Value="[AzureBlobConnectionString]" />
+            <Parameter Name="ContainerName" Value="[AzureBlobContainerName]" />
+          </Section>
           <Section Name="VersionSection">
             <Parameter Name="ServiceReleaseVersion" Value="[ServiceReleaseVersion]" />
-            <Parameter Name="ServiceReleaseDateTime" Value="[ServiceReleaseDateTime]"/>
+            <Parameter Name="ServiceReleaseDateTime" Value="[ServiceReleaseDateTime]" />
           </Section>
         </Settings>
       </ConfigOverride>

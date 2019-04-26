@@ -95,16 +95,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                         PwayCode = lf.PwayCode,
                         EffectiveFrom = lf.EffectiveFromNullable,
                         EffectiveTo = lf.EffectiveTo,
-                        FrameworkAim = new FrameworkAim
-                        {
-                            FworkCode = lf.FworkCode,
-                            ProgType = lf.ProgType,
-                            PwayCode = lf.PwayCode,
-                            LearnAimRef = ld.LearnAimRef,
-                            FrameworkComponentType = lf.LARSFrameworkAim.FrameworkComponentType,
-                            EffectiveFrom = lf.LARSFrameworkAim.EffectiveFrom,
-                            EffectiveTo = lf.LARSFrameworkAim.EffectiveTo
-                        },
+                        FrameworkAim = FrameworkAimFromEntity(lf, ld.LearnAimRef),
                         FrameworkCommonComponents = lf.LARSFrameworkCommonComponents?
                         .Select(lfc => new FrameworkCommonComponent
                         {
@@ -114,7 +105,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                             CommonComponent = lfc.CommonComponent,
                             EffectiveFrom = lfc.EffectiveFrom,
                             EffectiveTo = lfc.EffectiveTo
-                        })
+                        }).ToList()
                     }).ToList(),
                     Validities = ld.LARSValidities?
                         .Select(ldc => new LARSValidity
@@ -126,6 +117,25 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                             LastNewStartDate = ldc.LastNewStartDate
                         }).ToList()
                 }, StringComparer.OrdinalIgnoreCase);
+        }
+
+        private FrameworkAim FrameworkAimFromEntity(LARSFramework larsFramework, string learnAimRef)
+        {
+            if (larsFramework.LARSFrameworkAim == null)
+            {
+                return null;
+            }
+
+            return new FrameworkAim
+            {
+                FworkCode = larsFramework.FworkCode,
+                ProgType = larsFramework.ProgType,
+                PwayCode = larsFramework.PwayCode,
+                LearnAimRef = learnAimRef,
+                FrameworkComponentType = larsFramework.LARSFrameworkAim.FrameworkComponentType,
+                EffectiveFrom = larsFramework.LARSFrameworkAim.EffectiveFrom,
+                EffectiveTo = larsFramework.LARSFrameworkAim.EffectiveTo
+            };
         }
     }
 }

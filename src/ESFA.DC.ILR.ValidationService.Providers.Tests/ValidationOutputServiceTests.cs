@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.FileService.Interface;
 using ESFA.DC.ILR.IO.Model.Validation;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
@@ -122,6 +125,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
             var invalidLearnRefNumbersKey = "Invalid Learn Ref Numbers Key";
             var validationErrorsKey = "Validation Errors Key";
             var validationErrorMessageLookupsKey = "Validation Error Message Lookups Key";
+            var container = "Container";
 
             IEnumerable<string> validLearnerRefNumbers = new List<string>() { "a", "b", "c" };
             IEnumerable<string> invalidLearnerRefNumbers = new List<string>() { "d", "e", "f" };
@@ -130,7 +134,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
 
             var serializationServiceMock = new Mock<IJsonSerializationService>();
             var preValidationContextMock = new Mock<IPreValidationContext>();
-            var keyValuePersistenceServiceMock = new Mock<IKeyValuePersistenceService>();
+            var fileServiceMock = new Mock<IFileService>();
 
             serializationServiceMock.Setup(s => s.Serialize(validLearnerRefNumbers)).Returns(serializedValidLearners);
             serializationServiceMock.Setup(s => s.Serialize(invalidLearnerRefNumbers)).Returns(serializedInvalidLearners);
@@ -141,26 +145,32 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
             preValidationContextMock.SetupGet(c => c.InvalidLearnRefNumbersKey).Returns(invalidLearnRefNumbersKey);
             preValidationContextMock.SetupGet(c => c.ValidationErrorsKey).Returns(validationErrorsKey);
             preValidationContextMock.SetupGet(c => c.ValidationErrorMessageLookupKey).Returns(validationErrorMessageLookupsKey);
+            preValidationContextMock.SetupGet(c => c.Container).Returns(container);
 
-            keyValuePersistenceServiceMock.Setup(ps => ps.SaveAsync(validLearnRefNumbersKey, serializedValidLearners, default(CancellationToken))).Returns(Task.CompletedTask).Verifiable();
-            keyValuePersistenceServiceMock.Setup(ps => ps.SaveAsync(invalidLearnRefNumbersKey, serializedInvalidLearners, default(CancellationToken))).Returns(Task.CompletedTask).Verifiable();
-            keyValuePersistenceServiceMock.Setup(ps => ps.SaveAsync(validationErrorsKey, serializedValidationErrors, default(CancellationToken))).Returns(Task.CompletedTask).Verifiable();
-            keyValuePersistenceServiceMock.Setup(ps => ps.SaveAsync(validationErrorMessageLookupsKey, serializedValidationErrorMessageLookups, default(CancellationToken))).Returns(Task.CompletedTask).Verifiable();
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes("Stream")))
+            {
+                fileServiceMock.Setup(s => s.OpenWriteStreamAsync(validLearnRefNumbersKey, container, default(CancellationToken))).ReturnsAsync(stream).Verifiable();
+                fileServiceMock.Setup(s => s.OpenWriteStreamAsync(invalidLearnRefNumbersKey, container, default(CancellationToken))).ReturnsAsync(stream).Verifiable();
+                fileServiceMock.Setup(s => s.OpenWriteStreamAsync(validationErrorsKey, container, default(CancellationToken))).ReturnsAsync(stream).Verifiable();
+                fileServiceMock.Setup(s => s.OpenWriteStreamAsync(validationErrorMessageLookupsKey, container, default(CancellationToken))).ReturnsAsync(stream).Verifiable();
 
-            var service = NewService(
-                keyValuePersistenceService: keyValuePersistenceServiceMock.Object,
-                preValidationContext: preValidationContextMock.Object,
-                jsonSerializationService: serializationServiceMock.Object);
+                var service = NewService(
+                    fileService: fileServiceMock.Object,
+                    preValidationContext: preValidationContextMock.Object,
+                    jsonSerializationService: serializationServiceMock.Object);
 
-            await service.SaveAsync(validLearnerRefNumbers, invalidLearnerRefNumbers, validationErrors, validationErrorMessageLookups, CancellationToken.None);
+                await service.SaveAsync(validLearnerRefNumbers, invalidLearnerRefNumbers, validationErrors, validationErrorMessageLookups, CancellationToken.None);
 
-            keyValuePersistenceServiceMock.VerifyAll();
+                fileServiceMock.VerifyAll();
+            }
+
+         
         }
 
         private ValidationOutputService NewService(
             IValidationErrorCache<IValidationError> validationErrorCache = null,
             ICache<IMessage> messageCache = null,
-            IKeyValuePersistenceService keyValuePersistenceService = null,
+            IFileService fileService = null,
             IPreValidationContext preValidationContext = null,
             IJsonSerializationService jsonSerializationService = null,
             IValidationErrorsDataService validationErrorsDataService = null
@@ -169,7 +179,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
             return new ValidationOutputService(
                 validationErrorCache,
                 messageCache,
-                keyValuePersistenceService,
+                fileService,
                 preValidationContext,
                 jsonSerializationService,
                 validationErrorsDataService,
