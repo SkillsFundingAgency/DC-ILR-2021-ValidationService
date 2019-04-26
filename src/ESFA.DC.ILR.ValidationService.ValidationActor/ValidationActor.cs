@@ -105,7 +105,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                     EPAOrganisations = externalDataCacheGet.EPAOrganisations.ToCaseInsensitiveDictionary(),
                     ERNs = externalDataCacheGet.ERNs,
                     FCSContractAllocations = externalDataCacheGet.FCSContractAllocations,
-                    Frameworks = externalDataCacheGet.Frameworks,
                     Organisations = externalDataCacheGet.Organisations,
                     Postcodes = externalDataCacheGet.Postcodes.ToCaseInsensitiveHashSet(),
                     ONSPostcodes = externalDataCacheGet.ONSPostcodes,

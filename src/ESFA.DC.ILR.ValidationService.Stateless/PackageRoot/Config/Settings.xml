@@ -24,20 +24,13 @@
     <Parameter Name="AzureBlobContainerName" Value="" />
   </Section>
   
-  <Section  Name="ReferenceDataSection">
-    <Parameter Name="LARSConnectionString" Value="" />
-    <Parameter Name="LargeEmployersConnectionString" Value="" />
-    <Parameter Name="PostcodesConnectionString" Value="" />
-    <Parameter Name="ULNConnectionstring" Value="" />
-    <Parameter Name="ValidationErrorsConnectionString" Value="" />
-    <Parameter Name="OrganisationsConnectionString" Value="" />
-    <Parameter Name="FCSConnectionString" Value="" />
-    <Parameter Name="EPAConnectionString" Value="" />
-    <Parameter Name="EmployersConnectionString" Value=""/>
+  <Section Name="AzureStorageFileServiceConfiguration">
+    <Parameter Name="ConnectionString" Value="" />
   </Section>
-
-  <Section  Name="AzureRedisSection">
-    <Parameter Name="RedisCacheConnectionString" Value="" />
+  
+  <Section Name="IOConfiguration">
+    <Parameter Name="ConnectionString" Value="" />
+    <Parameter Name="ContainerName" Value="" />
   </Section>
 
   <Section Name="DataTransportSettings">

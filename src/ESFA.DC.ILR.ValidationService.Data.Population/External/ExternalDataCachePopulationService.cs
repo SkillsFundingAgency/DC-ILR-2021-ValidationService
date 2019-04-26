@@ -1,78 +1,73 @@
-﻿using ESFA.DC.ILR.ValidationService.Data.Extensions;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.External
 {
     public class ExternalDataCachePopulationService : IExternalDataCachePopulationService
     {
         private readonly IExternalDataCache _externalDataCache;
-        private readonly ILARSStandardDataRetrievalService _larsStandardDataRetrievalService;
-        private readonly ILARSStandardValidityDataRetrievalService _larsStandardValidityDataRetrievalService;
-        private readonly ILARSLearningDeliveryDataRetrievalService _larsLearningDeliveryDataRetrievalService;
-        private readonly ILARSFrameworkDataRetrievalService _larsFrameworkDataRetrievalService;
-        private readonly IULNDataRetrievalService _ulnDataRetrievalService;
-        private readonly IPostcodesDataRetrievalService _postcodesDataRetrievalService;
-        private readonly IOrganisationsDataRetrievalService _organisationsDataRetrievalService;
-        private readonly IEPAOrganisationsDataRetrievalService _epaOrganisationsDataRetrievalService;
-        private readonly ICampusIdentifierDataRetrievalService _campusIdentifierDataRetrievalService;
-        private readonly IFCSDataRetrievalService _fcsDataRetrievalService;
-        private readonly IEmployersDataRetrievalService _employersDataRetrievalService;
+        private readonly ICache<ReferenceDataRoot> _referenceDataCache;
+        private readonly IEmployersDataMapper _employersDataMapper;
+        private readonly IEpaOrgDataMapper _epaOrgDataMapper;
+        private readonly IFcsDataMapper _fcsDataMapper;
+        private readonly ILarsDataMapper _larsDataMapper;
+        private readonly IOrganisationsDataMapper _organisationsDataMapper;
+        private readonly IPostcodesDataMapper _postcodesDataMapper;
+        private readonly IUlnDataMapper _ulnDataMapper;
+        private readonly IValidationErrorsDataMapper _validationErrorsDataMapper;
 
         public ExternalDataCachePopulationService(
             IExternalDataCache externalDataCache,
-            ILARSStandardDataRetrievalService larsStandardDataRetrievalService,
-            ILARSStandardValidityDataRetrievalService larsStandardValidityDataRetrievalService,
-            ILARSLearningDeliveryDataRetrievalService larsLearningDeliveryDataRetrievalService,
-            ILARSFrameworkDataRetrievalService larsFrameworkDataRetrievalService,
-            IULNDataRetrievalService ulnDataRetrievalService,
-            IPostcodesDataRetrievalService postcodesDataRetrievalService,
-            IOrganisationsDataRetrievalService organisationsDataRetrievalService,
-            IEPAOrganisationsDataRetrievalService epaOrganisationsDataRetrievalService,
-            ICampusIdentifierDataRetrievalService campusIdentifierDataRetrievalService,
-            IFCSDataRetrievalService fcsDataRetrievalService,
-            IEmployersDataRetrievalService employersDataRetrievalService)
+            ICache<ReferenceDataRoot> referenceDataCache,
+            IEmployersDataMapper employersDataMapper,
+            IEpaOrgDataMapper epaOrgDataMapper,
+            IFcsDataMapper fcsDataMapper,
+            ILarsDataMapper larsDataMapper,
+            IOrganisationsDataMapper organisationsDataMapper,
+            IPostcodesDataMapper postcodesDataMapper,
+            IUlnDataMapper ulnDataMapper,
+            IValidationErrorsDataMapper validationErrorsDataMapper)
         {
             _externalDataCache = externalDataCache;
-            _larsStandardDataRetrievalService = larsStandardDataRetrievalService;
-            _larsStandardValidityDataRetrievalService = larsStandardValidityDataRetrievalService;
-            _larsLearningDeliveryDataRetrievalService = larsLearningDeliveryDataRetrievalService;
-            _larsFrameworkDataRetrievalService = larsFrameworkDataRetrievalService;
-            _ulnDataRetrievalService = ulnDataRetrievalService;
-            _postcodesDataRetrievalService = postcodesDataRetrievalService;
-            _organisationsDataRetrievalService = organisationsDataRetrievalService;
-            _epaOrganisationsDataRetrievalService = epaOrganisationsDataRetrievalService;
-            _campusIdentifierDataRetrievalService = campusIdentifierDataRetrievalService;
-            _fcsDataRetrievalService = fcsDataRetrievalService;
-            _employersDataRetrievalService = employersDataRetrievalService;
+            _referenceDataCache = referenceDataCache;
+            _employersDataMapper = employersDataMapper;
+            _epaOrgDataMapper = epaOrgDataMapper;
+            _fcsDataMapper = fcsDataMapper;
+            _larsDataMapper = larsDataMapper;
+            _organisationsDataMapper = organisationsDataMapper;
+            _postcodesDataMapper = postcodesDataMapper;
+            _ulnDataMapper = ulnDataMapper;
+            _validationErrorsDataMapper = validationErrorsDataMapper;
         }
 
         public async Task PopulateAsync(CancellationToken cancellationToken)
         {
             var externalDataCache = (ExternalDataCache)_externalDataCache;
+            var referenceDataCache = _referenceDataCache.Item;
 
-            externalDataCache.Standards = await _larsStandardDataRetrievalService.RetrieveAsync(cancellationToken);
-            externalDataCache.StandardValidities = await _larsStandardValidityDataRetrievalService.RetrieveAsync(cancellationToken);
-            externalDataCache.LearningDeliveries = await _larsLearningDeliveryDataRetrievalService.RetrieveAsync(cancellationToken);
-            externalDataCache.Frameworks = await _larsFrameworkDataRetrievalService.RetrieveAsync(cancellationToken);
+            externalDataCache.Standards = _larsDataMapper.MapLarsStandards(referenceDataCache.LARSStandards);
+            externalDataCache.StandardValidities = _larsDataMapper.MapLarsStandardValidities(referenceDataCache.LARSStandards);
+            externalDataCache.LearningDeliveries = _larsDataMapper.MapLarsLearningDeliveries(referenceDataCache.LARSLearningDeliveries);
 
-            externalDataCache.ULNs = new HashSet<long>(await _ulnDataRetrievalService.RetrieveAsync(cancellationToken));
+            externalDataCache.ULNs = _ulnDataMapper.MapUlns(referenceDataCache.ULNs);
 
-            externalDataCache.Postcodes = (await _postcodesDataRetrievalService.RetrieveAsync(cancellationToken)).ToCaseInsensitiveHashSet();
-            externalDataCache.ONSPostcodes = await _postcodesDataRetrievalService.RetrieveONSPostcodesAsync(cancellationToken);
+            externalDataCache.Postcodes = _postcodesDataMapper.MapPostcodes(referenceDataCache.Postcodes);
+            externalDataCache.ONSPostcodes = _postcodesDataMapper.MapONSPostcodes(referenceDataCache.Postcodes);
 
-            externalDataCache.Organisations = await _organisationsDataRetrievalService.RetrieveAsync(cancellationToken);
-            externalDataCache.CampusIdentifiers = await _campusIdentifierDataRetrievalService.RetrieveAsync(cancellationToken);
+            externalDataCache.Organisations = _organisationsDataMapper.MapOrganisations(referenceDataCache.Organisations);
+            externalDataCache.CampusIdentifiers = _organisationsDataMapper.MapCampusIdentifiers(referenceDataCache.Organisations);
 
-            externalDataCache.EPAOrganisations = await _epaOrganisationsDataRetrievalService.RetrieveAsync(cancellationToken);
+            externalDataCache.EPAOrganisations = _epaOrgDataMapper.MapEpaOrganisations(referenceDataCache.EPAOrganisations);
 
-            externalDataCache.FCSContractAllocations = await _fcsDataRetrievalService.RetrieveAsync(cancellationToken);
+            externalDataCache.FCSContractAllocations = _fcsDataMapper.MapFcsContractAllocations(referenceDataCache.FCSContractAllocations);
 
-            externalDataCache.ERNs = new HashSet<int>(await _employersDataRetrievalService.RetrieveAsync(cancellationToken));
+            externalDataCache.ERNs = _employersDataMapper.MapEmployers(referenceDataCache.Employers);
+
+            externalDataCache.ValidationErrors = _validationErrorsDataMapper.MapValidationErrors(referenceDataCache.MetaDatas?.ValidationErrors);
         }
     }
 }

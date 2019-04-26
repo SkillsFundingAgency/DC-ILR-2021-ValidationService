@@ -1,7 +1,7 @@
-﻿using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
+using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Model
 {
@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Model
         /// <summary>
         /// The framework aims
         /// </summary>
-        private IEnumerable<ILARSFrameworkAim> _frameworkAims;
+        private ILARSFrameworkAim _frameworkAim;
 
         /// <summary>
         /// The framework common components
@@ -49,10 +49,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Model
         /// <summary>
         /// Gets or sets the framework aims.
         /// </summary>
-        public IEnumerable<ILARSFrameworkAim> FrameworkAims
+        public ILARSFrameworkAim FrameworkAim
         {
-            get => _frameworkAims ?? (_frameworkAims = Collection.EmptyAndReadOnly<ILARSFrameworkAim>());
-            set => _frameworkAims = value;
+            get => _frameworkAim ?? (_frameworkAim = new FrameworkAim());
+            set => _frameworkAim = value;
         }
 
         /// <summary>

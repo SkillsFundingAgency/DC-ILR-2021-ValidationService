@@ -37,6 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 if (ConditionMet(
+                    learningDelivery.LearnAimRef,
                     learningDelivery.ProgTypeNullable,
                     learningDelivery.AimType,
                     learningDelivery.LearnStartDate,
@@ -52,11 +53,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             }
         }
 
-        public bool ConditionMet(int? progType, int aimType, DateTime learnStartDate, int? fWorkCode, int? pwayCode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        public bool ConditionMet(string learnAimRef, int? progType, int aimType, DateTime learnStartDate, int? fWorkCode, int? pwayCode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return ApprenticeshipConditionMet(progType)
                 && AimTypeConditionMet(aimType)
-                && FrameworkConditionMet(learnStartDate, progType, fWorkCode, pwayCode)
+                && FrameworkConditionMet(learnAimRef, learnStartDate, progType, fWorkCode, pwayCode)
                 && !Excluded(progType, learningDeliveryFAMs);
         }
 
@@ -70,9 +71,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             return aimType == 1;
         }
 
-        public bool FrameworkConditionMet(DateTime learnStartDate, int? progType, int? fWorkCode, int? pwayCode)
+        public bool FrameworkConditionMet(string learnAimRef, DateTime learnStartDate, int? progType, int? fWorkCode, int? pwayCode)
         {
-            return _larsDataService.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fWorkCode, pwayCode);
+            return _larsDataService.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fWorkCode, pwayCode);
         }
 
         public bool Excluded(int? progType, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)

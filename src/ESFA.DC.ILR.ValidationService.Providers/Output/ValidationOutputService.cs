@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Autofac.Features.AttributeFilters;
+using ESFA.DC.FileService.Interface;
 using ESFA.DC.ILR.IO.Model.Validation;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Interface.Enum;
 using ESFA.DC.ILR.ValidationService.IO.Model;
-using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Serialization.Interfaces;
 
@@ -24,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
 
         private readonly IValidationErrorCache<IValidationError> _validationErrorCache;
         private readonly ICache<IMessage> _messageCache;
-        private readonly IKeyValuePersistenceService _keyValuePersistenceService;
+        private readonly IFileService _fileService;
         private readonly IPreValidationContext _validationContext;
         private readonly IJsonSerializationService _serializationService;
         private readonly IValidationErrorsDataService _validationErrorsDataService;
@@ -33,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
         public ValidationOutputService(
             IValidationErrorCache<IValidationError> validationErrorCache,
             ICache<IMessage> messageCache,
-            [KeyFilter(PersistenceStorageKeys.Redis)] IKeyValuePersistenceService keyValuePersistenceService,
+            IFileService fileService,
             IPreValidationContext validationContext,
             IJsonSerializationService serializationService,
             IValidationErrorsDataService validationErrorsDataService,
@@ -41,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
         {
             _validationErrorCache = validationErrorCache;
             _messageCache = messageCache;
-            _keyValuePersistenceService = keyValuePersistenceService;
+            _fileService = fileService;
             _validationContext = validationContext;
             _serializationService = serializationService;
             _validationErrorsDataService = validationErrorsDataService;
@@ -50,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
 
         public async Task ProcessAsync(CancellationToken cancellationToken)
         {
-            var existingValidationErrors = await GetExistingValidationErrors();
+            var existingValidationErrors = await GetExistingValidationErrors(cancellationToken);
 
             var validationErrors = _validationErrorCache
                 .ValidationErrors
@@ -131,10 +130,10 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
             validationContext.ValidationTotalWarningCount = validationErrors.Count(x => x.Severity == Warning);
 
             await Task.WhenAll(
-                _keyValuePersistenceService.SaveAsync(validLearnRefNumbersKey, _serializationService.Serialize(validLearnerRefNumbers), cancellationToken),
-                _keyValuePersistenceService.SaveAsync(invalidLearnRefNumbersKey, _serializationService.Serialize(invalidLearnerRefNumbers), cancellationToken),
-                _keyValuePersistenceService.SaveAsync(validationErrorsKey, _serializationService.Serialize(validationErrors), cancellationToken),
-                _keyValuePersistenceService.SaveAsync(validationErrorMessageLookupKey, _serializationService.Serialize(validationErrorMessageLookups), cancellationToken));
+                OutputAsync(validLearnRefNumbersKey, _validationContext.Container, validLearnerRefNumbers, cancellationToken),
+                OutputAsync(invalidLearnRefNumbersKey, _validationContext.Container, invalidLearnerRefNumbers, cancellationToken),
+                OutputAsync(validationErrorsKey, _validationContext.Container, validationErrors, cancellationToken),
+                OutputAsync(validationErrorMessageLookupKey, _validationContext.Container, validationErrorMessageLookups, cancellationToken));
         }
 
         public string SeverityToString(Severity? severity)
@@ -154,13 +153,26 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
             }
         }
 
-        private async Task<IEnumerable<ValidationError>> GetExistingValidationErrors()
+        private async Task OutputAsync<T>(string key, string container, IEnumerable<T> output, CancellationToken cancellationToken)
+        {
+            using (var fileStream = await _fileService.OpenWriteStreamAsync(key, container, cancellationToken))
+            {
+                _serializationService.Serialize(output, fileStream);
+            }
+        }
+
+        private async Task<IEnumerable<ValidationError>> GetExistingValidationErrors(CancellationToken cancellationToken)
         {
             IEnumerable<ValidationError> validationErrors = new List<ValidationError>();
 
             try
             {
-                validationErrors = _serializationService.Deserialize<List<ValidationError>>(await _keyValuePersistenceService.GetAsync(_validationContext.ValidationErrorsKey));
+                using (var stream = await _fileService.OpenReadStreamAsync(_validationContext.ValidationErrorsKey, _validationContext.Container, cancellationToken))
+                {
+                    stream.Position = 0;
+
+                    validationErrors = _serializationService.Deserialize<List<ValidationError>>(stream);
+                }
             }
             catch (Exception e)
             {

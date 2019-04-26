@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.ReferenceDataService.Model.Postcodes;
+using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
+using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
+
+namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
+{
+    public class PostcodesDataMapper : IPostcodesDataMapper
+    {
+        public PostcodesDataMapper()
+        {
+        }
+
+        public IReadOnlyCollection<string> MapPostcodes(IReadOnlyCollection<Postcode> postcodes)
+        {
+            return new HashSet<string>(postcodes?.Select(p => p.PostCode).ToList(), StringComparer.OrdinalIgnoreCase);
+        }
+
+        public IReadOnlyCollection<ONSPostcode> MapONSPostcodes(IReadOnlyCollection<Postcode> postcodes)
+        {
+            List<ONSPostcode> onsPostcodes = new List<ONSPostcode>();
+
+            foreach (var postcode in postcodes.Where(o => o.ONSData != null))
+            {
+                onsPostcodes.AddRange(postcode?.ONSData?.Select(o => new ONSPostcode
+                {
+                    Postcode = postcode.PostCode,
+                    EffectiveFrom = o.EffectiveFrom,
+                    EffectiveTo = o.EffectiveTo,
+                    Lep1 = o.Lep1,
+                    Lep2 = o.Lep2,
+                    LocalAuthority = o.LocalAuthority,
+                    Nuts = o.Nuts,
+                    Termination = o.Termination
+                }));
+            }
+
+            return onsPostcodes;
+        }
+    }
+}

@@ -4,6 +4,8 @@ using System.Threading;
 using Autofac;
 using Autofac.Integration.ServiceFabric;
 using ESFA.DC.Auditing.Interface;
+using ESFA.DC.FileService.Config;
+using ESFA.DC.ILR.ReferenceDataService.Modules;
 using ESFA.DC.ILR.ValidationService.Interface.Enum;
 using ESFA.DC.ILR.ValidationService.Modules;
 using ESFA.DC.ILR.ValidationService.Modules.Stateless;
@@ -13,9 +15,6 @@ using ESFA.DC.ILR.ValidationService.Stateless.Models;
 using ESFA.DC.IO.AzureStorage;
 using ESFA.DC.IO.AzureStorage.Config.Interfaces;
 using ESFA.DC.IO.Interfaces;
-using ESFA.DC.IO.Redis;
-using ESFA.DC.IO.Redis.Config;
-using ESFA.DC.IO.Redis.Config.Interfaces;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager;
 using ESFA.DC.JobContextManager.Interface;
@@ -27,6 +26,7 @@ using ESFA.DC.Mapping.Interface;
 using ESFA.DC.Queueing;
 using ESFA.DC.Queueing.Interface;
 using ESFA.DC.Serialization.Interfaces;
+using ESFA.DC.ServiceFabric.Common.Config;
 using ESFA.DC.ServiceFabric.Helpers;
 
 namespace ESFA.DC.ILR.ValidationService.Stateless
@@ -96,18 +96,6 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             containerBuilder.RegisterModule<LoggerModule>();
 
             Console.WriteLine($"BuildContainer:5");
-            var azureRedisCacheOptions = configHelper.GetSectionValues<AzureRedisCacheOptions>("AzureRedisSection");
-            containerBuilder.Register(c => new RedisKeyValuePersistenceServiceConfig()
-            {
-                ConnectionString = azureRedisCacheOptions.RedisCacheConnectionString,
-                KeyExpiry = new TimeSpan(14, 0, 0, 0)
-            }).As<IRedisKeyValuePersistenceServiceConfig>().SingleInstance();
-
-            containerBuilder.RegisterType<AzureStorageKeyValuePersistenceService>()
-                .Keyed<IKeyValuePersistenceService>(PersistenceStorageKeys.Redis)
-                .As<IKeyValuePersistenceService>()
-                .InstancePerLifetimeScope();
-
             containerBuilder.RegisterType<AzureStorageKeyValuePersistenceService>()
                 .Keyed<IKeyValuePersistenceService>(PersistenceStorageKeys.AzureStorage)
                 .As<IKeyValuePersistenceService>()
@@ -193,6 +181,12 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             containerBuilder.RegisterType<JobContextMessage>().As<IJobContextMessage>().InstancePerLifetimeScope();
 
             Console.WriteLine($"BuildContainer:20");
+            var serviceFabricConfigurationService = new ServiceFabricConfigurationService();
+
+            var azureStorageFileServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<AzureStorageFileServiceConfiguration>("AzureStorageFileServiceConfiguration");
+            var ioConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<IOConfiguration>("IOConfiguration");
+
+            containerBuilder.RegisterModule(new IOModule(azureStorageFileServiceConfiguration, ioConfiguration));
 
             return containerBuilder;
         }

@@ -66,6 +66,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Fact]
         public void FrameworkConditionMet_True()
         {
+            var learnAimRef = "LearnAimRef";
             var learnStartDate = new DateTime(2018, 10, 01);
             var progType = 1;
             var fworkCode = 1;
@@ -73,15 +74,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(ldsm =>
-                    ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode))
+                    ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode))
                 .Returns(true);
 
-            NewRule(larsDataService: larsDataServiceMock.Object).FrameworkConditionMet(learnStartDate, progType, fworkCode, pwayCode).Should().BeTrue();
+            NewRule(larsDataService: larsDataServiceMock.Object).FrameworkConditionMet(learnAimRef, learnStartDate, progType, fworkCode, pwayCode).Should().BeTrue();
         }
 
         [Fact]
         public void FrameworkConditionMet_False()
         {
+            var learnAimRef = "LearnAimRef";
             var learnStartDate = new DateTime(2018, 10, 01);
             var progType = 0;
             var fworkCode = 0;
@@ -89,15 +91,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(ldsm =>
-                    ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode))
+                    ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode))
                 .Returns(false);
 
-            NewRule(larsDataService: larsDataServiceMock.Object).FrameworkConditionMet(learnStartDate, progType, fworkCode, pwayCode).Should().BeFalse();
+            NewRule(larsDataService: larsDataServiceMock.Object).FrameworkConditionMet(learnAimRef, learnStartDate, progType, fworkCode, pwayCode).Should().BeFalse();
         }
 
         [Fact]
         public void FrameworkConditionMet_FalseNull()
         {
+            var learnAimRef = "LearnAimRef";
             var learnStartDate = new DateTime(2018, 10, 01);
             int? progType = null;
             int? fworkCode = null;
@@ -105,10 +108,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(ldsm =>
-                    ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode))
+                    ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode))
                 .Returns(false);
 
-            NewRule(larsDataService: larsDataServiceMock.Object).FrameworkConditionMet(learnStartDate, progType, fworkCode, pwayCode).Should().BeFalse();
+            NewRule(larsDataService: larsDataServiceMock.Object).FrameworkConditionMet(learnAimRef, learnStartDate, progType, fworkCode, pwayCode).Should().BeFalse();
         }
 
         [Fact]
@@ -189,6 +192,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Fact]
         public void ConditionMet_true()
         {
+            var learnAimRef = "LearnAimRef";
             var learnStartDate = new DateTime(2018, 10, 01);
             var aimType = 1;
             var progType = 24;
@@ -210,7 +214,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode))
+                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode))
                 .Returns(true);
 
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
@@ -219,7 +223,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(false);
 
             NewRule(dd07Mock.Object, larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object)
-                .ConditionMet(progType, aimType, learnStartDate, fworkCode, pwayCode, learningDeliveryFAMs)
+                .ConditionMet(learnAimRef, progType, aimType, learnStartDate, fworkCode, pwayCode, learningDeliveryFAMs)
                 .Should()
                 .BeTrue();
         }
@@ -227,6 +231,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Fact]
         public void ConditionMet_FalseApprenticeship()
         {
+            var learnAimRef = "LearnAimRef";
             var learnStartDate = new DateTime(2018, 10, 01);
             var aimType = 1;
             var progType = 99;
@@ -248,7 +253,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode))
+                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode))
                 .Returns(true);
 
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
@@ -257,7 +262,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(false);
 
             NewRule(dd07Mock.Object, larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object)
-                .ConditionMet(progType, aimType, learnStartDate, fworkCode, pwayCode, learningDeliveryFAMs)
+                .ConditionMet(learnAimRef, progType, aimType, learnStartDate, fworkCode, pwayCode, learningDeliveryFAMs)
                 .Should()
                 .BeFalse();
         }
@@ -265,6 +270,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Fact]
         public void ConditionMet_FalseAimType()
         {
+            var learnAimRef = "LearnAimRef";
             var learnStartDate = new DateTime(2018, 10, 01);
             var aimType = 0;
             var progType = 24;
@@ -286,7 +292,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode))
+                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode))
                 .Returns(true);
 
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
@@ -295,7 +301,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(false);
 
             NewRule(dd07Mock.Object, larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object)
-                .ConditionMet(progType, aimType, learnStartDate, fworkCode, pwayCode, learningDeliveryFAMs)
+                .ConditionMet(learnAimRef, progType, aimType, learnStartDate, fworkCode, pwayCode, learningDeliveryFAMs)
                 .Should()
                 .BeFalse();
         }
@@ -303,6 +309,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Fact]
         public void ConditionMet_FalseFramework()
         {
+            var learnAimRef = "LearnAimRef";
             var learnStartDate = new DateTime(2018, 10, 01);
             var aimType = 1;
             var progType = 0;
@@ -324,7 +331,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode))
+                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode))
                 .Returns(false);
 
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
@@ -333,7 +340,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(false);
 
             NewRule(dd07Mock.Object, larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object)
-                .ConditionMet(progType, aimType, learnStartDate, fworkCode, pwayCode, learningDeliveryFAMs)
+                .ConditionMet(learnAimRef, progType, aimType, learnStartDate, fworkCode, pwayCode, learningDeliveryFAMs)
                 .Should()
                 .BeFalse();
         }
@@ -341,6 +348,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Fact]
         public void ConditionMet_FalseExcluded()
         {
+            var learnAimRef = "LearnAimRef";
             var learnStartDate = new DateTime(2018, 10, 01);
             var aimType = 1;
             var progType = 25;
@@ -362,7 +370,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode))
+                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode))
                 .Returns(true);
 
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
@@ -371,7 +379,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(true);
 
             NewRule(dd07Mock.Object, larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object)
-                .ConditionMet(progType, aimType, learnStartDate, fworkCode, pwayCode, learningDeliveryFAMs)
+                .ConditionMet(learnAimRef, progType, aimType, learnStartDate, fworkCode, pwayCode, learningDeliveryFAMs)
                 .Should()
                 .BeFalse();
         }
@@ -379,6 +387,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Fact]
         public void ValidateError()
         {
+            var learnAimRef = "LearnAimRef";
             var learnStartDate = new DateTime(2018, 10, 01);
             var aimType = 1;
             var progType = 24;
@@ -391,6 +400,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 {
                     new TestLearningDelivery
                     {
+                        LearnAimRef = learnAimRef,
                         LearnStartDate = learnStartDate,
                         AimType = aimType,
                         ProgTypeNullable = progType,
@@ -416,7 +426,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode))
+                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode))
                 .Returns(true);
 
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
@@ -433,6 +443,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Fact]
         public void ValidateNoError()
         {
+            var learnAimRef = "LearnAimRef";
             var learnStartDate = new DateTime(2018, 10, 01);
             var aimType = 1;
             var progType = 25;
@@ -445,6 +456,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 {
                     new TestLearningDelivery
                     {
+                        LearnAimRef = learnAimRef,
                         LearnStartDate = learnStartDate,
                         AimType = aimType,
                         ProgTypeNullable = progType,
@@ -470,7 +482,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode))
+                .Setup(ldsm => ldsm.LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode))
                 .Returns(true);
 
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
