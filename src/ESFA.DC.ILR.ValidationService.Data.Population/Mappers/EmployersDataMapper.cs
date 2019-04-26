@@ -7,10 +7,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 {
     public class EmployersDataMapper : IEmployersDataMapper
     {
-        public EmployersDataMapper()
-        {
-        }
-
         public IReadOnlyCollection<int> MapEmployers(IReadOnlyCollection<Employer> employers)
         {
             return employers?.Select(e => e.ERN).ToList();

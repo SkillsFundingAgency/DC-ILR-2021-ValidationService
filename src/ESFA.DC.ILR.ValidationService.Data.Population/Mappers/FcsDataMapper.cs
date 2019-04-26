@@ -9,10 +9,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 {
     public class FcsDataMapper : IFcsDataMapper
     {
-        public FcsDataMapper()
-        {
-        }
-
         public IReadOnlyDictionary<string, IFcsContractAllocation> MapFcsContractAllocations(IReadOnlyCollection<ReferenceDataService.Model.FCS.FcsContractAllocation> fcsContractAllocations)
         {
             return fcsContractAllocations?
