@@ -31,14 +31,15 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
         public async Task PopulateAsync(CancellationToken cancellationToken)
         {
             var internalDataCache = (InternalDataCache)_internalDataCache;
-            var referenceDataCache = _referenceDataCache.Item;
+            var lookupsFromCache = _referenceDataCache.Item.MetaDatas.Lookups;
+            var lookupsDictionary = _lookupsDataMapper.BuildLookups(lookupsFromCache);
             var academicYear = BuildAcademicYear();
 
             internalDataCache.AcademicYear = _lookupsDataMapper.MapAcademicYear(academicYear);
-            internalDataCache.IntegerLookups = _lookupsDataMapper.MapIntegerLookups(referenceDataCache.MetaDatas.Lookups);
-            internalDataCache.LimitedLifeLookups = _lookupsDataMapper.MapLimitedLifeLookups(referenceDataCache.MetaDatas.Lookups);
-            internalDataCache.ListItemLookups = _lookupsDataMapper.MapListItemLookups(referenceDataCache.MetaDatas.Lookups);
-            internalDataCache.StringLookups = _lookupsDataMapper.MapStringLookups(referenceDataCache.MetaDatas.Lookups);
+            internalDataCache.IntegerLookups = _lookupsDataMapper.MapIntegerLookups(lookupsDictionary);
+            internalDataCache.LimitedLifeLookups = _lookupsDataMapper.MapLimitedLifeLookups(lookupsFromCache);
+            internalDataCache.ListItemLookups = _lookupsDataMapper.MapListItemLookups(lookupsFromCache);
+            internalDataCache.StringLookups = _lookupsDataMapper.MapStringLookups(lookupsDictionary);
         }
 
         private AcademicYear BuildAcademicYear()

@@ -10,14 +10,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
 {
     public interface ILookupsDataMapper
     {
+        IReadOnlyDictionary<string, IReadOnlyDictionary<string, IlrLookup>> BuildLookups(IReadOnlyCollection<Lookup> lookups);
+
         IAcademicYear MapAcademicYear(AcademicYear academicYear);
 
-        IDictionary<TypeOfIntegerCodedLookup, IReadOnlyCollection<int>> MapIntegerLookups(IReadOnlyCollection<Lookup> lookups);
+        IDictionary<TypeOfIntegerCodedLookup, IReadOnlyCollection<int>> MapIntegerLookups(IReadOnlyDictionary<string, IReadOnlyDictionary<string, IlrLookup>> lookups);
 
         IDictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>> MapLimitedLifeLookups(IReadOnlyCollection<Lookup> lookups);
 
         IDictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> MapListItemLookups(IReadOnlyCollection<Lookup> lookups);
 
-        IDictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>> MapStringLookups(IReadOnlyCollection<Lookup> lookups);
+        IDictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>> MapStringLookups(IReadOnlyDictionary<string, IReadOnlyDictionary<string, IlrLookup>> lookups);
     }
 }

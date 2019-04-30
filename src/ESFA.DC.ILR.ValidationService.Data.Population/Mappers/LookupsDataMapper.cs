@@ -12,6 +12,29 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 {
     public class LookupsDataMapper : ILookupsDataMapper
     {
+        public IReadOnlyDictionary<string, IReadOnlyDictionary<string, IlrLookup>> BuildLookups(IReadOnlyCollection<Lookup> lookups)
+        {
+           return lookups
+                .GroupBy(n => n.Name)
+                .ToDictionary(
+                k => k.Key,
+                v => v.Select(l => new IlrLookup
+                {
+                    Name = l.Name,
+                    Code = l.Code,
+                    ValidityPeriods = new ValidityPeriods(l.EffectiveFrom, l.EffectiveTo),
+                    SubLookup = l.SubCategories?.Select(sc => new IlrSubLookup
+                    {
+                        Code = sc.Code,
+                        ValidityPeriods = new ValidityPeriods(sc.EffectiveFrom ?? l.EffectiveFrom, sc.EffectiveTo ?? l.EffectiveFrom)
+                    }).ToList()
+                })
+                .ToDictionary(
+                    k => k.Code,
+                    s => s,
+                    StringComparer.OrdinalIgnoreCase) as IReadOnlyDictionary<string, IlrLookup>, StringComparer.OrdinalIgnoreCase);
+        }
+
         public IAcademicYear MapAcademicYear(AcademicYear academicYear)
         {
             return new AcademicYear
@@ -24,28 +47,42 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
             };
         }
 
-        public IDictionary<TypeOfIntegerCodedLookup, IReadOnlyCollection<int>> MapIntegerLookups(IReadOnlyCollection<Lookup> lookups)
+        public IDictionary<TypeOfIntegerCodedLookup, IReadOnlyCollection<int>> MapIntegerLookups(IReadOnlyDictionary<string, IReadOnlyDictionary<string, IlrLookup>> lookups)
         {
+            var integerDictionary = new Dictionary<TypeOfIntegerCodedLookup, IReadOnlyCollection<int>>();
+
             var type = typeof(TypeOfIntegerCodedLookup);
 
-            return lookups
-                .Where(l => Enum.IsDefined(type, l.Name))
-                .GroupBy(n => n.Name)
-                .ToDictionary(
-                l => (TypeOfIntegerCodedLookup)Enum.Parse(type, l.Key),
-                l => l.Select(v => int.Parse(v.Code)).ToList() as IReadOnlyCollection<int>);
+            foreach (var integerLookup in Enum.GetNames(type))
+            {
+                lookups.TryGetValue(integerLookup, out var lookupValue);
+
+                if (lookupValue != null)
+                {
+                    integerDictionary.Add((TypeOfIntegerCodedLookup)Enum.Parse(type, integerLookup), lookupValue.Keys.Select(x => int.Parse(x)).ToList());
+                }
+            }
+
+            return integerDictionary;
         }
 
-        public IDictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>> MapStringLookups(IReadOnlyCollection<Lookup> lookups)
+        public IDictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>> MapStringLookups(IReadOnlyDictionary<string, IReadOnlyDictionary<string, IlrLookup>> lookups)
         {
+            var stringDictionary = new Dictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>>();
+
             var type = typeof(TypeOfStringCodedLookup);
 
-            return lookups
-                .Where(l => Enum.IsDefined(type, l.Name))
-                .GroupBy(n => n.Name)
-                .ToDictionary(
-                l => (TypeOfStringCodedLookup)Enum.Parse(type, l.Key),
-                l => l.Select(v => v.Code).ToList() as IReadOnlyCollection<string>);
+            foreach (var stringLookup in Enum.GetNames(type))
+            {
+                lookups.TryGetValue(stringLookup, out var lookupValue);
+
+                if (lookupValue != null)
+                {
+                    stringDictionary.Add((TypeOfStringCodedLookup)Enum.Parse(type, stringLookup), lookupValue.Keys.ToList());
+                }
+            }
+
+            return stringDictionary;
         }
 
         public IDictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>> MapLimitedLifeLookups(IReadOnlyCollection<Lookup> lookups)

@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Data
         /// <returns>
         ///   <c>true</c> if the specified from date is between; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsBetween(DateTime fromDate, DateTime toDate, DateTime candidate) => (candidate >= fromDate) && (candidate <= toDate);
+        public bool IsBetween(DateTime? fromDate, DateTime? toDate, DateTime candidate) => (candidate >= fromDate) && (candidate <= toDate);
 
         public IReadOnlyCollection<int> Get(TypeOfIntegerCodedLookup lookupKey) =>
             _internalCache.IntegerLookups[lookupKey];
