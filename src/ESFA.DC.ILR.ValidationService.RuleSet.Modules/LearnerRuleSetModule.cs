@@ -494,7 +494,6 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Modules
                 typeof(QUALENT3_03Rule),
                 typeof(R07Rule),
                 typeof(R20Rule),
-                typeof(R29Rule),
                 typeof(R30Rule),
                 typeof(R31Rule),
                 typeof(R43Rule),
