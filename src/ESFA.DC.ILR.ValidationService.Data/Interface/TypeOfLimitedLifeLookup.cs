@@ -49,7 +49,7 @@
         /// <summary>
         /// contact preference
         /// </summary>
-        ContactPreference,
+        ContPrefType,
 
         /// <summary>
         /// The learning delivery fam

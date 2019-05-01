@@ -13,7 +13,7 @@
         ELQ,
         EmpStat,
         Ethnicity,
-        FINTYPE,
+        FinType,
         FundLev,
         FundModel,
         LLDDHealthProb,

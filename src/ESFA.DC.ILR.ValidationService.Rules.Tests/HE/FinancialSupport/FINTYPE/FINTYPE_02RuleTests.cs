@@ -149,7 +149,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.Get(TypeOfIntegerCodedLookup.FINTYPE))
+                .Setup(x => x.Get(TypeOfIntegerCodedLookup.FinType))
                 .Returns(candidates);
 
             var sut = new FINTYPE_02Rule(handler.Object, provider.Object);
@@ -176,7 +176,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.Get(TypeOfIntegerCodedLookup.FINTYPE))
+                .Setup(x => x.Get(TypeOfIntegerCodedLookup.FinType))
                 .Returns(candidates);
 
             var sut = new FINTYPE_02Rule(handler.Object, provider.Object);
@@ -224,7 +224,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.Get(TypeOfIntegerCodedLookup.FINTYPE))
+                .Setup(x => x.Get(TypeOfIntegerCodedLookup.FinType))
                 .Returns(candidates);
 
             var sut = new FINTYPE_02Rule(handler.Object, provider.Object);
@@ -277,7 +277,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
 
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.Get(TypeOfIntegerCodedLookup.FINTYPE))
+                .Setup(x => x.Get(TypeOfIntegerCodedLookup.FinType))
                 .Returns(candidates);
 
             var sut = new FINTYPE_02Rule(handler.Object, provider.Object);

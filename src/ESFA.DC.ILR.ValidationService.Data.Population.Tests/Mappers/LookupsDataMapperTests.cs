@@ -71,10 +71,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
             var expectedLookups = new Dictionary<TypeOfStringCodedLookup, List<string>>
             {
                 {
-                    TypeOfStringCodedLookup.AppFinType, new List<string> { "PMR", "TNP" }
+                    TypeOfStringCodedLookup.AppFinType, new List<string> { "PMR1", "PMR2", "PMR3", "TNP1", "TNP2", "TNP3", "TNP4" }
                 },
                 {
-                    TypeOfStringCodedLookup.ContPrefType, new List<string> { "PMC" }
+                    TypeOfStringCodedLookup.ContPrefType, new List<string> { "PMC1", "PMC2", "PMC3", "PMC4", "PMC5", "PMC6" }
                 },
                 {
                     TypeOfStringCodedLookup.OutGrade, new List<string> { "A", "A*" }
@@ -82,6 +82,75 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
             };
 
             expectedLookups.Should().BeEquivalentTo(NewMapper().MapStringLookups(lookup));
+        }
+
+        [Fact]
+        public void MapLimitedLifeLookups()
+        {
+            var lookup = LookupsDictionary();
+
+            var expectedLookups = new Dictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>>
+            {
+                {
+                    TypeOfLimitedLifeLookup.LLDDCat, new Dictionary<string, ValidityPeriods>
+                    {
+                        {
+                            "1", new ValidityPeriods(new DateTime(1900, 01, 01), new DateTime(2018, 05, 25))
+                        },
+                        {
+                            "2", new ValidityPeriods(new DateTime(1900, 01, 01), new DateTime(2018, 05, 25))
+                        }
+                    }
+                },
+                {
+                    TypeOfLimitedLifeLookup.ContPrefType, new Dictionary<string, ValidityPeriods>
+                    {
+                        {
+                            "PMC1", new ValidityPeriods(new DateTime(1900, 01, 01), new DateTime(2018, 05, 25))
+                        },
+                        {
+                            "PMC2", new ValidityPeriods(new DateTime(1900, 01, 01), new DateTime(2018, 05, 25))
+                        },
+                        {
+                            "PMC3", new ValidityPeriods(new DateTime(1900, 01, 01), new DateTime(2018, 05, 25))
+                        },
+                        {
+                            "PMC4", new ValidityPeriods(new DateTime(1900, 01, 01), new DateTime(2018, 05, 25))
+                        },
+                        {
+                            "PMC5", new ValidityPeriods(new DateTime(1900, 01, 01), new DateTime(2018, 05, 25))
+                        },
+                        {
+                            "PMC6", new ValidityPeriods(new DateTime(1900, 01, 01), new DateTime(2018, 05, 25))
+                        }
+                    }
+                }
+            };
+
+            expectedLookups.Should().BeEquivalentTo(NewMapper().MapLimitedLifeLookups(lookup));
+        }
+
+        [Fact]
+        public void MapListItemLookups()
+        {
+            var lookup = LookupsDictionary();
+
+            var expectedLookups = new Dictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>>
+            {
+                {
+                    TypeOfListItemLookup.LearningAimType, new Dictionary<string, IReadOnlyCollection<string>>
+                    {
+                        {
+                            "0001", new List<string> { "A", "B", "C", "D", "E", "F" }
+                        },
+                        {
+                            "0002", new List<string> { "A", "B", "C", "D", "E", "F" }
+                        },
+                    }
+                }
+            };
+
+            expectedLookups.Should().BeEquivalentTo(NewMapper().MapListItemLookups(lookup));
         }
 
         private List<Lookup> TestLookups()
@@ -137,6 +206,34 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                 },
                 new Lookup
                 {
+                    Name = "LearningAimType",
+                    Code = "0001",
+                    SubCategories = new List<LookupSubCategory>
+                    {
+                        new LookupSubCategory { Code = "A" },
+                        new LookupSubCategory { Code = "B" },
+                        new LookupSubCategory { Code = "C" },
+                        new LookupSubCategory { Code = "D" },
+                        new LookupSubCategory { Code = "E" },
+                        new LookupSubCategory { Code = "F" }
+                    }
+                },
+                new Lookup
+                {
+                    Name = "LearningAimType",
+                    Code = "0002",
+                    SubCategories = new List<LookupSubCategory>
+                    {
+                        new LookupSubCategory { Code = "A" },
+                        new LookupSubCategory { Code = "B" },
+                        new LookupSubCategory { Code = "C" },
+                        new LookupSubCategory { Code = "D" },
+                        new LookupSubCategory { Code = "E" },
+                        new LookupSubCategory { Code = "F" }
+                    }
+                },
+                new Lookup
+                {
                     Name = "LLDDCat",
                     Code = "1",
                     EffectiveFrom = new DateTime(1900, 01, 01),
@@ -162,24 +259,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                 new Lookup
                 {
                     Name = "OutGrade",
-                    Code = "A",
-                    SubCategories = new List<LookupSubCategory>
-                    {
-                        new LookupSubCategory { Code = "0001" },
-                        new LookupSubCategory { Code = "0002" },
-                        new LookupSubCategory { Code = "0003" },
-                    }
+                    Code = "A"
                 },
                 new Lookup
                 {
                     Name = "OutGrade",
-                    Code = "A*",
-                    SubCategories = new List<LookupSubCategory>
-                    {
-                        new LookupSubCategory { Code = "0002" },
-                        new LookupSubCategory { Code = "0003" },
-                        new LookupSubCategory { Code = "1413" },
-                    }
+                    Code = "A*"
                 },
             };
         }
@@ -266,6 +351,45 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                     }
                 },
                 {
+                    "LearningAimType", new Dictionary<string, IlrLookup>
+                    {
+                        {
+                            "0001",
+                            new IlrLookup
+                            {
+                                Name = "LearningAimType",
+                                Code = "0001",
+                                SubLookup = new List<IlrSubLookup>
+                                {
+                                    new IlrSubLookup { Code = "A" },
+                                    new IlrSubLookup { Code = "B" },
+                                    new IlrSubLookup { Code = "C" },
+                                    new IlrSubLookup { Code = "D" },
+                                    new IlrSubLookup { Code = "E" },
+                                    new IlrSubLookup { Code = "F" }
+                                }
+                            }
+                        },
+                        {
+                            "0002",
+                            new IlrLookup
+                            {
+                                Name = "LearningAimType",
+                                Code = "0002",
+                                SubLookup = new List<IlrSubLookup>
+                                {
+                                    new IlrSubLookup { Code = "A" },
+                                    new IlrSubLookup { Code = "B" },
+                                    new IlrSubLookup { Code = "C" },
+                                    new IlrSubLookup { Code = "D" },
+                                    new IlrSubLookup { Code = "E" },
+                                    new IlrSubLookup { Code = "F" }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
                     "LLDDCat", new Dictionary<string, IlrLookup>
                     {
                         {
@@ -317,13 +441,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                             new IlrLookup
                             {
                                 Name = "OutGrade",
-                                Code = "A",
-                                SubLookup = new List<IlrSubLookup>
-                                {
-                                    new IlrSubLookup { Code = "0001" },
-                                    new IlrSubLookup { Code = "0002" },
-                                    new IlrSubLookup { Code = "0003" }
-                                }
+                                Code = "A"
                             }
                         },
                         {
@@ -331,13 +449,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                             new IlrLookup
                             {
                                 Name = "OutGrade",
-                                Code = "A*",
-                                SubLookup = new List<IlrSubLookup>
-                                {
-                                    new IlrSubLookup { Code = "0002" },
-                                    new IlrSubLookup { Code = "0003" },
-                                    new IlrSubLookup { Code = "1413" }
-                                }
+                                Code = "A*"
                             }
                         }
                     }

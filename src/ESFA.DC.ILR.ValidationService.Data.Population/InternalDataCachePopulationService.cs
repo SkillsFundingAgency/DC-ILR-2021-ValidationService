@@ -37,8 +37,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
 
             internalDataCache.AcademicYear = _lookupsDataMapper.MapAcademicYear(academicYear);
             internalDataCache.IntegerLookups = _lookupsDataMapper.MapIntegerLookups(lookupsDictionary);
-            internalDataCache.LimitedLifeLookups = _lookupsDataMapper.MapLimitedLifeLookups(lookupsFromCache);
-            internalDataCache.ListItemLookups = _lookupsDataMapper.MapListItemLookups(lookupsFromCache);
+            internalDataCache.LimitedLifeLookups = _lookupsDataMapper.MapLimitedLifeLookups(lookupsDictionary);
+            internalDataCache.ListItemLookups = _lookupsDataMapper.MapListItemLookups(lookupsDictionary);
             internalDataCache.StringLookups = _lookupsDataMapper.MapStringLookups(lookupsDictionary);
         }
 

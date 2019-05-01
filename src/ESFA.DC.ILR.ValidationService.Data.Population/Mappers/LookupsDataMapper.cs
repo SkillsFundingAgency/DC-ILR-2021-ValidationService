@@ -78,21 +78,92 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 
                 if (lookupValue != null)
                 {
-                    stringDictionary.Add((TypeOfStringCodedLookup)Enum.Parse(type, stringLookup), lookupValue.Keys.ToList());
+                    var sublookupCollection = lookupValue.Values.Where(v => v.SubLookup != null).SelectMany(v => v.SubLookup.Select(l => $"{v.Code}{l.Code}")).ToList();
+
+                    if (sublookupCollection.Count() > 0)
+                    {
+                        stringDictionary.Add((TypeOfStringCodedLookup)Enum.Parse(type, stringLookup), sublookupCollection);
+                    }
+
+                    if (sublookupCollection.Count() == 0)
+                    {
+                        stringDictionary.Add((TypeOfStringCodedLookup)Enum.Parse(type, stringLookup), lookupValue.Keys.ToList());
+                    }
                 }
             }
 
             return stringDictionary;
         }
 
-        public IDictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>> MapLimitedLifeLookups(IReadOnlyCollection<Lookup> lookups)
+        public IDictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>> MapLimitedLifeLookups(IReadOnlyDictionary<string, IReadOnlyDictionary<string, IlrLookup>> lookups)
         {
-            throw new NotImplementedException();
+            var limitedLifeDictionary = new Dictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>>();
+
+            var type = typeof(TypeOfLimitedLifeLookup);
+
+            foreach (var limitedLIfeLookup in Enum.GetNames(type))
+            {
+                lookups.TryGetValue(limitedLIfeLookup, out var lookupValue);
+
+                if (lookupValue != null)
+                {
+                    var sublookupCollection = lookupValue.Values.Where(l => l.SubLookup != null)
+                     .SelectMany(s => s.SubLookup.Select(v => new IlrSubLookup
+                     {
+                         Code = $"{s.Code}{v.Code}",
+                         ValidityPeriods = v.ValidityPeriods
+                     })).ToList();
+
+                    if (sublookupCollection.Count() > 0)
+                    {
+                        var value =
+                            sublookupCollection
+                            .ToDictionary(
+                            k => k.Code,
+                            v => v.ValidityPeriods,
+                            StringComparer.OrdinalIgnoreCase);
+
+                        limitedLifeDictionary.Add((TypeOfLimitedLifeLookup)Enum.Parse(type, limitedLIfeLookup), value);
+                    }
+
+                    if (sublookupCollection.Count() == 0)
+                    {
+                        var value =
+                            lookupValue.ToDictionary(
+                            k => k.Key,
+                            v => v.Value.ValidityPeriods,
+                            StringComparer.OrdinalIgnoreCase);
+
+                        limitedLifeDictionary.Add((TypeOfLimitedLifeLookup)Enum.Parse(type, limitedLIfeLookup), value);
+                    }
+                }
+            }
+
+            return limitedLifeDictionary;
         }
 
-        public IDictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> MapListItemLookups(IReadOnlyCollection<Lookup> lookups)
+        public IDictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> MapListItemLookups(IReadOnlyDictionary<string, IReadOnlyDictionary<string, IlrLookup>> lookups)
         {
-            throw new NotImplementedException();
+            var listItemDictionary = new Dictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>>();
+
+            var type = typeof(TypeOfListItemLookup);
+
+            foreach (var stringLookup in Enum.GetNames(type))
+            {
+                lookups.TryGetValue(stringLookup, out var lookupValue);
+
+                if (lookupValue != null)
+                {
+                    var value = lookupValue.ToDictionary(
+                        k => k.Key,
+                        v => v.Value.SubLookup.Select(c => c.Code).ToList() as IReadOnlyCollection<string>,
+                        StringComparer.OrdinalIgnoreCase);
+
+                    listItemDictionary.Add((TypeOfListItemLookup)Enum.Parse(type, stringLookup), value);
+                }
+            }
+
+            return listItemDictionary;
         }
     }
 }

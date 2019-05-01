@@ -33,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
             lookupsMock
-                .Setup(l => l.Contains(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, $"{appFinRecord.AFinType}{appFinRecord.AFinCode}"))
+                .Setup(l => l.Contains(TypeOfStringCodedLookup.AppFinType, $"{appFinRecord.AFinType}{appFinRecord.AFinCode}"))
                 .Returns(false);
 
             NewRule(lookupsMock.Object).ConditionMet(appFinRecord).Should().BeTrue();
@@ -53,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
             lookupsMock
-                .Setup(l => l.Contains(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, $"{appFinRecord.AFinType}{appFinRecord.AFinCode}"))
+                .Setup(l => l.Contains(TypeOfStringCodedLookup.AppFinType, $"{appFinRecord.AFinType}{appFinRecord.AFinCode}"))
                 .Returns(true);
 
             NewRule(lookupsMock.Object).ConditionMet(appFinRecord).Should().BeFalse();
@@ -85,7 +85,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
             lookupsMock
-                .Setup(l => l.Contains(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, It.IsAny<string>()))
+                .Setup(l => l.Contains(TypeOfStringCodedLookup.AppFinType, It.IsAny<string>()))
                 .Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
@@ -110,7 +110,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
             lookupsMock
-                .Setup(l => l.Contains(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, It.IsAny<string>()))
+                .Setup(l => l.Contains(TypeOfStringCodedLookup.AppFinType, It.IsAny<string>()))
                 .Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
@@ -145,7 +145,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
             lookupsMock
-                .Setup(l => l.Contains(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, It.IsAny<string>()))
+                .Setup(l => l.Contains(TypeOfStringCodedLookup.AppFinType, It.IsAny<string>()))
                 .Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())

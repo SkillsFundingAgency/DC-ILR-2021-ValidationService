@@ -6,7 +6,6 @@
     /// </summary>
     public enum TypeOfStringCodedLookup
     {
-        AppFinType,
         ContPrefType,
         Domicile,
         GCSEGrade,
@@ -21,6 +20,6 @@
         /// <summary>
         /// The apprenticeship financial record
         /// </summary>
-        ApprenticeshipFinancialRecord,
+        AppFinType,
     }
 }

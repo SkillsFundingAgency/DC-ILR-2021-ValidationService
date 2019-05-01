@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OutGrade
                 }
 
                 if (!_lookupDetails.Contains(
-                    TypeOfListItemLookup.OutGradeLearningAimType,
+                    TypeOfListItemLookup.LearningAimType,
                     larsLearningDelivery.LearnAimRefType,
                     learningDelivery.OutGrade))
                 {

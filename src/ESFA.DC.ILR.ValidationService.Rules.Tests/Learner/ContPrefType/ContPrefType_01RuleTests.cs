@@ -149,7 +149,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ContPrefType
             // pass or fail is determined by this call
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.Contains(TypeOfLimitedLifeLookup.ContactPreference, candidate))
+                .Setup(x => x.Contains(TypeOfLimitedLifeLookup.ContPrefType, candidate))
                 .Returns(false);
 
             var sut = new ContPrefType_01Rule(handler.Object, provider.Object);
@@ -204,7 +204,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ContPrefType
             // pass or fail is determined by this call
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.Contains(TypeOfLimitedLifeLookup.ContactPreference, candidate))
+                .Setup(x => x.Contains(TypeOfLimitedLifeLookup.ContPrefType, candidate))
                 .Returns(true);
 
             var sut = new ContPrefType_01Rule(handler.Object, provider.Object);
