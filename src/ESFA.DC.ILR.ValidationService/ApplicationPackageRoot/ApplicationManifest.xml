@@ -102,7 +102,7 @@
           </Section>
           <Section Name="VersionSection">
             <Parameter Name="ServiceReleaseVersion" Value="[ServiceReleaseVersion]" />
-            <Parameter Name="ServiceReleaseDateTime" Value="[ServiceReleaseDateTime]"/>
+            <Parameter Name="ServiceReleaseDateTime" Value="[ServiceReleaseDateTime]" />
           </Section>
         </Settings>
       </ConfigOverride>
