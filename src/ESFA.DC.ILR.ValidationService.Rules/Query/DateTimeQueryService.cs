@@ -19,6 +19,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             return Math.Abs(monthsApart);
         }
 
+        public double WholeMonthsBetween(DateTime start, DateTime end)
+        {
+            return MonthsBetween(start, end) + 1;
+        }
+
         public double DaysBetween(DateTime start, DateTime end)
         {
             return (end - start).TotalDays;
@@ -26,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
         public double WholeDaysBetween(DateTime start, DateTime end)
         {
-            return Math.Abs((end - start).TotalDays) + 1;
+            return Math.Abs(DaysBetween(start, end)) + 1;
         }
 
         [Obsolete("Please use YearsBetween instead")]
