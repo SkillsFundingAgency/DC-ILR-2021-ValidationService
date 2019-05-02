@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Model;
-using ESFA.DC.ILR.ValidationService.Data.Internal.Model;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population
 {
@@ -53,14 +47,5 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
                 Start = new DateTime(2018, 8, 1),
             };
         }
-
-        private DateTime GetMinimumDate(string candidate) =>
-            It.IsEmpty(candidate) ? DateTime.MinValue : DateTime.Parse(candidate);
-
-        private DateTime GetMaximumDate(string candidate) =>
-            It.IsEmpty(candidate) ? DateTime.MaxValue : DateTime.Parse(candidate);
-
-        private string GetAttributeValue(XAttribute thisAttribute) =>
-            thisAttribute?.Value;
     }
 }

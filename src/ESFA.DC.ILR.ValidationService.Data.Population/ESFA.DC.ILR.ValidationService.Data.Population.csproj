@@ -169,7 +169,6 @@
     <Compile Include="Interface\IPostcodesDataMapper.cs" />
     <Compile Include="Interface\IValidationErrorsDataMapper.cs" />
     <Compile Include="InternalDataCachePopulationService.cs" />
-    <Compile Include="Keys\FrameworkKey.cs" />
     <Compile Include="Mappers\LookupsDataMapper.cs" />
     <Compile Include="Mappers\EmployersDataMapper.cs" />
     <Compile Include="Mappers\EpaOrgDataMapper.cs" />
