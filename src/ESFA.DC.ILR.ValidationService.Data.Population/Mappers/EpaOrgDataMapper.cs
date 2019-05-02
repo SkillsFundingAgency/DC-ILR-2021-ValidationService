@@ -9,10 +9,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 {
     public class EpaOrgDataMapper : IEpaOrgDataMapper
     {
-        public EpaOrgDataMapper()
-        {
-        }
-
         public IReadOnlyDictionary<string, List<EPAOrganisations>> MapEpaOrganisations(IReadOnlyCollection<EPAOrganisation> epaOrganisations)
         {
             return epaOrganisations?

@@ -14,9 +14,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Stateless
 
             builder.RegisterType<PreValidationPopulationService>().As<IPopulationService>().InstancePerLifetimeScope();
 
-            builder.RegisterType<InternalDataCachePopulationService>().As<IInternalDataCachePopulationService>().InstancePerLifetimeScope();
-            builder.RegisterType<InternalDataCachePopulationService>().As<ICreateInternalDataCache>().InstancePerLifetimeScope();
-
             base.Load(builder);
         }
     }

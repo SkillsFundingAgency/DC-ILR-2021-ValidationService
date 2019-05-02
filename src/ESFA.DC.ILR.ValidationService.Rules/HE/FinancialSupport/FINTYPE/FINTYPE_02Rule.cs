@@ -88,7 +88,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.FinancialSupport.FINTYPE
         public bool ConditionMet(IReadOnlyCollection<ILearnerHEFinancialSupport> financialSupport)
         {
             return It.HasValues(financialSupport)
-                ? _lookupDetails.Get(TypeOfIntegerCodedLookup.FINTYPE).All(x => financialSupport.Count(y => y.FINTYPE == x) <= 1)
+                ? _lookupDetails.Get(TypeOfIntegerCodedLookup.FinType).All(x => financialSupport.Count(y => y.FINTYPE == x) <= 1)
                 : true;
         }
 

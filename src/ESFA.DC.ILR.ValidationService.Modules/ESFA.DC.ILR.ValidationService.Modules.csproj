@@ -375,7 +375,6 @@
     <Compile Include="DataCacheMapperModule.cs" />
     <Compile Include="DataServiceModule.cs" />
     <Compile Include="BaseDataModule.cs" />
-    <Compile Include="ExternalDataCachePopulationServiceModule.cs" />
     <Compile Include="IOModule.cs" />
     <Compile Include="LoggerModule.cs" />
     <Compile Include="Stateless\PreValidationDataModule.cs" />

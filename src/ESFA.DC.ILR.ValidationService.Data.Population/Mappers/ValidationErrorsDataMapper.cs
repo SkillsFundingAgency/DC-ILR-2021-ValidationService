@@ -10,10 +10,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 {
     public class ValidationErrorsDataMapper : IValidationErrorsDataMapper
     {
-        public ValidationErrorsDataMapper()
-        {
-        }
-
         public IReadOnlyDictionary<string, ValidationError> MapValidationErrors(IReadOnlyCollection<ReferenceDataService.Model.MetaData.ValidationError> validationErrors)
         {
             return validationErrors?

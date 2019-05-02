@@ -154,7 +154,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.Contains(TypeOfIntegerCodedLookup.FINTYPE, Moq.It.IsAny<int>()))
+                .Setup(x => x.Contains(TypeOfIntegerCodedLookup.FinType, Moq.It.IsAny<int>()))
                 .Returns(true);
 
             var sut = new FINTYPE_01Rule(handler.Object, provider.Object);
@@ -183,7 +183,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.Contains(TypeOfIntegerCodedLookup.FINTYPE, Moq.It.IsAny<int>()))
+                .Setup(x => x.Contains(TypeOfIntegerCodedLookup.FinType, Moq.It.IsAny<int>()))
                 .Returns(false);
 
             var sut = new FINTYPE_01Rule(handler.Object, provider.Object);
@@ -233,7 +233,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
 
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.Contains(TypeOfIntegerCodedLookup.FINTYPE, candidate))
+                .Setup(x => x.Contains(TypeOfIntegerCodedLookup.FinType, candidate))
                 .Returns(true);
 
             var sut = new FINTYPE_01Rule(handler.Object, provider.Object);
@@ -287,7 +287,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
 
             var mockProvider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             mockProvider
-                .Setup(x => x.Contains(TypeOfIntegerCodedLookup.FINTYPE, candidate))
+                .Setup(x => x.Contains(TypeOfIntegerCodedLookup.FinType, candidate))
                 .Returns(false);
 
             var sut = new FINTYPE_01Rule(mockHandler.Object, mockProvider.Object);

@@ -76,7 +76,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enum\PersistenceStorageKey.cs" />
     <Compile Include="Enum\Severity.cs" />
     <Compile Include="IErrorMessageParameter.cs" />
     <Compile Include="IFileSystemFileContentStringProviderService.cs" />

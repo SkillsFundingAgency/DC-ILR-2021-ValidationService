@@ -9,10 +9,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 {
     public class PostcodesDataMapper : IPostcodesDataMapper
     {
-        public PostcodesDataMapper()
-        {
-        }
-
         public IReadOnlyCollection<string> MapPostcodes(IReadOnlyCollection<Postcode> postcodes)
         {
             return new HashSet<string>(postcodes?.Select(p => p.PostCode).ToList(), StringComparer.OrdinalIgnoreCase);

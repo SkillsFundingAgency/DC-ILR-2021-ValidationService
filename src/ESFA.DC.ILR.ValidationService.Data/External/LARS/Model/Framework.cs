@@ -12,11 +12,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Model
         ILARSFramework
     {
         /// <summary>
-        /// The framework aims
-        /// </summary>
-        private ILARSFrameworkAim _frameworkAim;
-
-        /// <summary>
         /// The framework common components
         /// </summary>
         private IEnumerable<ILARSFrameworkCommonComponent> _frameworkCommonComponents;
@@ -49,11 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Model
         /// <summary>
         /// Gets or sets the framework aims.
         /// </summary>
-        public ILARSFrameworkAim FrameworkAim
-        {
-            get => _frameworkAim ?? (_frameworkAim = new FrameworkAim());
-            set => _frameworkAim = value;
-        }
+        public ILARSFrameworkAim FrameworkAim { get; set; }
 
         /// <summary>
         /// Gets or sets the framework common components.

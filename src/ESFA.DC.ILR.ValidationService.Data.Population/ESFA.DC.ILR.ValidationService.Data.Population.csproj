@@ -150,7 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\IQueryableExtensions.cs" />
-    <Compile Include="External\ExternalDataCachePopulationService.cs" />
+    <Compile Include="ExternalDataCachePopulationService.cs" />
     <Compile Include="FileDataCachePopulationService.cs" />
     <Compile Include="Interface\IExternalDataCachePopulationService.cs" />
     <Compile Include="Interface\IExternalDataRetrievalService.cs" />
@@ -158,6 +158,7 @@
     <Compile Include="Interface\IFileDataCachePopulationService.cs" />
     <Compile Include="Interface\IInternalDataCachePopulationService.cs" />
     <Compile Include="Interface\ILarsDataMapper.cs" />
+    <Compile Include="Interface\ILookupsDataMapper.cs" />
     <Compile Include="Interface\IOrganisationsDataMapper.cs" />
     <Compile Include="Interface\IReferenceDataCachePopulationService.cs" />
     <Compile Include="Interface\IMessageCachePopulationService.cs" />
@@ -168,7 +169,7 @@
     <Compile Include="Interface\IPostcodesDataMapper.cs" />
     <Compile Include="Interface\IValidationErrorsDataMapper.cs" />
     <Compile Include="InternalDataCachePopulationService.cs" />
-    <Compile Include="Keys\FrameworkKey.cs" />
+    <Compile Include="Mappers\LookupsDataMapper.cs" />
     <Compile Include="Mappers\EmployersDataMapper.cs" />
     <Compile Include="Mappers\EpaOrgDataMapper.cs" />
     <Compile Include="Mappers\FcsDataMapper.cs" />
@@ -203,11 +204,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Files\Lookups.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Lindhart.Analyser.MissingAwaitWarning.1.0.1\analyzers\dotnet\cs\Lindhart.Analyser.MissingAwaitWarning.dll" />

@@ -8,10 +8,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 {
     public class OrganisationsDataMapper : IOrganisationsDataMapper
     {
-        public OrganisationsDataMapper()
-        {
-        }
-
         public IReadOnlyDictionary<long, Organisation> MapOrganisations(IReadOnlyCollection<ReferenceDataService.Model.Organisations.Organisation> organisations)
         {
             return organisations?

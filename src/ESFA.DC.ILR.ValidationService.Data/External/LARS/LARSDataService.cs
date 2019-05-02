@@ -121,7 +121,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var delivery = GetDeliveryFor(thisAimRef);
 
-            return delivery?.Frameworks.Select(f => f.FrameworkAim).ToList()
+            return delivery?.Frameworks?.Where(f => f.FrameworkAim != null)
+                .Select(f => f.FrameworkAim).ToList()
                 ?? Collection.EmptyAndReadOnly<ILARSFrameworkAim>();
         }
 

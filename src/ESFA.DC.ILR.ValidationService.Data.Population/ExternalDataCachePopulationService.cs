@@ -5,7 +5,7 @@ using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 
-namespace ESFA.DC.ILR.ValidationService.Data.Population.External
+namespace ESFA.DC.ILR.ValidationService.Data.Population
 {
     public class ExternalDataCachePopulationService : IExternalDataCachePopulationService
     {
