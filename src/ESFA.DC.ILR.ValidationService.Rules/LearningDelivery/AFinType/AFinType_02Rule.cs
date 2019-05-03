@@ -37,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public bool ConditionMet(IAppFinRecord appFinRecord)
         {
-            return !_lookups.Contains(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, $"{appFinRecord.AFinType}{appFinRecord.AFinCode}");
+            return !_lookups.Contains(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, $"{appFinRecord.AFinType.ToUpper()}{appFinRecord.AFinCode}");
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string aFinType, int aFinCode)
