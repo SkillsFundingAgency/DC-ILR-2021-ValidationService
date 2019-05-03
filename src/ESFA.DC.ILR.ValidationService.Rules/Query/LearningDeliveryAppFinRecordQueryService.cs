@@ -16,7 +16,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                 return false;
             }
 
-            return appFinRecords.Any(afr => afr.AFinType == aFinType && aFinCodes.Contains(afr.AFinCode));
+            return appFinRecords.Any(afr => afr.AFinType.CaseInsensitiveEquals(aFinType) && aFinCodes.Contains(afr.AFinCode));
         }
 
         public bool HasAnyLearningDeliveryAFinCodeForType(IEnumerable<IAppFinRecord> appFinRecords, string aFinType, int? aFinCode)
@@ -26,7 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                 return false;
             }
 
-            return appFinRecords.Any(afr => afr.AFinType == aFinType && aFinCode == afr.AFinCode);
+            return appFinRecords.Any(afr => afr.AFinType.CaseInsensitiveEquals(aFinType) && aFinCode == afr.AFinCode);
         }
 
         public bool HasAnyLearningDeliveryAFinCodes(IEnumerable<IAppFinRecord> appFinRecords, IEnumerable<int> aFinCodes)
