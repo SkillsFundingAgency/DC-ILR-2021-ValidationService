@@ -35,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
 
             var lookupDetailsMock = new Mock<IProvideLookupDetails>();
             lookupDetailsMock
-                .Setup(ldm => ldm.IsCurrent(TypeOfLimitedLifeLookup.LearnerFAM, $"{famType}{famCode}", dd06Date))
+                .Setup(ldm => ldm.IsCurrent(TypeOfLimitedLifeLookup.LearnFAMType, $"{famType}{famCode}", dd06Date))
                 .Returns(false);
 
             NewRule(lookupDetails: lookupDetailsMock.Object).ConditionMet(learnerFam, dd06Date).Should().BeTrue();
@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
 
             var lookupDetailsMock = new Mock<IProvideLookupDetails>();
             lookupDetailsMock
-                .Setup(ldm => ldm.IsCurrent(TypeOfLimitedLifeLookup.LearnerFAM, $"{famType}{famCode}", dd06Date))
+                .Setup(ldm => ldm.IsCurrent(TypeOfLimitedLifeLookup.LearnFAMType, $"{famType}{famCode}", dd06Date))
                 .Returns(true);
 
             NewRule(lookupDetails: lookupDetailsMock.Object).ConditionMet(learnerFam, dd06Date).Should().BeFalse();
@@ -93,7 +93,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
 
             var lookupDetailsMock = new Mock<IProvideLookupDetails>();
             lookupDetailsMock
-                .Setup(ldm => ldm.IsCurrent(TypeOfLimitedLifeLookup.LearnerFAM, $"{famType}{famCode}", learnStartDate))
+                .Setup(ldm => ldm.IsCurrent(TypeOfLimitedLifeLookup.LearnFAMType, $"{famType}{famCode}", learnStartDate))
                 .Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
@@ -133,7 +133,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
 
             var lookupDetailsMock = new Mock<IProvideLookupDetails>();
             lookupDetailsMock
-                .Setup(ldm => ldm.IsCurrent(TypeOfLimitedLifeLookup.LearnerFAM, $"{famType}{famCode}", learnStartDate))
+                .Setup(ldm => ldm.IsCurrent(TypeOfLimitedLifeLookup.LearnFAMType, $"{famType}{famCode}", learnStartDate))
                 .Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())

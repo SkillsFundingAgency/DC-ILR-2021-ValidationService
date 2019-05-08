@@ -54,11 +54,11 @@
         /// <summary>
         /// The learning delivery fam
         /// </summary>
-        LearningDeliveryFAM,
+        LearnDelFAMType,
 
         /// <summary>
         /// The learner fam
         /// </summary>
-        LearnerFAM
+        LearnFAMType
     }
 }

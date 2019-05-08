@@ -91,7 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsNotCurrent(ILearningDeliveryFAM monitor, DateTime referenceDate)
         {
             return !_lookupDetails.IsVaguelyCurrent(
-                TypeOfLimitedLifeLookup.LearningDeliveryFAM,
+                TypeOfLimitedLifeLookup.LearnDelFAMType,
                 $"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}",
                 referenceDate);
         }
