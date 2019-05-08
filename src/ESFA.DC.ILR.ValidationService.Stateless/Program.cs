@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
                 builder.RegisterServiceFabricSupport();
 
                 // Register the stateless service.
-                builder.RegisterStatelessService<Stateless>("ESFA.DC.ILR.ValidationService.StatelessType");
+                builder.RegisterStatelessService<Stateless>("ESFA.DC.ILR1819.ValidationService.StatelessType");
 
                 using (var container = builder.Build())
                 {

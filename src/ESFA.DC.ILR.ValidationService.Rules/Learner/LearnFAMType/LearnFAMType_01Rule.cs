@@ -36,7 +36,7 @@
         public bool ConditionMet(ILearnerFAM learnerFam)
         {
             return learnerFam.LearnFAMType != null
-                && !_lookupDetails.Contains(TypeOfLimitedLifeLookup.LearnerFAM, $"{learnerFam.LearnFAMType}{learnerFam.LearnFAMCode}");
+                && !_lookupDetails.Contains(TypeOfLimitedLifeLookup.LearnFAMType, $"{learnerFam.LearnFAMType}{learnerFam.LearnFAMCode}");
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string learnFAMType, int learnFAMCode)
