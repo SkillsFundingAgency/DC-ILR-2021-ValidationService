@@ -625,29 +625,50 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         /// </summary>
         /// <param name="birthDate">The birth date.</param>
         /// <param name="startDate">The start date.</param>
+        /// <param name="ageInYears">Age in years</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData("1997-08-23", "2018-04-18", true)] // in age group
-        [InlineData("1998-05-11", "2018-04-18", true)] // in age group
-        [InlineData("1999-04-18", "2018-04-18", true)] // in age group, lower boundary
-        [InlineData("1999-04-19", "2018-04-18", false)] // too young
-        [InlineData("1995-04-18", "2018-04-18", true)] // in age group, upper boundary
-        [InlineData("1995-04-17", "2018-04-18", false)] // too old
-        public void IsTargetAgeGroupMeetsExpectation(string birthDate, string startDate, bool expectation)
+        [InlineData("1997-08-23", "2018-04-18", 20, true)] // in age group
+        [InlineData("1998-05-11", "2018-04-18", 19, true)] // in age group
+        [InlineData("1999-04-18", "2018-04-18", 19, true)] // in age group, lower boundary
+        [InlineData("1999-04-19", "2018-04-18", 18, false)] // too young
+        [InlineData("1995-04-18", "2018-04-18", 23, true)] // in age group, upper boundary
+        [InlineData("1994-04-17", "2018-04-18", 24, false)] // too old
+        public void IsTargetAgeGroupMeetsExpectation(string birthDate, string startDate, int ageInYears, bool expectation)
         {
             // arrange
-            var sut = NewRule();
+            DateTime dateOfBirth = DateTime.Parse(birthDate);
+            DateTime learnStartDate = DateTime.Parse(startDate);
+
             var mockLearner = new Mock<ILearner>();
             mockLearner
                 .SetupGet(y => y.DateOfBirthNullable)
-                .Returns(DateTime.Parse(birthDate));
+                .Returns(dateOfBirth);
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
-                .Returns(DateTime.Parse(startDate));
+                .Returns(learnStartDate);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
+            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
+            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            mockDateTimeQueryService.Setup(x => x.YearsBetween(dateOfBirth, learnStartDate)).Returns(ageInYears);
 
             // act
+            var sut = new LearnDelFAMType_62Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
+
             var result = sut.IsTargetAgeGroup(mockLearner.Object, mockDelivery.Object);
 
             // assert
@@ -1130,6 +1151,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
             var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            mockDateTimeQueryService.Setup(x => x.YearsBetween(dateOfBirth.Value, learnStartDate)).Returns(21);
 
             var sut = new LearnDelFAMType_62Rule(
                 handler.Object,
@@ -1238,7 +1260,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(false);
 
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
-            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+
+            var mockDateTimeQuery = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            mockDateTimeQuery.Setup(x => x.YearsBetween(DateTime.Parse("1996-07-01"), DateTime.Parse("2017-08-01"))).Returns(21);
 
             var sut = new LearnDelFAMType_62Rule(
                 handler.Object,
@@ -1247,7 +1271,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 mockDDRule21.Object,
                 mockDDRule28.Object,
                 mockDDRule29.Object,
-                mockDateTimeQueryService.Object);
+                mockDateTimeQuery.Object);
 
             // act
             sut.ValidateDeliveries(mockLearner.Object);
@@ -1259,7 +1283,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDDRule21.VerifyAll();
             mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
-            mockDateTimeQueryService.VerifyAll();
         }
 
         /// <summary>
