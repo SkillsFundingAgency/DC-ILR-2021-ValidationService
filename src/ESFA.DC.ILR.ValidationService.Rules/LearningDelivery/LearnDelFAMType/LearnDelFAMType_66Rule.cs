@@ -4,6 +4,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly IDerivedData_29Rule _derivedData29;
 
         /// <summary>
+        /// The date time query service
+        /// </summary>
+        private readonly IDateTimeQueryService _dateTimeQueryService;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="LearnDelFAMType_66Rule" /> class.
         /// </summary>
         /// <param name="validationErrorHandler">The validation error handler.</param>
@@ -49,13 +55,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <param name="derivedData21">The derived data 21 rule.</param>
         /// <param name="derivedData28">The derived data 28 rule.</param>
         /// <param name="derivedData29">The derived data 29 rule.</param>
+        /// <param name="dateTimeQueryService">The date time query service.</param>
         public LearnDelFAMType_66Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
             IDerivedData_07Rule derivedData07,
             IDerivedData_21Rule derivedData21,
             IDerivedData_28Rule derivedData28,
-            IDerivedData_29Rule derivedData29)
+            IDerivedData_29Rule derivedData29,
+            IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_66)
         {
             It.IsNull(validationErrorHandler)
@@ -70,12 +78,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 .AsGuard<ArgumentNullException>(nameof(derivedData28));
             It.IsNull(derivedData29)
                 .AsGuard<ArgumentNullException>(nameof(derivedData29));
+            It.IsNull(dateTimeQueryService)
+                .AsGuard<ArgumentNullException>(nameof(dateTimeQueryService));
 
             _larsData = larsData;
             _derivedData07 = derivedData07;
             _derivedData21 = derivedData21;
             _derivedData28 = derivedData28;
             _derivedData29 = derivedData29;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         /// <summary>
@@ -112,7 +123,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [is within viable age group] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
         public bool WithinViableAgeGroup(DateTime candidate, DateTime reference) =>
-            It.IsBetween(candidate, reference.AddYears(-MaximumViableAge), reference.AddYears(-MinimumViableAge));
+            It.IsBetween(_dateTimeQueryService.YearsBetween(candidate, reference), MinimumViableAge, MaximumViableAge);
 
         /// <summary>
         /// Determines whether [is learner in custody] [the specified monitor].
