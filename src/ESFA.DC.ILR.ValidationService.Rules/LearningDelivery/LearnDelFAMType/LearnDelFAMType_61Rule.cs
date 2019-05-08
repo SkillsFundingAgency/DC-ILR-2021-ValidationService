@@ -4,6 +4,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly IDerivedData_21Rule _derivedData21;
         private readonly IDerivedData_28Rule _derivedData28;
         private readonly IDerivedData_29Rule _derivedData29;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public LearnDelFAMType_61Rule(
             IValidationErrorHandler validationErrorHandler,
@@ -27,7 +29,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             IDerivedData_07Rule derivedData07,
             IDerivedData_21Rule derivedData21,
             IDerivedData_28Rule derivedData28,
-            IDerivedData_29Rule derivedData29)
+            IDerivedData_29Rule derivedData29,
+            IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_61)
         {
             _larsData = larsData;
@@ -35,6 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _derivedData21 = derivedData21;
             _derivedData28 = derivedData28;
             _derivedData29 = derivedData29;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         /// <summary>
@@ -61,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [is within viable age group] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
         public bool WithinViableAgeGroup(DateTime candidate, DateTime reference) =>
-            It.IsBetween(candidate, reference.AddYears(-MaximumViableAge), reference.AddYears(-MinimumViableAge));
+            It.IsBetween(_dateTimeQueryService.YearsBetween(candidate, reference), MinimumViableAge, MaximumViableAge);
 
         public bool IsLearnerInCustody(ILearningDeliveryFAM monitor) =>
             It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.OLASSOffendersInCustody);
