@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
@@ -60,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         ///   <c>true</c> if [has qualifying indicator] [the specified monitor]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasDisqualifyingIndicator(IEmploymentStatusMonitoring monitor) =>
-            It.IsInRange(monitor.ESMType, Monitoring.EmploymentStatus.Types.LengthOfUnemployment);
+            monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.LengthOfUnemployment);
 
         /// <summary>
         /// Determines whether [has disqualifying indicator] [the specified employment status].
