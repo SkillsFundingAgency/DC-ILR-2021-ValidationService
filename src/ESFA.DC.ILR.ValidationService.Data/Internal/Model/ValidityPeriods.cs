@@ -12,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.Model
         /// </summary>
         /// <param name="validFrom">The valid from.</param>
         /// <param name="validTo">The valid to.</param>
-        public ValidityPeriods(DateTime validFrom, DateTime validTo)
+        public ValidityPeriods(DateTime? validFrom, DateTime? validTo)
         {
             ValidFrom = validFrom;
             ValidTo = validTo;
@@ -21,11 +21,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.Model
         /// <summary>
         /// Gets valid from.
         /// </summary>
-        public DateTime ValidFrom { get; }
+        public DateTime? ValidFrom { get; }
 
         /// <summary>
         /// Gets valid to.
         /// </summary>
-        public DateTime ValidTo { get; }
+        public DateTime? ValidTo { get; }
     }
 }

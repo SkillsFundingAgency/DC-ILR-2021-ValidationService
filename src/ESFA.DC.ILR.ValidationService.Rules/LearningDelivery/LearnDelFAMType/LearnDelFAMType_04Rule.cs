@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [is not valid] [the specified monitor]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsNotValid(ILearningDeliveryFAM monitor) =>
-            !_lookupDetails.Contains(TypeOfLimitedLifeLookup.LearningDeliveryFAM, $"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
+            !_lookupDetails.Contains(TypeOfLimitedLifeLookup.LearnDelFAMType, $"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         /// <summary>
         /// Validates the specified object.

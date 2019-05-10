@@ -119,7 +119,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.EmploymentStatusMonitoring, candidateCode, testdate))
+                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.ESMType, candidateCode, testdate))
                 .Returns(expectation);
 
             var sut = new ESMType_11Rule(handler.Object, provider.Object);
@@ -245,7 +245,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             // we want it to 'fail'; so we return false
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.EmploymentStatusMonitoring, candidateCode, testDate))
+                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.ESMType, candidateCode, testDate))
                 .Returns(false);
 
             var sut = new ESMType_11Rule(handler.Object, provider.Object);
@@ -313,7 +313,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             // we want it to 'succeed'; so we return true
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             provider
-                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.EmploymentStatusMonitoring, candidateCode, testDate))
+                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.ESMType, candidateCode, testDate))
                 .Returns(true);
 
             var sut = new ESMType_11Rule(handler.Object, provider.Object);

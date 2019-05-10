@@ -14,7 +14,7 @@
         /// <summary>
         /// employment status monitor (typed code)
         /// </summary>
-        EmploymentStatusMonitoring,
+        ESMType,
 
         /// <summary>
         /// funding completion (code)
@@ -34,7 +34,7 @@
         /// <summary>
         /// Outcome Type
         /// </summary>
-        OutTypedCode,
+        OutType,
 
         /// <summary>
         /// highest qualification on entry
@@ -49,16 +49,16 @@
         /// <summary>
         /// contact preference
         /// </summary>
-        ContactPreference,
+        ContPrefType,
 
         /// <summary>
         /// The learning delivery fam
         /// </summary>
-        LearningDeliveryFAM,
+        LearnDelFAMType,
 
         /// <summary>
         /// The learner fam
         /// </summary>
-        LearnerFAM
+        LearnFAMType
     }
 }

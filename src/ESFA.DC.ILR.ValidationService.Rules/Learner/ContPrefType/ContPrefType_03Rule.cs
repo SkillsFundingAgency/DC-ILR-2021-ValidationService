@@ -59,7 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
         ///   <c>true</c> if [has disqualifying contact preference] [the specified preference]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasDisqualifyingContactPreference(IContactPreference preference, DateTime candidate) =>
-            !_lookups.IsCurrent(TypeOfLimitedLifeLookup.ContactPreference, $"{preference.ContPrefType}{preference.ContPrefCode}", candidate);
+            !_lookups.IsCurrent(TypeOfLimitedLifeLookup.ContPrefType, $"{preference.ContPrefType}{preference.ContPrefCode}", candidate);
 
         /// <summary>
         /// Determines whether [is not valid] [the specified preference].

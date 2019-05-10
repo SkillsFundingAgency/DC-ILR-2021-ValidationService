@@ -58,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutType
         {
             var code = $"{dpOutcome.OutType}{dpOutcome.OutCode}";
             var t = !_lookups.Contains(
-                TypeOfLimitedLifeLookup.OutTypedCode,
+                TypeOfLimitedLifeLookup.OutType,
                code);
 
             return t;

@@ -27,7 +27,6 @@ namespace ESFA.DC.ILR.ValidationService.Providers
     public class PreValidationOrchestrationSfService<U> : IPreValidationOrchestrationService<U>
     {
         private readonly IPopulationService _preValidationPopulationService;
-        private readonly IErrorLookupPopulationService _errorLookupPopulationService;
         private readonly ILearnerPerActorProviderService _learnerPerActorProviderService;
         private readonly ILearnerDPPerActorProviderService _learnerDPPerActorProviderService;
         private readonly IJsonSerializationService _jsonSerializationService;
@@ -41,7 +40,6 @@ namespace ESFA.DC.ILR.ValidationService.Providers
 
         public PreValidationOrchestrationSfService(
             IPopulationService preValidationPopulationService,
-            IErrorLookupPopulationService errorLookupPopulationService,
             ILearnerPerActorProviderService learnerPerActorProviderService,
             ILearnerDPPerActorProviderService learnerDPPerActorProviderService,
             IJsonSerializationService jsonSerializationService,
@@ -54,7 +52,6 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             ILogger logger)
         {
             _preValidationPopulationService = preValidationPopulationService;
-            _errorLookupPopulationService = errorLookupPopulationService;
             _learnerPerActorProviderService = learnerPerActorProviderService;
             _learnerDPPerActorProviderService = learnerDPPerActorProviderService;
             _jsonSerializationService = jsonSerializationService;
@@ -74,10 +71,6 @@ namespace ESFA.DC.ILR.ValidationService.Providers
 
             try
             {
-                // get ILR data from file
-                await _errorLookupPopulationService.PopulateAsync(cancellationToken).ConfigureAwait(false);
-                _logger.LogDebug($"Error lookup service completed in: {stopWatch.ElapsedMilliseconds}");
-
                 if (_validationErrorCache.ValidationErrors.Any())
                 {
                     return;
