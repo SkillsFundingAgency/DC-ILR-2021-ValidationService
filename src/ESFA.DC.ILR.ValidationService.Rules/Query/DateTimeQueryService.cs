@@ -21,7 +21,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
         public double WholeMonthsBetween(DateTime start, DateTime end)
         {
-            return MonthsBetween(start, end) + 1;
+            if (start.AddMonths(12).AddDays(-1) == end || (start.AddMonths(12) < end))
+            {
+                return MonthsBetween(start, end) + 1;
+            }
+
+            return MonthsBetween(start, end);
         }
 
         public double DaysBetween(DateTime start, DateTime end)

@@ -35,9 +35,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         [Theory]
         [InlineData("2018-8-01", "2019-7-31", 12)]
         [InlineData("2018-8-01", "2020-7-31", 24)]
-        [InlineData("2018-8-01", "2018-8-31", 1)]
-        [InlineData("2018-8-01", "2018-8-01", 1)]
-        [InlineData("2018-8-01", "2018-7-01", 2)]
+        [InlineData("2018-8-01", "2018-8-31", 0)]
+        [InlineData("2018-8-01", "2018-8-01", 0)]
+        [InlineData("2018-8-01", "2018-7-01", 1)]
+        [InlineData("2018-01-01", "2018-12-01", 11)]
         public void WholeMonthsBetween(string start, string end, int months)
         {
             new DateTimeQueryService().WholeMonthsBetween(DateTime.Parse(start), DateTime.Parse(end)).Should().Be(months);
