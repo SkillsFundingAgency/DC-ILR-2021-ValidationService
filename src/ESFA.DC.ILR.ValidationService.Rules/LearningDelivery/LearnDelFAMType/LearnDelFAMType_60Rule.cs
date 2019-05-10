@@ -6,6 +6,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly IDerivedData_29Rule _derivedData29;
         private readonly IOrganisationDataService _organisationDataService;
         private readonly IFileDataService _fileDataService;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LearnDelFAMType_60Rule"/> class.
@@ -35,6 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <param name="derivedData29">The derived data29.</param>
         /// <param name="organisationDataService">The organisation data service.</param>
         /// <param name="fileDataService">The file data service.</param>
+        /// <param name="datetimeQueryService">The date time query service.</param>
         public LearnDelFAMType_60Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
@@ -43,7 +46,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             IDerivedData_28Rule derivedData28,
             IDerivedData_29Rule derivedData29,
             IOrganisationDataService organisationDataService,
-            IFileDataService fileDataService)
+            IFileDataService fileDataService,
+            IDateTimeQueryService datetimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_60)
         {
             _larsData = larsData;
@@ -53,6 +57,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _derivedData29 = derivedData29;
             _organisationDataService = organisationDataService;
             _fileDataService = fileDataService;
+            _dateTimeQueryService = datetimeQueryService;
         }
 
         /// <summary>
@@ -84,7 +89,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [is within viable age group] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
         public bool WithinViableAgeGroup(DateTime candidate, DateTime reference) =>
-            It.IsBetween(candidate, reference.AddYears(-MaximumViableAge), reference.AddYears(-MinimumViableAge));
+            It.IsBetween(_dateTimeQueryService.YearsBetween(candidate, reference), MinimumViableAge, MaximumViableAge);
 
         /// <summary>
         /// Checks the learning deliveries.
