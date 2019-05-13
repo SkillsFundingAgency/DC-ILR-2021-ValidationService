@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
@@ -10,7 +11,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.MathGrade
     public class MathGrade_03Rule : AbstractRule, IRule<ILearner>
     {
         private readonly ILearnerFAMQueryService _learnerFamQueryService;
-        private readonly HashSet<string> _mathGrades = new HashSet<string> { "D", "DD", "DE", "E", "EE", "EF", "F", "FF", "FG", "G", "GG", "N", "U" };
 
         public MathGrade_03Rule(IValidationErrorHandler validationErrorHandler, ILearnerFAMQueryService learnerFAMQueryService)
             : base(validationErrorHandler, RuleNameConstants.MathGrade_03)
@@ -35,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.MathGrade
         public bool LearnerMathGradeConditionMet(string mathGrade)
         {
             return !string.IsNullOrWhiteSpace(mathGrade)
-                && _mathGrades.Contains(mathGrade);
+                && Monitoring.Learner.Level1AndLowerGrades.Contains(mathGrade);
         }
 
         public bool LearnerFAMsConditionMet(IEnumerable<ILearnerFAM> learnerFAMs)
