@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -36,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.MathGrade
         public bool LearnerMathGradeConditionMet(string mathGrade)
         {
             return !string.IsNullOrWhiteSpace(mathGrade)
-                   && Monitoring.Learner.Level1AndLowerGrades.Any(g => g.CaseInsensitiveEquals(mathGrade));
+                && Monitoring.Learner.Level1AndLowerGrades.Contains(mathGrade);
         }
 
         public bool LearnerFAMsConditionMet(IEnumerable<ILearnerFAM> learnerFAMs)
