@@ -25,7 +25,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
             /// <summary>
             /// (GCSE) level 1 and lower grades
             /// </summary>
-            public static readonly string[] Level1AndLowerGrades = new string[] { "D", "DD", "DE", "E", "EE", "EF", "F", "FF", "FG", "G", "GG", "N", "U" };
+            public static readonly string[] Level1AndLowerGrades = new string[] { "D", "DD", "DE", "E", "EE", "EF", "F", "FF", "FG", "G", "GG", "N", "U", "3", "2", "1" };
 
             /// <summary>
             /// learner monitoring types
