@@ -182,36 +182,53 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         /// <param name="isRES">if set to <c>true</c> [is resource].</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(false, false, false)]
-        [InlineData(true, false, true)]
-        [InlineData(false, true, true)]
-        [InlineData(true, true, true)]
-        public void IsExcludedMeetsExpectation(bool isSP, bool isRES, bool expectation)
+        [InlineData(false, false, TypeOfLARSCommonComponent.Unknown, false)]
+        [InlineData(true, false, TypeOfLARSCommonComponent.Unknown, true)]
+        [InlineData(false, true, TypeOfLARSCommonComponent.NotApplicable, true)]
+        [InlineData(true, true, TypeOfLARSCommonComponent.NotApplicable, true)]
+        [InlineData(false, false, TypeOfLARSCommonComponent.GCSEEnglish, true)]
+        public void IsExcludedMeetsExpectation(bool isSP, bool isRES, int fwkCC, bool expectation)
         {
             // arrange
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+
+            var larsDelivery = new Mock<ILARSLearningDelivery>();
+            larsDelivery
+                .SetupGet(x => x.FrameworkCommonComponent)
+                .Returns(fwkCC);
+
+            const string learnAimRef = "123456789X";
+
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            larsData
+                .Setup(x => x.GetDeliveryFor(learnAimRef))
+                .Returns(larsDelivery.Object);
+
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns(learnAimRef);
+
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(null))
+                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
                 .Returns(isSP);
             if (!isSP)
             {
                 commonOps
-                    .Setup(x => x.IsRestart(null))
+                    .Setup(x => x.IsRestart(delivery.Object))
                     .Returns(isRES);
             }
 
             var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
 
             // act
-            var result = sut.IsExcluded(null);
+            var result = sut.IsExcluded(delivery.Object);
 
             // assert
             handler.VerifyAll();
             ddRule04.VerifyAll();
-            larsData.VerifyAll();
             commonOps.VerifyAll();
 
             Assert.Equal(expectation, result);
@@ -463,10 +480,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.EndDate)
                 .Returns(endDate);
 
+            var larsDelivery = new Mock<ILARSLearningDelivery>();
+            larsDelivery
+                .SetupGet(x => x.FrameworkCommonComponent)
+                .Returns(TypeOfLARSCommonComponent.Unknown);
+
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
                 .Setup(x => x.GetFrameworkAimsFor(learnAimRef))
                 .Returns(new ILARSFrameworkAim[] { frameworkAim.Object });
+            larsData
+                .Setup(x => x.GetDeliveryFor(learnAimRef))
+                .Returns(larsDelivery.Object);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
@@ -568,10 +593,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.EndDate)
                 .Returns(endDate);
 
+            var larsDelivery = new Mock<ILARSLearningDelivery>();
+            larsDelivery
+                .SetupGet(x => x.FrameworkCommonComponent)
+                .Returns(TypeOfLARSCommonComponent.Unknown);
+
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
                 .Setup(x => x.GetFrameworkAimsFor(learnAimRef))
                 .Returns(new ILARSFrameworkAim[] { frameworkAim.Object });
+            larsData
+                .Setup(x => x.GetDeliveryFor(learnAimRef))
+                .Returns(larsDelivery.Object);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
