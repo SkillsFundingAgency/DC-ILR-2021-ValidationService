@@ -110,7 +110,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// </returns>
         public bool IsExcluded(ILearningDelivery thisDelivery) =>
             _check.IsStandardApprencticeship(thisDelivery)
-            || _check.IsRestart(thisDelivery);
+            || _check.IsRestart(thisDelivery)
+            || IsCommonComponent(GetLARSLearningDeliveryFor(thisDelivery));
 
         /// <summary>
         /// Gets the qualifying frameworks for.
@@ -119,6 +120,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// <returns>the filtered list of framework aims</returns>
         public IReadOnlyCollection<ILARSFrameworkAim> GetQualifyingFrameworksFor(ILearningDelivery thisDelivery) =>
             _larsData.GetFrameworkAimsFor(thisDelivery.LearnAimRef);
+
+        /// <summary>
+        /// Gets the LARS delivery for.
+        /// </summary>
+        /// <param name="thisDelivery">this delivery.</param>
+        /// <returns>the LARS delivery</returns>
+        public ILARSLearningDelivery GetLARSLearningDeliveryFor(ILearningDelivery thisDelivery) =>
+            _larsData.GetDeliveryFor(thisDelivery.LearnAimRef);
+
+        /// <summary>
+        /// Checks if the lars delivery is a common component.
+        /// </summary>
+        /// <param name="larsDelivery">lars delivery.</param>
+        /// <returns>true if common component, false if not</returns>
+        public bool IsCommonComponent(ILARSLearningDelivery larsDelivery) =>
+            TypeOfLARSCommonComponent.CommonComponents.Contains(larsDelivery.FrameworkCommonComponent);
 
         /// <summary>
         /// Filtereds the framework aims for.
@@ -133,8 +150,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             return usingTheseAims
                 .SafeWhere(fa => fa.ProgType == thisDelivery.ProgTypeNullable
                     && fa.FworkCode == thisDelivery.FworkCodeNullable
-                    && fa.PwayCode == thisDelivery.PwayCodeNullable
-                    && !TypeOfLARSCommonComponent.CommonComponents.Contains(fa.FrameworkComponentType))
+                    && fa.PwayCode == thisDelivery.PwayCodeNullable)
                 .AsSafeReadOnlyList();
         }
 
