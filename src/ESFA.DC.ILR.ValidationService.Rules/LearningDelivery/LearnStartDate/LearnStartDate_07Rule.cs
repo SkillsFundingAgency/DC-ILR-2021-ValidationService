@@ -133,7 +133,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             return usingTheseAims
                 .SafeWhere(fa => fa.ProgType == thisDelivery.ProgTypeNullable
                     && fa.FworkCode == thisDelivery.FworkCodeNullable
-                    && fa.PwayCode == thisDelivery.PwayCodeNullable)
+                    && fa.PwayCode == thisDelivery.PwayCodeNullable
+                    && !TypeOfLARSCommonComponent.CommonComponents.Contains(fa.FrameworkComponentType))
                 .AsSafeReadOnlyList();
         }
 

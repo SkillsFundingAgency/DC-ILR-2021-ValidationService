@@ -321,6 +321,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             frameworkAim.SetupGet(x => x.ProgType).Returns(2);
             frameworkAim.SetupGet(x => x.FworkCode).Returns(3);
             frameworkAim.SetupGet(x => x.PwayCode).Returns(4);
+            frameworkAim.SetupGet(x => x.FrameworkComponentType).Returns(-1);
 
             var sut = NewRule();
 
@@ -329,6 +330,33 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             // assert
             Assert.Contains(result, x => x == frameworkAim.Object);
+        }
+
+        /// <summary>
+        /// Filtered framework aims for, meets expectation.
+        /// </summary>
+        [Fact]
+        public void FilteredFrameworkAimsForMeetsExpectation_IsCommonComponent()
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery.SetupGet(x => x.ProgTypeNullable).Returns(2);
+            delivery.SetupGet(x => x.FworkCodeNullable).Returns(3);
+            delivery.SetupGet(x => x.PwayCodeNullable).Returns(4);
+
+            var frameworkAim = new Mock<ILARSFrameworkAim>();
+            frameworkAim.SetupGet(x => x.ProgType).Returns(2);
+            frameworkAim.SetupGet(x => x.FworkCode).Returns(3);
+            frameworkAim.SetupGet(x => x.PwayCode).Returns(4);
+            frameworkAim.SetupGet(x => x.FrameworkComponentType).Returns(1);
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.FilteredFrameworkAimsFor(delivery.Object, new ILARSFrameworkAim[] { frameworkAim.Object });
+
+            // assert
+            Assert.Empty(result);
         }
 
         /// <summary>

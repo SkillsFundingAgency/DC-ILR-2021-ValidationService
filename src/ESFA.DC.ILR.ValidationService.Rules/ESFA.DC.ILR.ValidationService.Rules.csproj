@@ -87,6 +87,7 @@
     <Compile Include="Constants\ContactPreference.cs" />
     <Compile Include="Constants\TypeOfEmploymentStatus.cs" />
     <Compile Include="Constants\TypeOfEthnicity.cs" />
+    <Compile Include="Constants\TypeOfLARSCommonComponent.cs" />
     <Compile Include="Constants\TypeOfLARSLearnAimRef.cs" />
     <Compile Include="Constants\TypeOfMODESTUD.cs" />
     <Compile Include="Constants\TypeOfNotionalNVQLevelV2.cs" />
