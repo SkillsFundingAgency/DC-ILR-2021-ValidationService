@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
         ///   <c>true</c> if the specified he has domicile; otherwise, <c>false</c>.
         /// </returns>
         public bool HasValidDomicile(ILearningDeliveryHE he) =>
-           _lookups.Contains(TypeOfStringCodedLookup.Domicile, he.DOMICILE);
+            string.IsNullOrWhiteSpace(he.DOMICILE) || _lookups.Contains(TypeOfStringCodedLookup.Domicile, he.DOMICILE);
 
         /// <summary>
         /// Validates the specified object.
