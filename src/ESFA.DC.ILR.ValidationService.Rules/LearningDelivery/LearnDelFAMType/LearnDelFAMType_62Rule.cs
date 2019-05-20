@@ -310,7 +310,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             var larsDelivery = _larsData.GetDeliveryFor(delivery.LearnAimRef);
 
             return IsV2NotionalLevel2(larsDelivery)
-                && larsDelivery.Categories.SafeAny(IsLegallyEntitled);
+                && !larsDelivery.Categories.SafeAny(IsLegallyEntitled);
         }
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 && IsAdultFunding(thisDelivery)
                 && IsTargetAgeGroup(forLearner, thisDelivery)
                 && CheckDeliveryFAMs(thisDelivery, IsCoFunded)
-                && !IsEntitledLevel2NVQ(thisDelivery);
+                && IsEntitledLevel2NVQ(thisDelivery);
 
         /// <summary>
         /// Determines whether the specified candidate is excluded.
