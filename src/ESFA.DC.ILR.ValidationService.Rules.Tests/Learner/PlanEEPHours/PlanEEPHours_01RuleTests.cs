@@ -21,7 +21,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanEEPHours
 
         [Theory]
         [InlineData(25)]
-        [InlineData(82)]
         public void FundModelConditionMet_true(int fundModel)
         {
             NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
