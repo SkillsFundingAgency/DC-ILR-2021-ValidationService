@@ -50,11 +50,11 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
                 builder.RegisterServiceFabricSupport();
 
                 // Register the stateless service.
-                builder.RegisterStatelessService<Stateless>("ESFA.DC.ILR1819.ValidationService.StatelessType");
+                builder.RegisterStatelessService<ESFA.DC.ServiceFabric.Common.Stateless>("ESFA.DC.ILR1819.ValidationService.StatelessType");
 
                 using (var container = builder.Build())
                 {
-                    ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(Stateless).Name);
+                    ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(ESFA.DC.ServiceFabric.Common.Stateless).Name);
 
                     // Prevents this host process from terminating so services keep running.
                     Thread.Sleep(Timeout.Infinite);
