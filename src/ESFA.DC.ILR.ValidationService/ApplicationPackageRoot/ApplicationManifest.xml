@@ -34,11 +34,6 @@
       <ConfigOverride Name="Config">
         <Settings>
           <Section Name="LoggerSection">
-            <!--<Parameter Name="AuditQueueName" Value="[AuditQueueName]" />
-            <Parameter Name="JobStatusQueueName" Value="[JobStatusQueueName]" />
-            <Parameter Name="ServiceBusConnectionString" Value="[ServiceBusConnectionString]" />
-            <Parameter Name="TopicName" Value="[TopicName]" />
-            <Parameter Name="SubscriptionName" Value="[SubscriptionName]" />-->
             <Parameter Name="LoggerConnectionstring" Value="[LoggerConnectionstring]" />
           </Section>
           <Section Name="AzureStorageSection">
@@ -83,9 +78,6 @@
           <Section Name="DataTransportSettings">
             <Parameter Name="MaxMessageSize" Value="[MaxMessageSize]" />
           </Section>
-          <!--<Section Name="LoggerSection">
-            <Parameter Name="LoggerConnectionstring" Value="[LoggerConnectionstring]" />
-          </Section>-->
           <Section Name="AzureStorageSection">
             <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
             <Parameter Name="AzureBlobContainerName" Value="[AzureBlobContainerName]" />
