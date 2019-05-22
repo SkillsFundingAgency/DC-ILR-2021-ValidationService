@@ -7,7 +7,7 @@
   </Section>
   -->
 
-  <Section Name="ServiceBusSettings">
+  <!--<Section Name="ServiceBusSettings">
     <Parameter Name="JobStatusQueueName" Value="" />
     <Parameter Name="ServiceBusConnectionString" Value="" />
     <Parameter Name="AuditQueueName" Value="" />
@@ -48,6 +48,44 @@
   <Section Name="VersionSection">
     <Parameter Name="ServiceReleaseVersion" Value="" />
     <Parameter Name="ServiceReleaseDateTime" Value="" />
-  </Section>
+  </Section>-->
 
+  <Section Name="StatelessServiceConfiguration">
+    <Parameter Name="ServiceBusConnectionString" Value="" />
+    <Parameter Name="TopicName" Value="" />
+    <Parameter Name="SubscriptionName" Value=""/>
+    <Parameter Name="TopicMaxConcurrentCalls" Value=""/>
+    <Parameter Name="TopicMaxCallbackTimeSpanMinutes" Value="" />
+    <Parameter Name="JobStatusQueueName" Value="" />
+    <Parameter Name="JobStatusMaxConcurrentCalls" Value="" />
+    <Parameter Name="AuditQueueName" Value="" />
+    <Parameter Name="AuditMaxConcurrentCalls" Value="" />
+    <Parameter Name="LoggerConnectionString" Value="" />
+  </Section>
+  <Section Name="AzureStorageFileServiceConfiguration">
+    <Parameter Name="ConnectionString" Value="" />
+  </Section>
+  <Section  Name="AzureStorageSection">
+    <Parameter Name="AzureBlobConnectionString" Value="" />
+    <Parameter Name="AzureBlobContainerName" Value="" />
+  </Section>
+  <Section Name="IOConfiguration">
+    <Parameter Name="ConnectionString" Value="" />
+    <Parameter Name="ContainerName" Value="" />
+  </Section>
+  <Section Name="DataTransportSettings">
+    <Parameter Name="MaxMessageSize" Value="1073741824" MustOverride="true"/>
+    <Parameter Name="SecurityCredentialsType" Value="None" />
+    <Parameter Name="CertificateFindType" Value="" />
+    <Parameter Name="CertificateFindValue" Value="" />
+    <Parameter Name="CertificateRemoteThumbprints" Value="" />
+    <Parameter Name="CertificateStoreLocation" Value="" />
+    <Parameter Name="CertificateStoreName" Value="" />
+    <Parameter Name="CertificateProtectionLevel" Value="" />
+    <Parameter Name="CertificateRemoteCommonNames" Value="" />
+  </Section>
+  <Section Name="VersionSection">
+    <Parameter Name="ServiceReleaseVersion" Value="" />
+    <Parameter Name="ServiceReleaseDateTime" Value="" />
+  </Section>
 </Settings>

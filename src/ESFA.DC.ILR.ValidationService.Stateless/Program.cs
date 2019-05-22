@@ -3,30 +3,20 @@ using System.Diagnostics;
 using System.Threading;
 using Autofac;
 using Autofac.Integration.ServiceFabric;
-using ESFA.DC.Auditing.Interface;
 using ESFA.DC.FileService.Config;
 using ESFA.DC.ILR.ReferenceDataService.Modules;
-using ESFA.DC.ILR.ValidationService.Interface.Enum;
-using ESFA.DC.ILR.ValidationService.Modules;
 using ESFA.DC.ILR.ValidationService.Modules.Stateless;
 using ESFA.DC.ILR.ValidationService.Stateless.Configuration;
 using ESFA.DC.ILR.ValidationService.Stateless.Handlers;
 using ESFA.DC.ILR.ValidationService.Stateless.Models;
-using ESFA.DC.IO.AzureStorage;
 using ESFA.DC.IO.AzureStorage.Config.Interfaces;
-using ESFA.DC.IO.Interfaces;
-using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobContextManager.Model.Interface;
-using ESFA.DC.JobStatus.Interface;
-using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.Mapping.Interface;
-using ESFA.DC.Queueing;
-using ESFA.DC.Queueing.Interface;
-using ESFA.DC.Serialization.Interfaces;
 using ESFA.DC.ServiceFabric.Common.Config;
+using ESFA.DC.ServiceFabric.Common.Modules;
 using ESFA.DC.ServiceFabric.Helpers;
 
 namespace ESFA.DC.ILR.ValidationService.Stateless
@@ -69,123 +59,30 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
 
         private static ContainerBuilder BuildContainer()
         {
-            Console.WriteLine($"BuildContainer:1");
-            var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<PreValidationServiceModule>();
-
-            Console.WriteLine($"BuildContainer:2");
-
-            // get ServiceBus, Azurestorage config values and register container
             var configHelper = new ConfigurationHelper();
-            var serviceBusOptions =
-                configHelper.GetSectionValues<ServiceBusOptions>("ServiceBusSettings");
-            containerBuilder.RegisterInstance(serviceBusOptions).As<ServiceBusOptions>().SingleInstance();
+            var containerBuilder = new ContainerBuilder();
 
-            Console.WriteLine($"BuildContainer:3");
-            var azureStorageOptions =
-                configHelper.GetSectionValues<AzureStorageModel>("AzureStorageSection");
-            containerBuilder.RegisterInstance(azureStorageOptions).As<AzureStorageModel>().SingleInstance();
-            containerBuilder.RegisterInstance(azureStorageOptions).As<IAzureStorageKeyValuePersistenceServiceConfig>().SingleInstance();
-
-            Console.WriteLine($"BuildContainer:4");
-
-            // register logger
-            var loggerOptions =
-                configHelper.GetSectionValues<LoggerOptions>("LoggerSection");
-            containerBuilder.RegisterInstance(loggerOptions).As<LoggerOptions>().SingleInstance();
-            containerBuilder.RegisterModule<LoggerModule>();
-
-            Console.WriteLine($"BuildContainer:5");
-            containerBuilder.RegisterType<AzureStorageKeyValuePersistenceService>()
-                .As<IKeyValuePersistenceService>()
-                .As<IStreamableKeyValuePersistenceService>()
-                .InstancePerLifetimeScope();
-
-            Console.WriteLine($"BuildContainer:6");
-
-            // service bus queue configuration
-            // var topicConfiguration = new ServiceBusTopicConfiguration(
-            //    serviceBusOptions.ServiceBusConnectionString,
-            //    serviceBusOptions.TopicName,
-            //    serviceBusOptions.SubscriptionName);
-            var topicSubscribeConfig = new TopicConfiguration(
-                serviceBusOptions.ServiceBusConnectionString,
-                serviceBusOptions.TopicName,
-                serviceBusOptions.SubscriptionName,
-                1,
-                maximumCallbackTimeSpan: TimeSpan.FromMinutes(20));
-
-            Console.WriteLine($"BuildContainer:8");
-            var auditPublishConfig = new ServiceBusQueueConfig(
-                serviceBusOptions.ServiceBusConnectionString,
-                serviceBusOptions.AuditQueueName,
-                Environment.ProcessorCount);
-
-            Console.WriteLine($"BuildContainer:9");
-
-            // register queue services
-            containerBuilder.Register(c =>
-            {
-                var topicSubscriptionSevice =
-                    new TopicSubscriptionSevice<JobContextDto>(
-                        topicSubscribeConfig,
-                        c.Resolve<IJsonSerializationService>(),
-                        c.Resolve<ILogger>());
-                return topicSubscriptionSevice;
-            }).As<ITopicSubscriptionService<JobContextDto>>();
-
-            Console.WriteLine($"BuildContainer:10");
-            containerBuilder.Register(c =>
-            {
-                var topicPublishService =
-                    new TopicPublishService<JobContextDto>(
-                        topicSubscribeConfig,
-                        c.Resolve<IJsonSerializationService>());
-                return topicPublishService;
-            }).As<ITopicPublishService<JobContextDto>>();
-
-            Console.WriteLine($"BuildContainer:11");
-            containerBuilder.Register(c => new QueuePublishService<AuditingDto>(
-                    auditPublishConfig,
-                    c.Resolve<IJsonSerializationService>()))
-                .As<IQueuePublishService<AuditingDto>>();
-
-            Console.WriteLine($"BuildContainer:12");
-
-            // Job Status Update Service
-            var jobStatusPublishConfig = new JobStatusQueueConfig(
-                serviceBusOptions.ServiceBusConnectionString,
-                serviceBusOptions.JobStatusQueueName,
-                Environment.ProcessorCount);
-
-            Console.WriteLine($"BuildContainer:13");
-            containerBuilder.Register(c => new QueuePublishService<JobStatusDto>(
-                    jobStatusPublishConfig,
-                    c.Resolve<IJsonSerializationService>()))
-                .As<IQueuePublishService<JobStatusDto>>();
-
-            Console.WriteLine($"BuildContainer:14");
-
-            // register job context manager
-            containerBuilder.RegisterType<DefaultJobContextMessageMapper<JobContextMessage>>().As<IMapper<JobContextMessage, JobContextMessage>>();
-
-            Console.WriteLine($"BuildContainer:16");
-            containerBuilder.RegisterType<MessageHandler>().As<IMessageHandler<JobContextMessage>>();
-
-            Console.WriteLine($"BuildContainer:17");
-
-            containerBuilder.RegisterType<JobContextManager<JobContextMessage>>().As<IJobContextManager<JobContextMessage>>().InstancePerLifetimeScope();
-
-            Console.WriteLine($"BuildContainer:19");
-            containerBuilder.RegisterType<JobContextMessage>().As<IJobContextMessage>().InstancePerLifetimeScope();
-
-            Console.WriteLine($"BuildContainer:20");
             var serviceFabricConfigurationService = new ServiceFabricConfigurationService();
 
+            var statelessServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAsStatelessServiceConfiguration();
             var azureStorageFileServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<AzureStorageFileServiceConfiguration>("AzureStorageFileServiceConfiguration");
             var ioConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<IOConfiguration>("IOConfiguration");
 
+            containerBuilder.RegisterModule(new StatelessServiceModule(statelessServiceConfiguration));
+            containerBuilder.RegisterModule<SerializationModule>();
+
+            var azureStorageOptions = configHelper.GetSectionValues<AzureStorageModel>("AzureStorageSection");
+            containerBuilder.RegisterInstance(azureStorageOptions).As<AzureStorageModel>().SingleInstance();
+            containerBuilder.RegisterInstance(azureStorageOptions).As<IAzureStorageKeyValuePersistenceServiceConfig>().SingleInstance();
+
+            containerBuilder.RegisterModule<PreValidationServiceModule>();
             containerBuilder.RegisterModule(new IOModule(azureStorageFileServiceConfiguration, ioConfiguration));
+
+            containerBuilder.RegisterType<DefaultJobContextMessageMapper<JobContextMessage>>().As<IMapper<JobContextMessage, JobContextMessage>>();
+            containerBuilder.RegisterType<MessageHandler>().As<IMessageHandler<JobContextMessage>>();
+
+            containerBuilder.RegisterType<JobContextManager<JobContextMessage>>().As<IJobContextManager<JobContextMessage>>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<JobContextMessage>().As<IJobContextMessage>().InstancePerLifetimeScope();
 
             return containerBuilder;
         }
