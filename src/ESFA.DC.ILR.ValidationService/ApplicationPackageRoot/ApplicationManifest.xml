@@ -7,6 +7,10 @@
     <Parameter Name="TopicName" DefaultValue="TopicName" />
     <Parameter Name="SubscriptionName" DefaultValue="" />
     <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
+    <Parameter Name="TopicMaxConcurrentCalls" DefaultValue="1" />
+    <Parameter Name="TopicMaxCallbackTimeSpanMinutes" DefaultValue="20" />
+    <Parameter Name="JobStatusMaxConcurrentCalls" DefaultValue="1" />
+    <Parameter Name="AuditMaxConcurrentCalls" DefaultValue="1" />
     <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
     <Parameter Name="LoggerConnectionstring" DefaultValue="Server=localhost;Database=logs;User Id=loguser;" />
     <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
@@ -59,18 +63,20 @@
     <ConfigOverrides>
       <ConfigOverride Name="Config">
         <Settings>
-          <Section Name="ServiceBusSettings">
-            <Parameter Name="AuditQueueName" Value="[AuditQueueName]" />
-            <Parameter Name="JobStatusQueueName" Value="[JobStatusQueueName]" />
+          <Section Name="StatelessServiceConfiguration">
             <Parameter Name="ServiceBusConnectionString" Value="[ServiceBusConnectionString]" />
             <Parameter Name="TopicName" Value="[TopicName]" />
             <Parameter Name="SubscriptionName" Value="[SubscriptionName]" />
+            <Parameter Name="TopicMaxConcurrentCalls" Value="[TopicMaxConcurrentCalls]" />
+            <Parameter Name="TopicMaxCallbackTimeSpanMinutes" Value="[TopicMaxCallbackTimeSpanMinutes]" />
+            <Parameter Name="JobStatusQueueName" Value="[JobStatusQueueName]" />
+            <Parameter Name="JobStatusMaxConcurrentCalls" Value="[JobStatusMaxConcurrentCalls]" />
+            <Parameter Name="AuditQueueName" Value="[AuditQueueName]" />
+            <Parameter Name="AuditMaxConcurrentCalls" Value="[AuditMaxConcurrentCalls]" />
+            <Parameter Name="LoggerConnectionString" Value="[LoggerConnectionString]" />
           </Section>
           <Section Name="DataTransportSettings">
             <Parameter Name="MaxMessageSize" Value="[MaxMessageSize]" />
-          </Section>
-          <Section Name="LoggerSection">
-            <Parameter Name="LoggerConnectionstring" Value="[LoggerConnectionstring]" />
           </Section>
           <Section Name="AzureStorageSection">
             <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
