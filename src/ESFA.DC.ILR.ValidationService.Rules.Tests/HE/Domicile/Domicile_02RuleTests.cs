@@ -105,8 +105,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.DOMICILE
         [InlineData(true, "ValidLookUp")]
         [InlineData(false, "InvalidLookUp")]
         [InlineData(true, null)]
-        [InlineData(true, "")]
-        [InlineData(true, " ")]
+        [InlineData(false, "")]
+        [InlineData(false, " ")]
         public void HasValidDomicileMeetsExpectation(bool expectation, string domicile)
         {
             // arrange
