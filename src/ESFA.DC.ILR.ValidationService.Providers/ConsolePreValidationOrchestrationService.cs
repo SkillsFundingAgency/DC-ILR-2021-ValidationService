@@ -36,11 +36,11 @@ namespace ESFA.DC.ILR.ValidationService.Providers
         }
 
         public async Task ExecuteAsync(
-            IPreValidationContext preValidationContext,
+            IValidationContext preValidationContext,
             CancellationToken cancellationToken)
         {
             // get the file name
-            _fileDataCache.FileName = preValidationContext.Input;
+            _fileDataCache.FileName = preValidationContext.Filename;
 
             // get ILR data from file
             await _preValidationPopulationService.PopulateAsync(cancellationToken);

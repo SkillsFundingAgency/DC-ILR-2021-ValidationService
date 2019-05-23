@@ -22,9 +22,9 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
             var input = "ILR String";
             var container = "Container";
 
-            var validationContextMock = new Mock<IPreValidationContext>();
+            var validationContextMock = new Mock<IValidationContext>();
 
-            validationContextMock.SetupGet(c => c.Input).Returns(input);
+            validationContextMock.SetupGet(c => c.Filename).Returns(input);
             validationContextMock.SetupGet(c => c.Container).Returns(container);
 
             using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("Stream")))
@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
 
         private MessageFileProviderService NewService(
             IXmlSerializationService xmlSerializationService = null,
-            IPreValidationContext preValidationContext = null,
+            IValidationContext preValidationContext = null,
             IFileService fileService = null)
         {
             return new MessageFileProviderService(xmlSerializationService, preValidationContext, fileService);

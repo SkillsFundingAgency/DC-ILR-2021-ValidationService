@@ -2,13 +2,11 @@
 
 namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface IPreValidationContext
+    public interface IValidationContext
     {
-        string Input { get; set; }
+        string Filename { get; }
 
-        string Output { get; }
-
-        string Container { get; set; }
+        string Container { get; }
 
         string IlrReferenceDataKey { get; }
 
@@ -30,6 +28,6 @@ namespace ESFA.DC.ILR.ValidationService.Interface
 
         int ValidationTotalWarningCount { get; set; }
 
-        IEnumerable<string> Tasks { get; set; }
+        IEnumerable<string> Tasks { get; }
     }
 }

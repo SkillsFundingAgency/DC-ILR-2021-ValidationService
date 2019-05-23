@@ -19,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
         {
             var cancellationToken = CancellationToken.None;
 
-            var validationContextMock = new Mock<IPreValidationContext>();
+            var validationContextMock = new Mock<IValidationContext>();
 
             var ilrReferenceDataKey = "ILR RD String";
             var container = "Container";
@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
 
         private IlrReferenceDataFileProviderService NewService(
             IJsonSerializationService jsonSerializationService = null,
-            IPreValidationContext preValidationContext = null,
+            IValidationContext preValidationContext = null,
             IFileService fileService = null)
         {
             return new IlrReferenceDataFileProviderService(jsonSerializationService, preValidationContext, fileService);

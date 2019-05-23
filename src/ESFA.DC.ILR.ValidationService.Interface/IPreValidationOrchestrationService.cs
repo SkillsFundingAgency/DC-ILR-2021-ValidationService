@@ -5,6 +5,6 @@ namespace ESFA.DC.ILR.ValidationService.Interface
 {
     public interface IPreValidationOrchestrationService<U>
     {
-        Task ExecuteAsync(IPreValidationContext validationContext, CancellationToken cancellationToken);
+        Task ExecuteAsync(IValidationContext validationContext, CancellationToken cancellationToken);
     }
 }

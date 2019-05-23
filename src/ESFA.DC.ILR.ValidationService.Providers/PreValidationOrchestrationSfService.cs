@@ -64,7 +64,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             _logger = logger;
         }
 
-        public async Task ExecuteAsync(IPreValidationContext validationContext, CancellationToken cancellationToken)
+        public async Task ExecuteAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -82,7 +82,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
                 _logger.LogDebug($"Population service completed in: {stopWatch.ElapsedMilliseconds}");
 
                 // Set the filename
-                _fileDataCache.FileName = validationContext.Input;
+                _fileDataCache.FileName = validationContext.Filename;
 
                 // File Validation
                 await _ruleSetOrchestrationService.ExecuteAsync(validationContext.Tasks, cancellationToken).ConfigureAwait(false);
@@ -164,7 +164,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             }
         }
 
-        private async Task ExecuteValidationActors(IPreValidationContext validationContext, CancellationToken cancellationToken)
+        private async Task ExecuteValidationActors(IValidationContext validationContext, CancellationToken cancellationToken)
         {
             // Get L/A and split the learners into separate lists
             IEnumerable<IMessage> learnerMessageShards = await _learnerPerActorProviderService.ProvideAsync();

@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
         private readonly IValidationErrorCache<IValidationError> _validationErrorCache;
         private readonly ICache<IMessage> _messageCache;
         private readonly IFileService _fileService;
-        private readonly IPreValidationContext _validationContext;
+        private readonly IValidationContext _validationContext;
         private readonly IJsonSerializationService _serializationService;
         private readonly IValidationErrorsDataService _validationErrorsDataService;
         private readonly ILogger _logger;
@@ -33,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
             IValidationErrorCache<IValidationError> validationErrorCache,
             ICache<IMessage> messageCache,
             IFileService fileService,
-            IPreValidationContext validationContext,
+            IValidationContext validationContext,
             IJsonSerializationService serializationService,
             IValidationErrorsDataService validationErrorsDataService,
             ILogger logger)

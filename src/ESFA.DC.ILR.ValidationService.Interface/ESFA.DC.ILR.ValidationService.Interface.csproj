@@ -82,7 +82,7 @@
     <Compile Include="IFileSystemFileContentStringProviderService.cs" />
     <Compile Include="ILearnerDPPerActorProviderService.cs" />
     <Compile Include="ILearnerPerActorProviderService.cs" />
-    <Compile Include="IPreValidationContext.cs" />
+    <Compile Include="IValidationContext.cs" />
     <Compile Include="IPreValidationOrchestrationService.cs" />
     <Compile Include="IRule.cs" />
     <Compile Include="IRuleSetExecutionService.cs" />
