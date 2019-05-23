@@ -20,13 +20,13 @@ namespace ESFA.DC.ILR.ValidationService.Interface
 
         string JobId { get; }
 
-        int ValidLearnRefNumbersCount { get; set; }
+        int ValidLearnRefNumbersCount { set; }
 
-        int InvalidLearnRefNumbersCount { get; set; }
+        int InvalidLearnRefNumbersCount { set; }
 
-        int ValidationTotalErrorCount { get; set; }
+        int ValidationTotalErrorCount { set; }
 
-        int ValidationTotalWarningCount { get; set; }
+        int ValidationTotalWarningCount { set; }
 
         IEnumerable<string> IgnoredRules { get; }
     }
