@@ -10,6 +10,7 @@ using ESFA.DC.ILR.ValidationService.Stateless.Models;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
+using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ExecutionContext = ESFA.DC.Logging.ExecutionContext;
 
@@ -18,11 +19,13 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
     public class MessageHandler : IMessageHandler<JobContextMessage>
     {
         private readonly ILifetimeScope _parentLifeTimeScope;
+        private readonly IValidationContextFactory<IJobContextMessage> _validationContextFactory;
         private readonly StatelessServiceContext _context;
 
-        public MessageHandler(ILifetimeScope parentLifeTimeScope, StatelessServiceContext context)
+        public MessageHandler(ILifetimeScope parentLifeTimeScope, IValidationContextFactory<IJobContextMessage> validationContextFactory, StatelessServiceContext context)
         {
             _parentLifeTimeScope = parentLifeTimeScope;
+            _validationContextFactory = validationContextFactory;
             _context = context;
         }
 
@@ -31,8 +34,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
             using (var childLifeTimeScope = _parentLifeTimeScope
                 .BeginLifetimeScope(c =>
                 {
-                    c.RegisterInstance(
-                        new JobContextMessageValidationContext(jobContextMessage)).As<IValidationContext>();
+                    c.RegisterInstance(_validationContextFactory.Build(jobContextMessage)).As<IValidationContext>();
                 }))
             {
                 var executionContext = (ExecutionContext)childLifeTimeScope.Resolve<IExecutionContext>();
