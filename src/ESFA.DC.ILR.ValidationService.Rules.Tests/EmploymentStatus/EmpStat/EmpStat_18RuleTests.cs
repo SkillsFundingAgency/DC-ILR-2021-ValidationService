@@ -109,21 +109,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             // arrange / act / assert
             Assert.Equal(DateTime.Parse("2018-07-31"), EmpStat_18Rule.OldCodeMonitoringThresholdDate);
         }
-        ///// <summary>
-        ///// Does not have a qualifying employment status with null employment returns true
-        ///// </summary>
-        //[Fact]
-        //public void DoesNotHaveAQualifyingEmploymentStatusWithNullEmploymentReturnsTrue()
-        //{
-        //    // arrange
-        //    var sut = NewRule();
-
-        //    // act
-        //    var result = sut.RunChecks(null, null, null);
-
-        //    // assert
-        //    Assert.True(result);
-        //}
 
         [Fact]
         public void IsQualifyingPrimaryLearningAimWithNullReturnsFalse()

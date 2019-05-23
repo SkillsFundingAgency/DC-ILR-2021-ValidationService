@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         ///   <c>true</c> if [is qualifying period] [the specified monitor]; otherwise, <c>false</c>.
         /// </returns>
         public bool InQualifyingPeriod(IEmploymentStatusMonitoring monitor, DateTime candidate) =>
-            _lookups.IsCurrent(TypeOfLimitedLifeLookup.EmploymentStatusMonitoring, $"{monitor.ESMType}{monitor.ESMCode}", candidate);
+            _lookups.IsCurrent(TypeOfLimitedLifeLookup.ESMType, $"{monitor.ESMType}{monitor.ESMCode}", candidate);
 
         /// <summary>
         /// Determines whether [is not valid] [the specified employment status].

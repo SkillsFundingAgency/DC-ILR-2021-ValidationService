@@ -45,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
             dd28Mock
-                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>()))
+                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
                 .Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
@@ -165,7 +165,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
             dd28Mock
-                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>()))
+                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
                 .Returns(dd28);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
@@ -227,7 +227,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
             dd28Mock
-                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>()))
+                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
                 .Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
@@ -289,7 +289,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
             dd28Mock
-                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>()))
+                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
                 .Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
@@ -351,7 +351,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
             dd28Mock
-                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>()))
+                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
                 .Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
@@ -413,7 +413,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
             dd28Mock
-                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>()))
+                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
                 .Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
@@ -475,7 +475,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
             dd28Mock
-                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>()))
+                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
                 .Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
@@ -539,7 +539,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
             dd28Mock
-                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>()))
+                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
                 .Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
@@ -601,7 +601,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
             dd28Mock
-                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>()))
+                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
                 .Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();

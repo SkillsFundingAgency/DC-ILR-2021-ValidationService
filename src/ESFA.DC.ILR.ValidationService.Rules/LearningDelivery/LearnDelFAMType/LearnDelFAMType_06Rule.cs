@@ -81,7 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         }
 
         /// <summary>
-        /// Determines whether [is not current] [the specified monitor].
+        /// Determines whether [is not cuurrent] [the specified monitor].
         /// </summary>
         /// <param name="monitor">The monitor.</param>
         /// <param name="referenceDate">The reference date.</param>
@@ -90,8 +90,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// </returns>
         public bool IsNotCurrent(ILearningDeliveryFAM monitor, DateTime referenceDate)
         {
-            return !_lookupDetails.IsCurrent(
-                TypeOfLimitedLifeLookup.LearningDeliveryFAM,
+            return !_lookupDetails.IsVaguelyCurrent(
+                TypeOfLimitedLifeLookup.LearnDelFAMType,
                 $"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}",
                 referenceDate);
         }

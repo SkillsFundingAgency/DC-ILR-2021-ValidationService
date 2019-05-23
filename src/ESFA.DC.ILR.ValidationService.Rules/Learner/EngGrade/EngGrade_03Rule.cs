@@ -3,6 +3,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
+using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.EngGrade
 {
@@ -54,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.EngGrade
         ///   <c>true</c> if [is eligible for funding] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsEligibleForFunding(ILearner candidate) =>
-            It.IsInRange(candidate.EngGrade, Monitoring.Learner.Level1AndLowerGrades);
+            Monitoring.Learner.Level1AndLowerGrades.Contains(candidate.EngGrade);
 
         /// <summary>
         /// Determines whether [has eligible funding] [the specified monitor].

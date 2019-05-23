@@ -49,9 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanEEPHours
 
         public bool FundModelConditionMet(int fundModel)
         {
-            var fundModels = new[] { 25, 82 };
-
-            return fundModels.Contains(fundModel);
+            return fundModel == TypeOfFunding.Age16To19ExcludingApprenticeships;
         }
 
         public bool PlanEEPHoursConditionMet(int? planEEPHours)

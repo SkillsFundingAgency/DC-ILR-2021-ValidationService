@@ -132,12 +132,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         [InlineData("2017-02-01", "2017-07-31", true)]
         [InlineData("2017-02-26", "2017-11-30", false)]
         [InlineData("2017-03-14", "2017-11-30", false)]
-        [InlineData("2017-03-31", "2017-11-30", false)]
+        [InlineData("2017-03-31", "2017-12-01", false)]
         [InlineData("2017-04-01", "2017-11-30", true)]
         [InlineData("2015-04-01", "2017-12-01", false)]
         [InlineData("2015-07-31", "2015-10-01", true)]
         [InlineData("2015-08-01", "2016-03-31", true)]
-        [InlineData("2015-08-01", "2016-04-01", false)]
+        [InlineData("2015-08-01", "2016-04-01", true)]
+        [InlineData("2015-08-01", "2016-04-02", false)]
         public void ConditionMetWithLearningDeliveriesContainingOpenTrainingMeetExpectation(string startDate, string filePreparationDate, bool expectation)
         {
             // arrange

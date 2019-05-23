@@ -44,12 +44,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
             NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
         }
 
+        [Fact]
+        public void FundModelConditionMet_False_ValueCheck()
+        {
+            NewRule().FundModelConditionMet(36).Should().BeFalse();
+        }
+
         [Theory]
         [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships)]
-        [InlineData(TypeOfFunding.Other16To19)]
         public void FundModelConditionMet_True(int fundModel)
         {
             NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
+        }
+
+        [Fact]
+        public void FundModelConditionMet_True_ValueCheck()
+        {
+            NewRule().FundModelConditionMet(25).Should().BeTrue();
         }
 
         [Theory]
@@ -60,12 +71,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
             NewRule().ConditionMet(fundModel).Should().BeFalse();
         }
 
-        [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships)]
-        [InlineData(TypeOfFunding.Other16To19)]
-        public void ConditionMet_True(int fundModel)
+        [Fact]
+        public void ConditionMet_False_ValueCheck()
         {
-            NewRule().ConditionMet(fundModel).Should().BeTrue();
+            NewRule().ConditionMet(36).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_True()
+        {
+            NewRule().ConditionMet(TypeOfFunding.Age16To19ExcludingApprenticeships).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMet_True_ValueCheck()
+        {
+            NewRule().ConditionMet(25).Should().BeTrue();
         }
 
         [Fact]
@@ -79,11 +100,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.Other16To19
+                        FundModel = 82
                     },
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = 25
                     }
                 }
             };
@@ -105,7 +126,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.AdultSkills
+                        FundModel = 82
                     },
                     new TestLearningDelivery()
                     {
@@ -113,6 +134,42 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
                     }
                 }
             };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_NullPlanLearnHours()
+        {
+            var learner = new TestLearner()
+            {
+                PlanEEPHoursNullable = 6,
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 35
+                    },
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 0
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_NullCheck()
+        {
+            TestLearner learner = null;
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
@@ -129,11 +186,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
 
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.PlanLearnHours, planLearnHours)).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.PlanEEPHours, planEEPHours)).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel)).Verifiable();
+            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("PlanLearnHours", planLearnHours)).Verifiable();
+            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("PlanEEPHours", planEEPHours)).Verifiable();
+            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("FundModel", fundModel)).Verifiable();
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(planLearnHours, planEEPHours, fundModel);
+            NewRule(
+                validationErrorHandler: validationErrorHandlerMock.Object)
+                .BuildErrorMessageParameters(planLearnHours, planEEPHours, fundModel);
 
             validationErrorHandlerMock.Verify();
         }

@@ -17,8 +17,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="IEsfEligibilityRule"/> has benefits support.
+        /// Null - information is not provided
+        /// 0 - No Benefit
+        /// 1 - Benefit
         /// </summary>
-        bool Benefits { get; }
+        bool? Benefits { get; }
 
         /// <summary>
         /// Gets the minimum length of unemployment.

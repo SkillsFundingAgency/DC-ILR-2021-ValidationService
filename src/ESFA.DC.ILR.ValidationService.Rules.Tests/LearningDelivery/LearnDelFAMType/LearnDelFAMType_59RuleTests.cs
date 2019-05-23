@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ESFA.DC.ILR.Model.Interface;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
@@ -16,6 +11,8 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAMType
@@ -361,7 +358,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(true);
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
-            dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>())).Returns(true);
+            dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>())).Returns(true);
 
             NewRule(dd07: ddo07Mock.Object, famQueryService: famqueryServiceMock.Object, dd28: dd28Mock.Object).IsLearningDeliveryExcluded(It.IsAny<ILearner>(), learningDelivery).Should().BeTrue();
         }
@@ -382,7 +379,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             };
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
-            dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>())).Returns(true);
+            dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>())).Returns(true);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock.Setup(x => x.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>())).Returns(true);
@@ -487,7 +484,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             };
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
-            dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>())).Returns(false);
+            dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>())).Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock.Setup(x => x.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>())).Returns(false);
@@ -532,7 +529,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(false);
 
             famqueryServiceMock.Setup(x =>
-                    x.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(),  It.IsAny<string>()))
+                    x.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), It.IsAny<string>()))
                 .Returns(false);
 
             var organisationDataService = new Mock<IOrganisationDataService>();
@@ -542,7 +539,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             fileDataServiceMock.Setup(x => x.UKPRN()).Returns(1000);
 
             var dd28Mock = new Mock<IDerivedData_28Rule>();
-            dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearner>())).Returns(false);
+            dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>())).Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock.Setup(x => x.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>())).Returns(false);

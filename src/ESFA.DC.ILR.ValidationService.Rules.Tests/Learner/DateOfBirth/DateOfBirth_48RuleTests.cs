@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using ESFA.DC.ILR.Model.Interface;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -10,6 +8,8 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
+using System;
+using System.Linq;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
@@ -138,7 +138,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
 
             dd07Mock.Setup(dd => dd.IsApprenticeship(23)).Returns(true);
-            dd04Mock.Setup(dd => dd.Derive(learner.LearningDeliveries, learner.LearningDeliveries.FirstOrDefault())).Returns(dd04Date);
+            dd04Mock.Setup(dd => dd.GetEarliesStartDateFor(learner.LearningDeliveries.FirstOrDefault(), learner.LearningDeliveries)).Returns(dd04Date);
             academicYearQueryServiceMock.Setup(dd => dd.LastFridayInJuneForDateInAcademicYear(dd04Date)).Returns(lastFridayOfJune);
 
             using (var validateionErrorHandlerMock = BuildValidationErrorHandlerMockForError())
@@ -179,7 +179,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var datetimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
 
-            dd04Mock.Setup(dd => dd.Derive(learner.LearningDeliveries, learner.LearningDeliveries.FirstOrDefault())).Returns(dd04Date);
+            dd04Mock.Setup(dd => dd.GetEarliesStartDateFor(learner.LearningDeliveries.FirstOrDefault(), learner.LearningDeliveries)).Returns(dd04Date);
             academicYearQueryServiceMock.Setup(dd => dd.LastFridayInJuneForDateInAcademicYear(dd04Date)).Returns(lastFridayOfJune);
 
             using (var validateionErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())

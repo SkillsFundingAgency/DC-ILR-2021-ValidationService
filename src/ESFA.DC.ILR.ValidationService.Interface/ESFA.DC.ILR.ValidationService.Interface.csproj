@@ -51,13 +51,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
+      <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.ILR.Model, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.1819.Model.0.1.5-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.4-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.5-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -76,9 +76,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enum\PersistenceStorageKey.cs" />
     <Compile Include="Enum\Severity.cs" />
     <Compile Include="IErrorMessageParameter.cs" />
+    <Compile Include="IFileSystemFileContentStringProviderService.cs" />
     <Compile Include="ILearnerDPPerActorProviderService.cs" />
     <Compile Include="ILearnerPerActorProviderService.cs" />
     <Compile Include="IPreValidationContext.cs" />
@@ -87,7 +87,6 @@
     <Compile Include="IRuleSetExecutionService.cs" />
     <Compile Include="IRuleSetOrchestrationService.cs" />
     <Compile Include="IRuleSetResolutionService.cs" />
-    <Compile Include="IMessageStreamProviderService.cs" />
     <Compile Include="IValidationContext.cs" />
     <Compile Include="IValidationError.cs" />
     <Compile Include="IValidationErrorCache.cs" />

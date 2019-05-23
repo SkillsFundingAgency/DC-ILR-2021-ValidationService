@@ -40,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 .Where(x => AimTypeConditionMet(x.AimType) &&
                             FundModelsConditionMet(x.FundModel) &&
                             !ExcludeConditionMet(x.ProgTypeNullable) &&
-                            LarsComponentTypeConditionMet(x.LearnAimRef));
+                            LarsComponentTypeConditionMet(x.LearnAimRef, x.ProgTypeNullable, x.FworkCodeNullable, x.PwayCodeNullable, x.LearnStartDate));
 
             var completedLearningDeliveries = filteredLearningDeliveries.
                 Where(x => CompletedLearningDeliveryConditionMet(x.CompStatus, x.OutcomeNullable));
@@ -81,9 +81,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             return aimType == TypeOfAim.ComponentAimInAProgramme;
         }
 
-        public bool LarsComponentTypeConditionMet(string learnAimRef)
+        public bool LarsComponentTypeConditionMet(string learnAimRef, int? progType, int? fworkCode, int? pwayCode, DateTime startDate)
         {
-            return _larsDataService.FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, validComponentTypes);
+            return _larsDataService.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, validComponentTypes, startDate);
         }
 
         public bool ExcludeConditionMet(int? progType)

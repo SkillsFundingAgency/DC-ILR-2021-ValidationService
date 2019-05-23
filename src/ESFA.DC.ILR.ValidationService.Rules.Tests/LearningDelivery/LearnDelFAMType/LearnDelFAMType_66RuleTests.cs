@@ -1,9 +1,11 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
@@ -29,9 +31,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(null, mockService.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object));
+            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(
+                null,
+                mockService.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object));
         }
 
         /// <summary>
@@ -46,9 +56,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(mockHandler.Object, null, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object));
+            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(
+                mockHandler.Object,
+                null,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object));
         }
 
         /// <summary>
@@ -64,9 +82,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(mockHandler.Object, mockService.Object, null, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object));
+            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(
+                mockHandler.Object,
+                mockService.Object,
+                null,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object));
         }
 
         /// <summary>
@@ -82,9 +108,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(mockHandler.Object, mockService.Object, mockDDRule07.Object, null, mockDDRule28.Object, mockDDRule29.Object));
+            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(
+                mockHandler.Object,
+                mockService.Object,
+                mockDDRule07.Object,
+                null,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object));
         }
 
         /// <summary>
@@ -100,9 +134,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(mockHandler.Object, mockService.Object, mockDDRule07.Object, mockDDRule21.Object, null, mockDDRule29.Object));
+            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(
+                mockHandler.Object,
+                mockService.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                null,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object));
         }
 
         /// <summary>
@@ -118,9 +160,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(mockHandler.Object, mockService.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, null));
+            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_66Rule(
+                mockHandler.Object,
+                mockService.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                null,
+                mockDateTimeQueryService.Object));
         }
 
         /// <summary>
@@ -152,7 +202,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var result = sut.RuleName;
 
             // assert
-            Assert.Equal(LearnDelFAMType_66Rule.Name, result);
+            Assert.Equal(RuleNameConstants.LearnDelFAMType_66, result);
         }
 
         /// <summary>
@@ -190,14 +240,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void LastInviableDateMeetsExpectation()
         {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.LastInviableDate;
-
-            // assert
-            Assert.Equal(DateTime.Parse("2017-07-31"), result);
+            // arrange / act / assert
+            Assert.Equal(DateTime.Parse("2017-07-31"), LearnDelFAMType_66Rule.LastInviableDate);
         }
 
         /// <summary>
@@ -429,6 +473,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             // arrange
             var mockItem = new Mock<ILearner>();
+            var delivery = new Mock<ILearningDelivery>();
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
@@ -436,15 +481,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             mockDDRule21
-                .Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(mockItem.Object))
+                .Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(delivery.Object, mockItem.Object))
                 .Returns(expectation);
 
-            var sut = new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
+            var sut = new LearnDelFAMType_66Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
 
             // act
-            var result = sut.IsAdultFundedUnemployedWithOtherStateBenefits(mockItem.Object);
+            var result = sut.IsAdultFundedUnemployedWithOtherStateBenefits(delivery.Object, mockItem.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -454,6 +507,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDDRule21.VerifyAll();
             mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
+            mockDateTimeQueryService.VerifyAll();
         }
 
         /// <summary>
@@ -466,22 +520,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void IsAdultFundedUnemployedWithBenefitsMeetsExpectation(bool expectation)
         {
             // arrange
-            var mockItem = new Mock<ILearner>();
+            var delivery = new Mock<ILearningDelivery>();
+            var learner = new Mock<ILearner>();
+
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             mockDDRule28
-                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(mockItem.Object))
+                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(delivery.Object, learner.Object))
                 .Returns(expectation);
 
-            var sut = new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
+            var sut = new LearnDelFAMType_66Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
 
             // act
-            var result = sut.IsAdultFundedUnemployedWithBenefits(mockItem.Object);
+            var result = sut.IsAdultFundedUnemployedWithBenefits(delivery.Object, learner.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -491,6 +555,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDDRule21.VerifyAll();
             mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
+            mockDateTimeQueryService.VerifyAll();
         }
 
         /// <summary>
@@ -511,12 +576,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             mockDDRule29
                 .Setup(x => x.IsInflexibleElementOfTrainingAim(mockItem.Object))
                 .Returns(expectation);
 
-            var sut = new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
+            var sut = new LearnDelFAMType_66Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
 
             // act
             var result = sut.IsInflexibleElementOfTrainingAim(mockItem.Object);
@@ -529,6 +602,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDDRule21.VerifyAll();
             mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
+            mockDateTimeQueryService.VerifyAll();
         }
 
         /// <summary>
@@ -549,12 +623,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             mockDDRule07
                 .Setup(x => x.IsApprenticeship(null))
                 .Returns(expectation);
 
-            var sut = new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
+            var sut = new LearnDelFAMType_66Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
 
             // act
             var result = sut.IsApprenticeship(mockItem.Object);
@@ -567,6 +649,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDDRule21.VerifyAll();
             mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
+            mockDateTimeQueryService.VerifyAll();
         }
 
         /// <summary>
@@ -630,25 +713,47 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         /// </summary>
         /// <param name="birthDate">The birth date.</param>
         /// <param name="startDate">The start date.</param>
+        /// <param name="ageInYears">The age in years.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData("1994-08-01", "2018-04-18", false)]
-        [InlineData("1994-08-01", "2018-07-31", false)]
-        [InlineData("1994-08-01", "2018-08-01", true)]
-        [InlineData("1994-08-01", "2018-09-07", true)]
-        public void IsTargetAgeGroupMeetsExpectation(string birthDate, string startDate, bool expectation)
+        [InlineData("1994-08-01", "2018-04-18", 23, false)]
+        [InlineData("1994-08-01", "2018-07-31", 23, false)]
+        [InlineData("1994-08-01", "2018-08-01", 24, true)]
+        [InlineData("1994-08-01", "2018-09-07", 24, true)]
+        public void IsTargetAgeGroupMeetsExpectation(string birthDate, string startDate, int ageInYears, bool expectation)
         {
             // arrange
-            var sut = NewRule();
+            DateTime dateOfBirth = DateTime.Parse(birthDate);
+            DateTime learnStartDate = DateTime.Parse(startDate);
+
             var mockLearner = new Mock<ILearner>();
             mockLearner
                 .SetupGet(y => y.DateOfBirthNullable)
-                .Returns(DateTime.Parse(birthDate));
+                .Returns(dateOfBirth);
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
-                .Returns(DateTime.Parse(startDate));
+                .Returns(learnStartDate);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
+            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
+            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            mockDateTimeQueryService.Setup(x => x.YearsBetween(dateOfBirth, learnStartDate)).Returns(ageInYears);
+
+            var sut = new LearnDelFAMType_66Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
 
             // act
             var result = sut.IsTargetAgeGroup(mockLearner.Object, mockDelivery.Object);
@@ -689,79 +794,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         /// <summary>
-        /// Is excluded for adult funded unemployed with other state benefits
-        /// </summary>
-        [Fact]
-        public void IsExcludedForAdultFundedUnemployedWithOtherStateBenefits()
-        {
-            // arrange
-            var mockItem = new Mock<ILearner>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
-
-            mockDDRule21
-                .Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(mockItem.Object))
-                .Returns(true);
-
-            var sut = new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
-
-            // act
-            var result = sut.IsExcluded(mockItem.Object);
-
-            // assert
-            Assert.True(result);
-            handler.VerifyAll();
-            service.VerifyAll();
-            mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
-            mockDDRule29.VerifyAll();
-        }
-
-        /// <summary>
-        /// Is excluded for adult funded unemployed with benefits
-        /// </summary>
-        [Fact]
-        public void IsExcludedForAdultFundedUnemployedWithBenefits()
-        {
-            // arrange
-            var mockItem = new Mock<ILearner>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
-
-            mockDDRule21
-                .Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(mockItem.Object))
-                .Returns(false);
-            mockDDRule28
-                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(mockItem.Object))
-                .Returns(true);
-
-            var sut = new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
-
-            // act
-            var result = sut.IsExcluded(mockItem.Object);
-
-            // assert
-            Assert.True(result);
-            handler.VerifyAll();
-            service.VerifyAll();
-            mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
-            mockDDRule29.VerifyAll();
-        }
-
-        /// <summary>
         /// Is excluded for inflexible element of training aim
         /// </summary>
         [Fact]
@@ -776,18 +808,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            mockDDRule21
-                .Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(mockItem.Object))
-                .Returns(false);
-            mockDDRule28
-                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(mockItem.Object))
-                .Returns(false);
             mockDDRule29
                 .Setup(x => x.IsInflexibleElementOfTrainingAim(mockItem.Object))
                 .Returns(true);
 
-            var sut = new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
+            var sut = new LearnDelFAMType_66Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
 
             // act
             var result = sut.IsExcluded(mockItem.Object);
@@ -800,6 +834,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDDRule21.VerifyAll();
             mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
+            mockDateTimeQueryService.VerifyAll();
         }
 
         /// <summary>
@@ -829,13 +864,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            mockDDRule21
-                .Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(mockItem.Object))
-                .Returns(false);
-            mockDDRule28
-                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(mockItem.Object))
-                .Returns(false);
             mockDDRule29
                 .Setup(x => x.IsInflexibleElementOfTrainingAim(mockItem.Object))
                 .Returns(false);
@@ -843,7 +873,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.IsApprenticeship(progType))
                 .Returns(true);
 
-            var sut = new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
+            var sut = new LearnDelFAMType_66Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
 
             // act
             var result = sut.IsExcluded(mockItem.Object);
@@ -856,6 +893,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDDRule21.VerifyAll();
             mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
+            mockDateTimeQueryService.VerifyAll();
         }
 
         /// <summary>
@@ -879,13 +917,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var fams = Collection.Empty<ILearningDeliveryFAM>();
             fams.Add(mockFAM.Object);
 
+            var testDate = DateTime.Parse("2017-08-01");
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.LearnAimRef)
                 .Returns(learnAimRef);
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
-                .Returns(DateTime.Parse("2017-08-01"));
+                .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
                 .Returns(TypeOfFunding.AdultSkills);
@@ -896,29 +935,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var deliveries = Collection.Empty<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
+            var birthDate = DateTime.Parse("1993-07-01");
             var mockLearner = new Mock<ILearner>();
             mockLearner
                 .SetupGet(x => x.LearnRefNumber)
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.DateOfBirthNullable)
-                .Returns(DateTime.Parse("1993-07-01"));
+                .Returns(birthDate);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
                 .Returns(deliveries.AsSafeReadOnlyList());
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
-                .Setup(x => x.Handle(
-                    Moq.It.Is<string>(y => y == LearnDelFAMType_66Rule.Name),
-                    Moq.It.Is<string>(y => y == LearnRefNumber),
-                    0,
-                    Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+                .Setup(x => x.Handle(RuleNameConstants.LearnDelFAMType_66, LearnRefNumber, 0, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
             handler
-                .Setup(x => x.BuildErrorMessageParameter(
-                    Moq.It.Is<string>(y => y == LearnDelFAMType_66Rule.MessagePropertyName),
-                    Moq.It.IsAny<ILearningDelivery>()))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
+               .Setup(x => x.BuildErrorMessageParameter("FundModel", 35))
+               .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+              .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMType", "FFI"))
+              .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+              .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMCode", "1"))
+              .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+              .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testDate)))
+              .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+              .Setup(x => x.BuildErrorMessageParameter("DateOfBirth", AbstractRule.AsRequiredCultureDate(birthDate)))
+              .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var mock = new Mock<ILARSLearningDelivery>();
             mock
@@ -932,10 +978,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
+            mockDDRule21
+                .Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(mockDelivery.Object, mockLearner.Object))
+                .Returns(false);
+
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
+            mockDDRule28
+                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(mockDelivery.Object, mockLearner.Object))
+                .Returns(false);
+
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
 
-            var sut = new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            mockDateTimeQueryService.Setup(x => x.YearsBetween(birthDate, testDate)).Returns(24);
+
+            var sut = new LearnDelFAMType_66Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
 
             // act
             sut.ValidateDeliveries(mockLearner.Object);
@@ -947,6 +1011,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDDRule21.VerifyAll();
             mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
+            mockDateTimeQueryService.VerifyAll();
         }
 
         /// <summary>
@@ -959,6 +1024,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             // arrange
             const string LearnRefNumber = "123456789X";
             const string learnAimRef = "salddfkjeifdnase";
+            DateTime dateOfBirth = new DateTime(1993, 07, 01);
+            DateTime learnStartDate = new DateTime(2017, 08, 01);
 
             var mockFAM = new Mock<ILearningDeliveryFAM>();
             mockFAM
@@ -977,7 +1044,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
-                .Returns(DateTime.Parse("2017-08-01"));
+                .Returns(learnStartDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
                 .Returns(TypeOfFunding.AdultSkills);
@@ -994,7 +1061,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.DateOfBirthNullable)
-                .Returns(DateTime.Parse("1993-07-01"));
+                .Returns(dateOfBirth);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
                 .Returns(deliveries.AsSafeReadOnlyList());
@@ -1007,10 +1074,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
+            mockDDRule21
+                .Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(mockDelivery.Object, mockLearner.Object))
+                .Returns(false);
+
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
+            mockDDRule28
+                .Setup(x => x.IsAdultFundedUnemployedWithBenefits(mockDelivery.Object, mockLearner.Object))
+                .Returns(false);
+
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
 
-            var sut = new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            mockDateTimeQueryService.Setup(x => x.YearsBetween(dateOfBirth, learnStartDate)).Returns(24);
+
+            var sut = new LearnDelFAMType_66Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
 
             // act
             sut.ValidateDeliveries(mockLearner.Object);
@@ -1022,6 +1107,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDDRule21.VerifyAll();
             mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
+            mockDateTimeQueryService.VerifyAll();
         }
 
         /// <summary>
@@ -1036,8 +1122,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
+            var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new LearnDelFAMType_66Rule(handler.Object, service.Object, mockDDRule07.Object, mockDDRule21.Object, mockDDRule28.Object, mockDDRule29.Object);
+            return new LearnDelFAMType_66Rule(
+                handler.Object,
+                service.Object,
+                mockDDRule07.Object,
+                mockDDRule21.Object,
+                mockDDRule28.Object,
+                mockDDRule29.Object,
+                mockDateTimeQueryService.Object);
         }
     }
 }

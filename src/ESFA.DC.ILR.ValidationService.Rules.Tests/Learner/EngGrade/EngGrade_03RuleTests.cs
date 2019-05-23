@@ -108,6 +108,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
         [InlineData("GG", true)]
         [InlineData("N", true)]
         [InlineData("U", true)]
+        [InlineData("3", true)]
+        [InlineData("2", true)]
+        [InlineData("1", true)]
         [InlineData("", false)]
         [InlineData(null, false)]
         public void IsEligibleForFundingMeetsExpectation(string candidate, bool expectation)
@@ -171,6 +174,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
         [InlineData("GG")]
         [InlineData("N")]
         [InlineData("U")]
+        [InlineData("3")]
+        [InlineData("2")]
+        [InlineData("1")]
         public void InvalidItemRaisesValidationMessage(string candidate)
         {
             // arrange
@@ -232,6 +238,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
         [InlineData("GG")]
         [InlineData("N")]
         [InlineData("U")]
+        [InlineData("3")]
+        [InlineData("2")]
+        [InlineData("1")]
         [InlineData("")]
         [InlineData(null)]
         public void ValidItemDoesNotRaiseValidationMessage(string candidate)

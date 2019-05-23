@@ -1,6 +1,4 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
-using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query;
@@ -21,27 +19,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         public void NewRuleWithNullCommonOperationsThrows()
         {
             // arrange
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRefRuleActionProvider(null, service.Object, derivedData11.Object));
-        }
-
-        /// <summary>
-        /// New rule with null lars service throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullLARSServiceThrows()
-        {
-            // arrange
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRefRuleActionProvider(commonOps.Object, null, derivedData11.Object));
+            Assert.Throws<ArgumentNullException>(() => new LearnAimRefRuleActionProvider(null, derivedData11.Object));
         }
 
         /// <summary>
@@ -51,12 +33,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         public void NewRuleWithNullDerivedDataThrows()
         {
             // arrange
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, null));
+            Assert.Throws<ArgumentNullException>(() => new LearnAimRefRuleActionProvider(commonOps.Object, null));
         }
 
         /// <summary>
@@ -79,6 +60,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             Assert.Equal(DateTime.Parse("2016-08-01"), LearnAimRefRuleActionProvider.UnemployedMaximumStart);
         }
 
+        [Theory]
+        [InlineData(TypeOfFunding.AdultSkills, 4)]
+        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, 2)]
+        [InlineData(TypeOfFunding.OtherAdult, 1)]
+        [InlineData(TypeOfFunding.NotFundedByESFA, 2)]
+        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, 1)]
+        [InlineData(TypeOfFunding.Other16To19, 1)]
+        [InlineData(TypeOfFunding.EuropeanSocialFund, 1)]
+        [InlineData(TypeOfFunding.CommunityLearning, 1)]
+        public void GetRoutinesMeetsExpectation(int candidate, int expectation)
+        {
+            // arrange
+            var sut = NewService();
+
+            // act
+            var result = sut.GetRoutines(candidate);
+
+            // assert
+            Assert.Equal(expectation, result.Count);
+        }
+
         /// <summary>
         /// In receipt of benefits at start meets expectation.
         /// </summary>
@@ -92,340 +94,62 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             var mockDelivery = new Mock<ILearningDelivery>();
             var employments = new ILearnerEmploymentStatus[] { };
 
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
             derivedData11
                 .Setup(x => x.IsAdultFundedOnBenefitsAtStartOfAim(mockDelivery.Object, employments))
                 .Returns(expectation);
 
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
 
             // act
             var result = sut.InReceiptOfBenefitsAtStart(mockDelivery.Object, employments);
 
             // assert
             commonOps.VerifyAll();
-            service.VerifyAll();
             derivedData11.VerifyAll();
 
             Assert.Equal(expectation, result);
         }
 
         /// <summary>
-        /// Has qualifying category (1) meets expectation
+        /// Is qualifying category olass meets expectation
         /// </summary>
-        /// <param name="category">The category.</param>
-        /// <param name="candidate">The candidate.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(TypeOfLARSValidity.AdultSkills, TypeOfLARSValidity.AdultSkills, true)]
-        [InlineData(TypeOfLARSValidity.AdvancedLearnerLoan, TypeOfLARSValidity.Any, false)]
-        [InlineData(TypeOfLARSValidity.Any, TypeOfLARSValidity.EFA16To19, false)]
-        [InlineData(TypeOfLARSValidity.Apprenticeships, TypeOfLARSValidity.Apprenticeships, true)]
-        [InlineData(TypeOfLARSValidity.CommunityLearning, TypeOfLARSValidity.EFA16To19, false)]
-        [InlineData(TypeOfLARSValidity.EFA16To19, TypeOfLARSValidity.EFA16To19, true)]
-        [InlineData(TypeOfLARSValidity.EFAConFundEnglish, TypeOfLARSValidity.EFAConFundEnglish, true)]
-        [InlineData(TypeOfLARSValidity.EFAConFundMaths, TypeOfLARSValidity.EuropeanSocialFund, false)]
-        [InlineData(TypeOfLARSValidity.EuropeanSocialFund, TypeOfLARSValidity.EuropeanSocialFund, true)]
-        [InlineData(TypeOfLARSValidity.OLASSAdult, TypeOfLARSValidity.OLASSAdult, true)]
-        [InlineData(TypeOfLARSValidity.Unemployed, TypeOfLARSValidity.Unemployed, true)]
-        public void HasQualifyingCategory1MeetsExpectation(string category, string candidate, bool expectation)
-        {
-            // arrange
-            var sut = NewService();
-
-            var mockValidity = new Mock<ILARSLearningDeliveryValidity>();
-            mockValidity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns(category);
-
-            // act
-            var result = sut.HasQualifyingCategory(mockValidity.Object, candidate);
-
-            // assert
-            Assert.Equal(expectation, result);
-        }
-
-        /// <summary>
-        /// Has qualifying category (2) meets expectation
-        /// </summary>
-        /// <param name="category">The category.</param>
-        /// <param name="desiredCategory">The desired category.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(TypeOfLARSValidity.AdultSkills, TypeOfLARSValidity.AdultSkills, true)]
-        [InlineData(TypeOfLARSValidity.AdvancedLearnerLoan, TypeOfLARSValidity.Any, false)]
-        [InlineData(TypeOfLARSValidity.Any, TypeOfLARSValidity.EFA16To19, false)]
-        [InlineData(TypeOfLARSValidity.Apprenticeships, TypeOfLARSValidity.Apprenticeships, true)]
-        [InlineData(TypeOfLARSValidity.CommunityLearning, TypeOfLARSValidity.EFA16To19, false)]
-        [InlineData(TypeOfLARSValidity.EFA16To19, TypeOfLARSValidity.EFA16To19, true)]
-        [InlineData(TypeOfLARSValidity.EFAConFundEnglish, TypeOfLARSValidity.EFAConFundEnglish, true)]
-        [InlineData(TypeOfLARSValidity.EFAConFundMaths, TypeOfLARSValidity.EuropeanSocialFund, false)]
-        [InlineData(TypeOfLARSValidity.EuropeanSocialFund, TypeOfLARSValidity.EuropeanSocialFund, true)]
-        [InlineData(TypeOfLARSValidity.OLASSAdult, TypeOfLARSValidity.OLASSAdult, true)]
-        [InlineData(TypeOfLARSValidity.Unemployed, TypeOfLARSValidity.Unemployed, true)]
-        public void HasQualifyingCategory2MeetsExpectation(string category, string desiredCategory, bool expectation)
-        {
-            // arrange
-            const string learnAimRef = "salddfkjeifdnase";
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
-
-            var validity = new Mock<ILARSLearningDeliveryValidity>();
-            validity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns(category);
-
-            var larsValidities = new ILARSLearningDeliveryValidity[]
-            {
-                validity.Object
-            };
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities);
-
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.HasQualifyingCategory(mockDelivery.Object, desiredCategory);
-
-            // assert
-            service.VerifyAll();
-            commonOps.VerifyAll();
-            derivedData11.VerifyAll();
-
-            Assert.Equal(expectation, result);
-        }
-
-        /// <summary>
-        /// Is qualifying category adult skills returns correct category
-        /// </summary>
-        [Fact]
-        public void IsQualifyingCategoryAdultSkillsReturnsCorrectCategory()
+        [InlineData(true)]
+        [InlineData(false)]
+        public void IsQualifyingCategoryOLASSMeetsExpectation(bool expectation)
         {
             // arrange
             var mockDelivery = new Mock<ILearningDelivery>();
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 35))
-                .Returns(false);
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategoryAdultSkills(mockDelivery.Object, null);
-
-            // assert
-            Assert.Equal("ADULT_SKILLS", result.Category);
-        }
-
-        /// <summary>
-        /// Is qualifying category adult skills meets expectation
-        /// </summary>
-        /// <param name="hasFunding">if set to <c>true</c> [has funding].</param>
-        /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
-        /// <param name="inApprenticeship">if set to <c>true</c> [in apprenticeship].</param>
-        /// <param name="isInCustody">if set to <c>true</c> [is in custody].</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(true, false, false, false, true)]
-        public void IsQualifyingCategoryAdultSkillsMeetsExpectation(bool hasFunding, bool isRestart, bool inApprenticeship, bool isInCustody, bool expectation)
-        {
-            // arrange
-            const string learnAimRef = "salddfkjeifdnase";
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 35))
-                .Returns(hasFunding);
-
-            var validity = new Mock<ILARSLearningDeliveryValidity>();
-            validity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns("ADULT_SKILLS");
-
-            var larsValidities = new ILARSLearningDeliveryValidity[]
-            {
-                validity.Object
-            };
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities);
-
             commonOps
                 .Setup(x => x.IsRestart(mockDelivery.Object))
-                .Returns(isRestart);
-            commonOps
-                .Setup(x => x.InApprenticeship(mockDelivery.Object))
-                .Returns(inApprenticeship);
+                .Returns(false);
             commonOps
                 .Setup(x => x.IsLearnerInCustody(mockDelivery.Object))
-                .Returns(isInCustody);
+                .Returns(expectation);
 
             var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
 
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
 
             // act
-            var result = sut.IsQualifyingCategoryAdultSkills(mockDelivery.Object, null);
+            var result = sut.IsQualifyingCategoryOLASS(mockDelivery.Object, null);
 
             // assert
-            service.VerifyAll();
             commonOps.VerifyAll();
             derivedData11.VerifyAll();
 
+            Assert.Equal("OLASS_ADULT", result.Category);
             Assert.Equal(expectation, result.Passed);
-        }
-
-        /// <summary>
-        /// Is qualifying category apprenticeship returns correct category
-        /// </summary>
-        [Fact]
-        public void IsQualifyingCategoryApprenticeshipReturnsCorrectCategory()
-        {
-            // arrange
-            var mockDelivery = new Mock<ILearningDelivery>();
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 35, 36))
-                .Returns(false);
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategoryApprenticeship(mockDelivery.Object, null);
-
-            // assert
-            Assert.Equal("APPRENTICESHIPS", result.Category);
-        }
-
-        /// <summary>
-        /// Is qualifying category apprenticeship meets expectation
-        /// </summary>
-        /// <param name="hasFunding">if set to <c>true</c> [has funding].</param>
-        /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
-        /// <param name="inStdApp">if set to <c>true</c> [in standard application].</param>
-        /// <param name="inApprenticeship">if set to <c>true</c> [in apprenticeship].</param>
-        /// <param name="isComponent">if set to <c>true</c> [is component].</param>
-        /// <param name="qualifyingStart">if set to <c>true</c> [qualifying start].</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(true, false, false, true, true, true, true)]
-        public void IsQualifyingCategoryApprenticeshipMeetsExpectation(bool hasFunding, bool isRestart, bool inStdApp, bool inApprenticeship, bool isComponent, bool qualifyingStart, bool expectation)
-        {
-            // arrange
-            const string learnAimRef = "salddfkjeifdnase";
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 35, 36))
-                .Returns(hasFunding);
-
-            var validity = new Mock<ILARSLearningDeliveryValidity>();
-            validity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns("APPRENTICESHIPS");
-
-            var larsValidities = new ILARSLearningDeliveryValidity[]
-            {
-                validity.Object
-            };
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities);
-
-            commonOps
-                .Setup(x => x.IsRestart(mockDelivery.Object))
-                .Returns(isRestart);
-            commonOps
-                .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
-                .Returns(inStdApp);
-            commonOps
-                .Setup(x => x.InApprenticeship(mockDelivery.Object))
-                .Returns(inApprenticeship);
-            commonOps
-                .Setup(x => x.IsComponentOfAProgram(mockDelivery.Object))
-                .Returns(isComponent);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.Parse("2011-08-01"), DateTime.Today))
-                .Returns(qualifyingStart);
-
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategoryApprenticeship(mockDelivery.Object, null);
-
-            // assert
-            service.VerifyAll();
-            commonOps.VerifyAll();
-            derivedData11.VerifyAll();
-
-            Assert.Equal(expectation, result.Passed);
-        }
-
-        /// <summary>
-        /// Is qualifying category unemployed returns correct category
-        /// </summary>
-        [Fact]
-        public void IsQualifyingCategoryUnemployedReturnsCorrectCategory()
-        {
-            // arrange
-            var mockDelivery = new Mock<ILearningDelivery>();
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 35))
-                .Returns(false);
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategoryUnemployed(mockDelivery.Object, null);
-
-            // assert
-            Assert.Equal("UNEMPLOYED", result.Category);
         }
 
         /// <summary>
         /// Is qualifying category unemployed meets expectation
         /// </summary>
-        /// <param name="hasFunding">if set to <c>true</c> [has funding].</param>
         /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
         /// <param name="inApprenticeship">if set to <c>true</c> [in apprenticeship].</param>
         /// <param name="isInCustody">if set to <c>true</c> [is in custody].</param>
@@ -433,37 +157,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         /// <param name="isFundedOnBenefits">if set to <c>true</c> [is funded on benefits].</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(true, false, false, false, true, true, true)]
-        public void IsQualifyingCategoryUnemployedMeetsExpectation(bool hasFunding, bool isRestart, bool inApprenticeship, bool isInCustody, bool qualifyingStart, bool isFundedOnBenefits, bool expectation)
+        [InlineData(false, false, false, false, true, false)]
+        [InlineData(false, false, false, true, true, true)]
+        [InlineData(false, false, true, true, true, false)]
+        [InlineData(false, true, true, true, true, false)]
+        [InlineData(true, true, true, true, true, false)]
+        [InlineData(true, true, true, true, false, false)]
+        [InlineData(true, true, true, false, false, false)]
+        [InlineData(true, true, false, false, false, false)]
+        [InlineData(true, false, false, false, false, false)]
+        public void IsQualifyingCategoryUnemployedMeetsExpectation(bool isRestart, bool inApprenticeship, bool isInCustody, bool qualifyingStart, bool isFundedOnBenefits, bool expectation)
         {
             // arrange
-            const string learnAimRef = "salddfkjeifdnase";
-
             var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 35))
-                .Returns(hasFunding);
-
-            var validity = new Mock<ILARSLearningDeliveryValidity>();
-            validity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns("UNEMPLOYED");
-
-            var larsValidities = new ILARSLearningDeliveryValidity[]
-            {
-                validity.Object
-            };
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities);
-
+            var commonOps = new Mock<IProvideRuleCommonOperations>();
             commonOps
                 .Setup(x => x.IsRestart(mockDelivery.Object))
                 .Returns(isRestart);
@@ -477,552 +185,380 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, DateTime.Parse("2016-08-01")))
                 .Returns(qualifyingStart);
 
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
+            var derivedData11 = new Mock<IDerivedData_11Rule>();
             derivedData11
                 .Setup(x => x.IsAdultFundedOnBenefitsAtStartOfAim(mockDelivery.Object, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()))
                 .Returns(isFundedOnBenefits);
 
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
 
             // act
             var result = sut.IsQualifyingCategoryUnemployed(mockDelivery.Object, null);
 
             // assert
-            service.VerifyAll();
-            commonOps.VerifyAll();
-            derivedData11.VerifyAll();
-
+            Assert.Equal("UNEMPLOYED", result.Category);
             Assert.Equal(expectation, result.Passed);
         }
 
         /// <summary>
-        /// Is qualifying category 16 to 19 efa returns correct category
+        /// Is qualifying category adult skills meets expectation
         /// </summary>
-        [Fact]
-        public void IsQualifyingCategory16To19EFAReturnsCorrectCategory()
-        {
-            // arrange
-            var mockDelivery = new Mock<ILearningDelivery>();
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 25, 82))
-                .Returns(false);
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategory16To19EFA(mockDelivery.Object, null);
-
-            // assert
-            Assert.Equal("1619_EFA", result.Category);
-        }
-
-        /// <summary>
-        /// Is qualifying category 16 to 19 efa meets expectation
-        /// </summary>
-        /// <param name="hasFunding">if set to <c>true</c> [has funding].</param>
-        /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(true, false, true)]
-        public void IsQualifyingCategory16To19EFAMeetsExpectation(bool hasFunding, bool isRestart, bool expectation)
-        {
-            // arrange
-            const string learnAimRef = "salddfkjeifdnase";
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 25, 82))
-                .Returns(hasFunding);
-
-            var validity = new Mock<ILARSLearningDeliveryValidity>();
-            validity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns("1619_EFA");
-
-            var larsValidities = new ILARSLearningDeliveryValidity[]
-            {
-                validity.Object
-            };
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities);
-
-            commonOps
-                .Setup(x => x.IsRestart(mockDelivery.Object))
-                .Returns(isRestart);
-
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategory16To19EFA(mockDelivery.Object, null);
-
-            // assert
-            service.VerifyAll();
-            commonOps.VerifyAll();
-            derivedData11.VerifyAll();
-
-            Assert.Equal(expectation, result.Passed);
-        }
-
-        /// <summary>
-        /// Is qualifying category community learning returns correct category
-        /// </summary>
-        [Fact]
-        public void IsQualifyingCategoryCommunityLearningReturnsCorrectCategory()
-        {
-            // arrange
-            var mockDelivery = new Mock<ILearningDelivery>();
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 10))
-                .Returns(false);
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategoryCommunityLearning(mockDelivery.Object, null);
-
-            // assert
-            Assert.Equal("COMM_LEARN", result.Category);
-        }
-
-        /// <summary>
-        /// Is qualifying category community learning meets expectation
-        /// </summary>
-        /// <param name="hasFunding">if set to <c>true</c> [has funding].</param>
-        /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(true, false, true)]
-        public void IsQualifyingCategoryCommunityLearningMeetsExpectation(bool hasFunding, bool isRestart, bool expectation)
-        {
-            // arrange
-            const string learnAimRef = "salddfkjeifdnase";
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 10))
-                .Returns(hasFunding);
-
-            var validity = new Mock<ILARSLearningDeliveryValidity>();
-            validity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns("COMM_LEARN");
-
-            var larsValidities = new ILARSLearningDeliveryValidity[]
-            {
-                validity.Object
-            };
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities);
-
-            commonOps
-                .Setup(x => x.IsRestart(mockDelivery.Object))
-                .Returns(isRestart);
-
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategoryCommunityLearning(mockDelivery.Object, null);
-
-            // assert
-            service.VerifyAll();
-            commonOps.VerifyAll();
-            derivedData11.VerifyAll();
-
-            Assert.Equal(expectation, result.Passed);
-        }
-
-        /// <summary>
-        /// Is qualifying category olass returns correct category
-        /// </summary>
-        [Fact]
-        public void IsQualifyingCategoryOLASSReturnsCorrectCategory()
-        {
-            // arrange
-            var mockDelivery = new Mock<ILearningDelivery>();
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 35))
-                .Returns(false);
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategoryOLASS(mockDelivery.Object, null);
-
-            // assert
-            Assert.Equal("OLASS_ADULT", result.Category);
-        }
-
-        /// <summary>
-        /// Is qualifying category olass meets expectation
-        /// </summary>
-        /// <param name="hasFunding">if set to <c>true</c> [has funding].</param>
         /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
         /// <param name="isInCustody">if set to <c>true</c> [is in custody].</param>
+        /// <param name="inApprenticeship">if set to <c>true</c> [in apprenticeship].</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(true, false, true, true)]
-        public void IsQualifyingCategoryOLASSMeetsExpectation(bool hasFunding, bool isRestart, bool isInCustody, bool expectation)
+        [InlineData(false, false, false, true)]
+        [InlineData(false, false, true, false)]
+        [InlineData(false, true, true, false)]
+        [InlineData(true, true, true, false)]
+        [InlineData(true, true, false, false)]
+        [InlineData(true, false, false, false)]
+        public void IsQualifyingCategoryAdultSkillsMeetsExpectation(bool isRestart, bool isInCustody, bool inApprenticeship, bool expectation)
         {
             // arrange
-            const string learnAimRef = "salddfkjeifdnase";
-
             var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 35))
-                .Returns(hasFunding);
-
-            var validity = new Mock<ILARSLearningDeliveryValidity>();
-            validity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns("OLASS_ADULT");
-
-            var larsValidities = new ILARSLearningDeliveryValidity[]
-            {
-                validity.Object
-            };
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities);
-
+            var commonOps = new Mock<IProvideRuleCommonOperations>();
             commonOps
                 .Setup(x => x.IsRestart(mockDelivery.Object))
                 .Returns(isRestart);
             commonOps
                 .Setup(x => x.IsLearnerInCustody(mockDelivery.Object))
                 .Returns(isInCustody);
+            commonOps
+                .Setup(x => x.InApprenticeship(mockDelivery.Object))
+                .Returns(inApprenticeship);
 
             var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
 
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
 
             // act
-            var result = sut.IsQualifyingCategoryOLASS(mockDelivery.Object, null);
+            var result = sut.IsQualifyingCategoryAdultSkills(mockDelivery.Object, null);
 
             // assert
-            service.VerifyAll();
-            commonOps.VerifyAll();
-            derivedData11.VerifyAll();
-
+            Assert.Equal("ADULT_SKILLS", result.Category);
             Assert.Equal(expectation, result.Passed);
         }
 
         /// <summary>
-        /// Is qualifying category advanced learner loan returns correct category
+        /// Is qualifying category apprenticeship meets expectation
         /// </summary>
-        [Fact]
-        public void IsQualifyingCategoryAdvancedLearnerLoanReturnsCorrectCategory()
+        /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
+        /// <param name="inStdApp">if set to <c>true</c> [in standard application].</param>
+        /// <param name="inApprenticeship">if set to <c>true</c> [in apprenticeship].</param>
+        /// <param name="isComponent">if set to <c>true</c> [is component].</param>
+        /// <param name="qualifyingStart">if set to <c>true</c> [qualifying start].</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false, false, true, true, true, true)]
+        [InlineData(false, false, true, true, false, false)]
+        public void IsQualifyingCategoryApprenticeshipMeetsExpectation(bool isRestart, bool inStdApp, bool inApprenticeship, bool isComponent, bool qualifyingStart, bool expectation)
         {
             // arrange
             var mockDelivery = new Mock<ILearningDelivery>();
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 99))
-                .Returns(false);
+                .Setup(x => x.IsRestart(mockDelivery.Object))
+                .Returns(isRestart);
+            commonOps
+                .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
+                .Returns(inStdApp);
+            commonOps
+                .Setup(x => x.InApprenticeship(mockDelivery.Object))
+                .Returns(inApprenticeship);
+            commonOps
+                .Setup(x => x.IsComponentOfAProgram(mockDelivery.Object))
+                .Returns(isComponent);
+            commonOps
+                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.Parse("2011-08-01"), DateTime.MaxValue))
+                .Returns(qualifyingStart);
 
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
 
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
+
+            // act
+            var result = sut.IsQualifyingCategoryApprenticeship(mockDelivery.Object, null);
+
+            // assert
+            commonOps.VerifyAll();
+            derivedData11.VerifyAll();
+
+            Assert.Equal("APPRENTICESHIPS", result.Category);
+            Assert.Equal(expectation, result.Passed);
+        }
+
+        [Theory]
+        [InlineData(false, false, false, false)]
+        [InlineData(false, false, true, true)]
+        [InlineData(true, false, false, false)]
+        [InlineData(true, false, true, false)]
+        [InlineData(true, true, true, false)]
+        public void IsQualifyingCategoryApprencticeshipAnyMeetsExpectation(bool isRestart, bool isAdvLoan, bool isStdApp, bool expectation)
+        {
+            // arrange
+            var mockDelivery = new Mock<ILearningDelivery>();
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>();
+            commonOps
+                .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
+                .Returns(isStdApp);
+            commonOps
+                .Setup(x => x.IsRestart(mockDelivery.Object))
+                .Returns(isRestart);
+            commonOps
+                .Setup(x => x.IsAdvancedLearnerLoan(mockDelivery.Object))
+                .Returns(isAdvLoan);
+
+            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
+
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
+
+            // act
+            var result = sut.IsQualifyingCategoryApprencticeshipAny(mockDelivery.Object, null);
+
+            // assert
+            Assert.Equal("ANY", result.Category);
+            Assert.Equal(expectation, result.Passed);
+        }
+
+        [Theory]
+        [InlineData(false, false, true)]
+        [InlineData(false, true, false)]
+        [InlineData(true, true, false)]
+        [InlineData(true, false, false)]
+        public void IsQualifyingCategoryOtherFundingAnyMeetsExpectation(bool isRestart, bool isAdvLoan, bool expectation)
+        {
+            // arrange
+            var mockDelivery = new Mock<ILearningDelivery>();
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>();
+            commonOps
+                .Setup(x => x.IsRestart(mockDelivery.Object))
+                .Returns(isRestart);
+            commonOps
+                .Setup(x => x.IsAdvancedLearnerLoan(mockDelivery.Object))
+                .Returns(isAdvLoan);
+
+            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
+
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
+
+            // act
+            var result = sut.IsQualifyingCategoryOtherFundingAny(mockDelivery.Object, null);
+
+            // assert
+            Assert.Equal("ANY", result.Category);
+            Assert.Equal(expectation, result.Passed);
+        }
+
+        /// <summary>
+        /// Is qualifying category advanced learner loan meets expectation
+        /// </summary>
+        /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
+        /// <param name="isAdvLoan">if set to <c>true</c> [is adv loan].</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false, false, false)]
+        [InlineData(false, true, true)]
+        [InlineData(true, true, false)]
+        [InlineData(true, false, false)]
+        public void IsQualifyingCategoryAdvancedLearnerLoanMeetsExpectation(bool isRestart, bool isAdvLoan, bool expectation)
+        {
+            // arrange
+            var mockDelivery = new Mock<ILearningDelivery>();
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>();
+            commonOps
+                .Setup(x => x.IsRestart(mockDelivery.Object))
+                .Returns(isRestart);
+            commonOps
+                .Setup(x => x.IsAdvancedLearnerLoan(mockDelivery.Object))
+                .Returns(isAdvLoan);
+
+            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
+
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
 
             // act
             var result = sut.IsQualifyingCategoryAdvancedLearnerLoan(mockDelivery.Object, null);
 
             // assert
             Assert.Equal("ADV_LEARN_LOAN", result.Category);
-        }
-
-        /// <summary>
-        /// Is qualifying category advanced learner loan meets expectation
-        /// </summary>
-        /// <param name="hasFunding">if set to <c>true</c> [has funding].</param>
-        /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
-        /// <param name="isAdvLoan">if set to <c>true</c> [is adv loan].</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(true, false, true, true)]
-        public void IsQualifyingCategoryAdvancedLearnerLoanMeetsExpectation(bool hasFunding, bool isRestart, bool isAdvLoan, bool expectation)
-        {
-            // arrange
-            const string learnAimRef = "salddfkjeifdnase";
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 99))
-                .Returns(hasFunding);
-
-            var validity = new Mock<ILARSLearningDeliveryValidity>();
-            validity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns("ADV_LEARN_LOAN");
-
-            var larsValidities = new ILARSLearningDeliveryValidity[]
-            {
-                validity.Object
-            };
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities);
-
-            commonOps
-                .Setup(x => x.IsRestart(mockDelivery.Object))
-                .Returns(isRestart);
-            commonOps
-                .Setup(x => x.IsAdvancedLearnerLoan(mockDelivery.Object))
-                .Returns(isAdvLoan);
-
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategoryAdvancedLearnerLoan(mockDelivery.Object, null);
-
-            // assert
-            service.VerifyAll();
-            commonOps.VerifyAll();
-            derivedData11.VerifyAll();
-
             Assert.Equal(expectation, result.Passed);
         }
 
         /// <summary>
-        /// Is qualifying category any returns correct category
+        /// Is qualifying category 16 to 19 efa meets expectation
         /// </summary>
-        [Fact]
-        public void IsQualifyingCategoryAnyReturnsCorrectCategory()
-        {
-            // arrange
-            var mockDelivery = new Mock<ILearningDelivery>();
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // tries this
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 99, 81))
-                .Returns(false);
-
-            // then this...
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 36))
-                .Returns(false);
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
-
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
-
-            // act
-            var result = sut.IsQualifyingCategoryAny(mockDelivery.Object, null);
-
-            // assert
-            Assert.Equal("ANY", result.Category);
-        }
-
-        /// <summary>
-        /// Is qualifying category any meets expectation
-        /// </summary>
-        /// <param name="hasFunding1">if set to <c>true</c> [has funding1].</param>
-        /// <param name="hasFunding2">if set to <c>true</c> [has funding2].</param>
-        /// <param name="isStdApp">if set to <c>true</c> [is standard application].</param>
         /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
-        /// <param name="isAdvLoan">if set to <c>true</c> [is adv loan].</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(true, false, false, false, false, true)]
-        [InlineData(false, true, true, false, false, true)]
-        public void IsQualifyingCategoryAnyMeetsExpectation(bool hasFunding1, bool hasFunding2, bool isStdApp, bool isRestart, bool isAdvLoan, bool expectation)
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        public void IsQualifyingCategory16To19EFAMeetsExpectation(bool isRestart, bool expectation)
         {
             // arrange
-            const string learnAimRef = "salddfkjeifdnase";
-
             var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 99, 81))
-                .Returns(hasFunding1);
-
-            if (!hasFunding1)
-            {
-                commonOps
-                    .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 36))
-                    .Returns(hasFunding2);
-                commonOps
-                    .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
-                    .Returns(isStdApp);
-            }
-
-            var validity = new Mock<ILARSLearningDeliveryValidity>();
-            validity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns("ANY");
-
-            var larsValidities = new ILARSLearningDeliveryValidity[]
-            {
-                validity.Object
-            };
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities);
-
+            var commonOps = new Mock<IProvideRuleCommonOperations>();
             commonOps
                 .Setup(x => x.IsRestart(mockDelivery.Object))
                 .Returns(isRestart);
-            commonOps
-                .Setup(x => x.IsAdvancedLearnerLoan(mockDelivery.Object))
-                .Returns(isAdvLoan);
 
             var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
 
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
 
             // act
-            var result = sut.IsQualifyingCategoryAny(mockDelivery.Object, null);
+            var result = sut.IsQualifyingCategory16To19EFA(mockDelivery.Object, null);
 
             // assert
-            service.VerifyAll();
-            commonOps.VerifyAll();
-            derivedData11.VerifyAll();
-
+            Assert.Equal("1619_EFA", result.Category);
             Assert.Equal(expectation, result.Passed);
         }
 
         /// <summary>
-        /// Is qualifying category esf returns correct category
+        /// Is qualifying category community learning meets expectation
         /// </summary>
-        [Fact]
-        public void IsQualifyingCategoryESFReturnsCorrectCategory()
+        /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        public void IsQualifyingCategoryCommunityLearningMeetsExpectation(bool isRestart, bool expectation)
         {
             // arrange
             var mockDelivery = new Mock<ILearningDelivery>();
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 70))
-                .Returns(false);
+                .Setup(x => x.IsRestart(mockDelivery.Object))
+                .Returns(isRestart);
 
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
 
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
 
             // act
-            var result = sut.IsQualifyingCategoryESF(mockDelivery.Object, null);
+            var result = sut.IsQualifyingCategoryCommunityLearning(mockDelivery.Object, null);
 
             // assert
-            Assert.Equal("ESF", result.Category);
+            commonOps.VerifyAll();
+            derivedData11.VerifyAll();
+
+            Assert.Equal("COMM_LEARN", result.Category);
+            Assert.Equal(expectation, result.Passed);
         }
 
         /// <summary>
         /// Is qualifying category esf meets expectation
         /// </summary>
-        /// <param name="hasFunding">if set to <c>true</c> [has funding].</param>
         /// <param name="isRestart">if set to <c>true</c> [is restart].</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(true, false, true)]
-        public void IsQualifyingCategoryESFMeetsExpectation(bool hasFunding, bool isRestart, bool expectation)
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        public void IsQualifyingCategoryESFMeetsExpectation(bool isRestart, bool expectation)
         {
             // arrange
-            const string learnAimRef = "salddfkjeifdnase";
-
             var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 70))
-                .Returns(hasFunding);
-
-            var validity = new Mock<ILARSLearningDeliveryValidity>();
-            validity
-                .SetupGet(x => x.ValidityCategory)
-                .Returns("ESF");
-
-            var larsValidities = new ILARSLearningDeliveryValidity[]
-            {
-                validity.Object
-            };
-
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities);
-
             commonOps
                 .Setup(x => x.IsRestart(mockDelivery.Object))
                 .Returns(isRestart);
 
             var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
 
-            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
 
             // act
             var result = sut.IsQualifyingCategoryESF(mockDelivery.Object, null);
 
             // assert
-            service.VerifyAll();
             commonOps.VerifyAll();
             derivedData11.VerifyAll();
 
+            Assert.Equal("ESF", result.Category);
             Assert.Equal(expectation, result.Passed);
+        }
+
+        // _________FM, LIC,   Appr, QS,   OnBens, StApr, AimCmp, AdvLL,
+        [Theory]
+        [InlineData(35, true, false, false, false, false, false, false, "OLASS_ADULT", false)]
+        [InlineData(35, false, false, true, true, false, false, false, "UNEMPLOYED", false)]
+        [InlineData(35, false, false, false, false, false, false, false, "ADULT_SKILLS", false)]
+        [InlineData(35, false, true, true, false, false, true, false, "APPRENTICESHIPS", false)]
+        [InlineData(36, false, true, true, false, false, true, false, "APPRENTICESHIPS", false)]
+        [InlineData(36, true, true, true, true, true, true, false, "ANY", false)] // can't be adv loan, must be 'std appr'
+        [InlineData(81, true, true, true, true, false, true, false, "ANY", false)] // can't be adv loan, turned off 'std appr' to make sure we we are not using it
+        [InlineData(99, true, true, true, true, false, true, false, "ANY", false)] // can't be adv loan, turned off 'std appr' to make sure we we are not using
+        [InlineData(99, true, true, true, true, true, true, true, "ADV_LEARN_LOAN", false)] // only interested in 'isAdvLLoan'
+        [InlineData(25, true, true, true, true, true, true, true, "1619_EFA", false)] // try and trip on anything
+        [InlineData(82, true, true, true, true, true, true, true, "1619_EFA", false)] // try and trip on anything
+        [InlineData(10, true, true, true, true, true, true, true, "COMM_LEARN", false)] // try and trip on anything
+        [InlineData(70, true, true, true, true, true, true, true, "ESF", false)] // try and trip on anything
+        public void GetBranchingResultForMeetsExpectation(
+            int fundModel,
+            bool isLIC,
+            bool inAppr,
+            bool hasQS,
+            bool isOnBenefits,
+            bool isStdAppr,
+            bool isAimComp,
+            bool isAdvLLoan,
+            string expectation,
+            bool isOutOfScope)
+        {
+            // arrange
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(x => x.FundModel)
+                .Returns(fundModel);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>();
+            commonOps
+                .Setup(x => x.IsRestart(mockDelivery.Object))
+                .Returns(false);
+            commonOps
+                .Setup(x => x.IsLearnerInCustody(mockDelivery.Object))
+                .Returns(isLIC);
+            commonOps
+                .Setup(x => x.InApprenticeship(mockDelivery.Object))
+                .Returns(inAppr);
+            commonOps
+                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, It.IsAny<DateTime>(), It.IsAny<DateTime?>()))
+                .Returns(hasQS);
+            commonOps
+                .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
+                .Returns(isStdAppr);
+            commonOps
+                .Setup(x => x.IsComponentOfAProgram(mockDelivery.Object))
+                .Returns(isAimComp);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, It.IsAny<int>()))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsAdvancedLearnerLoan(mockDelivery.Object))
+                .Returns(isAdvLLoan);
+
+            var derivedData11 = new Mock<IDerivedData_11Rule>();
+            derivedData11
+                .Setup(x => x.IsAdultFundedOnBenefitsAtStartOfAim(mockDelivery.Object, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()))
+                .Returns(isOnBenefits);
+
+            var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
+
+            // act
+            var result = sut.GetBranchingResultFor(mockDelivery.Object, new Mock<ILearner>().Object);
+
+            // assert
+            Assert.Equal(expectation, result.Category);
+            Assert.Equal(isOutOfScope, result.OutOfScope);
         }
 
         /// <summary>
@@ -1031,12 +567,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         /// <returns>a constructed and mocked up service</returns>
         public LearnAimRefRuleActionProvider NewService()
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var derivedData11 = new Mock<IDerivedData_11Rule>(MockBehavior.Strict);
 
-            return new LearnAimRefRuleActionProvider(commonOps.Object, service.Object, derivedData11.Object);
+            return new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
         }
     }
 }

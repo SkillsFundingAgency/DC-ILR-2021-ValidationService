@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
@@ -16,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
     public abstract class DelLocPostCode_EligibilityRule<TEligibilityItem> :
         AbstractRule,
         IRule<ILearner>
-        where TEligibilityItem : class, IEsfEligibilityRuleReferences
+        where TEligibilityItem : class, IEsfEligibilityRuleCode<string>
     {
         /// <summary>
         /// The common rule (operations provider)
@@ -29,25 +28,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         private readonly IPostcodesDataService _postcodesData;
 
         /// <summary>
-        /// The derived data 22 (rule)
-        /// </summary>
-        private readonly IDerivedData_22Rule _derivedData22;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="DelLocPostCode_EligibilityRule{TEligibilityItem}" /> class.
         /// </summary>
         /// <param name="validationErrorHandler">The validation error handler.</param>
         /// <param name="commonChecks">The common checks.</param>
         /// <param name="fcsData">The FCS data.</param>
         /// <param name="postcodesData">The postcodes data.</param>
-        /// <param name="derivedData22">The derived data22.</param>
         /// <param name="ruleName">Name of the rule.</param>
         public DelLocPostCode_EligibilityRule(
             IValidationErrorHandler validationErrorHandler,
             IProvideRuleCommonOperations commonChecks,
             IFCSDataService fcsData,
             IPostcodesDataService postcodesData,
-            IDerivedData_22Rule derivedData22,
             string ruleName)
             : base(validationErrorHandler, ruleName)
         {
@@ -59,13 +51,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
                 .AsGuard<ArgumentNullException>(nameof(fcsData));
             It.IsNull(postcodesData)
                 .AsGuard<ArgumentNullException>(nameof(postcodesData));
-            It.IsNull(derivedData22)
-                .AsGuard<ArgumentNullException>(nameof(derivedData22));
 
             _check = commonChecks;
             FcsData = fcsData;
             _postcodesData = postcodesData;
-            _derivedData22 = derivedData22;
         }
 
         /// <summary>
@@ -79,28 +68,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         protected IFCSDataService FcsData { get; }
 
         /// <summary>
-        /// Gets the contract completion date.
+        /// Gets the qualifyingd aim.
         /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="sources">The sources.</param>
-        /// <returns>the latest date for any specific contract reference</returns>
-        public DateTime? GetContractCompletionDate(
-            ILearningDelivery delivery,
-            IReadOnlyCollection<ILearningDelivery> sources) =>
-                _derivedData22.GetLatestLearningStartForESFContract(delivery, sources);
-
-        /// <summary>
-        /// Gets the latest start for completed contract.
-        /// </summary>
-        /// <param name="usingSources">using sources.</param>
-        /// <returns>the latest start across all the completed contracts (if there is one)</returns>
-        public DateTime? GetLatestStartForCompletedContract(IReadOnlyCollection<ILearningDelivery> usingSources)
-        {
-            var candidates = Collection.Empty<DateTime?>();
-            usingSources.ForEach(source => candidates.Add(GetContractCompletionDate(source, usingSources)));
-
-            return candidates.Max();
-        }
+        /// <param name="usingSources">The using sources.</param>
+        /// <returns>the latest completed ZESF0001 aim</returns>
+        public ILearningDelivery GetQualifyingAim(IReadOnlyCollection<ILearningDelivery> usingSources) =>
+            usingSources
+                .SafeWhere(x => x.FundModel == TypeOfFunding.EuropeanSocialFund
+                    && x.LearnAimRef == TypeOfAim.References.ESFLearnerStartandAssessment
+                    && x.CompStatus == CompletionState.HasCompleted)
+                .OrderByDescending(x => x.LearnStartDate)
+                .FirstOrDefault();
 
         /// <summary>
         /// Gets the (esf eligibility rule) enterprise partnership.
@@ -108,14 +86,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         /// <param name="delivery">The delivery.</param>
         /// <returns>the enterprise partnership (if found)</returns>
         public abstract IReadOnlyCollection<TEligibilityItem> GetEligibilityItemsFor(ILearningDelivery delivery);
-
-        /// <summary>
-        /// Gets the ons postcode.
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>the ons postcode (if found)</returns>
-        //public IONSPostcode GetONSPostcode(ILearningDelivery delivery) =>
-        //    _postcodesData.GetONSPostcode(delivery.DelLocPostCode);
 
         /// <summary>
         /// Gets the ons postcode.
@@ -129,12 +99,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         /// Determines whether [has qualifying eligibility] [the specified postcode].
         /// </summary>
         /// <param name="delivery">The latest learnstartdate delivery.</param>
-        /// <param name="postcode">The postcode.</param>
+        /// <param name="postcodes">The postcode.</param>
         /// <param name="eligibilities">The eligibilities.</param>
         /// <returns>
         ///   <c>true</c> if [has qualifying eligibility] [the specified postcode]; otherwise, <c>false</c>.
         /// </returns>
-        public abstract bool HasQualifyingEligibility(ILearningDelivery delivery, IReadOnlyCollection<IONSPostcode> postcode, IReadOnlyCollection<TEligibilityItem> eligibilities);
+        public bool HasQualifyingEligibility(ILearningDelivery delivery, IReadOnlyCollection<IONSPostcode> postcodes, IReadOnlyCollection<TEligibilityItem> eligibilities) =>
+            It.HasValues(postcodes)
+            && It.HasValues(eligibilities)
+            && It.Has(delivery)
+            && HasAnyQualifyingEligibility(delivery, postcodes, eligibilities.Select(x => x.Code).AsSafeDistinctKeySet());
+
+        /// <summary>
+        /// Determines whether [has any qualifying eligibility] [the specified delivery].
+        /// </summary>
+        /// <param name="delivery">The delivery.</param>
+        /// <param name="postcodes">The postcodes.</param>
+        /// <param name="eligibilityCodes">The eligibility codes.</param>
+        /// <returns>
+        ///   <c>true</c> if [has any qualifying eligibility] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public abstract bool HasAnyQualifyingEligibility(ILearningDelivery delivery, IReadOnlyCollection<IONSPostcode> postcodes, IContainThis<string> eligibilityCodes);
 
         /// <summary>
         /// Determines whether [in qualifying period] [the specified delivery].
@@ -147,9 +132,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         ///   <c>true</c> if [in qualifying period] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool InQualifyingPeriod(ILearningDelivery delivery, IONSPostcode onsPostcode) =>
-            delivery.LearnStartDate < onsPostcode.EffectiveFrom
-            || delivery.LearnStartDate > (onsPostcode.EffectiveTo ?? DateTime.MaxValue)
-            || delivery.LearnStartDate >= (onsPostcode.Termination ?? DateTime.MaxValue);
+            It.IsBetween(delivery.LearnStartDate, onsPostcode.EffectiveFrom, onsPostcode.Termination ?? onsPostcode.EffectiveTo ?? DateTime.MaxValue);
 
         /// <summary>
         /// Determines whether [is not valid] [the specified delivery].
@@ -158,40 +141,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         /// <returns>
         ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsNotValid(ILearningDelivery delivery) =>
-            _check.HasQualifyingStart(delivery, FirstViableDate)
-                && _check.HasQualifyingFunding(delivery, TypeOfFunding.EuropeanSocialFund)
-                && HasQualifyingEligibility(delivery, GetONSPostcodes(delivery), GetEligibilityItemsFor(delivery));
-
-        /// <summary>
-        /// Matches start.
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="learnStart">The learn start.</param>
-        /// <returns>true if it does</returns>
-        public bool MatchesStart(ILearningDelivery delivery, DateTime learnStart) =>
-            delivery.LearnStartDate == learnStart;
-
-        /// <summary>
-        /// Validates the specified object.
-        /// </summary>
-        /// <param name="objectToValidate">The object to validate.</param>
-        public void Validate(ILearner objectToValidate)
+        public bool IsNotValid(ILearningDelivery delivery)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            var eligibilities = GetEligibilityItemsFor(delivery);
 
-            var learnRefNumber = objectToValidate.LearnRefNumber;
+            return _check.HasQualifyingStart(delivery, FirstViableDate)
+                   && eligibilities.Any(x => !string.IsNullOrEmpty(x.Code))
+                   && !HasQualifyingEligibility(delivery, GetONSPostcodes(delivery), eligibilities);
+        }
 
-            var contractStart = GetLatestStartForCompletedContract(objectToValidate.LearningDeliveries);
-            if (It.IsEmpty(contractStart))
+        /// <summary>
+        /// Validates this learner.
+        /// </summary>
+        /// <param name="thisLearner">this learner.</param>
+        public void Validate(ILearner thisLearner)
+        {
+            It.IsNull(thisLearner)
+                .AsGuard<ArgumentNullException>(nameof(thisLearner));
+
+            var learnRefNumber = thisLearner.LearnRefNumber;
+
+            var candidate = GetQualifyingAim(thisLearner.LearningDeliveries);
+            if (It.IsNull(candidate))
             {
                 return;
             }
 
-            objectToValidate.LearningDeliveries
-                .SafeWhere(x => MatchesStart(x, contractStart.Value))
-                .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));
+            if (IsNotValid(candidate))
+            {
+                RaiseValidationMessage(learnRefNumber, candidate);
+            }
         }
 
         /// <summary>

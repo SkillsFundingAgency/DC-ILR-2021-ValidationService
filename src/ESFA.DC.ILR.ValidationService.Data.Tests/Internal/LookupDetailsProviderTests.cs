@@ -46,15 +46,18 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
         }
 
         [Theory]
-        [InlineData(TypeOfQualEnt3.CertificateOfHigherEducation, "2013/01/01", true)]
-        [InlineData(TypeOfQualEnt3.ProfessionalQualificationAtLevel3, "2013/07/31", true)]
-        [InlineData(TypeOfQualEnt3.CambridgePreUDiploma31072013, "2014/07/31", false)]
-        [InlineData("Z12345", "2018/10/28", false)]
-        public void ProviderIsCurrentValuesMatchForQualent3(string qualent3, string dateToCheckString, bool expectedResult)
+        [InlineData("BSI", "1", "2013/01/01", true)]
+        [InlineData("BSI", "10", "2013/01/01", false)]
+        [InlineData("LOE", "1", "2013/01/01", true)]
+        [InlineData("LOE", "4", "2013/01/01", false)]
+        [InlineData("XXX", "1", "2013/01/01", false)]
+        public void ProviderIsCurrentValuesMatchForESMType(string esmType, string esmCode, string dateToCheckString, bool expectedResult)
         {
             var dateToCheck = DateTime.Parse(dateToCheckString);
 
-            NewService().IsCurrent(TypeOfLimitedLifeLookup.QualEnt3, qualent3, dateToCheck).Should().Be(expectedResult);
+            var t = NewService().IsCurrent(TypeOfLimitedLifeLookup.ESMType, $"{esmType}{esmCode}", dateToCheck);
+
+            t.Should().Be(expectedResult);
         }
 
         /// <summary>
@@ -73,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
             var sut = NewService();
 
             // act
-            var result = sut.Contains(TypeOfIntegerCodedLookup.FINTYPE, candidate);
+            var result = sut.Contains(TypeOfIntegerCodedLookup.AimType, candidate);
 
             // assert
             Assert.Equal(expectation, result);
@@ -85,17 +88,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
         /// <param name="candidate">The candidate.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData("TNP", true)]
-        [InlineData("AMP", false)]
-        [InlineData("ME", true)]
-        [InlineData("UOY", false)]
+        [InlineData("A", true)]
+        [InlineData("A*", true)]
+        [InlineData("B*", false)]
         public void ProviderContainsCodedValueMatchesExpectation(string candidate, bool expectation)
         {
             // arrange
             var sut = NewService();
 
             // act
-            var result = sut.Contains(TypeOfStringCodedLookup.AppFinRecord, candidate);
+            var result = sut.Contains(TypeOfStringCodedLookup.OutGrade, candidate);
 
             // assert
             Assert.Equal(expectation, result);
@@ -137,13 +139,13 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
         [InlineData("PMR", 2, true)]
         [InlineData("PMR", 5, false)]
         [InlineData("TXX", 1, false)]
-        public void ProviderContainsCodedKeyDictionaryMatchesExpectation(string keyCandidate, int valueCandidate, bool expectation)
+        public void ProviderContainsCodedKeyDictionaryMatchesExpectation_AppFinType(string keyCandidate, int? valueCandidate, bool expectation)
         {
             // arrange
             var sut = NewService();
 
             // act
-            var result = sut.Contains(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, $"{keyCandidate}{valueCandidate}");
+            var result = sut.Contains(TypeOfStringCodedLookup.AppFinType, $"{keyCandidate}{valueCandidate}");
 
             // assert
             Assert.Equal(expectation, result);
@@ -155,10 +157,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
         /// <returns>a <seealso cref="LookupDetailsProvider"/></returns>
         public LookupDetailsProvider NewService()
         {
-            var cacheFactory = new Mock<ICreateInternalDataCache>();
-            var cache = new InternalDataCache();
-            var finTypes = new DistinctKeySet<int> { 1, 2, 4, 5, 6, 9, 24, 25, 29, 45 };
-            var codedTypes = new CaseInsensitiveDistinctKeySet { "TNP", "PMR", "AEC", "UI", "OT", "ME", "YOU" };
+            var aimTypes = new DistinctKeySet<int> { 1, 2, 4, 5, 6, 9, 24, 25, 29, 45 };
 
             var tTAccomItems = new Dictionary<string, ValidityPeriods>()
             {
@@ -170,26 +169,36 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
                 ["9"] = new ValidityPeriods(DateTime.Parse("2000-02-01"), DateTime.Parse("2008-08-26")),
             };
 
-            var qualent3s = new Dictionary<string, ValidityPeriods>()
+            var esmTypes = new Dictionary<string, ValidityPeriods>()
             {
-                ["C20"] = new ValidityPeriods(DateTime.MinValue, DateTime.MaxValue),
-                ["P69"] = new ValidityPeriods(DateTime.MinValue, DateTime.Parse("2013-07-31")),
-                ["P70"] = new ValidityPeriods(DateTime.MinValue, DateTime.Parse("2013-07-31"))
+                ["BSI1"] = new ValidityPeriods(DateTime.Parse("2000-06-14"), DateTime.Parse("2020-06-14")),
+                ["BSI2"] = new ValidityPeriods(DateTime.Parse("2000-04-28"), DateTime.Parse("2020-06-14")),
+                ["LOE1"] = new ValidityPeriods(DateTime.Parse("2000-09-06"), DateTime.Parse("2015-02-28")),
+                ["LOE2"] = new ValidityPeriods(DateTime.Parse("2000-11-21"), DateTime.Parse("2020-06-14")),
+                ["LOE3"] = new ValidityPeriods(DateTime.Parse("2000-07-02"), DateTime.Parse("2020-06-14")),
+                ["LOE4"] = new ValidityPeriods(DateTime.Parse("2000-02-01"), DateTime.Parse("2008-08-26")),
             };
 
-            var apprenticeshipFinancialRecords = new CaseInsensitiveDistinctKeySet { "TNP1", "TNP2", "TNP3", "TNP4", "PMR1", "PMR2", "PMR3" };
+            var cache = new InternalDataCache
+            {
+                IntegerLookups = new Dictionary<TypeOfIntegerCodedLookup, IReadOnlyCollection<int>>
+                {
+                    { TypeOfIntegerCodedLookup.AimType, aimTypes }
+                },
+                StringLookups = new Dictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>>
+                {
+                    { TypeOfStringCodedLookup.AppFinType, new List<string> { "PMR1", "PMR2", "PMR3", "TNP1", "TNP2", "TNP3", "TNP4" } },
+                    { TypeOfStringCodedLookup.OutGrade, new List<string> { "A", "A*" } }
+                },
+                LimitedLifeLookups = new Dictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>>
+                {
+                    { TypeOfLimitedLifeLookup.TTAccom, tTAccomItems },
+                    { TypeOfLimitedLifeLookup.ESMType, esmTypes }
+                },
+                ListItemLookups = new Dictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>>()
+            };
 
-            cache.IntegerLookups.Add(TypeOfIntegerCodedLookup.FINTYPE, finTypes);
-            cache.StringLookups.Add(TypeOfStringCodedLookup.AppFinRecord, codedTypes);
-            cache.StringLookups.Add(TypeOfStringCodedLookup.ApprenticeshipFinancialRecord, apprenticeshipFinancialRecords);
-            cache.LimitedLifeLookups.Add(TypeOfLimitedLifeLookup.TTAccom, tTAccomItems);
-            cache.LimitedLifeLookups.Add(TypeOfLimitedLifeLookup.QualEnt3, qualent3s);
-
-            cacheFactory
-                .Setup(c => c.Create())
-                .Returns(cache);
-
-            return new LookupDetailsProvider(cacheFactory.Object);
+            return new LookupDetailsProvider(cache);
         }
     }
 }

@@ -97,13 +97,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                 [learnAimRef] = new LearningDelivery
                 {
                     LearnAimRef = learnAimRef,
-                    FrameworkAims = new List<FrameworkAim>
+                    Frameworks = new List<Framework>
                     {
-                        new FrameworkAim()
+                        new Framework
                         {
-                            ProgType = progType,
-                            FworkCode = fworkCode,
-                            PwayCode = pwayCode,
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = progType,
+                                FworkCode = fworkCode,
+                                PwayCode = pwayCode,
+                            }
                         }
                     }
                 }
@@ -128,13 +131,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
             {
                 ["LEARNAIMREF"] = new LearningDelivery
                 {
-                    FrameworkAims = new List<FrameworkAim>
+                    Frameworks = new List<Framework>
                     {
-                        new FrameworkAim()
+                        new Framework
                         {
-                            ProgType = progType,
-                            FworkCode = fworkCode,
-                            PwayCode = pwayCode,
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = progType,
+                                FworkCode = fworkCode,
+                                PwayCode = pwayCode,
+                            }
                         }
                     }
                 }
@@ -176,42 +182,43 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                     {
                         LearnAimRef = learnAimRef,
                         FrameworkCommonComponent = frameworkCommonComponent,
-                    }
-                }
-            };
-
-            var frameworks = new List<Framework>()
-            {
-                new Framework()
-                {
-                    FrameworkCommonComponents = new List<FrameworkCommonComponent>()
-                    {
-                        new FrameworkCommonComponent()
+                        Frameworks = new List<Framework>()
                         {
-                            ProgType = progType,
-                            FworkCode = fworkCode,
-                            PwayCode = pwayCode,
-                            CommonComponent = frameworkCommonComponent,
+                            new Framework()
+                            {
+                                ProgType = progType,
+                                FworkCode = fworkCode,
+                                PwayCode = pwayCode,
+                                FrameworkCommonComponents = new List<FrameworkCommonComponent>()
+                                {
+                                    new FrameworkCommonComponent()
+                                    {
+                                        ProgType = progType,
+                                        FworkCode = fworkCode,
+                                        PwayCode = pwayCode,
+                                        CommonComponent = frameworkCommonComponent,
+                                    }
+                                }
+                            },
+                            new Framework()
+                            {
+                                FrameworkCommonComponents = new List<FrameworkCommonComponent>()
+                                {
+                                    new FrameworkCommonComponent()
+                                }
+                            },
+                            new Framework()
+                            {
+                                FrameworkCommonComponents = null,
+                            }
                         }
                     }
-                },
-                new Framework()
-                {
-                    FrameworkCommonComponents = new List<FrameworkCommonComponent>()
-                    {
-                        new FrameworkCommonComponent()
-                    }
-                },
-                new Framework()
-                {
-                    FrameworkCommonComponents = null,
                 }
             };
 
             var externalDataCacheMock = new Mock<IExternalDataCache>();
 
             externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveries);
-            externalDataCacheMock.SetupGet(c => c.Frameworks).Returns(frameworks);
 
             NewService(externalDataCacheMock.Object).FrameworkCodeExistsForCommonComponent(learnAimRef, progType, fworkCode, pwayCode).Should().BeTrue();
         }
@@ -250,42 +257,40 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                     {
                         LearnAimRef = learnAimRef,
                         FrameworkCommonComponent = frameworkCommonComponent,
-                    }
-                }
-            };
-
-            var frameworks = new List<Framework>()
-            {
-                new Framework()
-                {
-                    FrameworkCommonComponents = new List<FrameworkCommonComponent>()
-                    {
-                        new FrameworkCommonComponent()
+                        Frameworks = new List<Framework>()
                         {
-                            ProgType = progType,
-                            FworkCode = fworkCode,
-                            PwayCode = pwayCode,
-                            CommonComponent = frameworkCommonComponent + 1,
+                            new Framework()
+                            {
+                                FrameworkCommonComponents = new List<FrameworkCommonComponent>()
+                                {
+                                    new FrameworkCommonComponent()
+                                    {
+                                        ProgType = progType,
+                                        FworkCode = fworkCode,
+                                        PwayCode = pwayCode,
+                                        CommonComponent = frameworkCommonComponent + 1,
+                                    }
+                                }
+                            },
+                            new Framework()
+                            {
+                                FrameworkCommonComponents = new List<FrameworkCommonComponent>()
+                                {
+                                    new FrameworkCommonComponent()
+                                }
+                            },
+                            new Framework()
+                            {
+                                FrameworkCommonComponents = null,
+                            }
                         }
                     }
-                },
-                new Framework()
-                {
-                    FrameworkCommonComponents = new List<FrameworkCommonComponent>()
-                    {
-                        new FrameworkCommonComponent()
-                    }
-                },
-                new Framework()
-                {
-                    FrameworkCommonComponents = null,
                 }
             };
 
             var externalDataCacheMock = new Mock<IExternalDataCache>();
 
             externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveries);
-            externalDataCacheMock.SetupGet(c => c.Frameworks).Returns(frameworks);
 
             NewService(externalDataCacheMock.Object).FrameworkCodeExistsForCommonComponent(learnAimRef, progType, fworkCode, pwayCode).Should().BeFalse();
         }
@@ -1192,83 +1197,35 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
         {
             var effectiveTo = new DateTime(2018, 09, 01);
 
-            var learnStartDate = new DateTime(2018, 10, 01);
-            var progType = 1;
-            var fworkCode = 1;
-            var pwayCode = 1;
-
-            var frameworks = new List<Framework>()
-            {
-                new Framework()
-                {
-                    EffectiveTo = effectiveTo,
-                    ProgType = progType,
-                    FworkCode = fworkCode,
-                    PwayCode = pwayCode
-                },
-                new Framework()
-                {
-                    EffectiveTo = effectiveTo,
-                    ProgType = 15,
-                    FworkCode = 16,
-                    PwayCode = 0
-                },
-            };
-
-            var externalDataCacheMock = new Mock<IExternalDataCache>();
-
-            externalDataCacheMock.SetupGet(c => c.Frameworks).Returns(frameworks);
-
-            NewService(externalDataCacheMock.Object).LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode).Should().BeTrue();
-        }
-
-        [Fact]
-        public void LearnStartDateGreaterThanFrameworkEffectiveTo_False()
-        {
-            var learnStartDate = new DateTime(2018, 10, 01);
-            var progType = 1;
-            var fworkCode = 1;
-            var pwayCode = 1;
-
-            var externalDataCacheMock = new Mock<IExternalDataCache>();
-
-            NewService(externalDataCacheMock.Object).LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, progType, fworkCode, pwayCode).Should().BeFalse();
-        }
-
-        [Fact]
-        public void LearnStartDateGreaterThanEffectiveTo_FalseNull()
-        {
-            var learnStartDate = new DateTime(2018, 10, 01);
-            var externalDataCacheMock = new Mock<IExternalDataCache>();
-
-            NewService(externalDataCacheMock.Object).LearnStartDateGreaterThanFrameworkEffectiveTo(learnStartDate, null, null, null).Should().BeFalse();
-        }
-
-        [Fact]
-        public void DD04DateGreaterThanFrameworkAimEffectiveTo_True()
-        {
-            var dd04Date = new DateTime(2018, 11, 01);
-            var effectiveTo = new DateTime(2018, 10, 01);
-
             var learnAimRef = "LearnAimRef";
+            var learnStartDate = new DateTime(2018, 10, 01);
             var progType = 1;
             var fworkCode = 1;
             var pwayCode = 1;
 
             var learningDeliveriesDictionary = new Dictionary<string, LearningDelivery>()
             {
-                [learnAimRef] = new LearningDelivery
                 {
-                    LearnAimRef = learnAimRef,
-                    FrameworkAims = new List<FrameworkAim>
+                    learnAimRef,
+                    new LearningDelivery
                     {
-                        new FrameworkAim()
+                        LearnAimRef = learnAimRef,
+                        Frameworks = new List<Framework>()
                         {
-                            LearnAimRef = learnAimRef,
-                            ProgType = progType,
-                            FworkCode = fworkCode,
-                            PwayCode = pwayCode,
-                            EffectiveTo = effectiveTo
+                            new Framework()
+                            {
+                                EffectiveTo = effectiveTo,
+                                ProgType = progType,
+                                FworkCode = fworkCode,
+                                PwayCode = pwayCode
+                            },
+                            new Framework()
+                            {
+                                EffectiveTo = effectiveTo,
+                                ProgType = 15,
+                                FworkCode = 16,
+                                PwayCode = 0
+                            },
                         }
                     }
                 }
@@ -1278,26 +1235,31 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 
             externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
 
-            NewService(externalDataCacheMock.Object)
-                .DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode)
-                .Should()
-                .BeTrue();
+            NewService(externalDataCacheMock.Object).LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode).Should().BeTrue();
         }
 
         [Fact]
-        public void DD04DateGreaterThanFrameworkAimEffectiveTo_False()
+        public void LearnStartDateGreaterThanFrameworkEffectiveTo_False()
         {
-            var dd04Date = new DateTime(2018, 09, 01);
             var learnAimRef = "LearnAimRef";
+            var learnStartDate = new DateTime(2018, 10, 01);
             var progType = 1;
             var fworkCode = 1;
             var pwayCode = 1;
+
             var externalDataCacheMock = new Mock<IExternalDataCache>();
 
-            NewService(externalDataCacheMock.Object)
-                .DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode)
-                .Should()
-                .BeFalse();
+            NewService(externalDataCacheMock.Object).LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, progType, fworkCode, pwayCode).Should().BeFalse();
+        }
+
+        [Fact]
+        public void LearnStartDateGreaterThanEffectiveTo_FalseNull()
+        {
+            var learnAimRef = "LearnAimRef";
+            var learnStartDate = new DateTime(2018, 10, 01);
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            NewService(externalDataCacheMock.Object).LearnStartDateGreaterThanFrameworkEffectiveTo(learnAimRef, learnStartDate, null, null, null).Should().BeFalse();
         }
 
         [Theory]
@@ -1559,50 +1521,47 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
             var frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
             var learnAimRef = "ZESF12345";
 
-            var frameworks = new List<Framework>()
+            var learningDeliveriesDictionary = new Dictionary<string, LearningDelivery>()
             {
-                new Framework()
                 {
-                    FrameworkAims = new List<FrameworkAim>()
+                    learnAimRef,
+                    new LearningDelivery
                     {
-                        new FrameworkAim()
+                        LearnAimRef = learnAimRef,
+                        Frameworks = new List<Framework>()
                         {
-                            LearnAimRef = "ZESF12345",
-                            FrameworkComponentType = 5
-                        },
-                        new FrameworkAim()
-                        {
-                            LearnAimRef = "ZESF12345",
-                            FrameworkComponentType = 2
-                        },
-                        new FrameworkAim()
-                        {
-                            LearnAimRef = "ZESF12345",
-                            FrameworkComponentType = 6
-                        },
-                        new FrameworkAim()
-                        {
-                            LearnAimRef = "ZESF99887",
-                            FrameworkComponentType = 3
+                            new Framework()
+                            {
+                                FrameworkAim = new FrameworkAim()
+                                {
+                                    LearnAimRef = learnAimRef,
+                                    FrameworkComponentType = 5
+                                },
+                            },
+                            new Framework()
+                            {
+                                FrameworkAim = new FrameworkAim()
+                                {
+                                    LearnAimRef = learnAimRef,
+                                    FrameworkComponentType = 2
+                                },
+                            },
+                            new Framework()
+                            {
+                                FrameworkAim = new FrameworkAim()
+                                {
+                                    LearnAimRef = learnAimRef,
+                                    FrameworkComponentType = 6
+                                },
+                            }
                         }
                     }
-                },
-                new Framework()
-                {
-                    FrameworkAims = new List<FrameworkAim>()
-                    {
-                        new FrameworkAim(),
-                    }
-                },
-                new Framework()
-                {
-                    FrameworkAims = null
                 }
             };
 
             var externalDataCacheMock = new Mock<IExternalDataCache>();
 
-            externalDataCacheMock.SetupGet(c => c.Frameworks).Returns(frameworks);
+            externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
             NewService(externalDataCache: externalDataCacheMock.Object)
                 .FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, frameWorkComponentTypes)
                 .Should()
@@ -1615,17 +1574,24 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
             var frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
             var learnAimRef = "ZESF12345";
 
-            var frameworks = new List<Framework>()
+            var learningDeliveriesDictionary = new Dictionary<string, LearningDelivery>()
             {
-                new Framework()
                 {
-                    FrameworkAims = null
+                    learnAimRef,
+                    new LearningDelivery
+                    {
+                        LearnAimRef = learnAimRef,
+                        Frameworks = new List<Framework>()
+                        {
+                            new Framework()
+                        }
+                    }
                 }
             };
 
             var externalDataCacheMock = new Mock<IExternalDataCache>();
 
-            externalDataCacheMock.SetupGet(c => c.Frameworks).Returns(frameworks);
+            externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
             NewService(externalDataCache: externalDataCacheMock.Object)
                 .FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, frameWorkComponentTypes)
                 .Should()
@@ -1638,11 +1604,20 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
             var frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
             var learnAimRef = "ZESF12345";
 
-            List<Framework> frameworks = null;
+            var learningDeliveriesDictionary = new Dictionary<string, LearningDelivery>()
+            {
+                {
+                    learnAimRef,
+                    new LearningDelivery
+                    {
+                        LearnAimRef = learnAimRef
+                    }
+                }
+            };
 
             var externalDataCacheMock = new Mock<IExternalDataCache>();
 
-            externalDataCacheMock.SetupGet(c => c.Frameworks).Returns(frameworks);
+            externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
             NewService(externalDataCache: externalDataCacheMock.Object)
                 .FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, frameWorkComponentTypes)
                 .Should()
@@ -1660,22 +1635,31 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                 [learnAimRef] = new LearningDelivery
                 {
                     LearnAimRef = learnAimRef,
-                    FrameworkAims = new List<FrameworkAim>
+                    Frameworks = new List<Framework>
                     {
-                        new FrameworkAim
+                        new Framework
                         {
-                            LearnAimRef = "ZESF12345",
-                            FrameworkComponentType = 1
+                            FrameworkAim = new FrameworkAim
+                            {
+                                LearnAimRef = "ZESF12345",
+                                FrameworkComponentType = 1
+                            },
                         },
-                        new FrameworkAim
+                        new Framework
                         {
-                            LearnAimRef = "ZESF12345",
-                            FrameworkComponentType = 2
+                            FrameworkAim = new FrameworkAim
+                            {
+                                LearnAimRef = "ZESF12345",
+                                FrameworkComponentType = 2
+                            },
                         },
-                        new FrameworkAim
+                        new Framework
                         {
-                            LearnAimRef = "ZESF12345",
-                            FrameworkComponentType = 3
+                            FrameworkAim = new FrameworkAim
+                            {
+                                LearnAimRef = "ZESF12345",
+                                FrameworkComponentType = 3
+                            },
                         }
                     }
                 }
@@ -2050,6 +2034,186 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 
             NewService(externalDataCacheMock.Object).GetStandardFundingForCodeOnDate(2, DateTime.Parse(learnStartDate))
                 .Should().Be(null);
+        }
+
+        [Fact]
+        public void FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes_True()
+        {
+            var learnAimRef = "LearnAimRef";
+            var progType = 3;
+            var fworkCode = 445;
+            var pwayCode = 1;
+            var frameWorkComponentTypes = new HashSet<int?>() { 2, 3 };
+            var learnStartDate = new DateTime(2019, 01, 01);
+
+            var learningDeliveriesDictionary = new Dictionary<string, LearningDelivery>
+            {
+                [learnAimRef] = new LearningDelivery
+                {
+                    LearnAimRef = learnAimRef,
+                    Frameworks = new List<Framework>
+                    {
+                        new Framework
+                        {
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = 2,
+                                FworkCode = 445,
+                                PwayCode = 1,
+                                FrameworkComponentType = 2
+                            },
+                        },
+                        new Framework
+                        {
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = 2,
+                                FworkCode = 445,
+                                PwayCode = 3,
+                                FrameworkComponentType = 1
+                            },
+                        },
+                        new Framework
+                        {
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = 3,
+                                FworkCode = 445,
+                                PwayCode = 1,
+                                FrameworkComponentType = 2
+                            },
+                        }
+                    }
+                }
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
+
+            NewService(externalDataCacheMock.Object).FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate)
+                .Should()
+                .BeTrue();
+        }
+
+        [Fact]
+        public void FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes_False()
+        {
+            var learnAimRef = "LearnAimRef";
+            var progType = 3;
+            var fworkCode = 445;
+            var pwayCode = 1;
+            var frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
+            var learnStartDate = new DateTime(2019, 01, 01);
+
+            var learningDeliveriesDictionary = new Dictionary<string, LearningDelivery>
+            {
+                [learnAimRef] = new LearningDelivery
+                {
+                    LearnAimRef = learnAimRef,
+                    Frameworks = new List<Framework>
+                    {
+                        new Framework
+                        {
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = 2,
+                                FworkCode = 445,
+                                PwayCode = 1,
+                                FrameworkComponentType = 2
+                            },
+                        },
+                        new Framework
+                        {
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = 2,
+                                FworkCode = 445,
+                                PwayCode = 3,
+                                FrameworkComponentType = 1
+                            },
+                        },
+                        new Framework
+                        {
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = 3,
+                                FworkCode = 445,
+                                PwayCode = 1,
+                                FrameworkComponentType = 2
+                            },
+                        }
+                    }
+                }
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
+
+            NewService(externalDataCacheMock.Object).FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate)
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public void FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes_False_Nulls()
+        {
+            var learnAimRef = "LearnAimRef";
+            int? progType = null;
+            int? fworkCode = null;
+            int? pwayCode = null;
+            var frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
+            var learnStartDate = new DateTime(2019, 01, 01);
+
+            var learningDeliveriesDictionary = new Dictionary<string, LearningDelivery>
+            {
+                [learnAimRef] = new LearningDelivery
+                {
+                    LearnAimRef = learnAimRef,
+                    Frameworks = new List<Framework>
+                    {
+                        new Framework
+                        {
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = 2,
+                                FworkCode = 445,
+                                PwayCode = 1,
+                                FrameworkComponentType = 2
+                            },
+                        },
+                        new Framework
+                        {
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = 2,
+                                FworkCode = 445,
+                                PwayCode = 3,
+                                FrameworkComponentType = 1
+                            },
+                        },
+                        new Framework
+                        {
+                            FrameworkAim = new FrameworkAim()
+                            {
+                                ProgType = 3,
+                                FworkCode = 445,
+                                PwayCode = 1,
+                                FrameworkComponentType = 2
+                            },
+                        }
+                    }
+                }
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
+
+            NewService(externalDataCacheMock.Object).FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate)
+                .Should()
+                .BeFalse();
         }
 
         private LARSDataService NewService(IExternalDataCache externalDataCache = null)

@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OutGrade
 
             var lookupMock = new Mock<IProvideLookupDetails>();
             lookupMock
-                .Setup(m => m.Contains(TypeOfListItemLookup.OutGradeLearningAimType, It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(m => m.Contains(TypeOfListItemLookup.LearningAimType, It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(false);
 
             var testLearner = new TestLearner
@@ -76,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OutGrade
 
             var lookupMock = new Mock<IProvideLookupDetails>();
             lookupMock
-                .Setup(m => m.Contains(TypeOfListItemLookup.OutGradeLearningAimType, It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(m => m.Contains(TypeOfListItemLookup.LearningAimType, It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(false);
 
             var testLearner = new TestLearner
@@ -110,7 +110,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OutGrade
 
             var lookupMock = new Mock<IProvideLookupDetails>();
             lookupMock
-                .Setup(m => m.Contains(TypeOfListItemLookup.OutGradeLearningAimType, It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(m => m.Contains(TypeOfListItemLookup.LearningAimType, It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(false);
 
             var testLearner = new TestLearner
@@ -148,7 +148,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OutGrade
 
             var lookupMock = new Mock<IProvideLookupDetails>();
             lookupMock
-                .Setup(m => m.Contains(TypeOfListItemLookup.OutGradeLearningAimType, It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(m => m.Contains(TypeOfListItemLookup.LearningAimType, It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(true);
 
             var testLearner = new TestLearner
@@ -186,7 +186,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OutGrade
 
             var lookupMock = new Mock<IProvideLookupDetails>();
             lookupMock
-                .Setup(m => m.Contains(TypeOfListItemLookup.OutGradeLearningAimType, It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(m => m.Contains(TypeOfListItemLookup.LearningAimType, It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(false);
 
             var testLearner = new TestLearner
@@ -235,7 +235,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OutGrade
 
             var lookupMock = new Mock<IProvideLookupDetails>();
             lookupMock
-                .Setup(m => m.Contains(TypeOfListItemLookup.OutGradeLearningAimType, It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(m => m.Contains(TypeOfListItemLookup.LearningAimType, It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(false);
 
             var testLearner = new TestLearner

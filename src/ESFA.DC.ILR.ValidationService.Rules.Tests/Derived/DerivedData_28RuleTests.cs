@@ -1,6 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
 using System;
 using Xunit;
@@ -9,6 +10,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 {
     public class DerivedData_28RuleTests
     {
+        /// <summary>
+        /// New rule with null provider throws.
+        /// </summary>
+        [Fact]
+        public void NewRuleWithNullProviderThrows()
+        {
+            // arrange / act / assert
+            Assert.Throws<ArgumentNullException>(() => new DerivedData_28Rule(null));
+        }
+
         /// <summary>
         /// Determines whether [is adult funded unemployed with benefits with null learner throws].
         /// </summary>
@@ -19,37 +30,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var sut = NewRule();
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.IsAdultFundedUnemployedWithBenefits(null));
+            Assert.Throws<ArgumentNullException>(() => sut.IsAdultFundedUnemployedWithBenefits(new Mock<ILearningDelivery>().Object, null));
         }
 
         /// <summary>
-        /// Determines whether [is adult skills meets expectation] [the specified candidate].
+        /// Is adult funded unemployed with benefits, with null delivery learner throws
         /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, true)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, false)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, false)]
-        [InlineData(TypeOfFunding.CommunityLearning, false)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, false)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, false)]
-        [InlineData(TypeOfFunding.Other16To19, false)]
-        [InlineData(TypeOfFunding.OtherAdult, false)]
-        public void IsAdultSkillsMeetsExpectation(int candidate, bool expectation)
+        [Fact]
+        public void IsAdultFundedUnemployedWithBenefitsWithNullDeliveryLearnerThrows()
         {
             // arrange
             var sut = NewRule();
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.FundModel)
-                .Returns(candidate);
 
-            // act
-            var result = sut.IsAdultSkills(mockDelivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => sut.IsAdultFundedUnemployedWithBenefits(null, new Mock<ILearner>().Object));
         }
 
         /// <summary>
@@ -103,6 +97,64 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         /// <summary>
+        /// In receipt of employment support, with empty monitors meets expectation.
+        /// </summary>
+        [Fact]
+        public void InReceiptOfEmploymentSupportWithEmptyMonitorsMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.InReceiptOfEmploymentSupport(new IEmploymentStatusMonitoring[] { });
+
+            // assert
+            Assert.False(result);
+        }
+
+        /// <summary>
+        /// In receipt of employment support, with null monitors meets expectation.
+        /// </summary>
+        [Fact]
+        public void InReceiptOfEmploymentSupportWithNullMonitorsMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.InReceiptOfEmploymentSupport((IEmploymentStatusMonitoring[])null);
+
+            // assert
+            Assert.False(result);
+        }
+
+        /// <summary>
+        /// Determines whether [has valid employment status meets expectation] [the specified candidate].
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, true)]
+        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, true)]
+        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, true)]
+        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, true)]
+        public void HasValidEmploymentStatusMeetsExpectation(int candidate, bool expectation)
+        {
+            // arrange
+            var sut = NewRule();
+            var mockDelivery = new Mock<ILearnerEmploymentStatus>();
+            mockDelivery
+                .SetupGet(y => y.EmpStat)
+                .Returns(candidate);
+
+            // act
+            var result = sut.HasValidEmploymentStatus(mockDelivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        /// <summary>
         /// In receipt of credits meets expectation.
         /// </summary>
         /// <param name="candidate">The candidate.</param>
@@ -153,29 +205,35 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         /// <summary>
-        /// Determines whether [has valid employment status meets expectation] [the specified candidate].
+        /// In receipt of credits, with empty monitors meets expectation.
         /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, true)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, true)]
-        public void HasValidEmploymentStatusMeetsExpectation(int candidate, bool expectation)
+        [Fact]
+        public void InReceiptOfCreditsWithEmptyMonitorsMeetsExpectation()
         {
             // arrange
             var sut = NewRule();
-            var mockDelivery = new Mock<ILearnerEmploymentStatus>();
-            mockDelivery
-                .SetupGet(y => y.EmpStat)
-                .Returns(candidate);
 
             // act
-            var result = sut.HasValidEmploymentStatus(mockDelivery.Object);
+            var result = sut.InReceiptOfCredits(new IEmploymentStatusMonitoring[] { });
 
             // assert
-            Assert.Equal(expectation, result);
+            Assert.False(result);
+        }
+
+        /// <summary>
+        /// In receipt of credits, with null monitors meets expectation.
+        /// </summary>
+        [Fact]
+        public void InReceiptOfCreditsWithNullMonitorsMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.InReceiptOfCredits((IEmploymentStatusMonitoring[])null);
+
+            // assert
+            Assert.False(result);
         }
 
         /// <summary>
@@ -229,6 +287,38 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         /// <summary>
+        /// Is working short hours with empty monitors meets expectation
+        /// </summary>
+        [Fact]
+        public void IsWorkingShortHoursWithEmptyMonitorsMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.IsWorkingShortHours(new IEmploymentStatusMonitoring[] { });
+
+            // assert
+            Assert.False(result);
+        }
+
+        /// <summary>
+        /// Is working short hours with null monitors meets expectation
+        /// </summary>
+        [Fact]
+        public void IsWorkingShortHoursWithNullMonitorsMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.IsWorkingShortHours((IEmploymentStatusMonitoring[])null);
+
+            // assert
+            Assert.False(result);
+        }
+
+        /// <summary>
         /// Determines whether [is employed meets expectation] [the specified candidate].
         /// </summary>
         /// <param name="candidate">The candidate.</param>
@@ -260,7 +350,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         /// <returns>a constructed and mocked up derived data rule</returns>
         public DerivedData_28Rule NewRule()
         {
-            return new DerivedData_28Rule();
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            return new DerivedData_28Rule(commonOps.Object);
         }
     }
 }

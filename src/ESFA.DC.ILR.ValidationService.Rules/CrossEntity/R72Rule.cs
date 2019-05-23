@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ESFA.DC.ILR.Model.Interface;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
-using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
@@ -20,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
     {
         private readonly ILearningDeliveryAppFinRecordQueryService _learningDeliveryAppFinRecordQueryService;
         private readonly IDerivedData_17Rule _dd17;
-        private readonly HashSet<int> TrainingAndAssementAFinCodes = new HashSet<int>() { TypeOfPMRAFin.TrainingPayment, TypeOfPMRAFin.AssessmentPayment };
+        private readonly HashSet<int> _trainingAndAssementAFinCodes = new HashSet<int>() { TypeOfPMRAFin.TrainingPayment, TypeOfPMRAFin.AssessmentPayment };
 
         public R72Rule(
             IValidationErrorHandler validationErrorHandler,
@@ -72,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             {
                 var totalAFin1And2 = learningDelivery.AppFinRecords?.Where(
                                 fin => fin.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.PaymentRecord) &&
-                               TrainingAndAssementAFinCodes.Contains(fin.AFinCode)).Sum(s => s.AFinAmount);
+                               _trainingAndAssementAFinCodes.Contains(fin.AFinCode)).Sum(s => s.AFinAmount);
 
                 var totalAFin3 = learningDelivery.AppFinRecords?.Where(
                     fin => fin.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.PaymentRecord) &&

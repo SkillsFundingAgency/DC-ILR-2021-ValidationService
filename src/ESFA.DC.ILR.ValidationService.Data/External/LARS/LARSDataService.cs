@@ -121,7 +121,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var delivery = GetDeliveryFor(thisAimRef);
 
-            return delivery?.FrameworkAims
+            return delivery?.Frameworks?.Where(f => f.FrameworkAim != null)
+                .Select(f => f.FrameworkAim).ToList()
                 ?? Collection.EmptyAndReadOnly<ILARSFrameworkAim>();
         }
 
@@ -202,19 +203,30 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             return frameworkAims.Any(fa => frameworkTypeComponents.Contains(fa.FrameworkComponentType));
         }
 
+        public bool FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(string learnAimRef, int? progType, int? fworkCode, int? pwayCode, HashSet<int?> frameworkTypeComponents, DateTime startDate)
+        {
+            var frameworkAims = GetFrameworkAimsFor(learnAimRef);
+
+            return frameworkAims.Any(
+                fa => fa.ProgType == progType
+                      && fa.FworkCode == fworkCode
+                      && fa.PwayCode == pwayCode
+                      && frameworkTypeComponents.Contains(fa.FrameworkComponentType)
+                      && startDate >= fa.StartDate
+                      && (!fa.EndDate.HasValue || startDate <= fa.EndDate));
+        }
+
         // TODO: needs to be thought out, this isn't right either...
         public bool FrameworkCodeExistsForCommonComponent(string learnAimRef, int? progType, int? fworkCode, int? pwayCode)
         {
             var learningDelivery = GetDeliveryFor(learnAimRef);
 
             return learningDelivery != null
-                   && _externalDataCache.Frameworks
-                        .SafeWhere(f => f.FrameworkCommonComponents != null)
-                        .SelectMany(f => f.FrameworkCommonComponents)
-                        .Any(fa => fa.ProgType == progType
-                            && fa.FworkCode == fworkCode
-                            && fa.PwayCode == pwayCode
-                            && fa.CommonComponent == learningDelivery.FrameworkCommonComponent);
+                   && learningDelivery.Frameworks
+                        .Any(f => f.ProgType == progType
+                            && f.FworkCode == fworkCode
+                            && f.PwayCode == pwayCode
+                            && f.FrameworkCommonComponents.Any(cc => cc.CommonComponent == learningDelivery.FrameworkCommonComponent));
         }
 
         // TODO: not descriptive of it's actual operation, and should be done in the rule
@@ -336,28 +348,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         }
 
         // TODO: this should happen in the rule
-        public bool LearnStartDateGreaterThanFrameworkEffectiveTo(DateTime learnStartDate, int? progType, int? fWorkCode, int? pwayCode)
+        public bool LearnStartDateGreaterThanFrameworkEffectiveTo(string learnAimRef, DateTime learnStartDate, int? progType, int? fworkCode, int? pwayCode)
         {
-            return _externalDataCache.Frameworks
-                .SafeAny(f =>
-                    f.ProgType == progType
-                    && f.FworkCode == fWorkCode
-                    && f.PwayCode == pwayCode
+            var learningDelivery = GetDeliveryFor(learnAimRef);
 
-                    // && f.EffectiveTo != null <= not needed with uplifting operators
-                    && learnStartDate > f.EffectiveTo);
-        }
-
-        // TODO: this should happen in the rule, and it's now improperly named...
-        public bool DD04DateGreaterThanFrameworkAimEffectiveTo(DateTime dd04Date, string learnAimRef, int? progType, int? fworkCode, int? pwayCode)
-        {
-            var frameworkAims = GetFrameworkAimsFor(learnAimRef);
-
-            return frameworkAims.Any(
-                fa => fa.ProgType == progType
-                && fa.FworkCode == fworkCode
-                && fa.PwayCode == pwayCode
-                && !fa.IsCurrent(dd04Date));
+            return learningDelivery != null
+                   && learningDelivery.Frameworks
+                        .Any(f => f.ProgType == progType
+                            && f.FworkCode == fworkCode
+                            && f.PwayCode == pwayCode
+                            && learnStartDate > f.EffectiveTo);
         }
 
         // TODO: this should happen in the rule

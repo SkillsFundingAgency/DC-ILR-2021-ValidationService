@@ -57,7 +57,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutType
         public bool OutCodeConditionMet(IDPOutcome dpOutcome)
         {
             return !_lookups.IsCurrent(
-                TypeOfLimitedLifeLookup.OutTypedCode,
+                TypeOfLimitedLifeLookup.OutType,
                 $"{dpOutcome.OutType}{dpOutcome.OutCode}",
                 dpOutcome.OutStartDate);
         }

@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -9,7 +10,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDat
 {
     public class WorkPlaceStartDate_03Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IEnumerable<string> _learnAimRefs = new HashSet<string>()
+        private readonly IEnumerable<string> _learnAimRefs = new HashSet<string>
         {
             TypeOfAim.References.WorkPlacement0To49Hours,
             TypeOfAim.References.WorkPlacement50To99Hours,
@@ -19,7 +20,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDat
             TypeOfAim.References.SupportedInternship16To19,
             TypeOfAim.References.WorkExperience,
             TypeOfAim.References.IndustryPlacement,
-        };
+        }.ToCaseInsensitiveHashSet();
 
         public WorkPlaceStartDate_03Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.WorkPlaceStartDate_03)

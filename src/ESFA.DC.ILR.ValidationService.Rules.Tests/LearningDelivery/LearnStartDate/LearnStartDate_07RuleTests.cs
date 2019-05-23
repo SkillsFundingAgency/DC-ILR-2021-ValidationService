@@ -1,503 +1,649 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.Tests.Model;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
-using FluentAssertions;
 using Moq;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
 {
-    public class LearnStartDate_07RuleTests : AbstractRuleTests<LearnStartDate_07Rule>
+    public class LearnStartDate_07RuleTests
     {
+        /// <summary>
+        /// New rule with null message handler throws.
+        /// </summary>
         [Fact]
-        public void RuleName()
+        public void NewRuleWithNullMessageHandlerThrows()
         {
-            NewRule().RuleName.Should().Be("LearnStartDate_07");
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_07Rule(null, ddRule04.Object, larsData.Object, commonOps.Object));
+        }
+
+        /// <summary>
+        /// New rule with null derived data rule 04 throws.
+        /// </summary>
+        [Fact]
+        public void NewRuleWithNullDerivedDataRule04Throws()
+        {
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_07Rule(handler.Object, null, larsData.Object, commonOps.Object));
+        }
+
+        /// <summary>
+        /// New rule with null lars data throws.
+        /// </summary>
+        [Fact]
+        public void NewRuleWithNullLARSDataThrows()
+        {
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_07Rule(handler.Object, ddRule04.Object, null, commonOps.Object));
         }
 
         [Fact]
-        public void DD07ConditionMet_True()
+        public void NewRuleWithNullCommonOperationsThrows()
         {
-            var progType = 2;
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-            dd07Mock
-                .Setup(dm => dm.IsApprenticeship(progType))
-                .Returns(true);
-
-            NewRule(dd07Mock.Object).DD07ConditionMet(progType).Should().BeTrue();
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, null));
         }
 
+        /// <summary>
+        /// Rule name 1, matches a literal.
+        /// </summary>
         [Fact]
-        public void DD07ConditionMet_False()
+        public void RuleName1()
         {
-            var progType = 0;
+            // arrange
+            var sut = NewRule();
 
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-            dd07Mock
-                .Setup(dm => dm.IsApprenticeship(progType))
-                .Returns(false);
+            // act
+            var result = sut.RuleName;
 
-            NewRule(dd07Mock.Object).DD07ConditionMet(progType).Should().BeFalse();
+            // assert
+            Assert.Equal("LearnStartDate_07", result);
         }
 
+        /// <summary>
+        /// Rule name 2, matches the constant.
+        /// </summary>
         [Fact]
-        public void AimTypeConditionMet_True()
+        public void RuleName2()
         {
-            var aimType = 3;
+            // arrange
+            var sut = NewRule();
 
-            NewRule().AimTypeConditionMet(aimType).Should().BeTrue();
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.Equal(RuleNameConstants.LearnStartDate_07, result);
         }
 
+        /// <summary>
+        /// Rule name 3 test, account for potential false positives.
+        /// </summary>
         [Fact]
-        public void AimTypeConditionMet_False()
+        public void RuleName3()
         {
-            var aimType = 1;
+            // arrange
+            var sut = NewRule();
 
-            NewRule().AimTypeConditionMet(aimType).Should().BeFalse();
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.NotEqual("SomeOtherRuleName_07", result);
         }
 
+        /// <summary>
+        /// Validate with null learner throws.
+        /// </summary>
         [Fact]
-        public void FrameworkAimsConditionMet_True()
+        public void ValidateWithNullLearnerThrows()
         {
-            var dd04Date = new DateTime(2018, 10, 01);
-            var learnAimRef = "learnAimRef";
-            var progType = 1;
-            var fworkCode = 1;
-            var pwayCode = 1;
+            // arrange
+            var sut = NewRule();
 
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode))
-                .Returns(true);
-
-            NewRule(larsDataService: larsDataServiceMock.Object)
-                .FrameworkAimsConditionMet(dd04Date, learnAimRef, progType, fworkCode, pwayCode)
-                .Should()
-                .BeTrue();
+            // act/assert
+            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
-        [Fact]
-        public void FrameworkAimsConditionMet_False()
+        /// <summary>
+        /// Gets the earliest start date for, meets expectation.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData(null)]
+        [InlineData("2018-06-04")]
+        [InlineData("2018-08-06")]
+        public void GetEarliestStartDateForMeetsExpectation(string candidate)
         {
-            var dd04Date = new DateTime(2018, 10, 01);
-            var learnAimRef = "learnAimRef";
-            var progType = 0;
-            var fworkCode = 0;
-            var pwayCode = 0;
+            // arrange
+            var testDate = string.IsNullOrWhiteSpace(candidate)
+                ? (DateTime?)null
+                : DateTime.Parse(candidate);
 
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode))
-                .Returns(false);
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+            ddRule04
+                .Setup(x => x.GetEarliesStartDateFor(null, null))
+                .Returns(testDate);
 
-            NewRule(larsDataService: larsDataServiceMock.Object)
-                .FrameworkAimsConditionMet(dd04Date, learnAimRef, progType, fworkCode, pwayCode)
-                .Should()
-                .BeFalse();
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+
+            // act
+            var result = sut.GetEarliestStartDateFor(null, null);
+
+            // assert
+            handler.VerifyAll();
+            ddRule04.VerifyAll();
+            larsData.VerifyAll();
+            commonOps.VerifyAll();
+
+            Assert.Equal(testDate, result);
         }
 
-        [Fact]
-        public void Excluded_TrueProgType()
+        /// <summary>
+        /// Is excluded meets expectation
+        /// </summary>
+        /// <param name="isSP">if set to <c>true</c> [is sp].</param>
+        /// <param name="isRES">if set to <c>true</c> [is resource].</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false, false, TypeOfLARSCommonComponent.Unknown, false)]
+        [InlineData(true, false, TypeOfLARSCommonComponent.Unknown, true)]
+        [InlineData(false, true, TypeOfLARSCommonComponent.NotApplicable, true)]
+        [InlineData(true, true, TypeOfLARSCommonComponent.NotApplicable, true)]
+        [InlineData(false, false, TypeOfLARSCommonComponent.GCSEEnglish, true)]
+        public void IsExcludedMeetsExpectation(bool isSP, bool isRES, int fwkCC, bool expectation)
         {
-            var progType = 25;
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>();
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
 
-            NewRule().Excluded(progType, learningDeliveryFams).Should().BeTrue();
-        }
+            var larsDelivery = new Mock<ILARSLearningDelivery>();
+            larsDelivery
+                .SetupGet(x => x.FrameworkCommonComponent)
+                .Returns(fwkCC);
 
-        [Fact]
-        public void Excluded_TrueRestart()
-        {
-            var progType = 1;
-            var famType = "RES";
+            const string learnAimRef = "123456789X";
 
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>()
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            larsData
+                .Setup(x => x.GetDeliveryFor(learnAimRef))
+                .Returns(larsDelivery.Object);
+
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns(learnAimRef);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Returns(isSP);
+            if (!isSP)
             {
-                new TestLearningDeliveryFAM()
-                {
-                    LearnDelFAMType = famType
-                }
-            };
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, famType))
-                .Returns(true);
-
-            NewRule(learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object)
-                .Excluded(progType, learningDeliveryFams)
-                .Should()
-                .BeTrue();
-        }
-
-        [Fact]
-        public void Excluded_False()
-        {
-            var progType = 1;
-            var famType = "XXX";
-
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>()
-            {
-                new TestLearningDeliveryFAM()
-                {
-                    LearnDelFAMType = famType
-                }
-            };
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, famType))
-                .Returns(false);
-
-            NewRule(learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object)
-                .Excluded(progType, learningDeliveryFams)
-                .Should()
-                .BeFalse();
-        }
-
-        [Fact]
-        public void ConditionMet_True()
-        {
-            var aimType = 3;
-            var progType = 1;
-            var learnAimRef = "LearnAimRef";
-            var dd04Date = new DateTime(2018, 10, 01);
-            var fworkCode = 1;
-            var pwayCode = 1;
-            var famType = "XXX";
-
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>()
-            {
-                new TestLearningDeliveryFAM()
-                {
-                    LearnDelFAMType = famType
-                }
-            };
-
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-            dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode))
-                .Returns(true);
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, famType))
-                .Returns(false);
-
-            NewRule(dd07: dd07Mock.Object, larsDataService: larsDataServiceMock.Object, learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object)
-                .ConditionMet(aimType, progType, learnAimRef, dd04Date, fworkCode, pwayCode, learningDeliveryFams)
-                .Should()
-                .BeTrue();
-        }
-
-        [Fact]
-        public void ConditionMet_FalseExcluded()
-        {
-            var aimType = 3;
-            var progType = 1;
-            var learnAimRef = "LearnAimRef";
-            var dd04Date = new DateTime(2018, 10, 01);
-            var fworkCode = 1;
-            var pwayCode = 1;
-            var famType = "RES";
-
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>()
-            {
-                new TestLearningDeliveryFAM()
-                {
-                    LearnDelFAMType = famType
-                }
-            };
-
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-            dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode))
-                .Returns(true);
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, famType))
-                .Returns(true);
-
-            NewRule(dd07: dd07Mock.Object, larsDataService: larsDataServiceMock.Object, learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object)
-                .ConditionMet(aimType, progType, learnAimRef, dd04Date, fworkCode, pwayCode, learningDeliveryFams)
-                .Should()
-                .BeFalse();
-        }
-
-        [Fact]
-        public void ConditionMet_FalseAimType()
-        {
-            var aimType = 5;
-            var progType = 1;
-            var learnAimRef = "LearnAimRef";
-            var dd04Date = new DateTime(2018, 10, 01);
-            var fworkCode = 1;
-            var pwayCode = 1;
-            var famType = "XXX";
-
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>()
-            {
-                new TestLearningDeliveryFAM()
-                {
-                    LearnDelFAMType = famType
-                }
-            };
-
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-            dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode))
-                .Returns(true);
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, famType))
-                .Returns(false);
-
-            NewRule(dd07: dd07Mock.Object, larsDataService: larsDataServiceMock.Object, learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object)
-                .ConditionMet(aimType, progType, learnAimRef, dd04Date, fworkCode, pwayCode, learningDeliveryFams)
-                .Should()
-                .BeFalse();
-        }
-
-        [Fact]
-        public void ConditionMet_FalseDD07()
-        {
-            var aimType = 3;
-            var progType = 0;
-            var learnAimRef = "LearnAimRef";
-            var dd04Date = new DateTime(2018, 10, 01);
-            var fworkCode = 1;
-            var pwayCode = 1;
-            var famType = "XXX";
-
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>()
-            {
-                new TestLearningDeliveryFAM()
-                {
-                    LearnDelFAMType = famType
-                }
-            };
-
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-            dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(false);
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode))
-                .Returns(true);
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, famType))
-                .Returns(false);
-
-            NewRule(dd07: dd07Mock.Object, larsDataService: larsDataServiceMock.Object, learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object)
-                .ConditionMet(aimType, progType, learnAimRef, dd04Date, fworkCode, pwayCode, learningDeliveryFams)
-                .Should()
-                .BeFalse();
-        }
-
-        [Fact]
-        public void ConditionMet_FalseFrameworkAims()
-        {
-            var aimType = 3;
-            var progType = 1;
-            var learnAimRef = "LearnAimRef";
-            var dd04Date = new DateTime(2018, 10, 01);
-            var fworkCode = 1;
-            var pwayCode = 1;
-            var famType = "XXX";
-
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>()
-            {
-                new TestLearningDeliveryFAM()
-                {
-                    LearnDelFAMType = famType
-                }
-            };
-
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-            dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode))
-                .Returns(false);
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, famType))
-                .Returns(false);
-
-            NewRule(dd07: dd07Mock.Object, larsDataService: larsDataServiceMock.Object, learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object)
-                .ConditionMet(aimType, progType, learnAimRef, dd04Date, fworkCode, pwayCode, learningDeliveryFams)
-                .Should()
-                .BeFalse();
-        }
-
-        [Fact]
-        public void ValidateError()
-        {
-            var aimType = 3;
-            var progType = 1;
-            var learnAimRef = "LearnAimRef";
-            var dd04Date = new DateTime(2018, 10, 01);
-            var fworkCode = 1;
-            var pwayCode = 1;
-            var famType = "XXX";
-
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = new List<TestLearningDelivery>()
-                {
-                    new TestLearningDelivery()
-                    {
-                        AimType = aimType,
-                        ProgTypeNullable = progType,
-                        LearnAimRef = learnAimRef,
-                        FworkCodeNullable = fworkCode,
-                        PwayCodeNullable = pwayCode,
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
-                        {
-                            new TestLearningDeliveryFAM()
-                            {
-                                LearnDelFAMType = famType
-                            }
-                        }
-                    }
-                }
-            };
-
-            var learningDeliveryFams = learner.LearningDeliveries.SelectMany(ld => ld.LearningDeliveryFAMs);
-
-            var dd04Mock = new Mock<IDerivedData_04Rule>();
-            dd04Mock.Setup(dm => dm.Derive(It.IsAny<IEnumerable<ILearningDelivery>>(), It.IsAny<ILearningDelivery>())).Returns(dd04Date);
-
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-            dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode))
-                .Returns(true);
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, famType))
-                .Returns(false);
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-            {
-                NewRule(dd07Mock.Object, dd04Mock.Object, larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                commonOps
+                    .Setup(x => x.IsRestart(delivery.Object))
+                    .Returns(isRES);
             }
+
+            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+
+            // act
+            var result = sut.IsExcluded(delivery.Object);
+
+            // assert
+            handler.VerifyAll();
+            ddRule04.VerifyAll();
+            commonOps.VerifyAll();
+
+            Assert.Equal(expectation, result);
         }
 
+        /// <summary>
+        /// Get framework aims for, meets expectation.
+        /// </summary>
+        /// <param name="learnAimRef">The learn aim reference.</param>
+        [Theory]
+        [InlineData("shonkyRefCode1")]
+        [InlineData("shonkyRefCode2")]
+        [InlineData("shonkyRefCode3")]
+        public void GetFrameworkAimsForMeetsExpectation(string learnAimRef)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns(learnAimRef);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            larsData
+                .Setup(x => x.GetFrameworkAimsFor(learnAimRef))
+                .Returns((IReadOnlyCollection<ILARSFrameworkAim>)null);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+
+            // act
+            var result = sut.GetQualifyingFrameworksFor(delivery.Object);
+
+            // assert
+            handler.VerifyAll();
+            ddRule04.VerifyAll();
+            larsData.VerifyAll();
+            commonOps.VerifyAll();
+
+            Assert.Null(result);
+        }
+
+        /// <summary>
+        /// Filtered framework aims for null frameworks meets expectation.
+        /// </summary>
         [Fact]
-        public void ValidateNoError()
+        public void FilteredFrameworkAimsForNullFrameworksMeetsExpectation()
         {
-            var aimType = 3;
-            var progType = 1;
-            var learnAimRef = "LearnAimRef";
-            var dd04Date = new DateTime(2018, 10, 01);
-            var fworkCode = 1;
-            var pwayCode = 1;
-            var famType = "RES";
+            // arrange
+            var sut = NewRule();
 
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = new List<TestLearningDelivery>()
-                {
-                    new TestLearningDelivery()
-                    {
-                        AimType = aimType,
-                        ProgTypeNullable = progType,
-                        LearnAimRef = learnAimRef,
-                        FworkCodeNullable = fworkCode,
-                        PwayCodeNullable = pwayCode,
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
-                        {
-                            new TestLearningDeliveryFAM()
-                            {
-                                LearnDelFAMType = famType
-                            }
-                        }
-                    }
-                }
-            };
+            // act
+            var result = sut.FilteredFrameworkAimsFor(null, null);
 
-            var learningDeliveryFams = learner.LearningDeliveries.SelectMany(ld => ld.LearningDeliveryFAMs);
-
-            var dd04Mock = new Mock<IDerivedData_04Rule>();
-            dd04Mock.Setup(dm => dm.Derive(It.IsAny<IEnumerable<ILearningDelivery>>(), It.IsAny<ILearningDelivery>())).Returns(dd04Date);
-
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-            dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.DD04DateGreaterThanFrameworkAimEffectiveTo(dd04Date, learnAimRef, progType, fworkCode, pwayCode))
-                .Returns(true);
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, famType))
-                .Returns(true);
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(dd07Mock.Object, dd04Mock.Object, larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
-            }
+            // assert
+            Assert.Empty(result);
         }
 
+        /// <summary>
+        /// Filtered framework aims for empty frameworks meets expectation.
+        /// </summary>
         [Fact]
-        public void BuildErrorMessageParameters()
+        public void FilteredFrameworkAimsForEmptyFrameworksMeetsExpectation()
         {
-            var pwayCode = 1;
-            var progType = 1;
-            var fworkCode = 1;
+            // arrange
+            var sut = NewRule();
 
-            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
+            // act
+            var result = sut.FilteredFrameworkAimsFor(null, new ILARSFrameworkAim[] { });
 
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, "01/10/2018")).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.PwayCode, pwayCode)).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.ProgType, progType)).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.FworkCode, fworkCode)).Verifiable();
-
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(new DateTime(2018, 10, 01), pwayCode, progType, fworkCode);
-
-            validationErrorHandlerMock.Verify();
+            // assert
+            Assert.Empty(result);
         }
 
-        private LearnStartDate_07Rule NewRule(
-            IDerivedData_07Rule dd07 = null,
-            IDerivedData_04Rule dd04 = null,
-            ILARSDataService larsDataService = null,
-            ILearningDeliveryFAMQueryService learningDeliveryFamQueryService = null,
-            IValidationErrorHandler validationErrorHandler = null)
+        /// <summary>
+        /// Filtered framework aims for vanilla delivery and empty frameworks meets expectation.
+        /// </summary>
+        [Fact]
+        public void FilteredFrameworkAimsForVanillaDeliveryAndEmptyFrameworksMeetsExpectation()
         {
-            return new LearnStartDate_07Rule(dd07, dd04, larsDataService, learningDeliveryFamQueryService, validationErrorHandler);
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            var sut = NewRule();
+
+            // act
+            var result = sut.FilteredFrameworkAimsFor(delivery.Object, new ILARSFrameworkAim[] { });
+
+            // assert
+            Assert.Empty(result);
+        }
+
+        /// <summary>
+        /// Filtered framework aims for, meets expectation.
+        /// </summary>
+        [Fact]
+        public void FilteredFrameworkAimsForMeetsExpectation()
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery.SetupGet(x => x.ProgTypeNullable).Returns(2);
+            delivery.SetupGet(x => x.FworkCodeNullable).Returns(3);
+            delivery.SetupGet(x => x.PwayCodeNullable).Returns(4);
+
+            var frameworkAim = new Mock<ILARSFrameworkAim>();
+            frameworkAim.SetupGet(x => x.ProgType).Returns(2);
+            frameworkAim.SetupGet(x => x.FworkCode).Returns(3);
+            frameworkAim.SetupGet(x => x.PwayCode).Returns(4);
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.FilteredFrameworkAimsFor(delivery.Object, new ILARSFrameworkAim[] { frameworkAim.Object });
+
+            // assert
+            Assert.Contains(result, x => x == frameworkAim.Object);
+        }
+
+        /// <summary>
+        /// Has qualifying framework aim with empty frameworks meets expectation
+        /// an empty framework set signifies the delivery aim being a framework common component
+        /// </summary>
+        [Fact]
+        public void HasQualifyingFrameworkAimWithEmptyFrameworksMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.HasQualifyingFrameworkAim(new ILARSFrameworkAim[] { }, DateTime.Today);
+
+            // assert
+            Assert.True(result);
+        }
+
+        [Theory]
+        [InlineData("2016-08-02", "2016-04-01", "2017-04-01", true)] // inside
+        [InlineData("2016-04-01", "2016-04-01", "2017-04-01", true)] // lower limit
+        [InlineData("2017-04-01", "2016-04-01", "2017-04-01", true)] // upper limit
+        [InlineData("2016-03-31", "2016-04-01", "2017-04-01", false, Skip = "no lower range checks till next year (19/20)")] // outside lower limit
+        [InlineData("2017-04-02", "2016-04-01", "2017-04-01", false)] // outside upper limit
+        [InlineData("2016-04-01", "2016-04-01", "2016-03-31", false)] // withdrawn lower limit
+        [InlineData("2017-04-01", "2016-04-01", "2016-03-31", false)] // withdrawn upper limit
+        public void HasQualifyingFrameworkAimMeetsExpectation(string candidate, string start, string end, bool expectation)
+        {
+            // arrange
+            var testDate = DateTime.Parse(candidate);
+            var frameworkAim = new Mock<ILARSFrameworkAim>();
+            frameworkAim.SetupGet(x => x.StartDate).Returns(DateTime.Parse(start));
+            frameworkAim.SetupGet(x => x.EndDate).Returns(DateTime.Parse(end));
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.HasQualifyingFrameworkAim(new ILARSFrameworkAim[] { frameworkAim.Object }, testDate);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        /// <summary>
+        /// Invalid item raises validation message.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        [Theory]
+        [InlineData("2016-03-31", "2016-04-01", "2017-04-01", Skip = "no lower range checks till next year (19/20)")] // outside lower limit
+        [InlineData("2017-04-02", "2016-04-01", "2017-04-01")] // outside upper limit
+        [InlineData("2016-04-01", "2016-04-01", "2016-03-31")] // withdrawn lower limit
+        [InlineData("2017-04-01", "2016-04-01", "2016-03-31")] // withdrawn upper limit
+        public void InvalidItemRaisesValidationMessage(string candidate, string start, string end)
+        {
+            // arrange
+            const string LearnRefNumber = "123456789X";
+            const string learnAimRef = "shonkyRefCode"; // <= any old code for the purpose of the test...
+
+            var testDate = DateTime.Parse(candidate);
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnStartDate)
+                .Returns(testDate);
+            delivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns(learnAimRef);
+
+            // these are random and meaningless values
+            delivery
+                .SetupGet(x => x.ProgTypeNullable)
+                .Returns(2);
+            delivery
+                .SetupGet(x => x.FworkCodeNullable)
+                .Returns(3);
+            delivery
+                .SetupGet(x => x.PwayCodeNullable)
+                .Returns(4);
+
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var mockLearner = new Mock<ILearner>();
+            mockLearner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            mockLearner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            handler
+                .Setup(x => x.Handle(RuleNameConstants.LearnStartDate_07, LearnRefNumber, 0, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testDate)))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("PwayCode", 4))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("ProgType", 2))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("FworkCode", 3))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+            ddRule04
+                .Setup(x => x.GetEarliesStartDateFor(delivery.Object, deliveries))
+                .Returns(testDate);
+
+            var startDate = DateTime.Parse(start);
+            var endDate = string.IsNullOrWhiteSpace(end)
+                ? (DateTime?)null
+                : DateTime.Parse(end);
+
+            var frameworkAim = new Mock<ILARSFrameworkAim>();
+            frameworkAim
+                .SetupGet(x => x.ProgType)
+                .Returns(2);
+            frameworkAim
+                .SetupGet(x => x.FworkCode)
+                .Returns(3);
+            frameworkAim
+                .SetupGet(x => x.PwayCode)
+                .Returns(4);
+            frameworkAim
+                .SetupGet(x => x.StartDate)
+                .Returns(startDate);
+            frameworkAim
+                .SetupGet(x => x.EndDate)
+                .Returns(endDate);
+
+            var larsDelivery = new Mock<ILARSLearningDelivery>();
+            larsDelivery
+                .SetupGet(x => x.FrameworkCommonComponent)
+                .Returns(TypeOfLARSCommonComponent.Unknown);
+
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            larsData
+                .Setup(x => x.GetFrameworkAimsFor(learnAimRef))
+                .Returns(new ILARSFrameworkAim[] { frameworkAim.Object });
+            larsData
+                .Setup(x => x.GetDeliveryFor(learnAimRef))
+                .Returns(larsDelivery.Object);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsComponentOfAProgram(delivery.Object))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.InApprenticeship(delivery.Object))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsRestart(delivery.Object))
+                .Returns(false);
+            commonOps
+                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Returns(false);
+
+            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+
+            // act
+            sut.Validate(mockLearner.Object);
+
+            // assert
+            handler.VerifyAll();
+            ddRule04.VerifyAll();
+            larsData.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Valid item does not raise validation message.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        [Theory]
+        [InlineData("2016-08-02", "2016-04-01", "2017-04-01")] // inside
+        [InlineData("2016-04-01", "2016-04-01", "2017-04-01")] // lower limit
+        [InlineData("2017-04-01", "2016-04-01", "2017-04-01")] // upper limit
+        public void ValidItemDoesNotRaiseValidationMessage(string candidate, string start, string end)
+        {
+            // arrange
+            const string LearnRefNumber = "123456789X";
+            const string learnAimRef = "shonkyRefCode"; // <= any old code for the purpose of the test...
+
+            var testDate = DateTime.Parse(candidate);
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnStartDate)
+                .Returns(testDate);
+            delivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns(learnAimRef);
+
+            // these are random and meaningless values
+            delivery
+                .SetupGet(x => x.ProgTypeNullable)
+                .Returns(2);
+            delivery
+                .SetupGet(x => x.FworkCodeNullable)
+                .Returns(3);
+            delivery
+                .SetupGet(x => x.PwayCodeNullable)
+                .Returns(4);
+
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var mockLearner = new Mock<ILearner>();
+            mockLearner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            mockLearner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+            ddRule04
+                .Setup(x => x.GetEarliesStartDateFor(delivery.Object, deliveries))
+                .Returns(testDate);
+
+            var startDate = DateTime.Parse(start);
+            var endDate = string.IsNullOrWhiteSpace(end)
+                ? (DateTime?)null
+                : DateTime.Parse(end);
+
+            var frameworkAim = new Mock<ILARSFrameworkAim>();
+            frameworkAim
+                .SetupGet(x => x.ProgType)
+                .Returns(2);
+            frameworkAim
+                .SetupGet(x => x.FworkCode)
+                .Returns(3);
+            frameworkAim
+                .SetupGet(x => x.PwayCode)
+                .Returns(4);
+            frameworkAim
+                .SetupGet(x => x.StartDate)
+                .Returns(startDate);
+            frameworkAim
+                .SetupGet(x => x.EndDate)
+                .Returns(endDate);
+
+            var larsDelivery = new Mock<ILARSLearningDelivery>();
+            larsDelivery
+                .SetupGet(x => x.FrameworkCommonComponent)
+                .Returns(TypeOfLARSCommonComponent.Unknown);
+
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            larsData
+                .Setup(x => x.GetFrameworkAimsFor(learnAimRef))
+                .Returns(new ILARSFrameworkAim[] { frameworkAim.Object });
+            larsData
+                .Setup(x => x.GetDeliveryFor(learnAimRef))
+                .Returns(larsDelivery.Object);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsComponentOfAProgram(delivery.Object))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.InApprenticeship(delivery.Object))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsRestart(delivery.Object))
+                .Returns(false);
+            commonOps
+                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Returns(false);
+
+            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+
+            // act
+            sut.Validate(mockLearner.Object);
+
+            // assert
+            handler.VerifyAll();
+            ddRule04.VerifyAll();
+            larsData.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// New rule.
+        /// </summary>
+        /// <returns>a constructed and mocked up validation rule</returns>
+        public LearnStartDate_07Rule NewRule()
+        {
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            return new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
         }
     }
 }

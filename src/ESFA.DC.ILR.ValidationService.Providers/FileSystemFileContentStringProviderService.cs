@@ -5,7 +5,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Stubs
 {
-    public class FileSystemFileContentStringProviderService : IMessageStreamProviderService
+    public class FileSystemFileContentStringProviderService : IFileSystemFileContentStringProviderService
     {
         private readonly IPreValidationContext _preValidationContext;
 

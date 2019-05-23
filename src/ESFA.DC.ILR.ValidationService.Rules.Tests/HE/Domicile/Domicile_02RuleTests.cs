@@ -100,21 +100,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.DOMICILE
         /// Has valid domicile meets expectation
         /// </summary>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        /// <param name="domicile">the domicile.</param>
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void HasValidDomicileMeetsExpectation(bool expectation)
+        [InlineData(true, "ValidLookUp")]
+        [InlineData(false, "InvalidLookUp")]
+        [InlineData(true, null)]
+        [InlineData(false, "")]
+        [InlineData(false, " ")]
+        public void HasValidDomicileMeetsExpectation(bool expectation, string domicile)
         {
             // arrange
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             service
-                .Setup(x => x.Contains(TypeOfStringCodedLookup.Domicile, Moq.It.IsAny<string>()))
+                .Setup(x => x.Contains(TypeOfStringCodedLookup.Domicile, domicile))
                 .Returns(expectation);
 
             var sut = new DOMICILE_02Rule(handler.Object, service.Object);
 
             var mockItem = new Mock<ILearningDeliveryHE>();
+            mockItem.Setup(x => x.DOMICILE).Returns(domicile);
 
             // act
             var result = sut.HasValidDomicile(mockItem.Object);
@@ -227,6 +232,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.DOMICILE
             const string LearnRefNumber = "123456789X";
 
             var mockHE = new Mock<ILearningDeliveryHE>();
+            mockHE.Setup(x => x.DOMICILE).Returns("A");
+
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryHEEntity)

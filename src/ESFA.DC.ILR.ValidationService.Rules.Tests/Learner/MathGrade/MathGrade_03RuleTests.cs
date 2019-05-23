@@ -42,6 +42,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.MathGrade
         [InlineData("GG")]
         [InlineData("N")]
         [InlineData("U")]
+        [InlineData("3")]
+        [InlineData("2")]
+        [InlineData("1")]
         public void LearnerMathGradeConditionMet_True(string mathGrade)
         {
             NewRule().LearnerMathGradeConditionMet(mathGrade).Should().BeTrue();
@@ -133,6 +136,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.MathGrade
         [InlineData("GG")]
         [InlineData("N")]
         [InlineData("U")]
+        [InlineData("3")]
+        [InlineData("2")]
+        [InlineData("1")]
         public void ConditionMet_True(string mathGrade)
         {
             IEnumerable<TestLearnerFAM> learnerFAMs = new[]

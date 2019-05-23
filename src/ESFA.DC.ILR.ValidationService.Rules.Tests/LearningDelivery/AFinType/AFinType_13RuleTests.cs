@@ -173,12 +173,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         /// <summary>
         /// Validates with null apprenctce financial records does not raise validation message.
         /// </summary>
+        /// <param name="aFinType">The apprenticeship financial type.</param>
         [Fact]
         public void ValidateWithNullAppFinRecordsDoesNotRaiseValidationMessage()
         {
             // arrange
             const string LearnRefNumber = "123456789X";
-            const string aFinType = ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice;
+            const string aFinType = "TNP";
             var aFinDate = string.Empty;
             var learnStartDate = new DateTime(2018, 8, 1);
 
@@ -243,7 +244,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         {
             // arrange
             const string LearnRefNumber = "123456789X";
-            const string aFinType = ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice;
+            const string aFinType = "TNP";
             var aFinDate = string.Empty;
             var learnStartDate = new DateTime(2018, 8, 1);
 
@@ -309,16 +310,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         /// </summary>
         /// <param name="learnDate">The learn date.</param>
         /// <param name="finDate">The fin date.</param>
+        /// <param name="aFinType">The apprenticeship financial type.</param>
         [Theory]
-        [InlineData("2016-04-01", "2016-04-02")]
-        [InlineData("2016-04-01", "2016-03-31")]
-        [InlineData("2016-04-30", "2016-05-01")]
-        [InlineData("2016-05-02", "2016-05-01")]
-        public void InvalidItemRaisesValidationMessage(string learnDate, string finDate)
+        [InlineData("2016-04-01", "2016-04-02", ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice)]
+        [InlineData("2016-04-01", "2016-03-31", "TNP")]
+        [InlineData("2016-04-30", "2016-05-01", "tnp")]
+        [InlineData("2016-05-02", "2016-05-01", "tnp")]
+        public void InvalidItemRaisesValidationMessage(string learnDate, string finDate, string aFinType)
         {
             // arrange
             const string LearnRefNumber = "123456789X";
-            const string aFinType = ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice;
             var aFinDate = string.Empty;
             var learnStartDate = DateTime.Parse(learnDate);
 
@@ -336,10 +337,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(1);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(36);
             mockDelivery
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(learnStartDate);
@@ -366,17 +367,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
             mockHandler
                 .Setup(x => x.BuildErrorMessageParameter(
-                    Moq.It.Is<string>(y => y == PropertyNameConstants.LearnStartDate),
+                    Moq.It.Is<string>(y => y == "LearnStartDate"),
                     Moq.It.Is<DateTime>(y => y == learnStartDate)))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             mockHandler
                 .Setup(x => x.BuildErrorMessageParameter(
-                    Moq.It.Is<string>(y => y == PropertyNameConstants.AFinType),
-                    Moq.It.Is<string>(y => y == aFinType)))
+                    Moq.It.Is<string>(y => y == "AFinType"),
+                    Moq.It.Is<string>(y => y == aFinType.ToUpper())))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             mockHandler
                 .Setup(x => x.BuildErrorMessageParameter(
-                    Moq.It.Is<string>(y => y == PropertyNameConstants.AFinDate),
+                    Moq.It.Is<string>(y => y == "AFinDate"),
                     Moq.It.Is<string>(y => y == aFinDate)))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
@@ -394,10 +395,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         /// </summary>
         /// <param name="learnDate">The learn date.</param>
         /// <param name="finDate">The fin date.</param>
+        /// <param name="aFinType">The apprenticeship financial type.</param>
         [Theory]
-        [InlineData("2016-04-01", "2016-04-01")]
-        [InlineData("2016-05-01", "2016-05-01")]
-        public void ValidItemDoesNotRaiseAValidationMessage(string learnDate, string finDate)
+        [InlineData("2016-04-01", "2016-04-01", ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice)]
+        [InlineData("2016-05-01", "2016-05-01", "tnp")]
+        public void ValidItemDoesNotRaiseAValidationMessage(string learnDate, string finDate, string aFinType)
         {
             // arrange
             const string LearnRefNumber = "123456789X";
@@ -405,7 +407,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var mockFinRec = new Mock<IAppFinRecord>();
             mockFinRec
                 .SetupGet(x => x.AFinType)
-                .Returns(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice);
+                .Returns(aFinType);
             mockFinRec
                 .SetupGet(x => x.AFinDate)
                 .Returns(DateTime.Parse(finDate));

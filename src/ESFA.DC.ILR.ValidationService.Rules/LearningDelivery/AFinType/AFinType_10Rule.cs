@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
@@ -105,9 +106,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
         /// </returns>
         public bool ConditionMet(IAppFinRecord financialRecord)
         {
-            return It.Has(financialRecord)
-                ? It.IsInRange($"{financialRecord.AFinType}{financialRecord.AFinCode}", ApprenticeshipFinancialRecord.TotalAssessmentPrice, ApprenticeshipFinancialRecord.ResidualAssessmentPrice)
-                : true;
+            return !It.Has(financialRecord)
+                   || $"{financialRecord.AFinType}{financialRecord.AFinCode}".CaseInsensitiveEquals(ApprenticeshipFinancialRecord.TotalAssessmentPrice)
+                   || $"{financialRecord.AFinType}{financialRecord.AFinCode}".CaseInsensitiveEquals(ApprenticeshipFinancialRecord.ResidualAssessmentPrice);
         }
 
         /// <summary>

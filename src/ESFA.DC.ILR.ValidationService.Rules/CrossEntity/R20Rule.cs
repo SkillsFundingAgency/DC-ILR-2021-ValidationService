@@ -7,8 +7,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
@@ -31,28 +29,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public void Validate(ILearner objectToValidate)
         {
-            if (objectToValidate?.LearningDeliveries == null)
+            var learningDeliveries = objectToValidate?.LearningDeliveries?.Where(
+                ld => DD07ConditionMet(ld.ProgTypeNullable)
+                      && ApprenticeshipStandardsConditionMet(ld.ProgTypeNullable)
+                      && ComponentAimTypeConditionMet(ld.AimType)
+                      && LARSConditionMet(ld.LearnAimRef, ld.ProgTypeNullable, ld.FworkCodeNullable, ld.PwayCodeNullable, ld.LearnStartDate));
+
+            if (learningDeliveries == null || learningDeliveries.Count() < 2)
             {
                 return;
             }
 
             DateTime? learnActEndDatePrevious = null;
             bool firstRecord = true;
-            foreach (var learningDelivery in objectToValidate
-                .LearningDeliveries.OrderBy(d => d.LearnStartDate))
+
+            foreach (var learningDelivery in learningDeliveries.OrderBy(d => d.LearnStartDate))
             {
                 if (firstRecord)
                 {
                     learnActEndDatePrevious = learningDelivery.LearnActEndDateNullable;
                 }
 
-                if (ConditionMet(
-                        learningDelivery.AimType,
-                        learningDelivery.ProgTypeNullable,
-                        learningDelivery.LearnAimRef,
-                        learningDelivery.LearnStartDate,
-                        learnActEndDatePrevious,
-                        firstRecord))
+                if (ConditionMet(learningDelivery.LearnStartDate, learnActEndDatePrevious, firstRecord))
                 {
                     if (!firstRecord)
                     {
@@ -72,18 +70,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         }
 
         public bool ConditionMet(
-            int aimType,
-            int? progTypeNullable,
-            string learnAimRef,
             DateTime learnStartDate,
             DateTime? learnActEndDatePrevious,
             bool firstRecord)
         {
-            return ComponentAimTypeConditionMet(aimType)
-                && DD07ConditionMet(progTypeNullable)
-                && ApprenticeshipStandardsConditionMet(progTypeNullable)
-                && LARSConditionMet(learnAimRef)
-                && (firstRecord || LearnStartDateConditionMet(learnStartDate, learnActEndDatePrevious, firstRecord));
+            return firstRecord || LearnStartDateConditionMet(learnStartDate, learnActEndDatePrevious, firstRecord);
         }
 
         public bool LearnStartDateConditionMet(
@@ -97,7 +88,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ComponentAimTypeConditionMet(int aimType) => aimType == TypeOfAim.ComponentAimInAProgramme;
 
-        public bool LARSConditionMet(string learnAimRef) => _lARSDataService.FrameWorkComponentTypeExistsInFrameworkAims(learnAimRef, _frameWorkComponentTypes);
+        public bool LARSConditionMet(string learnAimRef, int? progType, int? fworkCode, int? pwayCode, DateTime startDate) => _lARSDataService.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, _frameWorkComponentTypes, startDate);
 
         public bool ApprenticeshipStandardsConditionMet(int? progTypeNullable) => progTypeNullable.HasValue
                 && progTypeNullable != TypeOfLearningProgramme.ApprenticeshipStandard;

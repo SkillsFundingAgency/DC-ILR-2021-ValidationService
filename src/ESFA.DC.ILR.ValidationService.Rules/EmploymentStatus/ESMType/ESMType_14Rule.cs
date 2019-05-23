@@ -84,7 +84,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         ///   <c>true</c> if [has matching benefits indicator] [the specified eligibility]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasMatchingBenefitsIndicator(IEsfEligibilityRule eligibility, bool derivedRuleResult) =>
-            eligibility == null || eligibility.Benefits == derivedRuleResult;
+            eligibility == null || eligibility.Benefits == null || eligibility.Benefits == derivedRuleResult;
 
         /// <summary>
         /// Determines whether [has matching benefits indicator] [this delivery].

@@ -77,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be(new DateTime(2018, 8, 10));
+            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be((true, new DateTime(2018, 8, 10)));
         }
 
         [Fact]
@@ -104,13 +104,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be(new DateTime(2018, 8, 20));
+            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be((true, new DateTime(2018, 8, 20)));
         }
 
         [Fact]
         public void LearnActEndDateForOverlappingCoreAims_ReturnsNull_NoDeliveries()
         {
-            NewRule().LearnActEndDateForOverlappingCoreAims(null).Should().BeNull();
+            NewRule().LearnActEndDateForOverlappingCoreAims(null).Should().Be((false, null));
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().BeNull();
+            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be((false, null));
         }
 
         [Fact]
@@ -162,7 +162,33 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().BeNull();
+            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be((true, null));
+        }
+
+        [Fact]
+        public void LearnActEndDateForOverlappingCoreAims_ReturnsNull_MixedDates()
+        {
+            var learningDeliveries = new List<TestLearningDelivery>
+            {
+                new TestLearningDelivery
+                {
+                    AimType = 5,
+                    LearnStartDate = new DateTime(2018, 8, 1)
+                },
+                new TestLearningDelivery
+                {
+                    AimType = 5,
+                    LearnStartDate = new DateTime(2018, 8, 11),
+                    LearnActEndDateNullable = new DateTime(2018, 8, 12)
+                },
+                new TestLearningDelivery
+                {
+                    AimType = 5,
+                    LearnStartDate = new DateTime(2018, 8, 19)
+                }
+            };
+
+            NewRule().LearnActEndDateForOverlappingCoreAims(learningDeliveries).Should().Be((true, null));
         }
 
         [Fact]
@@ -223,6 +249,35 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimType = 5,
                         LearnStartDate = new DateTime(2018, 8, 1)
                     },
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Error_NoActEndDate()
+        {
+            var learner = new TestLearner()
+            {
+                LearnRefNumber = "00100309",
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimSeqNumber = 1,
+                        AimType = 5,
+                        LearnStartDate = new DateTime(2018, 8, 1),
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimSeqNumber = 2,
+                        AimType = 5,
+                        LearnStartDate = new DateTime(2018, 9, 2)
+                    }
                 }
             };
 

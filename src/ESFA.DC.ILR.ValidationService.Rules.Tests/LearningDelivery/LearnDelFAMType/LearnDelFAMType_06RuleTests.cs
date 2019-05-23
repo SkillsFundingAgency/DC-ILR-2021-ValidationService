@@ -15,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
     public class LearnDelFAMType_06RuleTests
     {
         /// <summary>
-        /// New rule with null message handler throws.
+        /// New rule with null meessage handler throws.
         /// </summary>
         [Fact]
         public void NewRuleWithNullMessageHandlerThrows()
@@ -168,6 +168,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Theory]
         [InlineData("FTP1", "2016-09-04", true)]
         [InlineData("FTP2", "2016-09-05", false)]
+        [InlineData("LDM358", "2099-12-31", true)]
+        [InlineData("LDM358", "2018-03-31", false)]
         public void IsNotCurrentMeetsExpectation(string candidate, string testDate, bool expectation)
         {
             // arrange
@@ -184,7 +186,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var lookups = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             lookups
-                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.LearningDeliveryFAM, candidate, referenceDate))
+                .Setup(x => x.IsVaguelyCurrent(TypeOfLimitedLifeLookup.LearnDelFAMType, candidate, referenceDate))
                 .Returns(!expectation);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
@@ -263,7 +265,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var lookups = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             lookups
-                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.LearningDeliveryFAM, candidate, referenceDate))
+                .Setup(x => x.IsVaguelyCurrent(TypeOfLimitedLifeLookup.LearnDelFAMType, candidate, referenceDate))
                 .Returns(false);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
@@ -335,7 +337,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var lookups = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             lookups
-                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.LearningDeliveryFAM, candidate, referenceDate))
+                .Setup(x => x.IsVaguelyCurrent(TypeOfLimitedLifeLookup.LearnDelFAMType, candidate, referenceDate))
                 .Returns(true);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);

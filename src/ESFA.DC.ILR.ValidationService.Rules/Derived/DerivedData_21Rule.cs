@@ -1,10 +1,10 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
@@ -17,14 +17,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         IDerivedData_21Rule
     {
         /// <summary>
-        /// Determines whether [is adult skills] [the specified delivery].
+        /// The check (rule common operations provider)
         /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is adult skills] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsAdultSkills(ILearningDelivery delivery) =>
-                    delivery.FundModel == TypeOfFunding.AdultSkills;
+        private IProvideRuleCommonOperations _check;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DerivedData_21Rule"/> class.
+        /// </summary>
+        /// <param name="commonOperations">The common operations.</param>
+        public DerivedData_21Rule(IProvideRuleCommonOperations commonOperations)
+        {
+            It.IsNull(commonOperations)
+                .AsGuard<ArgumentNullException>(nameof(commonOperations));
+
+            _check = commonOperations;
+        }
 
         /// <summary>
         /// Determines whether [is not employed] [the specified candidate].
@@ -33,13 +40,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         /// <returns>
         ///   <c>true</c> if [is not employed] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsNotEmployed(ILearnerEmploymentStatus candidate)
-        {
-            return It.IsInRange(
-                    candidate?.EmpStat,
-                    TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable,
-                    TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable);
-        }
+        public bool IsNotEmployed(ILearnerEmploymentStatus candidate) =>
+            It.IsInRange(
+                candidate?.EmpStat,
+                TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable,
+                TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable);
 
         /// <summary>
         /// In receipt of another benefit.
@@ -62,27 +67,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 Monitoring.EmploymentStatus.InReceiptOfUniversalCredit);
 
         /// <summary>
-        /// Determines whether [is not employed] [the specified learner employment status].
+        /// Determines whether [in receipt of benefits] [the specified learner employment status].
         /// </summary>
         /// <param name="learnerEmploymentStatus">The learner employment status.</param>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="monitoredAndNotMandated">The monitored and not mandated.</param>
         /// <returns>
-        ///   <c>true</c> if [is not employed] [the specified learner employment status]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [in receipt of benefits] [the specified learner employment status]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsNotEmployed(IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatus, ILearningDelivery delivery, Func<bool> monitoredAndNotMandated)
-        {
-            It.IsNull(monitoredAndNotMandated)
-                .AsGuard<ArgumentNullException>(nameof(monitoredAndNotMandated));
+        public bool InReceiptOfBenefits(ILearnerEmploymentStatus learnerEmploymentStatus) =>
+            learnerEmploymentStatus.EmploymentStatusMonitorings.SafeAny(InReceiptOfAnotherBenefit);
 
-            var candidate = learnerEmploymentStatus
-                    .Where(x => x.DateEmpStatApp <= delivery.LearnStartDate)
-                    .OrderByDescending(x => x.DateEmpStatApp)
-                    .FirstOrDefault();
-
-            var esms = candidate?.EmploymentStatusMonitorings.AsSafeReadOnlyList();
-            return IsNotEmployed(candidate) && (esms.SafeAny(InReceiptOfAnotherBenefit) || (esms.SafeAny(InReceiptOfUniversalCredit) && monitoredAndNotMandated()));
-        }
+        /// <summary>
+        /// Determines whether [in receipt of universal credits] [the specified learner employment status].
+        /// </summary>
+        /// <param name="learnerEmploymentStatus">The learner employment status.</param>
+        /// <returns>
+        ///   <c>true</c> if [in receipt of credites] [the specified learner employment status]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool InReceiptOfCredits(ILearnerEmploymentStatus learnerEmploymentStatus) =>
+            learnerEmploymentStatus.EmploymentStatusMonitorings.SafeAny(InReceiptOfUniversalCredit);
 
         /// <summary>
         /// Determines whether the specified FAM is (learning dleivery) monitored.
@@ -91,8 +93,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         /// <returns>
         ///   <c>true</c> if the specified fam is monitored; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsMonitored(ILearningDeliveryFAM fam) =>
-            It.IsInRange(fam.LearnDelFAMType, Monitoring.Delivery.Types.Learning);
+        public bool NotIsMonitored(ILearningDeliveryFAM fam) =>
+            !It.IsInRange(fam.LearnDelFAMType, Monitoring.Delivery.Types.Learning);
 
         /// <summary>
         /// Determines whether (any of) the specified fams are monitored.
@@ -101,8 +103,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         /// <returns>
         ///   <c>true</c> if the specified fams are (learning delivery) monitored; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsMonitored(IReadOnlyCollection<ILearningDeliveryFAM> fams) =>
-            fams.Any(IsMonitored);
+        public bool NotIsMonitored(IReadOnlyCollection<ILearningDeliveryFAM> fams) =>
+            fams.SafeAny(NotIsMonitored);
 
         /// <summary>
         /// Mandateds to skills training.
@@ -118,30 +120,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         /// <param name="fams">The fams.</param>
         /// <returns>true if the condition is met</returns>
         public bool MandatedToSkillsTraining(IReadOnlyCollection<ILearningDeliveryFAM> fams) =>
-            fams.Any(MandatedToSkillsTraining);
+            fams.SafeAny(MandatedToSkillsTraining);
 
         /// <summary>
-        /// Confirms the monitoring and mandation.
+        /// Determines whether [is adult funded unemployed with other state benefits] [this delivery].
         /// </summary>
-        /// <param name="fams">The fams.</param>
-        /// <returns>true if the condition is met</returns>
-        public bool ConfirmMonitoringAndMandation(IReadOnlyCollection<ILearningDeliveryFAM> fams) =>
-            IsMonitored(fams) && !MandatedToSkillsTraining(fams);
-
-        /// <summary>
-        /// Determines whether [is adult funded unemployed with other state benefits] [the specified candidate].
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
+        /// <param name="thisDelivery">This delivery.</param>
+        /// <param name="forThisCandidate">For this candidate.</param>
         /// <returns>
-        ///   <c>true</c> if [is adult funded unemployed with other state benefits] [the specified candidate]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is adult funded unemployed with other state benefits] [this delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearner candidate)
+        public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearningDelivery thisDelivery, ILearner forThisCandidate)
         {
-            It.IsNull(candidate)
-                .AsGuard<ArgumentNullException>(nameof(candidate));
-
-            var lds = candidate.LearningDeliveries.AsSafeReadOnlyList();
-            var les = candidate.LearnerEmploymentStatuses.AsSafeReadOnlyList();
+            It.IsNull(thisDelivery)
+                .AsGuard<ArgumentNullException>(nameof(thisDelivery));
+            It.IsNull(forThisCandidate)
+                .AsGuard<ArgumentNullException>(nameof(forThisCandidate));
 
             /*
                 if
@@ -165,9 +159,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                         otherwise set to N
              */
 
-            return lds.Any(d =>
-                IsAdultSkills(d)
-                && IsNotEmployed(les, d, () => ConfirmMonitoringAndMandation(d.LearningDeliveryFAMs.AsSafeReadOnlyList())));
+            var employment = _check.GetEmploymentStatusOn(thisDelivery.LearnStartDate, forThisCandidate.LearnerEmploymentStatuses);
+
+            return _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.AdultSkills)
+                && It.Has(employment)
+                && IsNotEmployed(employment)
+                && (InReceiptOfBenefits(employment)
+                    || (InReceiptOfCredits(employment)
+                        && (NotIsMonitored(thisDelivery.LearningDeliveryFAMs)
+                            || !MandatedToSkillsTraining(thisDelivery.LearningDeliveryFAMs))));
         }
     }
 }

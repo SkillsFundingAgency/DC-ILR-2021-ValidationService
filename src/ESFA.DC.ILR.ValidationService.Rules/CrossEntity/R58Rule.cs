@@ -26,11 +26,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 return;
             }
 
-            var learnActEndDate = LearnActEndDateForOverlappingCoreAims(coreAims);
+            var learnActEndDateTuple = LearnActEndDateForOverlappingCoreAims(coreAims);
 
-            if (learnActEndDate != null)
+            if (learnActEndDateTuple.Invalid)
             {
-                HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(_aimType, learnActEndDate));
+                HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(_aimType, learnActEndDateTuple.LearnActEndDate));
             }
         }
 
@@ -42,7 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 : true;
         }
 
-        public DateTime? LearnActEndDateForOverlappingCoreAims(IEnumerable<ILearningDelivery> learningDeliveries)
+        public(bool Invalid, DateTime? LearnActEndDate) LearnActEndDateForOverlappingCoreAims(IEnumerable<ILearningDelivery> learningDeliveries)
         {
             if (learningDeliveries != null)
             {
@@ -56,21 +56,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 {
                     var errorConditionMet =
                         coreAims[i - 1].LearnActEndDateNullable == null
-                        ? false
+                        ? true
                         : coreAims[i - 1].LearnActEndDateNullable >= coreAims[i].LearnStartDate;
 
                     if (errorConditionMet)
                     {
-                        return coreAims[i - 1].LearnActEndDateNullable;
+                        return (true, coreAims[i - 1].LearnActEndDateNullable);
                     }
 
                     i++;
                 }
-
-                return null;
             }
 
-            return null;
+            return (false, null);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, DateTime? learnActEndDate)

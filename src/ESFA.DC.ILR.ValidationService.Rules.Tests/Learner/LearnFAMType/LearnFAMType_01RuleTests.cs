@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
             lookupsMock
-                .Setup(l => l.Contains(TypeOfLimitedLifeLookup.LearnerFAM, $"{learnFamType}{learnFamCode}"))
+                .Setup(l => l.Contains(TypeOfLimitedLifeLookup.LearnFAMType, $"{learnFamType}{learnFamCode}"))
                 .Returns(lookUpResult);
 
             var testLearnerFam = new TestLearnerFAM { LearnFAMType = learnFamType, LearnFAMCode = learnFamCode };
@@ -54,7 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
             lookupsMock
-                .Setup(l => l.Contains(TypeOfLimitedLifeLookup.LearnerFAM, It.IsAny<string>()))
+                .Setup(l => l.Contains(TypeOfLimitedLifeLookup.LearnFAMType, It.IsAny<string>()))
                 .Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
@@ -81,7 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
             lookupsMock
-                .Setup(l => l.Contains(TypeOfLimitedLifeLookup.LearnerFAM, It.IsAny<string>()))
+                .Setup(l => l.Contains(TypeOfLimitedLifeLookup.LearnFAMType, It.IsAny<string>()))
                 .Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
@@ -98,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
             var lookupsMock = new Mock<IProvideLookupDetails>();
 
             lookupsMock
-                .Setup(l => l.Contains(TypeOfLimitedLifeLookup.LearnerFAM, It.IsAny<string>()))
+                .Setup(l => l.Contains(TypeOfLimitedLifeLookup.LearnFAMType, It.IsAny<string>()))
                 .Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())

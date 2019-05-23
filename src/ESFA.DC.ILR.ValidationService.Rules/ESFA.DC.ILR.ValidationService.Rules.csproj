@@ -53,8 +53,8 @@
     <Reference Include="ESFA.DC.DateTimeProvider.Interface, Version=0.1.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.DateTimeProvider.Interface.0.1.6-beta0001\lib\netstandard2.0\ESFA.DC.DateTimeProvider.Interface.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.4-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR.1819.Model.Interface.0.1.5-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -87,6 +87,7 @@
     <Compile Include="Constants\ContactPreference.cs" />
     <Compile Include="Constants\TypeOfEmploymentStatus.cs" />
     <Compile Include="Constants\TypeOfEthnicity.cs" />
+    <Compile Include="Constants\TypeOfLARSCommonComponent.cs" />
     <Compile Include="Constants\TypeOfLARSLearnAimRef.cs" />
     <Compile Include="Constants\TypeOfMODESTUD.cs" />
     <Compile Include="Constants\TypeOfNotionalNVQLevelV2.cs" />
@@ -125,7 +126,6 @@
     <Compile Include="CrossEntity\R50Rule.cs" />
     <Compile Include="CrossEntity\R45Rule.cs" />
     <Compile Include="CrossEntity\R43Rule.cs" />
-    <Compile Include="CrossEntity\R29Rule.cs" />
     <Compile Include="CrossEntity\R62Rule.cs" />
     <Compile Include="CrossEntity\R61Rule.cs" />
     <Compile Include="CrossEntity\R73Rule.cs" />

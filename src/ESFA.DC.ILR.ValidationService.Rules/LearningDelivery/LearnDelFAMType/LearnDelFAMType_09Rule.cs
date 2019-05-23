@@ -14,11 +14,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         IRule<ILearner>
     {
         /// <summary>
-        /// The faulty fam code
-        /// </summary>
-        public const string FaultyFAMCode = "105";
-
-        /// <summary>
         /// The check (rule common operations provider)
         /// </summary>
         private readonly IProvideRuleCommonOperations _check;
@@ -49,7 +44,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [has esfa adultfunding] [the specified monitor]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasESFAAdultFunding(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
+            !It.IsNull(monitor)
+            && It.IsInRange(monitor.LearnDelFAMType, LearningDeliveryFAMTypeConstants.SOF)
+            && !It.IsInRange(monitor.LearnDelFAMCode, LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
 
         /// <summary>
         /// Determines whether [has esfa adultfunding] [the specified delivery].
@@ -86,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// </returns>
         public bool IsNotValid(ILearningDelivery delivery) =>
             HasQualifyingFunding(delivery)
-            && !HasESFAAdultFunding(delivery);
+            && HasESFAAdultFunding(delivery);
 
         /// <summary>
         /// Validates the specified object.
@@ -125,8 +122,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             return new[]
             {
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, thisDelivery.FundModel),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, FaultyFAMCode)
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.SOF),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult)
             };
         }
     }

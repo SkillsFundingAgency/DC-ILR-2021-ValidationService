@@ -2,6 +2,6 @@
 {
     public enum TypeOfListItemLookup
     {
-        OutGradeLearningAimType
+        LearningAimType
     }
 }

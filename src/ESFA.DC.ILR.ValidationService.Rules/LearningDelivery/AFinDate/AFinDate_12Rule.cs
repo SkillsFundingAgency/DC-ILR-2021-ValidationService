@@ -10,8 +10,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
 {
     public class AFinDate_12Rule : AbstractRule, IRule<ILearner>
     {
-        private const int _aimType = 1;
-        private const int _numberOfYears = 1;
+        private const int _aimType = TypeOfAim.ProgrammeAim;
+        private const int _numberOfYears = 2;
 
         private readonly IDerivedData_07Rule _dd07;
 
@@ -23,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
 
         public void Validate(ILearner objectToValidate)
         {
-            if (objectToValidate.LearningDeliveries == null)
+            if (objectToValidate?.LearningDeliveries == null)
             {
                 return;
             }
@@ -31,11 +31,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 if (learningDelivery.AppFinRecords != null
+                    && learningDelivery.LearnActEndDateNullable != null
                     && IsAppsStandardOrFramework(learningDelivery.AimType, learningDelivery.ProgTypeNullable))
                 {
                     foreach (var appFinRecord in learningDelivery.AppFinRecords)
                     {
-                        var aFinRecord = AFinRecordWithDateGreaterThanLearnActEndDate(learningDelivery.LearnActEndDateNullable, appFinRecord);
+                        var aFinRecord = AFinRecordWithDateGreaterThanLearnActEndDate(learningDelivery.LearnActEndDateNullable.Value, appFinRecord);
 
                         if (aFinRecord != null)
                         {
@@ -51,21 +52,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
             }
         }
 
-        public IAppFinRecord AFinRecordWithDateGreaterThanLearnActEndDate(DateTime? learnActEndDate, IAppFinRecord appFinRecord)
-        {
-            if (learnActEndDate != null)
-            {
-                return appFinRecord.AFinDate > learnActEndDate.Value.AddYears(_numberOfYears) ? appFinRecord : null;
-            }
+        public IAppFinRecord AFinRecordWithDateGreaterThanLearnActEndDate(DateTime learnActEndDate, IAppFinRecord appFinRecord)
+            => appFinRecord.AFinDate > learnActEndDate.AddYears(_numberOfYears) ? appFinRecord : null;
 
-            return null;
-        }
-
-        public bool IsAppsStandardOrFramework(int aimType, int? progType)
-        {
-            return aimType == _aimType
+        public bool IsAppsStandardOrFramework(int aimType, int? progType) => aimType == _aimType
                 && _dd07.IsApprenticeship(progType);
-        }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime aFinDate, DateTime? learnActEndDate)
         {

@@ -340,7 +340,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             dd12Mock.Setup(x => x.IsAdultSkillsFundedOnBenefits(It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>(), It.IsAny<ILearningDelivery>())).Returns(true);
 
             var dd21Mock = new Mock<IDerivedData_21Rule>();
-            dd21Mock.Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(It.IsAny<ILearner>())).Returns(true);
+            dd21Mock.Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>())).Returns(true);
 
             var ddo07Mock = new Mock<IDerivedData_07Rule>();
             ddo07Mock.Setup(x => x.IsApprenticeship(It.IsAny<int?>())).Returns(true);
@@ -469,7 +469,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             dd12Mock.Setup(x => x.IsAdultSkillsFundedOnBenefits(It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>(), It.IsAny<ILearningDelivery>())).Returns(false);
 
             var dd21Mock = new Mock<IDerivedData_21Rule>();
-            dd21Mock.Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(It.IsAny<ILearner>())).Returns(false);
+            dd21Mock.Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>())).Returns(false);
 
             var ddo07Mock = new Mock<IDerivedData_07Rule>();
             ddo07Mock.Setup(x => x.IsApprenticeship(It.IsAny<int?>())).Returns(false);
@@ -524,7 +524,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             dd12Mock.Setup(x => x.IsAdultSkillsFundedOnBenefits(It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>(), It.IsAny<ILearningDelivery>())).Returns(false);
 
             var dd21Mock = new Mock<IDerivedData_21Rule>();
-            dd21Mock.Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(It.IsAny<ILearner>())).Returns(false);
+            dd21Mock.Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>())).Returns(false);
 
             var ddo07Mock = new Mock<IDerivedData_07Rule>();
             ddo07Mock.Setup(x => x.IsApprenticeship(It.IsAny<int?>())).Returns(false);

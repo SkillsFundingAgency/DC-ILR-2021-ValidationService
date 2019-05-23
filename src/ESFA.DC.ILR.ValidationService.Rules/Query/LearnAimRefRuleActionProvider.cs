@@ -1,12 +1,10 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Query
 {
@@ -16,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         /// <summary>
         /// The branch actions
         /// </summary>
-        private readonly ICollection<Func<ILearningDelivery, ILearner, BranchResult>> _branchActions;
+        private readonly IDictionary<int, IReadOnlyCollection<Func<ILearningDelivery, ILearner, BranchResult>>> _branchActions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LearnAimRefRuleActionProvider " /> class.
@@ -26,31 +24,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         /// <param name="derivedData11">The derived data 11 (rule).</param>
         public LearnAimRefRuleActionProvider(
             IProvideRuleCommonOperations commonOperations,
-            ILARSDataService larsData,
             IDerivedData_11Rule derivedData11)
         {
             It.IsNull(commonOperations)
                 .AsGuard<ArgumentNullException>(nameof(commonOperations));
-            It.IsNull(larsData)
-                .AsGuard<ArgumentNullException>(nameof(larsData));
             It.IsNull(derivedData11)
                 .AsGuard<ArgumentNullException>(nameof(derivedData11));
 
             Check = commonOperations;
-            LarsData = larsData;
             DerivedData11 = derivedData11;
 
-            _branchActions = new List<Func<ILearningDelivery, ILearner, BranchResult>>
+            _branchActions = new Dictionary<int, IReadOnlyCollection<Func<ILearningDelivery, ILearner, BranchResult>>>
             {
-                IsQualifyingCategoryAdultSkills,
-                IsQualifyingCategoryApprenticeship,
-                IsQualifyingCategoryUnemployed,
-                IsQualifyingCategory16To19EFA,
-                IsQualifyingCategoryCommunityLearning,
-                IsQualifyingCategoryOLASS,
-                IsQualifyingCategoryAdvancedLearnerLoan,
-                IsQualifyingCategoryAny,
-                IsQualifyingCategoryESF
+                [TypeOfFunding.AdultSkills] = PackageRoutines(IsQualifyingCategoryOLASS, IsQualifyingCategoryUnemployed, IsQualifyingCategoryApprenticeship, IsQualifyingCategoryAdultSkills),
+                [TypeOfFunding.ApprenticeshipsFrom1May2017] = PackageRoutines(IsQualifyingCategoryApprenticeship, IsQualifyingCategoryApprencticeshipAny),
+                [TypeOfFunding.OtherAdult] = PackageRoutines(IsQualifyingCategoryOtherFundingAny),
+                [TypeOfFunding.NotFundedByESFA] = PackageRoutines(IsQualifyingCategoryAdvancedLearnerLoan, IsQualifyingCategoryOtherFundingAny),
+                [TypeOfFunding.Age16To19ExcludingApprenticeships] = PackageRoutines(IsQualifyingCategory16To19EFA),
+                [TypeOfFunding.Other16To19] = PackageRoutines(IsQualifyingCategory16To19EFA),
+                [TypeOfFunding.EuropeanSocialFund] = PackageRoutines(IsQualifyingCategoryESF),
+                [TypeOfFunding.CommunityLearning] = PackageRoutines(IsQualifyingCategoryCommunityLearning),
             };
         }
 
@@ -70,14 +63,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         protected IProvideRuleCommonOperations Check { get; }
 
         /// <summary>
-        /// Gets the lars data (service)
-        /// </summary>
-        protected ILARSDataService LarsData { get; }
-
-        /// <summary>
         /// Gets the derived data 11 (rule)
         /// </summary>
         protected IDerivedData_11Rule DerivedData11 { get; }
+
+        /// <summary>
+        /// Packages the routines.
+        /// </summary>
+        /// <param name="routines">The routines.</param>
+        /// <returns>a packaged collection of (funding model) routines</returns>
+        public IReadOnlyCollection<Func<ILearningDelivery, ILearner, BranchResult>> PackageRoutines(params Func<ILearningDelivery, ILearner, BranchResult>[] routines) =>
+            routines.AsSafeReadOnlyList();
+
+        /// <summary>
+        /// Gets the routines.
+        /// </summary>
+        /// <param name="forFundingModel">For funding model.</param>
+        /// <returns>a collection of routines for the funding model</returns>
+        public IReadOnlyCollection<Func<ILearningDelivery, ILearner, BranchResult>> GetRoutines(int forFundingModel) =>
+            _branchActions.ContainsKey(forFundingModel)
+                ? _branchActions[forFundingModel]
+                : PackageRoutines(null);
 
         /// <summary>
         /// Determines whether [in receipt of benefits at start] [the specified delivery].
@@ -91,119 +97,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             DerivedData11.IsAdultFundedOnBenefitsAtStartOfAim(delivery, employments);
 
         /// <summary>
-        /// Determines whether [has qualifying category] [the specified validity].
-        /// </summary>
-        /// <param name="validity">The validity.</param>
-        /// <param name="desiredCategories">The desired categories.</param>
-        /// <returns>
-        ///   <c>true</c> if [has qualifying category] [the specified validity]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasQualifyingCategory(ILARSLearningDeliveryValidity validity, params string[] desiredCategories) =>
-            It.IsInRange(validity.ValidityCategory, desiredCategories);
-
-        /// <summary>
-        /// Determines whether [has qualifying category] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="desiredCategories">The desired categories.</param>
-        /// <returns>
-        ///   <c>true</c> if [has qualifying category] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasQualifyingCategory(ILearningDelivery delivery, params string[] desiredCategories)
-        {
-            var validities = LarsData.GetValiditiesFor(delivery.LearnAimRef).AsSafeReadOnlyList();
-
-            return validities
-                .Any(x => HasQualifyingCategory(x, desiredCategories));
-        }
-
-        /// <summary>
-        /// Determines whether [is valid adult skills (category)] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="learner">The learner.</param>
-        /// <returns>
-        ///   <c>true</c> if [is valid adult skills (category)] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public BranchResult IsQualifyingCategoryAdultSkills(ILearningDelivery delivery, ILearner learner) =>
-            BranchResult.Create(
-                Check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)
-                    && HasQualifyingCategory(delivery, TypeOfLARSValidity.AdultSkills)
-                    && !Check.IsRestart(delivery)
-                    && !Check.InApprenticeship(delivery)
-                    && !Check.IsLearnerInCustody(delivery),
-                TypeOfLARSValidity.AdultSkills);
-
-        /// <summary>
-        /// Determines whether [is valid apprenticeship (category)] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="learner">The learner.</param>
-        /// <returns>
-        ///   <c>true</c> if [is valid apprenticeship (category)] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public BranchResult IsQualifyingCategoryApprenticeship(ILearningDelivery delivery, ILearner learner) =>
-            BranchResult.Create(
-                Check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills, TypeOfFunding.ApprenticeshipsFrom1May2017)
-                    && HasQualifyingCategory(delivery, TypeOfLARSValidity.Apprenticeships)
-                    && !Check.IsRestart(delivery)
-                    && !Check.IsStandardApprencticeship(delivery)
-                    && Check.InApprenticeship(delivery)
-                    && Check.IsComponentOfAProgram(delivery)
-                    && Check.HasQualifyingStart(delivery, ApprenticeshipMinimumStart, DateTime.Today),
-                TypeOfLARSValidity.Apprenticeships);
-
-        /// <summary>
-        /// Determines whether [is valid unemployed (category)] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="learner">The learner.</param>
-        /// <returns>
-        ///   <c>true</c> if [is valid unemployed (category)] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public BranchResult IsQualifyingCategoryUnemployed(ILearningDelivery delivery, ILearner learner) =>
-            BranchResult.Create(
-                Check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)
-                    && HasQualifyingCategory(delivery, TypeOfLARSValidity.Unemployed)
-                    && !Check.IsRestart(delivery)
-                    && !Check.InApprenticeship(delivery)
-                    && !Check.IsLearnerInCustody(delivery)
-                    && Check.HasQualifyingStart(delivery, DateTime.MinValue, UnemployedMaximumStart)
-                    && InReceiptOfBenefitsAtStart(delivery, learner?.LearnerEmploymentStatuses.AsSafeReadOnlyList()),
-                TypeOfLARSValidity.Unemployed);
-
-        /// <summary>
-        /// Determines whether [is valid 16 to 19 efa (category)] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="learner">The learner.</param>
-        /// <returns>
-        ///   <c>true</c> if [is valid 16 to 19 efa (category)] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public BranchResult IsQualifyingCategory16To19EFA(ILearningDelivery delivery, ILearner learner) =>
-            BranchResult.Create(
-                Check.HasQualifyingFunding(delivery, TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.Other16To19)
-                    && HasQualifyingCategory(delivery, TypeOfLARSValidity.EFA16To19)
-                    && !Check.IsRestart(delivery),
-                TypeOfLARSValidity.EFA16To19);
-
-        /// <summary>
-        /// Determines whether [is valid community learning (category)] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="learner">The learner.</param>
-        /// <returns>
-        ///   <c>true</c> if [is valid community learning (category)] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public BranchResult IsQualifyingCategoryCommunityLearning(ILearningDelivery delivery, ILearner learner) =>
-            BranchResult.Create(
-                Check.HasQualifyingFunding(delivery, TypeOfFunding.CommunityLearning)
-                    && HasQualifyingCategory(delivery, TypeOfLARSValidity.CommunityLearning)
-                    && !Check.IsRestart(delivery),
-                TypeOfLARSValidity.CommunityLearning);
-
-        /// <summary>
         /// Determines whether [is valid olass (category)] [the specified delivery].
+        /// this is an FM35 routine
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <param name="learner">The learner.</param>
@@ -212,14 +107,78 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         /// </returns>
         public BranchResult IsQualifyingCategoryOLASS(ILearningDelivery delivery, ILearner learner) =>
             BranchResult.Create(
-                Check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)
-                    && HasQualifyingCategory(delivery, TypeOfLARSValidity.OLASSAdult)
-                    && !Check.IsRestart(delivery)
+                    !Check.IsRestart(delivery)
                     && Check.IsLearnerInCustody(delivery),
                 TypeOfLARSValidity.OLASSAdult);
 
         /// <summary>
+        /// Determines whether [is valid unemployed (category)] [the specified delivery].
+        /// this is an FM35 routine
+        /// </summary>
+        /// <param name="delivery">The delivery.</param>
+        /// <param name="learner">The learner.</param>
+        /// <returns>
+        ///   <c>true</c> if [is valid unemployed (category)] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public BranchResult IsQualifyingCategoryUnemployed(ILearningDelivery delivery, ILearner learner) =>
+            BranchResult.Create(
+                    !Check.IsRestart(delivery)
+                    && !Check.IsLearnerInCustody(delivery)
+                    && !Check.InApprenticeship(delivery)
+                    && Check.HasQualifyingStart(delivery, DateTime.MinValue, UnemployedMaximumStart)
+                    && InReceiptOfBenefitsAtStart(delivery, learner?.LearnerEmploymentStatuses.AsSafeReadOnlyList()),
+                TypeOfLARSValidity.Unemployed);
+
+        /// <summary>
+        /// Determines whether [is valid adult skills (category)] [the specified delivery].
+        /// this is an FM35 routine
+        /// </summary>
+        /// <param name="delivery">The delivery.</param>
+        /// <param name="learner">The learner.</param>
+        /// <returns>
+        ///   <c>true</c> if [is valid adult skills (category)] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public BranchResult IsQualifyingCategoryAdultSkills(ILearningDelivery delivery, ILearner learner) =>
+            BranchResult.Create(
+                    !Check.IsRestart(delivery)
+                    && !Check.IsLearnerInCustody(delivery)
+                    && !Check.InApprenticeship(delivery),
+                TypeOfLARSValidity.AdultSkills);
+
+        /// <summary>
+        /// Determines whether [is valid apprenticeship (category)] [the specified delivery].
+        /// this is an FM35 and FM36 routine
+        /// </summary>
+        /// <param name="delivery">The delivery.</param>
+        /// <param name="learner">The learner.</param>
+        /// <returns>
+        ///   <c>true</c> if [is valid apprenticeship (category)] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public BranchResult IsQualifyingCategoryApprenticeship(ILearningDelivery delivery, ILearner learner) =>
+            BranchResult.Create(
+                    !Check.IsRestart(delivery)
+                    && !Check.IsStandardApprencticeship(delivery)
+                    && Check.InApprenticeship(delivery)
+                    && Check.IsComponentOfAProgram(delivery)
+                    && Check.HasQualifyingStart(delivery, ApprenticeshipMinimumStart, DateTime.MaxValue),
+                TypeOfLARSValidity.Apprenticeships);
+
+        public BranchResult IsQualifyingCategoryApprencticeshipAny(ILearningDelivery delivery, ILearner learner) =>
+            BranchResult.Create(
+                !Check.IsRestart(delivery)
+                    && !Check.IsAdvancedLearnerLoan(delivery)
+                    && Check.IsStandardApprencticeship(delivery),
+                TypeOfLARSValidity.Any);
+
+        public BranchResult IsQualifyingCategoryOtherFundingAny(ILearningDelivery delivery, ILearner learner) =>
+            BranchResult.Create(
+                    !Check.IsRestart(delivery)
+                    && !Check.IsAdvancedLearnerLoan(delivery),
+                TypeOfLARSValidity.Any);
+
+        /// <summary>
         /// Determines whether [is valid advanced learner loan (category)] [the specified delivery].
+        /// this is an FM99 routine
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <param name="learner">The learner.</param>
@@ -228,32 +187,41 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         /// </returns>
         public BranchResult IsQualifyingCategoryAdvancedLearnerLoan(ILearningDelivery delivery, ILearner learner) =>
             BranchResult.Create(
-                Check.HasQualifyingFunding(delivery, TypeOfFunding.NotFundedByESFA)
-                    && HasQualifyingCategory(delivery, TypeOfLARSValidity.AdvancedLearnerLoan)
-                    && !Check.IsRestart(delivery)
+                    !Check.IsRestart(delivery)
                     && Check.IsAdvancedLearnerLoan(delivery),
                 TypeOfLARSValidity.AdvancedLearnerLoan);
 
         /// <summary>
-        /// Determines whether [is valid any (category)] [the specified delivery].
+        /// Determines whether [is valid 16 to 19 efa (category)] [the specified delivery].
+        /// this is an FM25 and FM82 routine
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <param name="learner">The learner.</param>
         /// <returns>
-        ///   <c>true</c> if [is valid any (category)] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is valid 16 to 19 efa (category)] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public BranchResult IsQualifyingCategoryAny(ILearningDelivery delivery, ILearner learner) =>
+        public BranchResult IsQualifyingCategory16To19EFA(ILearningDelivery delivery, ILearner learner) =>
             BranchResult.Create(
-                (Check.HasQualifyingFunding(delivery, TypeOfFunding.NotFundedByESFA, TypeOfFunding.OtherAdult)
-                        || (Check.HasQualifyingFunding(delivery, TypeOfFunding.ApprenticeshipsFrom1May2017)
-                            && Check.IsStandardApprencticeship(delivery)))
-                    && HasQualifyingCategory(delivery, TypeOfLARSValidity.Any)
-                    && !Check.IsRestart(delivery)
-                    && !Check.IsAdvancedLearnerLoan(delivery),
-                TypeOfLARSValidity.Any);
+                    !Check.IsRestart(delivery),
+                TypeOfLARSValidity.EFA16To19);
+
+        /// <summary>
+        /// Determines whether [is valid community learning (category)] [the specified delivery].
+        /// this is an FM10 routine
+        /// </summary>
+        /// <param name="delivery">The delivery.</param>
+        /// <param name="learner">The learner.</param>
+        /// <returns>
+        ///   <c>true</c> if [is valid community learning (category)] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public BranchResult IsQualifyingCategoryCommunityLearning(ILearningDelivery delivery, ILearner learner) =>
+            BranchResult.Create(
+                    !Check.IsRestart(delivery),
+                TypeOfLARSValidity.CommunityLearning);
 
         /// <summary>
         /// Determines whether [is valid esf (category)] [the specified delivery].
+        /// this is an FM70 routine
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <param name="learner">The learner.</param>
@@ -262,9 +230,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         /// </returns>
         public BranchResult IsQualifyingCategoryESF(ILearningDelivery delivery, ILearner learner) =>
             BranchResult.Create(
-                Check.HasQualifyingFunding(delivery, TypeOfFunding.EuropeanSocialFund)
-                    && HasQualifyingCategory(delivery, TypeOfLARSValidity.EuropeanSocialFund)
-                    && !Check.IsRestart(delivery),
+                    !Check.IsRestart(delivery),
                 TypeOfLARSValidity.EuropeanSocialFund);
 
         /// <summary>
@@ -282,7 +248,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             It.IsNull(andLearner)
                 .AsGuard<ArgumentNullException>(nameof(andLearner));
 
-            foreach (var doActionFor in _branchActions)
+            foreach (var doActionFor in GetRoutines(thisDelivery.FundModel))
             {
                 var branch = doActionFor(thisDelivery, andLearner);
                 if (branch.Passed)
