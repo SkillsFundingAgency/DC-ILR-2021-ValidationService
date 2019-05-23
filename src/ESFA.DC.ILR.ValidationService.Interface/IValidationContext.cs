@@ -28,6 +28,6 @@ namespace ESFA.DC.ILR.ValidationService.Interface
 
         int ValidationTotalWarningCount { get; set; }
 
-        IEnumerable<string> Tasks { get; }
+        IEnumerable<string> IgnoredRules { get; }
     }
 }

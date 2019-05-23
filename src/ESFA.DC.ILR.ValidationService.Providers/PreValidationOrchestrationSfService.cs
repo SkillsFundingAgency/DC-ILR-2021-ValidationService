@@ -85,7 +85,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
                 _fileDataCache.FileName = validationContext.Filename;
 
                 // File Validation
-                await _ruleSetOrchestrationService.ExecuteAsync(validationContext.Tasks, cancellationToken).ConfigureAwait(false);
+                await _ruleSetOrchestrationService.ExecuteAsync(validationContext.IgnoredRules, cancellationToken).ConfigureAwait(false);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -190,7 +190,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             string externalDataCacheAsString =
                 _jsonSerializationService.Serialize(_externalDataCache);
             _logger.LogDebug($"ExternalDataCache: {externalDataCacheAsString.Length}");
-            string taskListAsString = _jsonSerializationService.Serialize(validationContext.Tasks);
+            string taskListAsString = _jsonSerializationService.Serialize(validationContext.IgnoredRules);
             _logger.LogDebug($"taskListAsString {taskListAsString.Length}");
 
             if (learnerMessageShards != null)

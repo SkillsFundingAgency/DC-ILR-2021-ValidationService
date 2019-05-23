@@ -56,6 +56,6 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Context
             set => _jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidationTotalWarningCount] = value;
         }
 
-        public IEnumerable<string> Tasks => _jobContextMessage.Topics[_jobContextMessage.TopicPointer].Tasks.SelectMany(x => x.Tasks);
+        public IEnumerable<string> IgnoredRules => _jobContextMessage.Topics[_jobContextMessage.TopicPointer].Tasks.SelectMany(x => x.Tasks);
     }
 }

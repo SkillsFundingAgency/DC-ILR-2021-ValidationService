@@ -31,6 +31,6 @@ namespace ESFA.DC.ILR.ValidationService.Stubs
 
         public string ValidationErrorMessageLookupKey { get; set; }
 
-        public IEnumerable<string> Tasks { get; set; }
+        public IEnumerable<string> IgnoredRules { get; set; }
     }
 }
