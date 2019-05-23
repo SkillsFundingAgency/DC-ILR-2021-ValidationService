@@ -390,6 +390,7 @@
   <ItemGroup>
     <Compile Include="Configuration\AzureStorageModel.cs" />
     <Compile Include="Configuration\IOConfiguration.cs" />
+    <Compile Include="Context\PreValidationContext.cs" />
     <Compile Include="Handlers\MessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
@@ -431,10 +432,6 @@
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.RuleSet.Modules\ESFA.DC.ILR.ValidationService.RuleSet.Modules.csproj">
       <Project>{E2D0F0D5-D9C8-41FE-B0DF-481DD5AA77CF}</Project>
       <Name>ESFA.DC.ILR.ValidationService.RuleSet.Modules</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Stateless.Models\ESFA.DC.ILR.ValidationService.Stateless.Models.csproj">
-      <Project>{eb94fed6-6895-488d-822a-60254bd32fc7}</Project>
-      <Name>ESFA.DC.ILR.ValidationService.Stateless.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

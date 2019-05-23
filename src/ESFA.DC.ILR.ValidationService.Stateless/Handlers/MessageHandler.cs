@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Stateless.Context;
 using ESFA.DC.ILR.ValidationService.Stateless.Models;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Interface;

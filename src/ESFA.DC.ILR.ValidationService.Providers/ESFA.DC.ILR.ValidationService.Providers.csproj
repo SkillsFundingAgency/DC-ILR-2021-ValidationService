@@ -228,10 +228,6 @@
       <Project>{621B61D1-339D-4910-8C86-8A64AF8822F5}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Stateless.Models\ESFA.DC.ILR.ValidationService.Stateless.Models.csproj">
-      <Project>{eb94fed6-6895-488d-822a-60254bd32fc7}</Project>
-      <Name>ESFA.DC.ILR.ValidationService.Stateless.Models</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces\ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces.csproj">
       <Project>{f267b89e-04e1-4295-ac75-7e9d833cf189}</Project>
       <Name>ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces</Name>
