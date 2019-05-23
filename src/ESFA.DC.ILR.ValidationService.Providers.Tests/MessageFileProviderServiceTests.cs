@@ -19,24 +19,26 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
         public async Task ProvideAsync()
         {
             var cancellationToken = CancellationToken.None;
+            
+            var input = "ILR String";
+            var container = "Container";
 
-            var preValidationContext = new PreValidationContext()
-            {
-                Input = "ILR String",
-                Container = "Container"
-            };
+            var validationContextMock = new Mock<IPreValidationContext>();
+
+            validationContextMock.SetupGet(c => c.Input).Returns(input);
+            validationContextMock.SetupGet(c => c.Container).Returns(container);
 
             using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("Stream")))
             {
                 var message = new Message();
 
                 var fileServiceeMock = new Mock<IFileService>();
-                fileServiceeMock.Setup(sps => sps.OpenReadStreamAsync(preValidationContext.Input, preValidationContext.Container, cancellationToken)).ReturnsAsync(memoryStream);
+                fileServiceeMock.Setup(sps => sps.OpenReadStreamAsync(input, container, cancellationToken)).ReturnsAsync(memoryStream);
 
                 var xmlSerializationService = new Mock<IXmlSerializationService>();
                 xmlSerializationService.Setup(s => s.Deserialize<Message>(memoryStream)).Returns(message);
 
-                (await NewService(xmlSerializationService.Object, preValidationContext, fileServiceeMock.Object).ProvideAsync(cancellationToken)).Should().BeSameAs(message);
+                (await NewService(xmlSerializationService.Object, validationContextMock.Object, fileServiceeMock.Object).ProvideAsync(cancellationToken)).Should().BeSameAs(message);
             }
         }
 

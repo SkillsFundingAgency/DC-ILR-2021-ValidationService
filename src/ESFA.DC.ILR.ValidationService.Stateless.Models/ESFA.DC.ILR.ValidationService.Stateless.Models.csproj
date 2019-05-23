@@ -247,14 +247,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AzureRedisCacheOptions.cs" />
-    <Compile Include="AzureStorageModel.cs" />
     <Compile Include="LoggerOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceBusOptions.cs" />
-    <Compile Include="ServiceBusQueueListenerModel.cs" />
     <Compile Include="PreValidationContext.cs" />
-    <Compile Include="ValidationContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -86,7 +86,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
             FileDataCache fileDataCache;
             Message message;
             IEnumerable<string> tasks;
-            ValidationContext validationContext;
             IEnumerable<IValidationError> errors;
 
             try
@@ -115,11 +114,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                     CampusIdentifiers = externalDataCacheGet.CampusIdentifiers
                 };
 
-                validationContext = new ValidationContext
-                {
-                    Input = message
-                };
-
                 logger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} finished getting input data");
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -133,7 +127,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
 
             using (var childLifeTimeScope = _parentLifeTimeScope.BeginLifetimeScope(c =>
             {
-                c.RegisterInstance(validationContext).As<IValidationContext>();
                 c.RegisterInstance(new Cache<IMessage> { Item = message }).As<ICache<IMessage>>();
                 c.RegisterInstance(internalDataCache).As<IInternalDataCache>();
                 c.RegisterInstance(externalDataCache).As<IExternalDataCache>();
@@ -146,7 +139,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                 ILogger jobLogger = childLifeTimeScope.Resolve<ILogger>();
                 try
                 {
-                    jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} started learners: {validationContext.Input.Learners.Count}");
+                    jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} started learners: {message.Learners.Count}");
                     IRuleSetOrchestrationService<ILearner, IValidationError> preValidationOrchestrationService = childLifeTimeScope
                         .Resolve<IRuleSetOrchestrationService<ILearner, IValidationError>>();
 
@@ -165,7 +158,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
             externalDataCache = null;
             fileDataCache = null;
             message = null;
-            validationContext = null;
 
             return errors;
         }

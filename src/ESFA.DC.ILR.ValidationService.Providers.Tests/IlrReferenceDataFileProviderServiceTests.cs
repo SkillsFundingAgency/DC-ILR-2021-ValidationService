@@ -20,23 +20,25 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
         {
             var cancellationToken = CancellationToken.None;
 
-            var preValidationContext = new PreValidationContext()
-            {
-                IlrReferenceDataKey = "ILR RD String",
-                Container = "Container"
-            };
+            var validationContextMock = new Mock<IPreValidationContext>();
+
+            var ilrReferenceDataKey = "ILR RD String";
+            var container = "Container";
+
+            validationContextMock.SetupGet(c => c.IlrReferenceDataKey).Returns(ilrReferenceDataKey);
+            validationContextMock.SetupGet(c => c.Container).Returns(container);
 
             using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("Stream")))
             {
                 var referenceData = new ReferenceDataRoot();
 
                 var fileServiceeMock = new Mock<IFileService>();
-                fileServiceeMock.Setup(sps => sps.OpenReadStreamAsync(preValidationContext.IlrReferenceDataKey, preValidationContext.Container, cancellationToken)).ReturnsAsync(memoryStream);
+                fileServiceeMock.Setup(sps => sps.OpenReadStreamAsync(ilrReferenceDataKey, container, cancellationToken)).ReturnsAsync(memoryStream);
 
                 var jsonSerializationService = new Mock<IJsonSerializationService>();
                 jsonSerializationService.Setup(s => s.Deserialize<ReferenceDataRoot>(memoryStream)).Returns(referenceData);
 
-                (await NewService(jsonSerializationService.Object, preValidationContext, fileServiceeMock.Object).ProvideAsync(cancellationToken)).Should().BeSameAs(referenceData);
+                (await NewService(jsonSerializationService.Object, validationContextMock.Object, fileServiceeMock.Object).ProvideAsync(cancellationToken)).Should().BeSameAs(referenceData);
             }
         }
 
