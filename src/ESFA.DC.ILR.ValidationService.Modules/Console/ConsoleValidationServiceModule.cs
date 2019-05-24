@@ -12,7 +12,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Console
             builder.RegisterModule<BaseDataModule>();
             builder.RegisterModule<LearnerRuleSetModule>();
             builder.RegisterModule<MessageRuleSetModule>();
-            builder.RegisterModule<ActorStubsModule>();
 
             builder.RegisterModule<DataServiceModule>();
             builder.RegisterModule<ConsoleCachePopulationModule>();

@@ -371,7 +371,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actor\ActorStubsModule.cs" />
     <Compile Include="Actor\ActorValidationDPModule.cs" />
     <Compile Include="CacheModule.cs" />
     <Compile Include="Console\ConsoleCachePopulationModule.cs" />
