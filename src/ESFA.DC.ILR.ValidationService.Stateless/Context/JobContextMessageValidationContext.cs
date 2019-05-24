@@ -34,25 +34,21 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Context
 
         public int ValidLearnRefNumbersCount
         {
-            get => int.Parse(_jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidLearnRefNumbersCount].ToString());
             set => _jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidLearnRefNumbersCount] = value;
         }
 
         public int InvalidLearnRefNumbersCount
         {
-            get => int.Parse(_jobContextMessage.KeyValuePairs[JobContextMessageKey.InvalidLearnRefNumbersCount].ToString());
             set => _jobContextMessage.KeyValuePairs[JobContextMessageKey.InvalidLearnRefNumbersCount] = value;
         }
 
         public int ValidationTotalErrorCount
         {
-            get => int.Parse(_jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidationTotalErrorCount].ToString());
             set => _jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidationTotalErrorCount] = value;
         }
 
         public int ValidationTotalWarningCount
         {
-            get => int.Parse(_jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidationTotalWarningCount].ToString());
             set => _jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidationTotalWarningCount] = value;
         }
 
