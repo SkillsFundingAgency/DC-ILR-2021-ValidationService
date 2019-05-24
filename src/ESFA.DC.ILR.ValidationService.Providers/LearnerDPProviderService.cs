@@ -16,7 +16,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             _messageCache = messageCache;
         }
 
-        public async Task<IEnumerable<ILearnerDestinationAndProgression>> ProvideAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<ILearnerDestinationAndProgression>> ProvideAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
             return _messageCache.Item.LearnerDestinationAndProgressions;
         }

@@ -7,16 +7,9 @@ namespace ESFA.DC.ILR.ValidationService.Stubs
 {
     public class FileSystemFileContentStringProviderService : IFileSystemFileContentStringProviderService
     {
-        private readonly IValidationContext _preValidationContext;
-
-        public FileSystemFileContentStringProviderService(IValidationContext preValidationContext)
+        public async Task<Stream> Provide(IValidationContext validationContext, CancellationToken cancellationToken)
         {
-            _preValidationContext = preValidationContext;
-        }
-
-        public async Task<Stream> Provide(CancellationToken cancellationToken)
-        {
-            return File.Open(_preValidationContext.Filename, FileMode.Open);
+            return File.Open(validationContext.Filename, FileMode.Open);
         }
     }
 }

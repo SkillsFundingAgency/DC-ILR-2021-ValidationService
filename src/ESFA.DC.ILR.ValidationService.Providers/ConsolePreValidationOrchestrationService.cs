@@ -35,20 +35,18 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             _fileDataCache = fileDataCache;
         }
 
-        public async Task ExecuteAsync(
-            IValidationContext preValidationContext,
-            CancellationToken cancellationToken)
+        public async Task ExecuteAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
             // get the file name
-            _fileDataCache.FileName = preValidationContext.Filename;
+            _fileDataCache.FileName = validationContext.Filename;
 
             // get ILR data from file
-            await _preValidationPopulationService.PopulateAsync(cancellationToken);
+            await _preValidationPopulationService.PopulateAsync(validationContext, cancellationToken);
 
-            await _messageRuleSetOrchestrationService.ExecuteAsync(new List<string>(), cancellationToken);
-            await _learnerRuleSetOrchestrationService.ExecuteAsync(new List<string>(), cancellationToken);
+            await _messageRuleSetOrchestrationService.ExecuteAsync(validationContext, cancellationToken);
+            await _learnerRuleSetOrchestrationService.ExecuteAsync(validationContext, cancellationToken);
 
-            await _validationOutputService.ProcessAsync(CancellationToken.None);
+            await _validationOutputService.ProcessAsync(validationContext, CancellationToken.None);
         }
     }
 }

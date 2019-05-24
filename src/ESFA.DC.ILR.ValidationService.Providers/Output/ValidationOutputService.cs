@@ -24,7 +24,6 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
         private readonly IValidationErrorCache<IValidationError> _validationErrorCache;
         private readonly ICache<IMessage> _messageCache;
         private readonly IFileService _fileService;
-        private readonly IValidationContext _validationContext;
         private readonly IJsonSerializationService _serializationService;
         private readonly IValidationErrorsDataService _validationErrorsDataService;
         private readonly ILogger _logger;
@@ -33,7 +32,6 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
             IValidationErrorCache<IValidationError> validationErrorCache,
             ICache<IMessage> messageCache,
             IFileService fileService,
-            IValidationContext validationContext,
             IJsonSerializationService serializationService,
             IValidationErrorsDataService validationErrorsDataService,
             ILogger logger)
@@ -41,15 +39,14 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
             _validationErrorCache = validationErrorCache;
             _messageCache = messageCache;
             _fileService = fileService;
-            _validationContext = validationContext;
             _serializationService = serializationService;
             _validationErrorsDataService = validationErrorsDataService;
             _logger = logger;
         }
 
-        public async Task ProcessAsync(CancellationToken cancellationToken)
+        public async Task ProcessAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
-            var existingValidationErrors = await GetExistingValidationErrors(cancellationToken);
+            var existingValidationErrors = await GetExistingValidationErrors(validationContext, cancellationToken);
 
             var validationErrors = _validationErrorCache
                 .ValidationErrors
@@ -83,6 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
                 }).ToList();
 
             await SaveAsync(
+                validationContext,
                 validLearnerRefNumbers,
                 invalidLearnerRefNumbers,
                 validationErrors,
@@ -112,28 +110,23 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
         }
 
         public async Task SaveAsync(
+            IValidationContext validationContext,
             IEnumerable<string> validLearnerRefNumbers,
             IEnumerable<string> invalidLearnerRefNumbers,
             IEnumerable<ValidationError> validationErrors,
             IEnumerable<ValidationErrorMessageLookup> validationErrorMessageLookups,
             CancellationToken cancellationToken)
         {
-            var validLearnRefNumbersKey = _validationContext.ValidLearnRefNumbersKey;
-            var invalidLearnRefNumbersKey = _validationContext.InvalidLearnRefNumbersKey;
-            var validationErrorsKey = _validationContext.ValidationErrorsKey;
-            var validationErrorMessageLookupKey = _validationContext.ValidationErrorMessageLookupKey;
-
-            var validationContext = _validationContext;
             validationContext.InvalidLearnRefNumbersCount = invalidLearnerRefNumbers.Count();
             validationContext.ValidLearnRefNumbersCount = validLearnerRefNumbers.Count();
             validationContext.ValidationTotalErrorCount = validationErrors.Count(x => x.Severity == Error);
             validationContext.ValidationTotalWarningCount = validationErrors.Count(x => x.Severity == Warning);
 
             await Task.WhenAll(
-                OutputAsync(validLearnRefNumbersKey, _validationContext.Container, validLearnerRefNumbers, cancellationToken),
-                OutputAsync(invalidLearnRefNumbersKey, _validationContext.Container, invalidLearnerRefNumbers, cancellationToken),
-                OutputAsync(validationErrorsKey, _validationContext.Container, validationErrors, cancellationToken),
-                OutputAsync(validationErrorMessageLookupKey, _validationContext.Container, validationErrorMessageLookups, cancellationToken));
+                OutputAsync(validationContext.ValidLearnRefNumbersKey, validationContext.Container, validLearnerRefNumbers, cancellationToken),
+                OutputAsync(validationContext.InvalidLearnRefNumbersKey, validationContext.Container, invalidLearnerRefNumbers, cancellationToken),
+                OutputAsync(validationContext.ValidationErrorsKey, validationContext.Container, validationErrors, cancellationToken),
+                OutputAsync(validationContext.ValidationErrorMessageLookupKey, validationContext.Container, validationErrorMessageLookups, cancellationToken));
         }
 
         public string SeverityToString(Severity? severity)
@@ -161,13 +154,13 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
             }
         }
 
-        private async Task<IEnumerable<ValidationError>> GetExistingValidationErrors(CancellationToken cancellationToken)
+        private async Task<IEnumerable<ValidationError>> GetExistingValidationErrors(IValidationContext validationContext, CancellationToken cancellationToken)
         {
             IEnumerable<ValidationError> validationErrors = new List<ValidationError>();
 
             try
             {
-                using (var stream = await _fileService.OpenReadStreamAsync(_validationContext.ValidationErrorsKey, _validationContext.Container, cancellationToken))
+                using (var stream = await _fileService.OpenReadStreamAsync(validationContext.ValidationErrorsKey, validationContext.Container, cancellationToken))
                 {
                     stream.Position = 0;
 

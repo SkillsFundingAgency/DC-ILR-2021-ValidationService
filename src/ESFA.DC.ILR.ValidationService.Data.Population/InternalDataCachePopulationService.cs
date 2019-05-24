@@ -6,6 +6,7 @@ using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Model;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population
 {
@@ -22,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
             _lookupsDataMapper = lookupsDataMapper;
         }
 
-        public async Task PopulateAsync(CancellationToken cancellationToken)
+        public async Task PopulateAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
             var internalDataCache = (InternalDataCache)_internalDataCache;
             var lookupsFromCache = _referenceDataCache.Item.MetaDatas.Lookups;

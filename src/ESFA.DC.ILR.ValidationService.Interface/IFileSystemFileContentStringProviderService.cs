@@ -6,6 +6,6 @@ namespace ESFA.DC.ILR.ValidationService.Interface
 {
     public interface IFileSystemFileContentStringProviderService
     {
-        Task<Stream> Provide(CancellationToken cancellationToken);
+        Task<Stream> Provide(IValidationContext validationContext, CancellationToken cancellationToken);
     }
 }

@@ -21,10 +21,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
             _messageValidationItemProviderService = messageValidationItemProviderService;
         }
 
-        public async Task PopulateAsync(CancellationToken cancellationToken)
+        public async Task PopulateAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
             var messageCache = (Cache<IMessage>)_messageCache;
-            messageCache.Item = await _messageValidationItemProviderService.ProvideAsync(cancellationToken);
+            messageCache.Item = await _messageValidationItemProviderService.ProvideAsync(validationContext, cancellationToken);
         }
     }
 }

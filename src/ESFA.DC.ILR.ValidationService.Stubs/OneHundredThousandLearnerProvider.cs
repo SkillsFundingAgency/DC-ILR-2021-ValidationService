@@ -18,9 +18,9 @@ namespace ESFA.DC.ILR.ValidationService.Stubs
         {
         }
 
-        public new async Task<IEnumerable<ILearner>> ProvideAsync(CancellationToken cancellationToken)
+        public new async Task<IEnumerable<ILearner>> ProvideAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
-            var learnerList = (await base.ProvideAsync(cancellationToken)).ToList();
+            var learnerList = (await base.ProvideAsync(validationContext, cancellationToken)).ToList();
 
             while (learnerList.Count < LearnerCount)
             {

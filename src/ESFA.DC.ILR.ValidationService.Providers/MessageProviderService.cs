@@ -16,7 +16,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             _messageCache = messageCache;
         }
 
-        public async Task<IEnumerable<IMessage>> ProvideAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<IMessage>> ProvideAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
             return new List<IMessage>
             {

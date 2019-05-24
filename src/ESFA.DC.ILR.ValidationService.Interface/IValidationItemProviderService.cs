@@ -5,6 +5,6 @@ namespace ESFA.DC.ILR.ValidationService.Interface
 {
     public interface IValidationItemProviderService<T>
     {
-        Task<T> ProvideAsync(CancellationToken cancellationToken);
+        Task<T> ProvideAsync(IValidationContext validationContext, CancellationToken cancellationToken);
     }
 }
