@@ -191,14 +191,14 @@ steps:
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: NugetPackages'
-  enabled: true
+  enabled: False
   inputs:
     ArtifactName: NugetPackages
     PathtoPublish: '$(build.artifactstagingdirectory)\Nuget'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: Databases'
-  enabled: true
+  enabled: False
   inputs:
     ArtifactName: Databases
     PathtoPublish: '$(build.artifactstagingdirectory)\Databases'
