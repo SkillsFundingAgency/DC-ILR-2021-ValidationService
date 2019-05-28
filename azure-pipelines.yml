@@ -11,6 +11,7 @@ variables:
   BuildConfiguration: 'Release'
   BuildPlatform: 'Any CPU'
   BuildPlatformX64: 'x64'  
+  ServiceFabricApplicationParametersFolder: 'src\ESFA.DC.ILR.ValidationService\ApplicationParameters'
 
 pool:
   name: DCT
@@ -21,6 +22,13 @@ pool:
   - IsBuildServer
 
 steps:
+- powershell: |
+   Copy-Item "Cloud.xml" "Local.1Node.xml" -Force
+   Copy-Item "Cloud.xml" "Local.5Node.xml" -Force
+   
+  workingDirectory: '$(ServiceFabricApplicationParametersFolder)'
+  displayName: 'Generate Fake Config Files'
+
 - task: DotNetCoreInstaller@0
   displayName: 'Use .NET Core sdk 2.2.203'
   inputs:
@@ -183,14 +191,14 @@ steps:
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: NugetPackages'
-  enabled: true
+  enabled: False
   inputs:
     ArtifactName: NugetPackages
     PathtoPublish: '$(build.artifactstagingdirectory)\Nuget'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: Databases'
-  enabled: true
+  enabled: False
   inputs:
     ArtifactName: Databases
     PathtoPublish: '$(build.artifactstagingdirectory)\Databases'
