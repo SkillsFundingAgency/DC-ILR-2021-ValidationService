@@ -76,18 +76,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ILoggerOptions.cs" />
     <Compile Include="Enum\Severity.cs" />
     <Compile Include="IErrorMessageParameter.cs" />
     <Compile Include="IFileSystemFileContentStringProviderService.cs" />
     <Compile Include="ILearnerDPPerActorProviderService.cs" />
     <Compile Include="ILearnerPerActorProviderService.cs" />
-    <Compile Include="IPreValidationContext.cs" />
+    <Compile Include="IValidationContext.cs" />
     <Compile Include="IPreValidationOrchestrationService.cs" />
     <Compile Include="IRule.cs" />
     <Compile Include="IRuleSetExecutionService.cs" />
     <Compile Include="IRuleSetOrchestrationService.cs" />
     <Compile Include="IRuleSetResolutionService.cs" />
-    <Compile Include="IValidationContext.cs" />
+    <Compile Include="IValidationContextFactory.cs" />
     <Compile Include="IValidationError.cs" />
     <Compile Include="IValidationErrorCache.cs" />
     <Compile Include="IValidationErrorHandler.cs" />

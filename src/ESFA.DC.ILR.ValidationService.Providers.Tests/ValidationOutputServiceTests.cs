@@ -133,7 +133,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
             IEnumerable<ValidationErrorMessageLookup> validationErrorMessageLookups = new List<ValidationErrorMessageLookup> { new ValidationErrorMessageLookup(), new ValidationErrorMessageLookup(), new ValidationErrorMessageLookup() };
 
             var serializationServiceMock = new Mock<IJsonSerializationService>();
-            var preValidationContextMock = new Mock<IPreValidationContext>();
+            var preValidationContextMock = new Mock<IValidationContext>();
             var fileServiceMock = new Mock<IFileService>();
 
             serializationServiceMock.Setup(s => s.Serialize(validLearnerRefNumbers)).Returns(serializedValidLearners);
@@ -171,7 +171,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
             IValidationErrorCache<IValidationError> validationErrorCache = null,
             ICache<IMessage> messageCache = null,
             IFileService fileService = null,
-            IPreValidationContext preValidationContext = null,
+            IValidationContext preValidationContext = null,
             IJsonSerializationService jsonSerializationService = null,
             IValidationErrorsDataService validationErrorsDataService = null
             )

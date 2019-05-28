@@ -10,12 +10,12 @@ namespace ESFA.DC.ILR.ValidationService.Providers
     public class IlrReferenceDataFileProviderService : IValidationItemProviderService<ReferenceDataRoot>
     {
         private readonly IJsonSerializationService _jsonSerializationService;
-        private readonly IPreValidationContext _preValidationContext;
+        private readonly IValidationContext _preValidationContext;
         private readonly IFileService _fileService;
 
         public IlrReferenceDataFileProviderService(
             IJsonSerializationService jsonSerializationService,
-            IPreValidationContext preValidationContext,
+            IValidationContext preValidationContext,
             IFileService fileService)
         {
             _jsonSerializationService = jsonSerializationService;

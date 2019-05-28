@@ -3,9 +3,9 @@ using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Stubs
 {
-    public class PreValidationContextStub : IPreValidationContext
+    public class PreValidationContextStub : IValidationContext
     {
-        public string Input { get; set; }
+        public string Filename { get; set; }
 
         public string Output { get; set; }
 
@@ -31,6 +31,6 @@ namespace ESFA.DC.ILR.ValidationService.Stubs
 
         public string ValidationErrorMessageLookupKey { get; set; }
 
-        public IEnumerable<string> Tasks { get; set; }
+        public IEnumerable<string> IgnoredRules { get; set; }
     }
 }

@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Console
         {
             var preValidationContext = new PreValidationContextStub
             {
-                Input = filePath,
+                Filename = filePath,
                 Output = filePath + ".vs.csv",
                 ValidLearnRefNumbersKey = "ValidLearnRefNumbers",
                 InvalidLearnRefNumbersKey = "InvalidLearnRefNumbers",
@@ -74,9 +74,9 @@ namespace ESFA.DC.ILR.ValidationService.Console
             System.IO.File.WriteAllText(path, contents.ToString());
         }
 
-        private static void RegisterContext(ContainerBuilder containerBuilder, IPreValidationContext preValidationContext)
+        private static void RegisterContext(ContainerBuilder containerBuilder, IValidationContext preValidationContext)
         {
-            containerBuilder.RegisterInstance(preValidationContext).As<IPreValidationContext>();
+            containerBuilder.RegisterInstance(preValidationContext).As<IValidationContext>();
         }
 
         private static IContainer BuildContainer()
