@@ -1,6 +1,6 @@
 ﻿using ESFA.DC.IO.AzureStorage.Config.Interfaces;
 
-namespace ESFA.DC.ILR.ValidationService.Stateless.Models
+namespace ESFA.DC.ILR.ValidationService.Stateless.Configuration
 {
     // TODO: refactor this and use the storage config properly everywhere
     public class AzureStorageModel : IAzureStorageKeyValuePersistenceServiceConfig

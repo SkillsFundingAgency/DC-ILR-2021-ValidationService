@@ -189,8 +189,6 @@
     <Compile Include="IlrReferenceDataFileProviderService.cs" />
     <Compile Include="MessageProviderService.cs" />
     <Compile Include="LearnerProviderService.cs" />
-    <Compile Include="ConsolePreValidationOrchestrationService.cs" />
-    <Compile Include="FileSystemFileContentStringProviderService.cs" />
     <Compile Include="MessageFileProviderService.cs" />
     <Compile Include="Output\Model\ValidationErrorMessageLookup.cs" />
     <Compile Include="Output\ValidationOutputService.cs" />
