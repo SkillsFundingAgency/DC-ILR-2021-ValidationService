@@ -31,11 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
 
         public async Task<bool> HandleAsync(JobContextMessage jobContextMessage, CancellationToken cancellationToken)
         {
-            using (var childLifeTimeScope = _parentLifeTimeScope
-                .BeginLifetimeScope(c =>
-                {
-                    c.RegisterInstance(_validationContextFactory.Build(jobContextMessage)).As<IValidationContext>();
-                }))
+            using (var childLifeTimeScope = _parentLifeTimeScope.BeginLifetimeScope())
             {
                 var executionContext = (ExecutionContext)childLifeTimeScope.Resolve<IExecutionContext>();
                 executionContext.JobId = jobContextMessage.JobId.ToString();
