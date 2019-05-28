@@ -11,22 +11,19 @@ namespace ESFA.DC.ILR.ValidationService.Providers
     public class MessageFileProviderService : IValidationItemProviderService<IMessage>
     {
         private readonly IXmlSerializationService _xmlSerializationService;
-        private readonly IValidationContext _preValidationContext;
         private readonly IFileService _fileService;
 
         public MessageFileProviderService(
             IXmlSerializationService xmlSerializationService,
-            IValidationContext preValidationContext,
             IFileService fileService)
         {
             _xmlSerializationService = xmlSerializationService;
-            _preValidationContext = preValidationContext;
             _fileService = fileService;
         }
 
-        public async Task<IMessage> ProvideAsync(CancellationToken cancellationToken)
+        public async Task<IMessage> ProvideAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
-            using (var stream = await _fileService.OpenReadStreamAsync(_preValidationContext.Filename, _preValidationContext.Container, cancellationToken))
+            using (var stream = await _fileService.OpenReadStreamAsync(validationContext.Filename, validationContext.Container, cancellationToken))
             {
                 stream.Position = 0;
 

@@ -4,6 +4,7 @@ using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population
 {
@@ -18,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
             _messageCache = messageCache;
         }
 
-        public async Task PopulateAsync(CancellationToken cancellationToken)
+        public async Task PopulateAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
             var fileDataCache = (FileDataCache)_fileDataCache;
 

@@ -12,6 +12,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
+using ESFA.DC.ILR.ValidationService.Interface;
 using Moq;
 using Xunit;
 
@@ -22,6 +23,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
         [Fact]
         public async void PopulateAsync()
         {
+            var validationContextMock = new Mock<IValidationContext>();
+
             var externalDataCache = new ExternalDataCache();
             var referenceDataCacheMock = new Mock<ICache<ReferenceDataRoot>>();
             var employersDataMapperMock = new Mock<IEmployersDataMapper>();
@@ -57,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
                 organisationsDataMapperMock.Object,
                 postcodesDataMapperMock.Object,
                 ulnDataMapperMock.Object,
-                validationErrorsDataMapperMock.Object).PopulateAsync(CancellationToken.None);
+                validationErrorsDataMapperMock.Object).PopulateAsync(validationContextMock.Object, CancellationToken.None);
 
             referenceDataCacheMock.VerifyAll();
             employersDataMapperMock.VerifyAll();

@@ -20,11 +20,14 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
 
             referenceDataCacheMock.SetupSet(mc => mc.Item = referenceData).Verifiable();
 
+            var validationContextMock = new Mock<IValidationContext>();
+            var cancellationToken = CancellationToken.None;
+
             var validationItemProviderServiceMock = new Mock<IValidationItemProviderService<ReferenceDataRoot>>();
 
-            validationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(It.IsAny<CancellationToken>())).ReturnsAsync(referenceData);
+            validationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(validationContextMock.Object, cancellationToken)).ReturnsAsync(referenceData);
 
-            await NewService(referenceDataCacheMock.Object, validationItemProviderServiceMock.Object).PopulateAsync(CancellationToken.None);
+            await NewService(referenceDataCacheMock.Object, validationItemProviderServiceMock.Object).PopulateAsync(validationContextMock.Object, cancellationToken);
 
             validationItemProviderServiceMock.Verify();
             referenceDataCacheMock.Verify();

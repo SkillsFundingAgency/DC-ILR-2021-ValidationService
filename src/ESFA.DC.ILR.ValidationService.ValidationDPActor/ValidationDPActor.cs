@@ -37,6 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
         private readonly ILifetimeScope _parentLifeTimeScope;
         private readonly IExecutionContext _executionContext;
         private readonly IJsonSerializationService _jsonSerializationService;
+        private readonly IValidationContextFactory<ValidationDPActorModel> _validationContextFactory;
         private readonly ActorId _actorId;
 
         /// <summary>
@@ -47,12 +48,13 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
         /// <param name="parentLifeTimeScope">Autofac Parent Lifetime Scope</param>
         /// <param name="executionContext">The logger execution context.</param>
         /// <param name="jsonSerializationService">JSON serialiser.</param>
-        public ValidationDPActor(ActorService actorService, ActorId actorId, ILifetimeScope parentLifeTimeScope, IExecutionContext executionContext, IJsonSerializationService jsonSerializationService)
+        public ValidationDPActor(ActorService actorService, ActorId actorId, ILifetimeScope parentLifeTimeScope, IExecutionContext executionContext, IJsonSerializationService jsonSerializationService, IValidationContextFactory<ValidationDPActorModel> validationContextFactory)
             : base(actorService, actorId)
         {
             _parentLifeTimeScope = parentLifeTimeScope;
             _executionContext = executionContext;
             _jsonSerializationService = jsonSerializationService;
+            _validationContextFactory = validationContextFactory;
             _actorId = actorId;
         }
 
@@ -75,6 +77,8 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
                 executionContextObj.TaskKey = _actorId.ToString();
             }
 
+            var validationContext = _validationContextFactory.Build(actorModel);
+
             ILogger logger = _parentLifeTimeScope.Resolve<ILogger>();
 
             InternalDataCache internalDataCache;
@@ -82,7 +86,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
             ExternalDataCache externalDataCache;
             FileDataCache fileDataCache;
             Message message;
-            IEnumerable<string> tasks;
             IEnumerable<IValidationError> errors;
 
             try
@@ -93,7 +96,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
                 externalDataCacheGet = _jsonSerializationService.Deserialize<ExternalDataCache>(actorModel.ExternalDataCache);
                 fileDataCache = _jsonSerializationService.Deserialize<FileDataCache>(actorModel.FileDataCache);
                 message = _jsonSerializationService.Deserialize<Message>(actorModel.Message);
-                tasks = _jsonSerializationService.Deserialize<IEnumerable<string>>(actorModel.TaskList);
 
                 externalDataCache = new ExternalDataCache
                 {
@@ -130,7 +132,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
                     IRuleSetOrchestrationService<ILearnerDestinationAndProgression, IValidationError> preValidationOrchestrationService = childLifeTimeScope
                         .Resolve<IRuleSetOrchestrationService<ILearnerDestinationAndProgression, IValidationError>>();
 
-                    errors = await preValidationOrchestrationService.ExecuteAsync(tasks, cancellationToken);
+                    errors = await preValidationOrchestrationService.ExecuteAsync(validationContext, cancellationToken);
                     jobLogger.LogDebug($"{nameof(ValidationDPActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} Destination and Progression validation done");
                 }
                 catch (Exception ex)

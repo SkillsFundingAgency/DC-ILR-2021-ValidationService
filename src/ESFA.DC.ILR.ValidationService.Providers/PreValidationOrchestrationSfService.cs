@@ -78,14 +78,14 @@ namespace ESFA.DC.ILR.ValidationService.Providers
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                await _preValidationPopulationService.PopulateAsync(cancellationToken).ConfigureAwait(false);
+                await _preValidationPopulationService.PopulateAsync(validationContext, cancellationToken).ConfigureAwait(false);
                 _logger.LogDebug($"Population service completed in: {stopWatch.ElapsedMilliseconds}");
 
                 // Set the filename
                 _fileDataCache.FileName = validationContext.Filename;
 
                 // File Validation
-                await _ruleSetOrchestrationService.ExecuteAsync(validationContext.IgnoredRules, cancellationToken).ConfigureAwait(false);
+                await _ruleSetOrchestrationService.ExecuteAsync(validationContext, cancellationToken).ConfigureAwait(false);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -109,7 +109,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             finally
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                await _validationOutputService.ProcessAsync(cancellationToken).ConfigureAwait(false);
+                await _validationOutputService.ProcessAsync(validationContext, cancellationToken).ConfigureAwait(false);
                 _logger.LogDebug($"Validation final results persisted in {stopWatch.ElapsedMilliseconds}");
             }
         }

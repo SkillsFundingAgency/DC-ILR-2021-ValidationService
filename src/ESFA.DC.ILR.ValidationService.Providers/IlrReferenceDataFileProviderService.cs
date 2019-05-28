@@ -10,22 +10,19 @@ namespace ESFA.DC.ILR.ValidationService.Providers
     public class IlrReferenceDataFileProviderService : IValidationItemProviderService<ReferenceDataRoot>
     {
         private readonly IJsonSerializationService _jsonSerializationService;
-        private readonly IValidationContext _preValidationContext;
         private readonly IFileService _fileService;
 
         public IlrReferenceDataFileProviderService(
             IJsonSerializationService jsonSerializationService,
-            IValidationContext preValidationContext,
             IFileService fileService)
         {
             _jsonSerializationService = jsonSerializationService;
-            _preValidationContext = preValidationContext;
             _fileService = fileService;
         }
 
-        public async Task<ReferenceDataRoot> ProvideAsync(CancellationToken cancellationToken)
+        public async Task<ReferenceDataRoot> ProvideAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
-            using (var stream = await _fileService.OpenReadStreamAsync(_preValidationContext.IlrReferenceDataKey, _preValidationContext.Container, cancellationToken))
+            using (var stream = await _fileService.OpenReadStreamAsync(validationContext.IlrReferenceDataKey, validationContext.Container, cancellationToken))
             {
                 stream.Position = 0;
 

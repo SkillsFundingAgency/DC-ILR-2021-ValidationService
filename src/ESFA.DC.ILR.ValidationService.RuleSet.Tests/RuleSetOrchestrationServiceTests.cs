@@ -22,14 +22,17 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<string>>();
             ruleSetResolutionServiceMock.Setup(rs => rs.Resolve()).Returns(new List<IRule<string>>() { new RuleOne(validationErrorCache), new RuleTwo(validationErrorCache) });
 
+            var validationContextMock = new Mock<IValidationContext>();
+            var cancellationToken = CancellationToken.None;
+
             var validationItemProviderServiceMock = new Mock<IValidationItemProviderService<IEnumerable<string>>>();
-            validationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<string> { "NA" });
+            validationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(validationContextMock.Object, cancellationToken)).ReturnsAsync(new List<string> { "NA" });
 
             var ruleSetExecutionService = new RuleSetExecutionService<string>();
 
             var service = NewService(ruleSetResolutionServiceMock.Object, validationItemProviderServiceMock.Object, validationErrorCache: validationErrorCache, ruleSetExecutionService: ruleSetExecutionService);
 
-            (await service.ExecuteAsync(new List<string>(), CancellationToken.None)).Should().BeEquivalentTo(output);
+            (await service.ExecuteAsync(validationContextMock.Object, cancellationToken)).Should().BeEquivalentTo(output);
         }
 
         [Fact]
@@ -40,16 +43,20 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<string>>();
             ruleSetResolutionServiceMock.Setup(rs => rs.Resolve()).Returns(new List<IRule<string>>() { new RuleOne(validationErrorCache), new RuleTwo(validationErrorCache) });
 
+            var validationContextMock = new Mock<IValidationContext>();
+
+            validationContextMock.SetupGet(c => c.IgnoredRules).Returns(new List<string> { "RuleOne", "RuleTwo" });
+
+            var cancellationToken = CancellationToken.None;
+
             var validationItemProviderServiceMock = new Mock<IValidationItemProviderService<IEnumerable<string>>>();
-            validationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<string> { "NA" });
+            validationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(validationContextMock.Object, cancellationToken)).ReturnsAsync(new List<string> { "NA" });
 
             var ruleSetExecutionService = new RuleSetExecutionService<string>();
 
             var service = NewService(ruleSetResolutionServiceMock.Object, validationItemProviderServiceMock.Object, validationErrorCache: validationErrorCache, ruleSetExecutionService: ruleSetExecutionService);
 
-            var filtered = new List<string> { "RuleOne", "RuleTwo" };
-
-            (await service.ExecuteAsync(filtered, CancellationToken.None)).Should().BeEmpty();
+            (await service.ExecuteAsync(validationContextMock.Object, cancellationToken)).Should().BeEmpty();
         }
 
         [Fact]
@@ -68,17 +75,21 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             const string two = "two";
             var validationItems = new List<string> { one, two };
 
+            var validationContextMock = new Mock<IValidationContext>();
+            validationContextMock.SetupGet(c => c.IgnoredRules).Returns(new List<string>());
+            var cancellationToken = CancellationToken.None;
+
             var validationItemProviderServiceMock = new Mock<IValidationItemProviderService<IEnumerable<string>>>();
-            validationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(It.IsAny<CancellationToken>())).ReturnsAsync(validationItems);
+            validationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(validationContextMock.Object, cancellationToken)).ReturnsAsync(validationItems);
 
             var ruleSetExecutionService = new RuleSetExecutionService<string>();
 
             var service = NewService(ruleSetResolutionServiceMock.Object, validationItemProviderServiceMock.Object, ruleSetExecutionService, validationErrorCache);
 
-            (await service.ExecuteAsync(new List<string>(), CancellationToken.None)).Should().BeEquivalentTo(output);
+            (await service.ExecuteAsync(validationContextMock.Object, cancellationToken)).Should().BeEquivalentTo(output);
         }
 
-        public RuleSetOrchestrationService<T, U> NewService<T, U>(
+        private RuleSetOrchestrationService<T, U> NewService<T, U>(
             IRuleSetResolutionService<T> ruleSetResolutionService = null,
             IValidationItemProviderService<IEnumerable<T>> validationItemProviderService = null,
             IRuleSetExecutionService<T> ruleSetExecutionService = null,

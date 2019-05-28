@@ -22,9 +22,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
 
             var messageValidationItemProviderServiceMock = new Mock<IValidationItemProviderService<IMessage>>();
 
-            messageValidationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(It.IsAny<CancellationToken>())).ReturnsAsync(message);
+            var validationContextMock = new Mock<IValidationContext>();
+            var cancellationToken = CancellationToken.None;
 
-            await NewService(messageCacheMock.Object, messageValidationItemProviderServiceMock.Object).PopulateAsync(CancellationToken.None);
+            messageValidationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(validationContextMock.Object, cancellationToken)).ReturnsAsync(message);
+
+            await NewService(messageCacheMock.Object, messageValidationItemProviderServiceMock.Object).PopulateAsync(validationContextMock.Object, cancellationToken);
 
             messageValidationItemProviderServiceMock.Verify();
             messageCacheMock.Verify();

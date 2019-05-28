@@ -4,6 +4,7 @@ using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population
 {
@@ -44,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
             _validationErrorsDataMapper = validationErrorsDataMapper;
         }
 
-        public async Task PopulateAsync(CancellationToken cancellationToken)
+        public async Task PopulateAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
             var externalDataCache = (ExternalDataCache)_externalDataCache;
             var referenceDataCache = _referenceDataCache.Item;

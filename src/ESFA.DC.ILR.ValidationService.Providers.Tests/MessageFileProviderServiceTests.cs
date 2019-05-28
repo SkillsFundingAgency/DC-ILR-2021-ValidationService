@@ -37,16 +37,15 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
                 var xmlSerializationService = new Mock<IXmlSerializationService>();
                 xmlSerializationService.Setup(s => s.Deserialize<Message>(memoryStream)).Returns(message);
 
-                (await NewService(xmlSerializationService.Object, validationContextMock.Object, fileServiceeMock.Object).ProvideAsync(cancellationToken)).Should().BeSameAs(message);
+                (await NewService(xmlSerializationService.Object, fileServiceeMock.Object).ProvideAsync(validationContextMock.Object, cancellationToken)).Should().BeSameAs(message);
             }
         }
 
         private MessageFileProviderService NewService(
             IXmlSerializationService xmlSerializationService = null,
-            IValidationContext preValidationContext = null,
             IFileService fileService = null)
         {
-            return new MessageFileProviderService(xmlSerializationService, preValidationContext, fileService);
+            return new MessageFileProviderService(xmlSerializationService, fileService);
         }
     }
 }

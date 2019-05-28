@@ -27,11 +27,11 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet
             _validationErrorCache = validationErrorCache;
         }
 
-        public async Task<IEnumerable<U>> ExecuteAsync(IEnumerable<string> ignoredRules, CancellationToken cancellationToken)
+        public async Task<IEnumerable<U>> ExecuteAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
-            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve().Where(x => !ignoredRules.Any(y => string.Equals(x.RuleName, y, StringComparison.OrdinalIgnoreCase))).ToList();
+            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve().Where(x => !validationContext.IgnoredRules.Any(y => string.Equals(x.RuleName, y, StringComparison.OrdinalIgnoreCase))).ToList();
 
-            IEnumerable<T> items = await _validationItemProviderService.ProvideAsync(cancellationToken);
+            IEnumerable<T> items = await _validationItemProviderService.ProvideAsync(validationContext, cancellationToken);
             foreach (T validationItem in items)
             {
                 cancellationToken.ThrowIfCancellationRequested();

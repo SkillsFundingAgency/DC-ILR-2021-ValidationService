@@ -12,7 +12,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules.Actor
             builder.RegisterModule<LearnerDPRuleSetModule>();
 
             builder.RegisterModule<DataServiceModule>();
-            builder.RegisterModule<ActorStubsModule>();
         }
     }
 }

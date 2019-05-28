@@ -157,6 +157,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\LoggerOptions.cs" />
+    <Compile Include="Context\ValidationDPActorModelValidationContext.cs" />
+    <Compile Include="Context\ValidationDPActorModelValidationContextFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValidationDPActor.cs" />
     <Compile Include="Program.cs" />

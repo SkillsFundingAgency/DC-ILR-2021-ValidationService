@@ -166,6 +166,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\LoggerOptions.cs" />
+    <Compile Include="Context\ValidationActorModelValidationContextFactory.cs" />
+    <Compile Include="Context\ValidationActorModelValidationContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValidationActor.cs" />
     <Compile Include="Program.cs" />

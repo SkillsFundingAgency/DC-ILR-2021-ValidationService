@@ -37,16 +37,15 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
                 var jsonSerializationService = new Mock<IJsonSerializationService>();
                 jsonSerializationService.Setup(s => s.Deserialize<ReferenceDataRoot>(memoryStream)).Returns(referenceData);
 
-                (await NewService(jsonSerializationService.Object, validationContextMock.Object, fileServiceeMock.Object).ProvideAsync(cancellationToken)).Should().BeSameAs(referenceData);
+                (await NewService(jsonSerializationService.Object, fileServiceeMock.Object).ProvideAsync(validationContextMock.Object, cancellationToken)).Should().BeSameAs(referenceData);
             }
         }
 
         private IlrReferenceDataFileProviderService NewService(
             IJsonSerializationService jsonSerializationService = null,
-            IValidationContext preValidationContext = null,
             IFileService fileService = null)
         {
-            return new IlrReferenceDataFileProviderService(jsonSerializationService, preValidationContext, fileService);
+            return new IlrReferenceDataFileProviderService(jsonSerializationService, fileService);
         }
     }
 }

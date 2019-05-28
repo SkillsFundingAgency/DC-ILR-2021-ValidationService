@@ -2,8 +2,11 @@
 using System.Threading;
 using Autofac;
 using Autofac.Integration.ServiceFabric;
+using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Modules;
 using ESFA.DC.ILR.ValidationService.Modules.Actor;
+using ESFA.DC.ILR.ValidationService.ValidationActor.Context;
+using ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces.Models;
 using ESFA.DC.ServiceFabric.Helpers;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using LoggerOptions = ESFA.DC.ILR.ValidationService.ValidationActor.Configuration.LoggerOptions;
@@ -46,6 +49,8 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule<ActorValidationModule>();
+
+            containerBuilder.RegisterType<ValidationActorModelValidationContextFactory>().As<IValidationContextFactory<ValidationActorModel>>();
 
             // register logger
             var configHelper = new ConfigurationHelper();
