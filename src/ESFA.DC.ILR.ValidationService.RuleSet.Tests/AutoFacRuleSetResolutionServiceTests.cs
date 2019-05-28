@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.RuleSet.Tests.ErrorHandler;
@@ -103,6 +104,33 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             }
 
             ruleOne.Should().NotBeSameAs(ruleTwo);
+        }
+
+        [Fact]
+        public void Resolve_FilteredValidationItems()
+        {
+            var builder = new ContainerBuilder();
+
+            builder.RegisterType<ValidationErrorCacheGenericTest<string>>().As<IValidationErrorCache<string>>();
+            builder.RegisterType<RuleOne>().As<IRule<string>>();
+            builder.RegisterType<RuleTwo>().As<IRule<string>>();
+
+            var validationContextMock = new Mock<IValidationContext>();
+
+            validationContextMock.SetupGet(x => x.IgnoredRules).Returns(new List<string> { "RuleTwo" });
+
+            var container = builder.Build();
+
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = NewService(scope);
+
+                var rules = service.Resolve(validationContextMock.Object).ToList();
+
+                rules.Count.Should().Be(1);
+                rules.Should().AllBeAssignableTo<IRule<string>>();
+                rules[0].Should().BeOfType<RuleOne>();
+            }
         }
 
         private IRuleSetResolutionService<string> NewService(ILifetimeScope lifetimeScope)

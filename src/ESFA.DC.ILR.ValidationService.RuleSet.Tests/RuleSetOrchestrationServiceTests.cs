@@ -36,29 +36,6 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
         }
 
         [Fact]
-        public async Task Execute_FilteredValidationItems()
-        {
-            IValidationErrorCache<string> validationErrorCache = new ValidationErrorCacheGenericTest<string>();
-
-            var validationContextMock = new Mock<IValidationContext>();
-            validationContextMock.SetupGet(c => c.IgnoredRules).Returns(new List<string> { "RuleOne", "RuleTwo" });
-
-            var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<string>>();
-            ruleSetResolutionServiceMock.Setup(rs => rs.Resolve(validationContextMock.Object)).Returns(new List<IRule<string>>() { new RuleOne(validationErrorCache), new RuleTwo(validationErrorCache) });
-
-            var cancellationToken = CancellationToken.None;
-
-            var validationItemProviderServiceMock = new Mock<IValidationItemProviderService<IEnumerable<string>>>();
-            validationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(validationContextMock.Object, cancellationToken)).ReturnsAsync(new List<string> { "NA" });
-
-            var ruleSetExecutionService = new RuleSetExecutionService<string>();
-
-            var service = NewService(ruleSetResolutionServiceMock.Object, validationItemProviderServiceMock.Object, validationErrorCache: validationErrorCache, ruleSetExecutionService: ruleSetExecutionService);
-
-            (await service.ExecuteAsync(validationContextMock.Object, cancellationToken)).Should().BeEmpty();
-        }
-
-        [Fact]
         public async Task Execute()
         {
             var output = new List<string> { "1", "2", "3", "1", "2", "3" };
