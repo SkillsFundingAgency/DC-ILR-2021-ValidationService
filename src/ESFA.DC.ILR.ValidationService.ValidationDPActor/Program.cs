@@ -4,11 +4,11 @@ using Autofac;
 using Autofac.Integration.ServiceFabric;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Modules;
-using ESFA.DC.ILR.ValidationService.Modules.Actor;
 using ESFA.DC.ILR.ValidationService.ValidationActor.Context;
 using ESFA.DC.ILR.ValidationService.ValidationDPActor.Interfaces.Models;
 using ESFA.DC.ServiceFabric.Helpers;
 using Microsoft.ServiceFabric.Actors.Runtime;
+using ActorValidationDPModule = ESFA.DC.ILR.ValidationService.ValidationDPActor.Modules.ActorValidationDPModule;
 using LoggerOptions = ESFA.DC.ILR.ValidationService.ValidationDPActor.Configuration.LoggerOptions;
 
 namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
