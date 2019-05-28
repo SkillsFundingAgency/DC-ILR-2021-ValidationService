@@ -91,11 +91,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OneHundredThousandLearnerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PreValidationContextStub.cs" />
-    <Compile Include="SixHundredRuleRulesetResolutionService.cs" />
-    <Compile Include="ValidationOutputServiceStub.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ESFA.DC.ILR.ValidationService.Stubs.ruleset">

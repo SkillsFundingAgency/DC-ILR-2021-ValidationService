@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationServi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Data.Population.Tests", "ESFA.DC.ILR.ValidationService.Data.Population.Tests\ESFA.DC.ILR.ValidationService.Data.Population.Tests.csproj", "{BF5DE04C-B644-47B9-9329-1F62272B41F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Stubs", "ESFA.DC.ILR.ValidationService.Stubs\ESFA.DC.ILR.ValidationService.Stubs.csproj", "{BA81EBE1-6C72-454E-85D5-761B13911B82}"
-EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "ESFA.DC.ILR.ValidationService", "ESFA.DC.ILR.ValidationService\ESFA.DC.ILR.ValidationService.sfproj", "{C41CFC22-B667-4497-960C-F67ADFE39B1B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Stateless", "ESFA.DC.ILR.ValidationService.Stateless\ESFA.DC.ILR.ValidationService.Stateless.csproj", "{8C696361-57C5-4712-A2E7-E6DC1230325B}"
@@ -123,14 +121,6 @@ Global
 		{BF5DE04C-B644-47B9-9329-1F62272B41F0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BF5DE04C-B644-47B9-9329-1F62272B41F0}.Release|x64.ActiveCfg = Release|Any CPU
 		{BF5DE04C-B644-47B9-9329-1F62272B41F0}.Release|x64.Build.0 = Release|Any CPU
-		{BA81EBE1-6C72-454E-85D5-761B13911B82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA81EBE1-6C72-454E-85D5-761B13911B82}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA81EBE1-6C72-454E-85D5-761B13911B82}.Debug|x64.ActiveCfg = Debug|x64
-		{BA81EBE1-6C72-454E-85D5-761B13911B82}.Debug|x64.Build.0 = Debug|x64
-		{BA81EBE1-6C72-454E-85D5-761B13911B82}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA81EBE1-6C72-454E-85D5-761B13911B82}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA81EBE1-6C72-454E-85D5-761B13911B82}.Release|x64.ActiveCfg = Release|Any CPU
-		{BA81EBE1-6C72-454E-85D5-761B13911B82}.Release|x64.Build.0 = Release|Any CPU
 		{C41CFC22-B667-4497-960C-F67ADFE39B1B}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{C41CFC22-B667-4497-960C-F67ADFE39B1B}.Debug|x64.ActiveCfg = Debug|x64
 		{C41CFC22-B667-4497-960C-F67ADFE39B1B}.Debug|x64.Build.0 = Debug|x64

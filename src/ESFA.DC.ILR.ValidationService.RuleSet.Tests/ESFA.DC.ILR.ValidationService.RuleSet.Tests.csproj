@@ -133,10 +133,6 @@
       <Project>{ebe0154d-6f8b-4dbb-a18f-4929ab74d204}</Project>
       <Name>ESFA.DC.ILR.ValidationService.RuleSet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Stubs\ESFA.DC.ILR.ValidationService.Stubs.csproj">
-      <Project>{BA81EBE1-6C72-454E-85D5-761B13911B82}</Project>
-      <Name>ESFA.DC.ILR.ValidationService.Stubs</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

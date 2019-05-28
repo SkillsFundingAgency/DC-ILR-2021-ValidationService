@@ -225,10 +225,6 @@
       <Project>{621B61D1-339D-4910-8C86-8A64AF8822F5}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Stubs\ESFA.DC.ILR.ValidationService.Stubs.csproj">
-      <Project>{ba81ebe1-6c72-454e-85d5-761b13911b82}</Project>
-      <Name>ESFA.DC.ILR.ValidationService.Stubs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces\ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces.csproj">
       <Project>{F267B89E-04E1-4295-AC75-7E9D833CF189}</Project>
       <Name>ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces</Name>
