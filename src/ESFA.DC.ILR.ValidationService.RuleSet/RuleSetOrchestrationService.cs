@@ -29,7 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet
 
         public async Task<IEnumerable<U>> ExecuteAsync(IValidationContext validationContext, CancellationToken cancellationToken)
         {
-            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve().Where(x => !validationContext.IgnoredRules.Any(y => string.Equals(x.RuleName, y, StringComparison.OrdinalIgnoreCase))).ToList();
+            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve(validationContext).ToList();
 
             IEnumerable<T> items = await _validationItemProviderService.ProvideAsync(validationContext, cancellationToken);
             foreach (T validationItem in items)
