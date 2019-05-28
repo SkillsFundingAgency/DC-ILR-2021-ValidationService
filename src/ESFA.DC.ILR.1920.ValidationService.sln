@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationServi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.ILR.ValidationService.ValidationActor.Model", "ESFA.DC.ILR.ValidationService.ValidationActor.Model\ESFA.DC.ILR.ValidationService.ValidationActor.Model.csproj", "{95CF36FF-C198-4B1D-8DD9-6BE0660F81F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Desktop", "ESFA.DC.ILR.ValidationService.Desktop\ESFA.DC.ILR.ValidationService.Desktop.csproj", "{78ED505A-B3D7-4DB6-B2C5-26366CDC4093}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -208,6 +210,14 @@ Global
 		{95CF36FF-C198-4B1D-8DD9-6BE0660F81F9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{95CF36FF-C198-4B1D-8DD9-6BE0660F81F9}.Release|x64.ActiveCfg = Release|Any CPU
 		{95CF36FF-C198-4B1D-8DD9-6BE0660F81F9}.Release|x64.Build.0 = Release|Any CPU
+		{78ED505A-B3D7-4DB6-B2C5-26366CDC4093}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78ED505A-B3D7-4DB6-B2C5-26366CDC4093}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78ED505A-B3D7-4DB6-B2C5-26366CDC4093}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{78ED505A-B3D7-4DB6-B2C5-26366CDC4093}.Debug|x64.Build.0 = Debug|Any CPU
+		{78ED505A-B3D7-4DB6-B2C5-26366CDC4093}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78ED505A-B3D7-4DB6-B2C5-26366CDC4093}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78ED505A-B3D7-4DB6-B2C5-26366CDC4093}.Release|x64.ActiveCfg = Release|Any CPU
+		{78ED505A-B3D7-4DB6-B2C5-26366CDC4093}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
