@@ -16,9 +16,9 @@ namespace ESFA.DC.ILR.ValidationService.Stubs
         {
         }
 
-        public new IEnumerable<IRule<T>> Resolve()
+        public new IEnumerable<IRule<T>> Resolve(IValidationContext validationContext)
         {
-            var rulesList = base.Resolve().ToList();
+            var rulesList = base.Resolve(validationContext).ToList();
 
             while (rulesList.Count < RuleCount)
             {
