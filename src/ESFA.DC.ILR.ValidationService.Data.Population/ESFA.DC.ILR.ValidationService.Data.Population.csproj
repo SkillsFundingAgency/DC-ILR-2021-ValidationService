@@ -159,6 +159,7 @@
     <Compile Include="Interface\IInternalDataCachePopulationService.cs" />
     <Compile Include="Interface\ILarsDataMapper.cs" />
     <Compile Include="Interface\ILookupsDataMapper.cs" />
+    <Compile Include="Interface\IMapper.cs" />
     <Compile Include="Interface\IOrganisationsDataMapper.cs" />
     <Compile Include="Interface\IReferenceDataCachePopulationService.cs" />
     <Compile Include="Interface\IMessageCachePopulationService.cs" />

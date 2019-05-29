@@ -5,7 +5,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
 {
-    public interface ILarsDataMapper
+    public interface ILarsDataMapper : IMapper
     {
         IReadOnlyCollection<ILARSStandard> MapLarsStandards(IReadOnlyCollection<ReferenceDataService.Model.LARS.LARSStandard> larsStandards);
 
