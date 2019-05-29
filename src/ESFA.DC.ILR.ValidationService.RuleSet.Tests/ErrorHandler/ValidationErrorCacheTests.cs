@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler;
 using ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler.Model;
 using FluentAssertions;
@@ -28,9 +29,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests.ErrorHandler
             }
         }
 
-        private ValidationErrorCache NewCache()
+        private ValidationErrorCache<IValidationError> NewCache()
         {
-            return new ValidationErrorCache();
+            return new ValidationErrorCache<IValidationError>();
         }
     }
 }

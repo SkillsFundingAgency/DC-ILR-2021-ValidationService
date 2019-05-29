@@ -4,16 +4,16 @@ using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler
 {
-    public class ValidationErrorCache : IValidationErrorCache<IValidationError>
+    public class ValidationErrorCache<T> : IValidationErrorCache<T>
     {
-        private readonly ConcurrentBag<IValidationError> _validationErrors = new ConcurrentBag<IValidationError>();
+        private readonly ConcurrentBag<T> _validationErrors = new ConcurrentBag<T>();
 
-        public IReadOnlyCollection<IValidationError> ValidationErrors
+        public IReadOnlyCollection<T> ValidationErrors
         {
             get { return _validationErrors; }
         }
 
-        public void Add(IValidationError validationError)
+        public void Add(T validationError)
         {
             _validationErrors.Add(validationError);
         }
