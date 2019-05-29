@@ -397,6 +397,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActorValidationExecutionProvider.cs" />
     <Compile Include="Configuration\AzureStorageModel.cs" />
     <Compile Include="Configuration\IOConfiguration.cs" />
     <Compile Include="Context\JobContextMessageValidationContext.cs" />
@@ -451,6 +452,18 @@
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Rules\ESFA.DC.ILR.ValidationService.Rules.csproj">
       <Project>{621B61D1-339D-4910-8C86-8A64AF8822F5}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Rules</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces\ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces.csproj">
+      <Project>{F267B89E-04E1-4295-AC75-7E9D833CF189}</Project>
+      <Name>ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.ValidationActor.Model\ESFA.DC.ILR.ValidationService.ValidationActor.Model.csproj">
+      <Project>{95CF36FF-C198-4B1D-8DD9-6BE0660F81F9}</Project>
+      <Name>ESFA.DC.ILR.ValidationService.ValidationActor.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.ValidationDPActor.Interfaces\ESFA.DC.ILR.ValidationService.ValidationDPActor.Interfaces.csproj">
+      <Project>{6FBDF88F-427D-498A-9A11-42743D8C3136}</Project>
+      <Name>ESFA.DC.ILR.ValidationService.ValidationDPActor.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -93,6 +93,7 @@
     <Compile Include="IValidationErrorCache.cs" />
     <Compile Include="IValidationErrorHandler.cs" />
     <Compile Include="IValidationErrorsDataService.cs" />
+    <Compile Include="IValidationExecutionProvider.cs" />
     <Compile Include="IValidationItemProviderService.cs" />
     <Compile Include="IValidationOutputService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
