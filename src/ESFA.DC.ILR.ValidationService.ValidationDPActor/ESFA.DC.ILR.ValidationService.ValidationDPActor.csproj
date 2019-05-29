@@ -206,7 +206,7 @@
       <Name>ESFA.DC.ILR.ValidationService.Interface</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Providers\ESFA.DC.ILR.ValidationService.Providers.csproj">
-      <Project>{A14B4498-EF4C-4457-BA09-E9ABA42FACE0}</Project>
+      <Project>{E28AFA95-BB56-48BA-8F89-C4CF31D8D2F4}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Providers</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.RuleSet\ESFA.DC.ILR.ValidationService.RuleSet.csproj">
