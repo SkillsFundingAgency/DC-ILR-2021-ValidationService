@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Rules", "ESFA.DC.ILR.ValidationService.Rules\ESFA.DC.ILR.ValidationService.Rules.csproj", "{621B61D1-339D-4910-8C86-8A64AF8822F5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Rules.Tests", "ESFA.DC.ILR.ValidationService.Rules.Tests\ESFA.DC.ILR.ValidationService.Rules.Tests.csproj", "{754EEC2F-826D-46CC-80C0-A0A006CA7CE9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.RuleSet.Tests", "ESFA.DC.ILR.ValidationService.RuleSet.Tests\ESFA.DC.ILR.ValidationService.RuleSet.Tests.csproj", "{72006714-411D-4D25-93FA-C9B78ED98B35}"
@@ -51,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.ILR.ValidationServi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Providers", "ESFA.DC.ILR.ValidationService.Providers\ESFA.DC.ILR.ValidationService.Providers.csproj", "{E28AFA95-BB56-48BA-8F89-C4CF31D8D2F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Rules", "ESFA.DC.ILR.ValidationService.Rules\ESFA.DC.ILR.ValidationService.Rules.csproj", "{21D59AEC-A7EB-4ABB-B378-649B504105C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,14 +59,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{621B61D1-339D-4910-8C86-8A64AF8822F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{621B61D1-339D-4910-8C86-8A64AF8822F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{621B61D1-339D-4910-8C86-8A64AF8822F5}.Debug|x64.ActiveCfg = Debug|x64
-		{621B61D1-339D-4910-8C86-8A64AF8822F5}.Debug|x64.Build.0 = Debug|x64
-		{621B61D1-339D-4910-8C86-8A64AF8822F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{621B61D1-339D-4910-8C86-8A64AF8822F5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{621B61D1-339D-4910-8C86-8A64AF8822F5}.Release|x64.ActiveCfg = Release|Any CPU
-		{621B61D1-339D-4910-8C86-8A64AF8822F5}.Release|x64.Build.0 = Release|Any CPU
 		{754EEC2F-826D-46CC-80C0-A0A006CA7CE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{754EEC2F-826D-46CC-80C0-A0A006CA7CE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{754EEC2F-826D-46CC-80C0-A0A006CA7CE9}.Debug|x64.ActiveCfg = Debug|x64
@@ -228,6 +220,14 @@ Global
 		{E28AFA95-BB56-48BA-8F89-C4CF31D8D2F4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E28AFA95-BB56-48BA-8F89-C4CF31D8D2F4}.Release|x64.ActiveCfg = Release|Any CPU
 		{E28AFA95-BB56-48BA-8F89-C4CF31D8D2F4}.Release|x64.Build.0 = Release|Any CPU
+		{21D59AEC-A7EB-4ABB-B378-649B504105C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21D59AEC-A7EB-4ABB-B378-649B504105C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21D59AEC-A7EB-4ABB-B378-649B504105C6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{21D59AEC-A7EB-4ABB-B378-649B504105C6}.Debug|x64.Build.0 = Debug|Any CPU
+		{21D59AEC-A7EB-4ABB-B378-649B504105C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21D59AEC-A7EB-4ABB-B378-649B504105C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21D59AEC-A7EB-4ABB-B378-649B504105C6}.Release|x64.ActiveCfg = Release|Any CPU
+		{21D59AEC-A7EB-4ABB-B378-649B504105C6}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

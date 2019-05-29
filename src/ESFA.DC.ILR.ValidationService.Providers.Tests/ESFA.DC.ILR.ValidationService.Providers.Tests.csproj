@@ -161,10 +161,6 @@
       <Project>{754EEC2F-826D-46CC-80C0-A0A006CA7CE9}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Rules.Tests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Rules\ESFA.DC.ILR.ValidationService.Rules.csproj">
-      <Project>{621B61D1-339D-4910-8C86-8A64AF8822F5}</Project>
-      <Name>ESFA.DC.ILR.ValidationService.Rules</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
