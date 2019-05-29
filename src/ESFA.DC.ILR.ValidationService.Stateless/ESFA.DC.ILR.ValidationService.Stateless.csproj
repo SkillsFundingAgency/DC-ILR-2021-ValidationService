@@ -89,6 +89,10 @@
     <Reference Include="ESFA.DC.ILR.ReferenceDataService.Model, Version=0.1.59.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.ReferenceDataService.Model.0.1.59\lib\netstandard2.0\ESFA.DC.ILR.ReferenceDataService.Model.dll</HintPath>
     </Reference>
+    <Reference Include="ESFA.DC.ILR.ValidationService.Interface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ESFA.DC.ILR.ValidationService.Interface\bin\Debug\netstandard2.0\ESFA.DC.ILR.ValidationService.Interface.dll</HintPath>
+    </Reference>
     <Reference Include="ESFA.DC.IO.AzureStorage, Version=0.1.14.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.IO.AzureStorage.0.1.14-beta0001\lib\netstandard2.0\ESFA.DC.IO.AzureStorage.dll</HintPath>
     </Reference>
@@ -436,10 +440,6 @@
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj">
       <Project>{41F68A8F-645C-4831-AA62-209AA316CC66}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Interface\ESFA.DC.ILR.ValidationService.Interface.csproj">
-      <Project>{EAD77BAA-6E45-4567-BCDC-F9E5E5BA5AFA}</Project>
-      <Name>ESFA.DC.ILR.ValidationService.Interface</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Providers\ESFA.DC.ILR.ValidationService.Providers.csproj">
       <Project>{A14B4498-EF4C-4457-BA09-E9ABA42FACE0}</Project>
