@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationServi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.RuleSet.Tests", "ESFA.DC.ILR.ValidationService.RuleSet.Tests\ESFA.DC.ILR.ValidationService.RuleSet.Tests.csproj", "{72006714-411D-4D25-93FA-C9B78ED98B35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.ILR.ValidationService.Data", "ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj", "{FAACF863-EB2E-473F-8EF9-F7FA9613F556}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Data.Population", "ESFA.DC.ILR.ValidationService.Data.Population\ESFA.DC.ILR.ValidationService.Data.Population.csproj", "{ACACD78D-34BD-45A9-A756-C637CB8987A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Data.Tests", "ESFA.DC.ILR.ValidationService.Data.Tests\ESFA.DC.ILR.ValidationService.Data.Tests.csproj", "{F8415CB1-6E85-4E4C-AAE9-B1490802FC76}"
@@ -51,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.ILR.ValidationServi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.RuleSet", "ESFA.DC.ILR.ValidationService.RuleSet\ESFA.DC.ILR.ValidationService.RuleSet.csproj", "{E668EA53-2B0A-4753-B91A-28ACD757C322}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Data", "ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj", "{41F68A8F-645C-4831-AA62-209AA316CC66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,14 +83,6 @@ Global
 		{72006714-411D-4D25-93FA-C9B78ED98B35}.Release|Any CPU.Build.0 = Release|Any CPU
 		{72006714-411D-4D25-93FA-C9B78ED98B35}.Release|x64.ActiveCfg = Release|Any CPU
 		{72006714-411D-4D25-93FA-C9B78ED98B35}.Release|x64.Build.0 = Release|Any CPU
-		{FAACF863-EB2E-473F-8EF9-F7FA9613F556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FAACF863-EB2E-473F-8EF9-F7FA9613F556}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FAACF863-EB2E-473F-8EF9-F7FA9613F556}.Debug|x64.ActiveCfg = Debug|x64
-		{FAACF863-EB2E-473F-8EF9-F7FA9613F556}.Debug|x64.Build.0 = Debug|x64
-		{FAACF863-EB2E-473F-8EF9-F7FA9613F556}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FAACF863-EB2E-473F-8EF9-F7FA9613F556}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FAACF863-EB2E-473F-8EF9-F7FA9613F556}.Release|x64.ActiveCfg = Release|Any CPU
-		{FAACF863-EB2E-473F-8EF9-F7FA9613F556}.Release|x64.Build.0 = Release|Any CPU
 		{ACACD78D-34BD-45A9-A756-C637CB8987A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ACACD78D-34BD-45A9-A756-C637CB8987A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACACD78D-34BD-45A9-A756-C637CB8987A7}.Debug|x64.ActiveCfg = Debug|x64
@@ -228,6 +220,14 @@ Global
 		{E668EA53-2B0A-4753-B91A-28ACD757C322}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E668EA53-2B0A-4753-B91A-28ACD757C322}.Release|x64.ActiveCfg = Release|Any CPU
 		{E668EA53-2B0A-4753-B91A-28ACD757C322}.Release|x64.Build.0 = Release|Any CPU
+		{41F68A8F-645C-4831-AA62-209AA316CC66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41F68A8F-645C-4831-AA62-209AA316CC66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41F68A8F-645C-4831-AA62-209AA316CC66}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{41F68A8F-645C-4831-AA62-209AA316CC66}.Debug|x64.Build.0 = Debug|Any CPU
+		{41F68A8F-645C-4831-AA62-209AA316CC66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41F68A8F-645C-4831-AA62-209AA316CC66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41F68A8F-645C-4831-AA62-209AA316CC66}.Release|x64.ActiveCfg = Release|Any CPU
+		{41F68A8F-645C-4831-AA62-209AA316CC66}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

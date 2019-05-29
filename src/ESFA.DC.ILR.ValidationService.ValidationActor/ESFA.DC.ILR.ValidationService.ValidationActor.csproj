@@ -206,7 +206,7 @@
       <Name>ESFA.DC.ILR.ValidationService.Data.Population</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj">
-      <Project>{FAACF863-EB2E-473F-8EF9-F7FA9613F556}</Project>
+      <Project>{41F68A8F-645C-4831-AA62-209AA316CC66}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Interface\ESFA.DC.ILR.ValidationService.Interface.csproj">

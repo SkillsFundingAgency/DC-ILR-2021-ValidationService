@@ -103,10 +103,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj">
-      <Project>{faacf863-eb2e-473f-8ef9-f7fa9613f556}</Project>
-      <Name>ESFA.DC.ILR.ValidationService.Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.ValidationActor.Model\ESFA.DC.ILR.ValidationService.ValidationActor.Model.csproj">
       <Project>{95CF36FF-C198-4B1D-8DD9-6BE0660F81F9}</Project>
       <Name>ESFA.DC.ILR.ValidationService.ValidationActor.Model</Name>
