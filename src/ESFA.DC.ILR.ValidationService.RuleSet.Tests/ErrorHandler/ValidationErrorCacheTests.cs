@@ -15,7 +15,11 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests.ErrorHandler
 
             Parallel.For(0, 1000, (i) =>
             {
-                validationErrorCache.Add(new ValidationError(i.ToString(), i.ToString()));
+                validationErrorCache.Add(new ValidationError()
+                {
+                    RuleName = i.ToString(),
+                    LearnerReferenceNumber = i.ToString()
+                });
             });
 
             for (int i = 0; i < 1000; i++)
