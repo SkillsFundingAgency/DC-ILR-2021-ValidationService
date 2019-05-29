@@ -5,16 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interface\**" />
+    <EmbeddedResource Remove="Interface\**" />
+    <None Remove="Interface\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.2" />
     <PackageReference Include="ESFA.DC.ILR.1920.Constants" Version="0.1.5-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.1920.Desktop.Interface" Version="0.1.0-beta0001" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interface\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Interface\ESFA.DC.ILR.ValidationService.Interface.csproj" />
+    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Modules\ESFA.DC.ILR.ValidationService.Modules.csproj" />
   </ItemGroup>
 
 </Project>

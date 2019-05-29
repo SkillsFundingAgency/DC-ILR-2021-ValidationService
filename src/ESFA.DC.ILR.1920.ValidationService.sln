@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.ILR.ValidationServi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Desktop.Tests", "ESFA.DC.ILR.ValidationService.Desktop.Tests\ESFA.DC.ILR.ValidationService.Desktop.Tests.csproj", "{758E8B3A-0748-4AB7-81F2-7854FE2BFEE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.ILR.ValidationService.Modules", "ESFA.DC.ILR.ValidationService.Modules\ESFA.DC.ILR.ValidationService.Modules.csproj", "{C046DE61-5671-4121-9E48-1800D597DBAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -218,6 +220,14 @@ Global
 		{758E8B3A-0748-4AB7-81F2-7854FE2BFEE7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{758E8B3A-0748-4AB7-81F2-7854FE2BFEE7}.Release|x64.ActiveCfg = Release|Any CPU
 		{758E8B3A-0748-4AB7-81F2-7854FE2BFEE7}.Release|x64.Build.0 = Release|Any CPU
+		{C046DE61-5671-4121-9E48-1800D597DBAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C046DE61-5671-4121-9E48-1800D597DBAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C046DE61-5671-4121-9E48-1800D597DBAC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C046DE61-5671-4121-9E48-1800D597DBAC}.Debug|x64.Build.0 = Debug|Any CPU
+		{C046DE61-5671-4121-9E48-1800D597DBAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C046DE61-5671-4121-9E48-1800D597DBAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C046DE61-5671-4121-9E48-1800D597DBAC}.Release|x64.ActiveCfg = Release|Any CPU
+		{C046DE61-5671-4121-9E48-1800D597DBAC}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
