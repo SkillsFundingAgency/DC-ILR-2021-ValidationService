@@ -1,5 +1,10 @@
 ﻿using Autofac;
 using ESFA.DC.DateTimeProvider.Interface;
+using ESFA.DC.FileService.Interface;
+using ESFA.DC.IO.Interfaces;
+using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.Serialization.Interfaces;
+using Moq;
 
 namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
 {
@@ -9,26 +14,16 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
         {
             containerBuilder.RegisterMock<IDateTimeProvider>();
             containerBuilder.RegisterMock<ILogger>();
-            //Logger
-            //containerBuilder.RegisterType<FileSystemFileService>().As<IFileService>();
-            //containerBuilder.RegisterType<FileSystemKeyValuePersistenceService>()
-            //    .As<IKeyValuePersistenceService>()
-            //    .As<IStreamableKeyValuePersistenceService>();
-
-            //containerBuilder.RegisterType<DecompressionService>().As<IDecompressionService>();
-
-            //var fileSystemKeyValuePersistenceServiceConfiguration = new FileSystemKeyValuePersistenceServiceConfigStub()
-            //{
-            //    Directory = "Sandbox"
-            //};
-
-            //containerBuilder.RegisterInstance(fileSystemKeyValuePersistenceServiceConfiguration).As<IFileSystemKeyValuePersistenceServiceConfig>();
-
-            //containerBuilder.RegisterType<XmlSerializationService>().As<IXmlSerializationService>();
-            //containerBuilder.RegisterType<JsonSerializationService>().As<IJsonSerializationService>().As<ISerializationService>();
+            containerBuilder.RegisterMock<IFileService>();
+            containerBuilder.RegisterMock<IKeyValuePersistenceService>();
+            containerBuilder.RegisterMock<IStreamableKeyValuePersistenceService>();
+            containerBuilder.RegisterMock<IDecompressionService>();
+            containerBuilder.RegisterMock<IXmlSerializationService>();
+            containerBuilder.RegisterMock<IJsonSerializationService>();
+            containerBuilder.RegisterMock<ISerializationService>();
         }
 
-        public static void RegisterMock<T>(this ContainerBuilder containerBuilder)
+        private static void RegisterMock<T>(this ContainerBuilder containerBuilder)
             where T : class
         {
             var mock = Mock.Of<T>();
