@@ -21,6 +21,8 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
 
             containerBuilder.RegisterModule<ValidationServiceDesktopModule>();
 
+            containerBuilder.RegisterCommonServiceStubs();
+
             var container = containerBuilder.Build();
 
             var rulesetOrchestrationService = container.Resolve<IRuleSetOrchestrationService<IMessage, IValidationError>>();
