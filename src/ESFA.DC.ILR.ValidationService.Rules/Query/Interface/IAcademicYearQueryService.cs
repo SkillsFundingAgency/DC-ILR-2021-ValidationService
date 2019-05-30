@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
 {
-    public interface IAcademicYearQueryService
+    public interface IAcademicYearQueryService : IQueryService
     {
         DateTime LastFridayInJuneForDateInAcademicYear(DateTime dateTime);
 

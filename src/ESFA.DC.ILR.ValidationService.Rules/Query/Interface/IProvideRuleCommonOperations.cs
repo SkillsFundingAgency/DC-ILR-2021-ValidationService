@@ -7,7 +7,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
     /// <summary>
     /// i provide common rule operations (definition)
     /// </summary>
-    public interface IProvideRuleCommonOperations
+    public interface IProvideRuleCommonOperations : IQueryService
     {
         /// <summary>
         /// Checks the delivery fams.
