@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
 {
-    public interface IDerivedData_04Rule
+    public interface IDerivedData_04Rule : IDerivedDataRule
     {
         /// <summary>
         /// Gets the earlies start date for.

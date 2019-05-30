@@ -4,7 +4,7 @@
     /// derived data rule 05
     /// Checksum digit for Employer reference number
     /// </summary>
-    public interface IDerivedData_05Rule
+    public interface IDerivedData_05Rule : IDerivedDataRule
     {
         /// <summary>
         /// Gets the invalid length checksum.

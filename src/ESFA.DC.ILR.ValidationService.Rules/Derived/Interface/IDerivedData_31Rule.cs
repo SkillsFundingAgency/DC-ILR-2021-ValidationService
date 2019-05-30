@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
 {
-    public interface IDerivedData_31Rule
+    public interface IDerivedData_31Rule : IDerivedDataRule
     {
         bool IsAdultSkillsFundedEnglishOrMathsAim(ILearningDelivery learningDelivery);
     }

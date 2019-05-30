@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
 {
-    public interface IDerivedData_32Rule
+    public interface IDerivedData_32Rule : IDerivedDataRule
     {
         bool IsOpenApprenticeshipFundedProgramme(ILearningDelivery learningDelivery);
     }
