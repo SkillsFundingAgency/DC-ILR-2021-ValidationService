@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
 {
-    public interface IUlnDataMapper : IMapper
+    public interface IMapper
     {
-        IReadOnlyCollection<long> MapUlns(IReadOnlyCollection<long> ulns);
     }
 }

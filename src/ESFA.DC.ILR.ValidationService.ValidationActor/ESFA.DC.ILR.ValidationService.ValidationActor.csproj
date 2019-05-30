@@ -202,7 +202,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data.Population\ESFA.DC.ILR.ValidationService.Data.Population.csproj">
-      <Project>{ACACD78D-34BD-45A9-A756-C637CB8987A7}</Project>
+      <Project>{A4E3C42B-0838-4157-A75D-4D34AF932685}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Data.Population</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj">

@@ -4,7 +4,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Model;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
 {
-    public interface IOrganisationsDataMapper
+    public interface IOrganisationsDataMapper : IMapper
     {
         IReadOnlyDictionary<long, Organisation> MapOrganisations(IReadOnlyCollection<ReferenceDataService.Model.Organisations.Organisation> organisations);
 
