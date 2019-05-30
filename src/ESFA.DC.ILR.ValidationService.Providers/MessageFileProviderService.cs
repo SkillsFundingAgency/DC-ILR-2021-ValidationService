@@ -8,7 +8,7 @@ using ESFA.DC.Serialization.Interfaces;
 
 namespace ESFA.DC.ILR.ValidationService.Providers
 {
-    public class MessageFileProviderService : IValidationItemProviderService<IMessage>
+    public class MessageFileProviderService : IProvider<IMessage>
     {
         private readonly IXmlSerializationService _xmlSerializationService;
         private readonly IFileService _fileService;
@@ -25,8 +25,6 @@ namespace ESFA.DC.ILR.ValidationService.Providers
         {
             using (var stream = await _fileService.OpenReadStreamAsync(validationContext.Filename, validationContext.Container, cancellationToken))
             {
-                stream.Position = 0;
-
                 return _xmlSerializationService.Deserialize<Message>(stream);
             }
         }

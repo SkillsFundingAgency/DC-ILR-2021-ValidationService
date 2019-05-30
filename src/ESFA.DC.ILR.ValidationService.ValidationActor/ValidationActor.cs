@@ -142,7 +142,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                     IRuleSetOrchestrationService<ILearner, IValidationError> preValidationOrchestrationService = childLifeTimeScope
                         .Resolve<IRuleSetOrchestrationService<ILearner, IValidationError>>();
 
-                    errors = await preValidationOrchestrationService.ExecuteAsync(validationContext, cancellationToken);
+                    errors = await preValidationOrchestrationService.ExecuteAsync(validationContext, message.Learners, cancellationToken);
                     jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} validation done");
                 }
                 catch (Exception ex)

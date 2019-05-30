@@ -6,6 +6,6 @@ namespace ESFA.DC.ILR.ValidationService.Interface
 {
     public interface ILearnerPerActorProviderService
     {
-        Task<IEnumerable<IMessage>> ProvideAsync();
+        IEnumerable<IMessage> Provide(IMessage message);
     }
 }

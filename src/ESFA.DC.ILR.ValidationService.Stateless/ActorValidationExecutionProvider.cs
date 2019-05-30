@@ -54,11 +54,11 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             _logger = logger;
         }
 
-        public async Task ExecuteAsync(IValidationContext validationContext, CancellationToken cancellationToken)
+        public async Task ExecuteAsync(IValidationContext validationContext, IMessage message, CancellationToken cancellationToken)
         {
             // Get L/A and split the learners into separate lists
-            IEnumerable<IMessage> learnerMessageShards = await _learnerPerActorProviderService.ProvideAsync();
-            IEnumerable<IMessage> learnerDPMessageShards = await _learnerDPPerActorProviderService.ProvideAsync();
+            var learnerMessageShards = _learnerPerActorProviderService.Provide(message).ToList();
+            var learnerDPMessageShards = _learnerDPPerActorProviderService.Provide(message).ToList();
 
             List<IValidationActor> learnerValidationActors = new List<IValidationActor>();
             List<IValidationDPActor> learnerDPValidationActors = new List<IValidationDPActor>();

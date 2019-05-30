@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -15,7 +16,8 @@ namespace ESFA.DC.ILR.ValidationService.Providers
     public class PreValidationOrchestrationSfService<U> : IPreValidationOrchestrationService<U>
     {
         private readonly IPopulationService _preValidationPopulationService;
-        private readonly IFileDataCache _fileDataCache;
+        private readonly IProvider<IMessage> _messageProvider;
+        private readonly IProvider<ReferenceDataRoot> _referenceDataRootProvider;
         private readonly IValidationErrorCache<U> _validationErrorCache;
         private readonly IValidationOutputService _validationOutputService;
         private readonly IRuleSetOrchestrationService<IMessage, U> _ruleSetOrchestrationService;
@@ -24,7 +26,8 @@ namespace ESFA.DC.ILR.ValidationService.Providers
 
         public PreValidationOrchestrationSfService(
             IPopulationService preValidationPopulationService,
-            IFileDataCache fileDataCache,
+            IProvider<IMessage> messageProvider,
+            IProvider<ReferenceDataRoot> referenceDataRootProvider,
             IValidationErrorCache<U> validationErrorCache,
             IValidationOutputService validationOutputService,
             IRuleSetOrchestrationService<IMessage, U> ruleSetOrchestrationService,
@@ -32,7 +35,8 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             ILogger logger)
         {
             _preValidationPopulationService = preValidationPopulationService;
-            _fileDataCache = fileDataCache;
+            _messageProvider = messageProvider;
+            _referenceDataRootProvider = referenceDataRootProvider;
             _validationErrorCache = validationErrorCache;
             _validationOutputService = validationOutputService;
             _ruleSetOrchestrationService = ruleSetOrchestrationService;
@@ -54,14 +58,14 @@ namespace ESFA.DC.ILR.ValidationService.Providers
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                await _preValidationPopulationService.PopulateAsync(validationContext, cancellationToken).ConfigureAwait(false);
+                var message = await _messageProvider.ProvideAsync(validationContext, cancellationToken);
+                var referenceDataRoot = await _referenceDataRootProvider.ProvideAsync(validationContext, cancellationToken);
+
+                _preValidationPopulationService.Populate(validationContext, message, referenceDataRoot);
                 _logger.LogDebug($"Population service completed in: {stopWatch.ElapsedMilliseconds}");
-
-                // Set the filename
-                _fileDataCache.FileName = validationContext.Filename;
-
+                
                 // File Validation
-                await _ruleSetOrchestrationService.ExecuteAsync(validationContext, cancellationToken).ConfigureAwait(false);
+                await _ruleSetOrchestrationService.ExecuteAsync(validationContext, message, cancellationToken).ConfigureAwait(false);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -72,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
                     return;
                 }
 
-                await _validationExecutionProvider.ExecuteAsync(validationContext, cancellationToken).ConfigureAwait(false);
+                await _validationExecutionProvider.ExecuteAsync(validationContext, message, cancellationToken).ConfigureAwait(false);
 
                 _logger.LogDebug(
                     $"Actors results collated {_validationErrorCache.ValidationErrors.Count} validation errors");

@@ -15,8 +15,6 @@ namespace ESFA.DC.ILR.ValidationService.Modules
             builder.RegisterGeneric(typeof(AutoFacRuleSetResolutionService<>)).As(typeof(IRuleSetResolutionService<>));
             builder.RegisterGeneric(typeof(RuleSetExecutionService<>)).As(typeof(IRuleSetExecutionService<>));
             builder.RegisterGeneric(typeof(ValidationErrorCache<>)).As(typeof(IValidationErrorCache<>));
-
-            builder.RegisterMock<IValidationItemProviderService<IEnumerable<IMessage>>>();
         }
     }
 }

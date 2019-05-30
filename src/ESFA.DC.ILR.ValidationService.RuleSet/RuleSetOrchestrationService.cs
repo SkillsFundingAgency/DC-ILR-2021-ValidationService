@@ -11,33 +11,40 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet
         where T : class
     {
         private readonly IRuleSetResolutionService<T> _ruleSetResolutionService;
-        private readonly IValidationItemProviderService<IEnumerable<T>> _validationItemProviderService;
         private readonly IRuleSetExecutionService<T> _ruleSetExecutionService;
         private readonly IValidationErrorCache<U> _validationErrorCache;
 
         public RuleSetOrchestrationService(
             IRuleSetResolutionService<T> ruleSetResolutionService,
-            IValidationItemProviderService<IEnumerable<T>> validationItemProviderService,
             IRuleSetExecutionService<T> ruleSetExecutionService,
             IValidationErrorCache<U> validationErrorCache)
         {
             _ruleSetResolutionService = ruleSetResolutionService;
-            _validationItemProviderService = validationItemProviderService;
             _ruleSetExecutionService = ruleSetExecutionService;
             _validationErrorCache = validationErrorCache;
         }
 
-        public async Task<IEnumerable<U>> ExecuteAsync(IValidationContext validationContext, CancellationToken cancellationToken)
+        public async Task<IEnumerable<U>> ExecuteAsync(IValidationContext validationContext, IEnumerable<T> validationItems, CancellationToken cancellationToken)
         {
             List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve(validationContext).ToList();
 
-            IEnumerable<T> items = await _validationItemProviderService.ProvideAsync(validationContext, cancellationToken);
-            foreach (T validationItem in items)
+            foreach (T validationItem in validationItems)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
                 _ruleSetExecutionService.Execute(ruleSet, validationItem);
             }
+
+            return _validationErrorCache.ValidationErrors;
+        }
+
+        public async Task<IEnumerable<U>> ExecuteAsync(IValidationContext validationContext, T validationItem, CancellationToken cancellationToken)
+        {
+            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve(validationContext).ToList();
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            _ruleSetExecutionService.Execute(ruleSet, validationItem);
 
             return _validationErrorCache.ValidationErrors;
         }

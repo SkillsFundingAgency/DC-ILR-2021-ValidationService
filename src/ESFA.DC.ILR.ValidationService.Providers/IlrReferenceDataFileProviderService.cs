@@ -7,7 +7,7 @@ using ESFA.DC.Serialization.Interfaces;
 
 namespace ESFA.DC.ILR.ValidationService.Providers
 {
-    public class IlrReferenceDataFileProviderService : IValidationItemProviderService<ReferenceDataRoot>
+    public class IlrReferenceDataFileProviderService : IProvider<ReferenceDataRoot>
     {
         private readonly IJsonSerializationService _jsonSerializationService;
         private readonly IFileService _fileService;
@@ -24,8 +24,6 @@ namespace ESFA.DC.ILR.ValidationService.Providers
         {
             using (var stream = await _fileService.OpenReadStreamAsync(validationContext.IlrReferenceDataKey, validationContext.Container, cancellationToken))
             {
-                stream.Position = 0;
-
                 return _jsonSerializationService.Deserialize<ReferenceDataRoot>(stream);
             }
         }
