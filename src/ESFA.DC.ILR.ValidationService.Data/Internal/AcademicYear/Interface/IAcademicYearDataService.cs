@@ -1,11 +1,12 @@
 ﻿using System;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface
 {
     /// <summary>
     /// the academic year data service
     /// </summary>
-    public interface IAcademicYearDataService
+    public interface IAcademicYearDataService : IDataService
     {
         /// <summary>
         /// Gets the academic year date of today.
