@@ -7,7 +7,7 @@ using ESFA.DC.ILR.ValidationService.Data.Internal.Model;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
 {
-    public interface ILookupsDataMapper
+    public interface ILookupsDataMapper : IMapper
     {
         IReadOnlyDictionary<string, IReadOnlyDictionary<string, IlrLookup>> BuildLookups(IReadOnlyCollection<Lookup> lookups);
 

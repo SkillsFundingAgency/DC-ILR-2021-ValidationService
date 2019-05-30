@@ -31,28 +31,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Extensions
         }
 
         [Fact]
-        public void ToCaseInsensitiveDictionary()
-        {
-            var enumerable = new List<string>() { "abc", "def" };
-
-            var hashset = enumerable.ToCaseInsensitiveDictionary(k => k, v => v);
-
-            hashset.Should().HaveCount(2);
-            hashset.Should().ContainKey("ABC");
-            hashset["DEF"].Should().Be("def");
-        }
-
-        [Fact]
-        public void ToCaseInsensitiveDictionary_Null()
-        {
-            IEnumerable<string> enumerable = null;
-
-            Action action = () => enumerable.ToCaseInsensitiveDictionary(k => k, v => v);
-
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void SplitList()
         {
             var enumerable = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };

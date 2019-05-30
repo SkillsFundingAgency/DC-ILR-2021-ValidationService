@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using Autofac;
 using Autofac.Features.AttributeFilters;
 using ESFA.DC.DateTimeProvider.Interface;
@@ -37,6 +38,7 @@ using ESFA.DC.ILR.ValidationService.Providers;
 using ESFA.DC.ILR.ValidationService.Providers.Output;
 using ESFA.DC.ILR.ValidationService.RuleSet;
 using ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler;
+using Module = Autofac.Module;
 
 namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
 {

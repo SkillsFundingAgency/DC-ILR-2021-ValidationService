@@ -83,10 +83,6 @@
     <Compile Include="RuleSetOrchestrationService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data.Population\ESFA.DC.ILR.ValidationService.Data.Population.csproj">
-      <Project>{ACACD78D-34BD-45A9-A756-C637CB8987A7}</Project>
-      <Name>ESFA.DC.ILR.ValidationService.Data.Population</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Interface\ESFA.DC.ILR.ValidationService.Interface.csproj">
       <Project>{513c4f05-55f4-4aef-b3eb-427c024da043}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Interface</Name>
