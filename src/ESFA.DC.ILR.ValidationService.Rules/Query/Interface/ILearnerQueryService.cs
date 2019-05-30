@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
 {
-    public interface ILearnerQueryService
+    public interface ILearnerQueryService : IQueryService
     {
         bool HasLearningDeliveryFAMCodeForType(ILearner learner, string famType, string famCode);
     }
