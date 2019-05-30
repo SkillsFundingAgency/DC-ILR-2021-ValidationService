@@ -103,7 +103,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
             builder.RegisterType<LarsDataMapper>().As<ILarsDataMapper>().InstancePerLifetimeScope();
             builder.RegisterType<OrganisationsDataMapper>().As<IOrganisationsDataMapper>().InstancePerLifetimeScope();
             builder.RegisterType<PostcodesDataMapper>().As<IPostcodesDataMapper>().InstancePerLifetimeScope();
-            builder.RegisterType<containeUlnDataMapper>().As<IUlnDataMapper>().InstancePerLifetimeScope();
+            builder.RegisterType<UlnDataMapper>().As<IUlnDataMapper>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationErrorsDataMapper>().As<IValidationErrorsDataMapper>().InstancePerLifetimeScope();
         }
     }
