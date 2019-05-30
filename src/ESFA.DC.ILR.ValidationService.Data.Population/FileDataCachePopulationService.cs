@@ -11,19 +11,18 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
     public class FileDataCachePopulationService : IFileDataCachePopulationService
     {
         private readonly IFileDataCache _fileDataCache;
-        private readonly ICache<IMessage> _messageCache;
 
-        public FileDataCachePopulationService(IFileDataCache fileDataCache, ICache<IMessage> messageCache)
+        public FileDataCachePopulationService(IFileDataCache fileDataCache)
         {
             _fileDataCache = fileDataCache;
-            _messageCache = messageCache;
         }
 
-        public async Task PopulateAsync(IValidationContext validationContext, CancellationToken cancellationToken)
+        public void Populate(IValidationContext validationContext, IMessage message)
         {
             var fileDataCache = (FileDataCache)_fileDataCache;
 
-            var message = _messageCache.Item;
+            fileDataCache.FileName = validationContext.Filename;
+
             if (message != null)
             {
                 fileDataCache.FilePreparationDate = message.HeaderEntity.CollectionDetailsEntity.FilePreparationDate;

@@ -41,56 +41,34 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
                 message
             };
 
-            var messageCacheMock = new Mock<ICache<IMessage>>();
+            var learnerDPPerActorProviderServiceMock = new LearnerDPPerActorProviderService();
 
-            messageCacheMock.SetupGet(mc => mc.Item).Returns(message);
-
-            var learnerDPPerActorProviderServiceMock = new LearnerDPPerActorProviderService(messageCacheMock.Object);
-
-            (await learnerDPPerActorProviderServiceMock.ProvideAsync()).Should().BeEquivalentTo(messages);
+            learnerDPPerActorProviderServiceMock.Provide(message).Should().BeEquivalentTo(messages);
         }
 
         [Fact]
         public async Task ProvideAsync_MultipleShards()
         {
-            var testLearners = new MessageLearner[]
-            {
-                new MessageLearner { LearnRefNumber = "Learner1" },
-                new MessageLearner { LearnRefNumber = "Learner2" },
-            };
+            var testLearnerDP = new List<MessageLearnerDestinationandProgression>();
 
-            var testLearnerDP = new MessageLearnerDestinationandProgression[]
+            for (var i = 0; i < 1001; i++)
             {
-                new MessageLearnerDestinationandProgression { LearnRefNumber = "Learner1" },
-                new MessageLearnerDestinationandProgression { LearnRefNumber = "Learner2" },
-            };
+                testLearnerDP.Add(new MessageLearnerDestinationandProgression());
+            }
 
             IMessage message = new Message
             {
                 Header = new MessageHeader(),
-                LearnerDestinationandProgression = testLearnerDP,
+                LearnerDestinationandProgression = testLearnerDP.ToArray(),
                 LearningProvider = new MessageLearningProvider { UKPRN = 12345678 },
             };
-
-
-            var messages = new List<IMessage>
-            {
-                message
-            };
-
-            var messageCacheMock = new Mock<ICache<IMessage>>();
-            messageCacheMock.SetupGet(mc => mc.Item).Returns(message);
-
-            var learnerDPPerActorProviderServiceMock = new Mock<LearnerDPPerActorProviderService>(messageCacheMock.Object);
-            learnerDPPerActorProviderServiceMock.Setup(ss => ss.CalculateLearnerDPsPerActor(message.LearnerDestinationAndProgressions.Count)).Returns(1);
-
-
-            var lpa = (await learnerDPPerActorProviderServiceMock.Object.ProvideAsync()).ToArray();
+            
+            var lpa = new LearnerDPPerActorProviderService().Provide(message).ToArray();
 
             lpa.Select(m => m).Should().HaveCount(2);
             lpa[0].Learners.Should().BeNullOrEmpty();
             lpa[1].Learners.Should().BeNullOrEmpty();
-            lpa[0].LearnerDestinationAndProgressions.Should().HaveCount(1);
+            lpa[0].LearnerDestinationAndProgressions.Should().HaveCount(1000);
             lpa[1].LearnerDestinationAndProgressions.Should().HaveCount(1);
         }
     }

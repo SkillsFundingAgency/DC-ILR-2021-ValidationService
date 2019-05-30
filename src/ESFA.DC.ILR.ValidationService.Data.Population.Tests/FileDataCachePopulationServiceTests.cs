@@ -56,17 +56,13 @@ namespace ESFA.DC.ILR.ValidationService.FileData.Tests
                 LearnerDestinationAndProgressions = learnerDestinationAndProgressions
             };
 
-            var messageCacheMock = new Mock<ICache<IMessage>>();
-
-            messageCacheMock.SetupGet(mc => mc.Item).Returns(message);
-
             var fileDataCache = new FileDataCache();
 
             var validationContextMock = new Mock<IValidationContext>();
 
-            var fileDataCachePopulationService = new FileDataCachePopulationService(fileDataCache, messageCacheMock.Object);
+            var fileDataCachePopulationService = new FileDataCachePopulationService(fileDataCache);
 
-            await fileDataCachePopulationService.PopulateAsync(validationContextMock.Object, CancellationToken.None);
+            fileDataCachePopulationService.Populate(validationContextMock.Object, message);
 
             fileDataCache.FilePreparationDate.Should().Be(filePreparationDate);
             fileDataCache.UKPRN.Should().Be(ukprn);

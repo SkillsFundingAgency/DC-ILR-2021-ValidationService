@@ -138,10 +138,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LearnerDPProviderServiceTests.cs" />
     <Compile Include="LearnerDPPerActorProviderServiceTests.cs" />
     <Compile Include="LearnerPerActorProviderServiceTests.cs" />
-    <Compile Include="LearnerProviderServiceTests.cs" />
     <Compile Include="IlrReferenceDataFileProviderServiceTests.cs" />
     <Compile Include="MessageFileProviderServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
