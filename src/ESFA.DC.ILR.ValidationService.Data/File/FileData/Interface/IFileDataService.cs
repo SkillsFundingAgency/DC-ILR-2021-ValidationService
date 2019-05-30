@@ -1,10 +1,9 @@
-﻿using ESFA.DC.ILR.Model.Interface;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface
 {
-    public interface IFileDataService
+    public interface IFileDataService : IDataService
     {
         int UKPRN();
 

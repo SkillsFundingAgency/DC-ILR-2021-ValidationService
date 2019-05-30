@@ -1,4 +1,6 @@
-﻿namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
+﻿using ESFA.DC.ILR.ValidationService.Interface;
+
+namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
 {
     /// <summary>
     /// derived data rule 05

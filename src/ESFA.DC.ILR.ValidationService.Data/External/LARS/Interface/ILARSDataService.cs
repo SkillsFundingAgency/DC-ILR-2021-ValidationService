@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
 {
     /// <summary>
     /// the lars data service
     /// </summary>
-    public interface ILARSDataService
+    public interface ILARSDataService : IDataService
     {
         /// <summary>
         /// Gets the deliveries for.
