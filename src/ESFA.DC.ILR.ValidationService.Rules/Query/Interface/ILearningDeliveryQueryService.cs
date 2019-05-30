@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
 {
-    public interface ILearningDeliveryQueryService
+    public interface ILearningDeliveryQueryService : IQueryService
     {
         double? AverageAddHoursPerLearningDay(ILearningDelivery learningDelivery);
     }

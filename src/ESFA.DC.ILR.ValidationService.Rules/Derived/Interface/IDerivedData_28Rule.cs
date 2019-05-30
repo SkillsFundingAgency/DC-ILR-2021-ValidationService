@@ -6,7 +6,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
     /// derived data rule 28
     /// Adult skills funded learner unemployed with benefits on learning aim start date
     /// </summary>
-    public interface IDerivedData_28Rule
+    public interface IDerivedData_28Rule : IDerivedDataRule
     {
         /// <summary>
         /// Determines whether [is adult skills unemployed with benefits] [this delivery].

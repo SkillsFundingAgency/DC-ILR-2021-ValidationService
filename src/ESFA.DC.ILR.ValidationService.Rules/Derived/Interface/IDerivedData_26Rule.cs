@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
 {
-    public interface IDerivedData_26Rule
+    public interface IDerivedData_26Rule : IDerivedDataRule
     {
         bool LearnerOnBenefitsAtStartOfCompletedZESF0001AimForContract(ILearner learner, string conRefNumber);
     }

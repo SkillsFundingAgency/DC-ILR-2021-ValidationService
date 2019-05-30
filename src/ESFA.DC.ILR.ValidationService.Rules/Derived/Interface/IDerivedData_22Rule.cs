@@ -7,7 +7,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
     /// <summary>
     /// derived data rule 22
     /// </summary>
-    public interface IDerivedData_22Rule
+    public interface IDerivedData_22Rule : IDerivedDataRule
     {
         /// <summary>
         /// Gets the latest learning start for esf contract.

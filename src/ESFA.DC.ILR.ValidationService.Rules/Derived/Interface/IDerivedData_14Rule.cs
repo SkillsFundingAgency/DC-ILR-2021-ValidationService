@@ -1,6 +1,6 @@
 ﻿namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
 {
-    public interface IDerivedData_14Rule
+    public interface IDerivedData_14Rule : IDerivedDataRule
     {
         char InvalidLengthChecksum { get; }
 
