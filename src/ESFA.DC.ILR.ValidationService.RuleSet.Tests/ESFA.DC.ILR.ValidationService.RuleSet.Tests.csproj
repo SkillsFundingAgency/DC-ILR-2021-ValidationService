@@ -122,16 +122,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Interface\ESFA.DC.ILR.ValidationService.Interface.csproj">
-      <Project>{513C4F05-55F4-4AEF-B3EB-427C024DA043}</Project>
+      <Project>{EAD77BAA-6E45-4567-BCDC-F9E5E5BA5AFA}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Interface</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.RuleSet\ESFA.DC.ILR.ValidationService.RuleSet.csproj">
-      <Project>{ebe0154d-6f8b-4dbb-a18f-4929ab74d204}</Project>
+      <Project>{E668EA53-2B0A-4753-B91A-28ACD757C322}</Project>
       <Name>ESFA.DC.ILR.ValidationService.RuleSet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Stubs\ESFA.DC.ILR.ValidationService.Stubs.csproj">
-      <Project>{BA81EBE1-6C72-454E-85D5-761B13911B82}</Project>
-      <Name>ESFA.DC.ILR.ValidationService.Stubs</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

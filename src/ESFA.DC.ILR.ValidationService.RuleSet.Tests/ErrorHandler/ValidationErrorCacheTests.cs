@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler;
 using ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler.Model;
 using FluentAssertions;
@@ -15,7 +16,11 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests.ErrorHandler
 
             Parallel.For(0, 1000, (i) =>
             {
-                validationErrorCache.Add(new ValidationError(i.ToString(), i.ToString()));
+                validationErrorCache.Add(new ValidationError()
+                {
+                    RuleName = i.ToString(),
+                    LearnerReferenceNumber = i.ToString()
+                });
             });
 
             for (int i = 0; i < 1000; i++)
@@ -24,9 +29,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests.ErrorHandler
             }
         }
 
-        private ValidationErrorCache NewCache()
+        private ValidationErrorCache<IValidationError> NewCache()
         {
-            return new ValidationErrorCache();
+            return new ValidationErrorCache<IValidationError>();
         }
     }
 }

@@ -25,7 +25,14 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler
 
         public IValidationError BuildValidationError(string ruleName, string learnRefNumber, long? aimSequenceNumber, Severity? severity, IEnumerable<IErrorMessageParameter> errorMessageParameters)
         {
-            return new ValidationError(ruleName, learnRefNumber, aimSequenceNumber, severity, errorMessageParameters);
+            return new ValidationError()
+            {
+                RuleName = ruleName,
+                LearnerReferenceNumber = learnRefNumber,
+                AimSequenceNumber = aimSequenceNumber,
+                Severity = severity,
+                ErrorMessageParameters = errorMessageParameters
+            };
         }
 
         public IErrorMessageParameter BuildErrorMessageParameter(string propertyName, object value)

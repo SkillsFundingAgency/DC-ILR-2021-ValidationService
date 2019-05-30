@@ -91,11 +91,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OneHundredThousandLearnerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PreValidationContextStub.cs" />
-    <Compile Include="SixHundredRuleRulesetResolutionService.cs" />
-    <Compile Include="ValidationOutputServiceStub.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ESFA.DC.ILR.ValidationService.Stubs.ruleset">
@@ -110,7 +106,7 @@
       <Name>ESFA.DC.ILR.ValidationService.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Interface\ESFA.DC.ILR.ValidationService.Interface.csproj">
-      <Project>{513C4F05-55F4-4AEF-B3EB-427C024DA043}</Project>
+      <Project>{EAD77BAA-6E45-4567-BCDC-F9E5E5BA5AFA}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Interface</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Providers\ESFA.DC.ILR.ValidationService.Providers.csproj">

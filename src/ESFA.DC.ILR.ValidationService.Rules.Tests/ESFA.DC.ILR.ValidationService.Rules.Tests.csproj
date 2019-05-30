@@ -659,19 +659,15 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj">
-      <Project>{FAACF863-EB2E-473F-8EF9-F7FA9613F556}</Project>
+      <Project>{41F68A8F-645C-4831-AA62-209AA316CC66}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Interface\ESFA.DC.ILR.ValidationService.Interface.csproj">
-      <Project>{513C4F05-55F4-4AEF-B3EB-427C024DA043}</Project>
+      <Project>{EAD77BAA-6E45-4567-BCDC-F9E5E5BA5AFA}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Interface</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.RuleSet\ESFA.DC.ILR.ValidationService.RuleSet.csproj">
-      <Project>{EBE0154D-6F8B-4DBB-A18F-4929AB74D204}</Project>
-      <Name>ESFA.DC.ILR.ValidationService.RuleSet</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Rules\ESFA.DC.ILR.ValidationService.Rules.csproj">
-      <Project>{621B61D1-339D-4910-8C86-8A64AF8822F5}</Project>
+      <Project>{21D59AEC-A7EB-4ABB-B378-649B504105C6}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Rules</Name>
     </ProjectReference>
   </ItemGroup>
