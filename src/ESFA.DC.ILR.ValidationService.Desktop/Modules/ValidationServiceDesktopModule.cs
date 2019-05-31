@@ -19,7 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Modules
             builder.RegisterModule<DataCacheModule>();
             builder.RegisterModule<QueryServiceModule>();
             builder.RegisterModule<DerivedDataModule>();
-            builder.RegisterModule<ProvideLookupModule>();
         }
     }
 }
