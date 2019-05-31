@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler;
 using ESFA.DC.ILR.ValidationService.RuleSet.Tests.ErrorHandler;
 using ESFA.DC.ILR.ValidationService.RuleSet.Tests.Rules;
 using FluentAssertions;
@@ -17,7 +18,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
         {
             var output = new List<string> { "1", "2", "3" };
 
-            IValidationErrorCache<string> validationErrorCache = new ValidationErrorCacheGenericTest<string>();
+            IValidationErrorCache validationErrorCache = new ValidationErrorCache();
             var validationContextMock = new Mock<IValidationContext>();
 
             var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<string>>();
@@ -35,9 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
         [Fact]
         public async Task Execute()
         {
-            var output = new List<string> { "1", "2", "3", "1", "2", "3" };
-
-            IValidationErrorCache<string> validationErrorCache = new ValidationErrorCacheGenericTest<string>();
+            IValidationErrorCache validationErrorCache = new ValidationErrorCache();
 
             var ruleSet = new List<IRule<string>> { new RuleOne(validationErrorCache), new RuleTwo(validationErrorCache) };
 
@@ -57,16 +56,16 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             var service = NewService(ruleSetResolutionServiceMock.Object, ruleSetExecutionService, validationErrorCache);
 
-            (await service.ExecuteAsync(validationContextMock.Object, validationItems, cancellationToken)).Should().BeEquivalentTo(output);
+            (await service.ExecuteAsync(validationContextMock.Object, validationItems, cancellationToken)).Should().HaveCount(3);
         }
 
-        private RuleSetOrchestrationService<T, U> NewService<T, U>(
+        private RuleSetOrchestrationService<T> NewService<T>(
             IRuleSetResolutionService<T> ruleSetResolutionService = null,
             IRuleSetExecutionService<T> ruleSetExecutionService = null,
-            IValidationErrorCache<U> validationErrorCache = null)
+            IValidationErrorCache validationErrorCache = null)
             where T : class
         {
-            return new RuleSetOrchestrationService<T, U>(
+            return new RuleSetOrchestrationService<T>(
                 ruleSetResolutionService,
                 ruleSetExecutionService,
                 validationErrorCache);

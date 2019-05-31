@@ -129,8 +129,8 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
                 try
                 {
                     jobLogger.LogDebug($"{nameof(ValidationDPActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} started Destination and Progressions: {message.LearnerDestinationAndProgressions.Count}");
-                    IRuleSetOrchestrationService<ILearnerDestinationAndProgression, IValidationError> preValidationOrchestrationService = childLifeTimeScope
-                        .Resolve<IRuleSetOrchestrationService<ILearnerDestinationAndProgression, IValidationError>>();
+                    IRuleSetOrchestrationService<ILearnerDestinationAndProgression> preValidationOrchestrationService = childLifeTimeScope
+                        .Resolve<IRuleSetOrchestrationService<ILearnerDestinationAndProgression>>();
 
                     errors = await preValidationOrchestrationService.ExecuteAsync(validationContext, message.LearnerDestinationAndProgressions, cancellationToken);
                     jobLogger.LogDebug($"{nameof(ValidationDPActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} Destination and Progression validation done");
