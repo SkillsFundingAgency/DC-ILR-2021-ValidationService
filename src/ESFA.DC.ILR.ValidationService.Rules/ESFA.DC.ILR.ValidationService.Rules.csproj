@@ -7,7 +7,6 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.2" />
     <PackageReference Include="ESFA.DC.DateTimeProvider.Interface" Version="0.1.6-beta0001" />
-    <PackageReference Include="ESFA.DC.ILR.1920.Model" Version="0.1.2-beta0001" />
   </ItemGroup>
 
   <ItemGroup>
