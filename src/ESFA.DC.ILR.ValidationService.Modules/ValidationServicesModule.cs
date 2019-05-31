@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Autofac;
-using ESFA.DC.ILR.Model.Interface;
+﻿using Autofac;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.RuleSet;
 using ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler;
@@ -15,6 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Modules
             builder.RegisterGeneric(typeof(AutoFacRuleSetResolutionService<>)).As(typeof(IRuleSetResolutionService<>));
             builder.RegisterGeneric(typeof(RuleSetExecutionService<>)).As(typeof(IRuleSetExecutionService<>));
             builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>();
+            builder.RegisterType<ValidationErrorHandler>().As<IValidationErrorHandler>();
         }
     }
 }
