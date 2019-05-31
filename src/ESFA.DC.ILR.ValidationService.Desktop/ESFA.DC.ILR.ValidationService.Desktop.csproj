@@ -17,8 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj" />
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Interface\ESFA.DC.ILR.ValidationService.Interface.csproj" />
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Modules\ESFA.DC.ILR.ValidationService.Modules.csproj" />
+    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Rules\ESFA.DC.ILR.ValidationService.Rules.csproj" />
   </ItemGroup>
 
 </Project>

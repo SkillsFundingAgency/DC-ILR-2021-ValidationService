@@ -106,6 +106,10 @@
     <Compile Include="ValidationServiceDesktopTaskTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj">
+      <Project>{41F68A8F-645C-4831-AA62-209AA316CC66}</Project>
+      <Name>ESFA.DC.ILR.ValidationService.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Desktop\ESFA.DC.ILR.ValidationService.Desktop.csproj">
       <Project>{78ED505A-B3D7-4DB6-B2C5-26366CDC4093}</Project>
       <Name>ESFA.DC.ILR.ValidationService.Desktop</Name>
