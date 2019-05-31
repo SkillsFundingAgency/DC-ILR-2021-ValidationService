@@ -1,12 +1,13 @@
 ﻿using ESFA.DC.ILR.ValidationService.Interface;
+using Moq;
 
 namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests.Rules
 {
     public class RuleOne : IRule<string>
     {
-        private readonly IValidationErrorCache<string> _validationErrorCache;
+        private readonly IValidationErrorCache _validationErrorCache;
 
-        public RuleOne(IValidationErrorCache<string> validationErrorCache)
+        public RuleOne(IValidationErrorCache validationErrorCache)
         {
             _validationErrorCache = validationErrorCache;
         }
@@ -15,7 +16,10 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests.Rules
 
         public void Validate(string objectToValidate)
         {
-            _validationErrorCache.Add("1");
+            var validationErrorMock = new Mock<IValidationError>();
+            validationErrorMock.SetupGet(e => e.RuleName).Returns("1");
+
+            _validationErrorCache.Add(validationErrorMock.Object);
         }
     }
 }

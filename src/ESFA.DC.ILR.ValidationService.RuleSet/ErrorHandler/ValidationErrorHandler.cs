@@ -7,10 +7,10 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler
 {
     public class ValidationErrorHandler : IValidationErrorHandler
     {
-        private readonly IValidationErrorCache<IValidationError> _validationErrorCache;
+        private readonly IValidationErrorCache _validationErrorCache;
         private readonly IValidationErrorsDataService _validationErrorsDataService;
 
-        public ValidationErrorHandler(IValidationErrorCache<IValidationError> validationErrorCache, IValidationErrorsDataService validationErrorsDataService)
+        public ValidationErrorHandler(IValidationErrorCache validationErrorCache, IValidationErrorsDataService validationErrorsDataService)
         {
             _validationErrorCache = validationErrorCache;
             _validationErrorsDataService = validationErrorsDataService;

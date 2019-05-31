@@ -2,10 +2,10 @@
 
 namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface IValidationErrorCache<T>
+    public interface IValidationErrorCache
     {
-        IReadOnlyCollection<T> ValidationErrors { get; }
+        IReadOnlyCollection<IValidationError> ValidationErrors { get; }
 
-        void Add(T validationError);
+        void Add(IValidationError validationError);
     }
 }

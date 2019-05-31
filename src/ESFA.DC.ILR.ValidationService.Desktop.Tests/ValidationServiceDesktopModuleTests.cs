@@ -22,7 +22,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
 
             var container = containerBuilder.Build();
 
-            var rulesetOrchestrationService = container.Resolve<IRuleSetOrchestrationService<IMessage, IValidationError>>();
+            var rulesetOrchestrationService = container.Resolve<IRuleSetOrchestrationService<IMessage>>();
 
             rulesetOrchestrationService.Should().NotBeNull();
         }

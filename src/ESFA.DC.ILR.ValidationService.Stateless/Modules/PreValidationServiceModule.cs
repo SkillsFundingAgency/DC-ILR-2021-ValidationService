@@ -46,20 +46,20 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<PreValidationOrchestrationSfService<IValidationError>>().As<IPreValidationOrchestrationService<IValidationError>>().InstancePerLifetimeScope();
+            builder.RegisterType<PreValidationOrchestrationSfService>().As<IPreValidationOrchestrationService>().InstancePerLifetimeScope();
 
             builder.RegisterType<MessageFileProviderService>().As<IProvider<IMessage>>().InstancePerLifetimeScope();
             builder.RegisterType<IlrReferenceDataFileProviderService>().As<IProvider<ReferenceDataRoot>>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationOutputService>().As<IValidationOutputService>().WithAttributeFiltering().InstancePerLifetimeScope();
             builder.RegisterType<LearnerPerActorProviderService>().As<ILearnerPerActorProviderService>().InstancePerLifetimeScope();
             builder.RegisterType<LearnerDPPerActorProviderService>().As<ILearnerDPPerActorProviderService>().InstancePerLifetimeScope();
-            builder.RegisterType<ValidationErrorCache<IValidationError>>().As<IValidationErrorCache<IValidationError>>().InstancePerLifetimeScope();
+            builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>().InstancePerLifetimeScope();
             builder.RegisterType<PreValidationPopulationService>().As<IPopulationService>().InstancePerLifetimeScope();
-            builder.RegisterType<RuleSetOrchestrationService<IMessage, IValidationError>>().As<IRuleSetOrchestrationService<IMessage, IValidationError>>();
+            builder.RegisterType<RuleSetOrchestrationService<IMessage>>().As<IRuleSetOrchestrationService<IMessage>>();
             builder.RegisterType<AutoFacRuleSetResolutionService<IMessage>>().As<IRuleSetResolutionService<IMessage>>();
             builder.RegisterType<RuleSetExecutionService<IMessage>>().As<IRuleSetExecutionService<IMessage>>();
             builder.RegisterType<ValidationErrorHandler>().As<IValidationErrorHandler>().InstancePerLifetimeScope();
-            builder.RegisterType<ActorValidationExecutionProvider<IValidationError>>().As<IValidationExecutionProvider<IValidationError>>().InstancePerLifetimeScope();
+            builder.RegisterType<ActorValidationExecutionProvider>().As<IValidationExecutionProvider>().InstancePerLifetimeScope();
 
             builder.RegisterType<PreValidationPopulationService>().As<IPopulationService>().InstancePerLifetimeScope();
             builder.RegisterModule<MessageRuleSetModule>();

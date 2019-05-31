@@ -21,35 +21,28 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
         private const string Warning = "W";
         private const string Fail = "F";
 
-        private readonly IValidationErrorCache<IValidationError> _validationErrorCache;
-        private readonly ICache<IMessage> _messageCache;
         private readonly IFileService _fileService;
         private readonly IJsonSerializationService _serializationService;
         private readonly IValidationErrorsDataService _validationErrorsDataService;
         private readonly ILogger _logger;
 
         public ValidationOutputService(
-            IValidationErrorCache<IValidationError> validationErrorCache,
-            ICache<IMessage> messageCache,
             IFileService fileService,
             IJsonSerializationService serializationService,
             IValidationErrorsDataService validationErrorsDataService,
             ILogger logger)
         {
-            _validationErrorCache = validationErrorCache;
-            _messageCache = messageCache;
             _fileService = fileService;
             _serializationService = serializationService;
             _validationErrorsDataService = validationErrorsDataService;
             _logger = logger;
         }
 
-        public async Task ProcessAsync(IValidationContext validationContext, CancellationToken cancellationToken)
+        public async Task ProcessAsync(IValidationContext validationContext, IMessage message, IEnumerable<IValidationError> validationErrors, CancellationToken cancellationToken)
         {
             var existingValidationErrors = await GetExistingValidationErrors(validationContext, cancellationToken);
 
-            var validationErrors = _validationErrorCache
-                .ValidationErrors
+            var outputValidationErrors = validationErrors
                 .Select(ve => new ValidationError
                 {
                     LearnerReferenceNumber = ve.LearnerReferenceNumber,
@@ -64,13 +57,13 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
                     }).ToList()
                 }).ToList();
 
-            validationErrors.AddRange(existingValidationErrors);
+            outputValidationErrors.AddRange(existingValidationErrors);
 
-            var invalidLearnerRefNumbers = BuildInvalidLearnRefNumbers(validationErrors).ToList();
-            var validLearnerRefNumbers = BuildValidLearnRefNumbers(_messageCache.Item, invalidLearnerRefNumbers).ToList();
+            var invalidLearnerRefNumbers = BuildInvalidLearnRefNumbers(outputValidationErrors).ToList();
+            var validLearnerRefNumbers = BuildValidLearnRefNumbers(message, invalidLearnerRefNumbers).ToList();
             _logger.LogDebug($"ValidationOutputService invalid:{invalidLearnerRefNumbers.Count} valid:{validLearnerRefNumbers.Count}");
 
-            var validationErrorMessageLookups = validationErrors
+            var validationErrorMessageLookups = outputValidationErrors
                 .Select(ve => ve.RuleName)
                 .Distinct()
                 .Select(rn => new ValidationErrorMessageLookup
@@ -83,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Output
                 validationContext,
                 validLearnerRefNumbers,
                 invalidLearnerRefNumbers,
-                validationErrors,
+                outputValidationErrors,
                 validationErrorMessageLookups,
                 cancellationToken);
         }

@@ -20,7 +20,7 @@ using Microsoft.ServiceFabric.Actors.Client;
 
 namespace ESFA.DC.ILR.ValidationService.Stateless
 {
-    public class ActorValidationExecutionProvider<U> : IValidationExecutionProvider<U>
+    public class ActorValidationExecutionProvider : IValidationExecutionProvider
     {
         private const string _validationActorServiceName = "ValidationActorService";
         private const string _validationDPActorServiceName = "ValidationDPActorService";
@@ -31,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
         private readonly IInternalDataCache _internalDataCache;
         private readonly IExternalDataCache _externalDataCache;
         private readonly IFileDataCache _fileDataCache;
-        private readonly IValidationErrorCache<U> _validationErrorCache;
+        private readonly IValidationErrorCache _validationErrorCache;
         private readonly ILogger _logger;
 
         public ActorValidationExecutionProvider(
@@ -41,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             IInternalDataCache internalDataCache,
             IExternalDataCache externalDataCache,
             IFileDataCache fileDataCache,
-            IValidationErrorCache<U> validationErrorCache,
+            IValidationErrorCache validationErrorCache,
             ILogger logger)
         {
             _learnerPerActorProviderService = learnerPerActorProviderService;
@@ -115,9 +115,9 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
 
             foreach (Task<string> actorTask in actorTasks)
             {
-                IEnumerable<U> errors = _jsonSerializationService.Deserialize<IEnumerable<U>>(actorTask.Result);
+                IEnumerable<IValidationError> errors = _jsonSerializationService.Deserialize<IEnumerable<IValidationError>>(actorTask.Result);
 
-                foreach (U error in errors)
+                foreach (IValidationError error in errors)
                 {
                     _validationErrorCache.Add(error);
                 }

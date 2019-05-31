@@ -29,9 +29,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests.ErrorHandler
             }
         }
 
-        private ValidationErrorCache<IValidationError> NewCache()
+        private ValidationErrorCache NewCache()
         {
-            return new ValidationErrorCache<IValidationError>();
+            return new ValidationErrorCache();
         }
     }
 }

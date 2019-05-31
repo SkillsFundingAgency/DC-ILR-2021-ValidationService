@@ -44,8 +44,8 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<RuleSetOrchestrationService<ILearner, IValidationError>>().As<IRuleSetOrchestrationService<ILearner, IValidationError>>();
-            builder.RegisterType<RuleSetOrchestrationService<ILearnerDestinationAndProgression, IValidationError>>().As<IRuleSetOrchestrationService<ILearnerDestinationAndProgression, IValidationError>>();
+            builder.RegisterType<RuleSetOrchestrationService<ILearner>>().As<IRuleSetOrchestrationService<ILearner>>();
+            builder.RegisterType<RuleSetOrchestrationService<ILearnerDestinationAndProgression>>().As<IRuleSetOrchestrationService<ILearnerDestinationAndProgression>>();
             builder.RegisterType<AutoFacRuleSetResolutionService<ILearner>>().As<IRuleSetResolutionService<ILearner>>();
             builder.RegisterType<AutoFacRuleSetResolutionService<ILearnerDestinationAndProgression>>().As<IRuleSetResolutionService<ILearnerDestinationAndProgression>>();
             builder.RegisterType<AutoFacRuleSetResolutionService<IMessage>>().As<IRuleSetResolutionService<IMessage>>();
@@ -53,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor.Modules
             builder.RegisterType<RuleSetExecutionService<ILearnerDestinationAndProgression>>().As<IRuleSetExecutionService<ILearnerDestinationAndProgression>>();
             builder.RegisterType<RuleSetExecutionService<IMessage>>().As<IRuleSetExecutionService<IMessage>>();
             builder.RegisterType<ValidationErrorHandler>().As<IValidationErrorHandler>().InstancePerLifetimeScope();
-            builder.RegisterType<ValidationErrorCache<IValidationError>>().As<IValidationErrorCache<IValidationError>>().InstancePerLifetimeScope();
+            builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>().InstancePerLifetimeScope();
 
             builder.RegisterType<JsonSerializationService>().As<IJsonSerializationService>().InstancePerLifetimeScope();
             builder.RegisterType<XmlSerializationService>().As<IXmlSerializationService>().InstancePerLifetimeScope();

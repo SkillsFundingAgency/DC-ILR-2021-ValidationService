@@ -107,7 +107,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoFacRuleSetResolutionServiceTests.cs" />
-    <Compile Include="ErrorHandler\ValidationErrorCacheGenericTest.cs" />
     <Compile Include="ErrorHandler\ValidationErrorCacheTests.cs" />
     <Compile Include="ErrorHandler\ValidationErrorHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

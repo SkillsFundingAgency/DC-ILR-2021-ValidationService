@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests.ErrorHandler
         [Fact]
         public void Handle()
         {
-            var validationErrorCacheMock = new Mock<IValidationErrorCache<IValidationError>>();
+            var validationErrorCacheMock = new Mock<IValidationErrorCache>();
             var validationErrorsDataService = new Mock<IValidationErrorsDataService>();
 
             var validationErrorHandler = NewHandler(validationErrorCacheMock.Object, validationErrorsDataService.Object);
@@ -125,7 +125,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests.ErrorHandler
             errorMessageParameter.Value.Should().Be(null);
         }
 
-        private ValidationErrorHandler NewHandler(IValidationErrorCache<IValidationError> validationErrorCache = null, IValidationErrorsDataService validationErrorsDataService = null)
+        private ValidationErrorHandler NewHandler(IValidationErrorCache validationErrorCache = null, IValidationErrorsDataService validationErrorsDataService = null)
         {
             return new ValidationErrorHandler(validationErrorCache, validationErrorsDataService);
         }
