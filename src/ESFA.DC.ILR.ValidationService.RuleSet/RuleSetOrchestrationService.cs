@@ -7,24 +7,24 @@ using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.RuleSet
 {
-    public class RuleSetOrchestrationService<T, U> : IRuleSetOrchestrationService<T, U>
+    public class RuleSetOrchestrationService<T> : IRuleSetOrchestrationService<T>
         where T : class
     {
         private readonly IRuleSetResolutionService<T> _ruleSetResolutionService;
         private readonly IRuleSetExecutionService<T> _ruleSetExecutionService;
-        private readonly IValidationErrorCache<U> _validationErrorCache;
+        private readonly IValidationErrorCache _validationErrorCache;
 
         public RuleSetOrchestrationService(
             IRuleSetResolutionService<T> ruleSetResolutionService,
             IRuleSetExecutionService<T> ruleSetExecutionService,
-            IValidationErrorCache<U> validationErrorCache)
+            IValidationErrorCache validationErrorCache)
         {
             _ruleSetResolutionService = ruleSetResolutionService;
             _ruleSetExecutionService = ruleSetExecutionService;
             _validationErrorCache = validationErrorCache;
         }
 
-        public async Task<IEnumerable<U>> ExecuteAsync(IValidationContext validationContext, IEnumerable<T> validationItems, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IValidationError>> ExecuteAsync(IValidationContext validationContext, IEnumerable<T> validationItems, CancellationToken cancellationToken)
         {
             List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve(validationContext).ToList();
 
@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet
             return _validationErrorCache.ValidationErrors;
         }
 
-        public async Task<IEnumerable<U>> ExecuteAsync(IValidationContext validationContext, T validationItem, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IValidationError>> ExecuteAsync(IValidationContext validationContext, T validationItem, CancellationToken cancellationToken)
         {
             List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve(validationContext).ToList();
 

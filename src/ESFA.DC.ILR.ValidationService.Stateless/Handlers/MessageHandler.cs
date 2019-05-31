@@ -46,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
 
                     logger.LogDebug("inside process message validate");
 
-                    var preValidationOrchestrationService = childLifeTimeScope.Resolve<IPreValidationOrchestrationService<IValidationError>>();
+                    var preValidationOrchestrationService = childLifeTimeScope.Resolve<IPreValidationOrchestrationService>();
 
                     await preValidationOrchestrationService.ExecuteAsync(validationContext, cancellationToken);
 
