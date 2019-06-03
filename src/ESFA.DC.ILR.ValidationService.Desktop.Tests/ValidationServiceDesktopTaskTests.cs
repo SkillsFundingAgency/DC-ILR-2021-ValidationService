@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using ESFA.DC.ILR.Desktop.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using FluentAssertions;
@@ -17,6 +18,15 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
         [Fact]
         public async Task ExecuteAsync()
         {
+            var builder = new ContainerBuilder();
+            builder.RegisterCommonServiceStubs();
+
+            var orchestrationServiceMock = Mock.Of<IPreValidationOrchestrationService>();
+            builder.RegisterInstance(orchestrationServiceMock).As<IPreValidationOrchestrationService>();
+
+            var container = builder.Build();
+            var lifetimeScope = container.Resolve<ILifetimeScope>();
+
             var desktopContextMock = new Mock<IDesktopContext>();
             var cancellationToken = CancellationToken.None;
 
@@ -25,16 +35,16 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
 
             validationContextFactoryMock.Setup(f => f.Build(desktopContextMock.Object)).Returns(validationContextMock.Object);
             
-            var task = NewTask(validationContextFactoryMock.Object);
+            var task = NewTask(lifetimeScope, validationContextFactoryMock.Object);
             
             var result = await task.ExecuteAsync(desktopContextMock.Object, cancellationToken);
 
             result.Should().Be(desktopContextMock.Object);
         }
 
-        private ValidationServiceDesktopTask NewTask(IValidationContextFactory<IDesktopContext> validationContextFactory = null)
+        private ValidationServiceDesktopTask NewTask(ILifetimeScope lifeTimeScope, IValidationContextFactory<IDesktopContext> validationContextFactory = null)
         {
-            return new ValidationServiceDesktopTask(validationContextFactory);
+            return new ValidationServiceDesktopTask(lifeTimeScope, validationContextFactory);
         }
     }
 }
