@@ -14,11 +14,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<ExternalDataCache>().As<IExternalDataCache>();
-            builder.RegisterType<FileDataCache>().As<IFileDataCache>();
-            builder.RegisterType<InternalDataCache>().As<IInternalDataCache>();
+            builder.RegisterType<ExternalDataCache>().As<IExternalDataCache>().InstancePerLifetimeScope();
+            builder.RegisterType<FileDataCache>().As<IFileDataCache>().InstancePerLifetimeScope();
+            builder.RegisterType<InternalDataCache>().As<IInternalDataCache>().InstancePerLifetimeScope();
 
-            builder.RegisterGeneric(typeof(Cache<>)).As(typeof(ICache<>));
+            builder.RegisterGeneric(typeof(Cache<>)).As(typeof(ICache<>)).InstancePerLifetimeScope();
         }
     }
 }

@@ -13,8 +13,8 @@ namespace ESFA.DC.ILR.ValidationService.Modules
             builder.RegisterGeneric(typeof(RuleSetOrchestrationService<>)).As(typeof(IRuleSetOrchestrationService<>));
             builder.RegisterGeneric(typeof(AutoFacRuleSetResolutionService<>)).As(typeof(IRuleSetResolutionService<>));
             builder.RegisterGeneric(typeof(RuleSetExecutionService<>)).As(typeof(IRuleSetExecutionService<>));
-            builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>();
-            builder.RegisterType<ValidationErrorHandler>().As<IValidationErrorHandler>();
+            builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>().InstancePerLifetimeScope();
+            builder.RegisterType<ValidationErrorHandler>().As<IValidationErrorHandler>().InstancePerLifetimeScope();
 
             builder.RegisterType<ValidationOutputService>().As<IValidationOutputService>().InstancePerLifetimeScope();
         }
