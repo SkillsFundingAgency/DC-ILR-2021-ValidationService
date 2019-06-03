@@ -10,7 +10,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace ESFA.DC.ILR.ValidationService.Providers.Tests
+namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
 {
     public class MessageFileProviderServiceTests
     {
@@ -18,7 +18,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
         public async Task ProvideAsync()
         {
             var cancellationToken = CancellationToken.None;
-            
+
             var input = "ILR String";
             var container = "Container";
 
