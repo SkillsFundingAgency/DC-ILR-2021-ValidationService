@@ -6,7 +6,7 @@ using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.Serialization.Interfaces;
 
-namespace ESFA.DC.ILR.ValidationService.Providers
+namespace ESFA.DC.ILR.ValidationService.Data.Population
 {
     public class MessageFileProviderService : IProvider<IMessage>
     {

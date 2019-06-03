@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ESFA.DC.FileService.Interface" Version="0.1.18-beta0001" />
+    <PackageReference Include="ESFA.DC.ILR.1920.Model" Version="0.1.2-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.1920.Model.Interface" Version="0.1.0-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.ReferenceDataService.Model" Version="0.1.59" />
+    <PackageReference Include="ESFA.DC.Serialization.Interfaces" Version="0.1.6-beta0001" />
   </ItemGroup>
 
   <ItemGroup>

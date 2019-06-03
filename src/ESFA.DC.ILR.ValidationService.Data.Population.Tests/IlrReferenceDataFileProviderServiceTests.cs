@@ -10,7 +10,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace ESFA.DC.ILR.ValidationService.Providers.Tests
+namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
 {
     public class IlrReferenceDataFileProviderServiceTests
     {

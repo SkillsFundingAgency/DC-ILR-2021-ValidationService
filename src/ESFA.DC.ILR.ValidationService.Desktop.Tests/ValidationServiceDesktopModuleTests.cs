@@ -126,7 +126,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
 
             var container = containerBuilder.Build();
 
-            var rulesetOrchestrationService = container.Resolve<IRuleSetOrchestrationService<IMessage>>();
+            var rulesetOrchestrationService = container.Resolve<IPreValidationOrchestrationService>();
 
             rulesetOrchestrationService.Should().NotBeNull();
         }
