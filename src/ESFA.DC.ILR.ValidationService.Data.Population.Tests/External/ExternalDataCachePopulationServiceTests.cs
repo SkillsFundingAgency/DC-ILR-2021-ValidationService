@@ -26,7 +26,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
             var validationContextMock = new Mock<IValidationContext>();
 
             var externalDataCache = new ExternalDataCache();
-            var referenceDataCacheMock = new Mock<ICache<ReferenceDataRoot>>();
             var employersDataMapperMock = new Mock<IEmployersDataMapper>();
             var epaOrgDataMapperMock = new Mock<IEpaOrgDataMapper>();
             var fcsDataMapperMock = new Mock<IFcsDataMapper>();
@@ -36,7 +35,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
             var ulnDataMapperMock = new Mock<IUlnDataMapper>();
             var validationErrorsDataMapperMock = new Mock<IValidationErrorsDataMapper>();
 
-            referenceDataCacheMock.Setup(r => r.Item).Returns(new ReferenceDataRoot()).Verifiable();
+            var referenceDataRoot = new ReferenceDataRoot();
+
             employersDataMapperMock.Setup(m => m.MapEmployers(It.IsAny<List<ReferenceDataService.Model.Employers.Employer>>())).Returns(new List<int>()).Verifiable();
             epaOrgDataMapperMock.Setup(m => m.MapEpaOrganisations(It.IsAny<List<ReferenceDataService.Model.EPAOrganisations.EPAOrganisation>>())).Returns(new Dictionary<string, List<EPAOrganisations>>()).Verifiable();
             fcsDataMapperMock.Setup(m => m.MapFcsContractAllocations(It.IsAny<List<ReferenceDataService.Model.FCS.FcsContractAllocation>>())).Returns(new Dictionary<string, IFcsContractAllocation>()).Verifiable();
@@ -50,9 +50,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
             ulnDataMapperMock.Setup(m => m.MapUlns(It.IsAny<List<long>>())).Returns(new List<long>()).Verifiable();
             validationErrorsDataMapperMock.Setup(m => m.MapValidationErrors(It.IsAny<List<ReferenceDataService.Model.MetaData.ValidationError>>())).Returns(new Dictionary<string, ValidationError>()).Verifiable();
 
-            await NewService(
+            NewService(
                 externalDataCache,
-                referenceDataCacheMock.Object,
                 employersDataMapperMock.Object,
                 epaOrgDataMapperMock.Object,
                 fcsDataMapperMock.Object,
@@ -60,9 +59,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
                 organisationsDataMapperMock.Object,
                 postcodesDataMapperMock.Object,
                 ulnDataMapperMock.Object,
-                validationErrorsDataMapperMock.Object).PopulateAsync(validationContextMock.Object, CancellationToken.None);
+                validationErrorsDataMapperMock.Object).Populate(referenceDataRoot);
 
-            referenceDataCacheMock.VerifyAll();
             employersDataMapperMock.VerifyAll();
             epaOrgDataMapperMock.VerifyAll();
             fcsDataMapperMock.VerifyAll();
@@ -75,7 +73,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
 
         private ExternalDataCachePopulationService NewService(
             IExternalDataCache externalDataCache = null,
-            ICache<ReferenceDataRoot> referenceDataCache = null,
             IEmployersDataMapper employersDataMapper = null,
             IEpaOrgDataMapper epaOrgDataMapper = null,
             IFcsDataMapper fcsDataMapper = null,
@@ -87,7 +84,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
         {
             return new ExternalDataCachePopulationService(
                 externalDataCache,
-                referenceDataCache,
                 employersDataMapper,
                 epaOrgDataMapper,
                 fcsDataMapper,

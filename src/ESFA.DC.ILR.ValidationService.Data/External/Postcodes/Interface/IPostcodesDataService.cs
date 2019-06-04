@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface
 {
     /// <summary>
     /// the postcodes service definition
     /// </summary>
-    public interface IPostcodesDataService
+    public interface IPostcodesDataService : IDataService
     {
         /// <summary>
         /// Postcode exists.

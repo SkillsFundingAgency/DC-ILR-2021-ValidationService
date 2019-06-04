@@ -1,10 +1,12 @@
-﻿namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
+﻿using ESFA.DC.ILR.ValidationService.Interface;
+
+namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
 {
     /// <summary>
     /// derived data rule 05
     /// Checksum digit for Employer reference number
     /// </summary>
-    public interface IDerivedData_05Rule
+    public interface IDerivedData_05Rule : IDerivedDataRule
     {
         /// <summary>
         /// Gets the invalid length checksum.

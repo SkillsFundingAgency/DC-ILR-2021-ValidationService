@@ -1,6 +1,8 @@
-﻿namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
+﻿using ESFA.DC.ILR.ValidationService.Interface;
+
+namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
 {
-    public interface IDerivedData_27Rule
+    public interface IDerivedData_27Rule : IDerivedDataRule
     {
         bool IsUKPRNCollegeOrGrantFundedProvider(int ukprn);
     }

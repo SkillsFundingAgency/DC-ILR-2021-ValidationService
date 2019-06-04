@@ -139,10 +139,10 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                 try
                 {
                     jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} started learners: {message.Learners.Count}");
-                    IRuleSetOrchestrationService<ILearner, IValidationError> preValidationOrchestrationService = childLifeTimeScope
-                        .Resolve<IRuleSetOrchestrationService<ILearner, IValidationError>>();
+                    IRuleSetOrchestrationService<ILearner> preValidationOrchestrationService = childLifeTimeScope
+                        .Resolve<IRuleSetOrchestrationService<ILearner>>();
 
-                    errors = await preValidationOrchestrationService.ExecuteAsync(validationContext, cancellationToken);
+                    errors = await preValidationOrchestrationService.ExecuteAsync(validationContext, message.Learners, cancellationToken);
                     jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} validation done");
                 }
                 catch (Exception ex)

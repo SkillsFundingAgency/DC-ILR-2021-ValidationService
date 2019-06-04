@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface IPreValidationOrchestrationService<U>
+    public interface IPreValidationOrchestrationService
     {
         Task ExecuteAsync(IValidationContext validationContext, CancellationToken cancellationToken);
     }

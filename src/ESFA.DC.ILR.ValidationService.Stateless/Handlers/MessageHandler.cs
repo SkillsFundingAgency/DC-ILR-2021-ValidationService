@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Stateless.Configuration;
 using ESFA.DC.ILR.ValidationService.Stateless.Context;
-using ESFA.DC.ILR.ValidationService.Stateless.Models;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
@@ -31,6 +31,8 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
 
         public async Task<bool> HandleAsync(JobContextMessage jobContextMessage, CancellationToken cancellationToken)
         {
+            var validationContext = _validationContextFactory.Build(jobContextMessage);
+
             using (var childLifeTimeScope = _parentLifeTimeScope.BeginLifetimeScope())
             {
                 var executionContext = (ExecutionContext)childLifeTimeScope.Resolve<IExecutionContext>();
@@ -40,15 +42,11 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
                 try
                 {
                     var azureStorageModel = childLifeTimeScope.Resolve<AzureStorageModel>();
-                    azureStorageModel.AzureContainerReference =
-                        jobContextMessage.KeyValuePairs[JobContextMessageKey.Container].ToString();
+                    azureStorageModel.AzureContainerReference = validationContext.Container;
 
                     logger.LogDebug("inside process message validate");
 
-                    var preValidationOrchestrationService = childLifeTimeScope
-                        .Resolve<IPreValidationOrchestrationService<IValidationError>>();
-
-                    var validationContext = childLifeTimeScope.Resolve<IValidationContext>();
+                    var preValidationOrchestrationService = childLifeTimeScope.Resolve<IPreValidationOrchestrationService>();
 
                     await preValidationOrchestrationService.ExecuteAsync(validationContext, cancellationToken);
 

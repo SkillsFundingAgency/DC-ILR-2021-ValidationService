@@ -1,6 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using System;
 using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
 {
@@ -8,7 +9,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
     /// derived data rule 18
     /// Apprenticeship standard programme start date (held at aim level, calculated from matching programme aims)
     /// </summary>
-    public interface IDerivedData_18Rule
+    public interface IDerivedData_18Rule : IDerivedDataRule
     {
         /// <summary>
         /// Gets the apprenticeship standard programme start date for.

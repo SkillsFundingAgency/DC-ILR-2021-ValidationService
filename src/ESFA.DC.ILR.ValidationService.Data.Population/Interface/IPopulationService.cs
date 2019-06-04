@@ -1,11 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
 {
     public interface IPopulationService
     {
-        Task PopulateAsync(IValidationContext validationContext,  CancellationToken cancellationToken);
+        void Populate(IValidationContext validationContext, IMessage message, ReferenceDataRoot referenceDataRoot);
     }
 }

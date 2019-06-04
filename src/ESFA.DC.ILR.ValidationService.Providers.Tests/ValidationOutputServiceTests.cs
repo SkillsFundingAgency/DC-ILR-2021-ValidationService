@@ -154,29 +154,21 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
                 fileServiceMock.Setup(s => s.OpenWriteStreamAsync(validationErrorsKey, container, default(CancellationToken))).ReturnsAsync(stream).Verifiable();
                 fileServiceMock.Setup(s => s.OpenWriteStreamAsync(validationErrorMessageLookupsKey, container, default(CancellationToken))).ReturnsAsync(stream).Verifiable();
 
-                var service = NewService(
-                    fileService: fileServiceMock.Object,
-                    jsonSerializationService: serializationServiceMock.Object);
+                var service = NewService(fileServiceMock.Object, serializationServiceMock.Object);
 
                 await service.SaveAsync(validationContextMock.Object, validLearnerRefNumbers, invalidLearnerRefNumbers, validationErrors, validationErrorMessageLookups, CancellationToken.None);
 
                 fileServiceMock.VerifyAll();
             }
-
-         
         }
 
         private ValidationOutputService NewService(
-            IValidationErrorCache<IValidationError> validationErrorCache = null,
-            ICache<IMessage> messageCache = null,
             IFileService fileService = null,
             IJsonSerializationService jsonSerializationService = null,
             IValidationErrorsDataService validationErrorsDataService = null
             )
         {
             return new ValidationOutputService(
-                validationErrorCache,
-                messageCache,
                 fileService,
                 jsonSerializationService,
                 validationErrorsDataService,

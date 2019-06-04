@@ -4,7 +4,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
 {
-    public interface IPostcodesDataMapper
+    public interface IPostcodesDataMapper : IMapper
     {
         IReadOnlyCollection<string> MapPostcodes(IReadOnlyCollection<Postcode> postcodes);
 

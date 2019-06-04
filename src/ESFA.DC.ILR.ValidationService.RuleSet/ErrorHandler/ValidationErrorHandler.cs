@@ -7,10 +7,10 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler
 {
     public class ValidationErrorHandler : IValidationErrorHandler
     {
-        private readonly IValidationErrorCache<IValidationError> _validationErrorCache;
+        private readonly IValidationErrorCache _validationErrorCache;
         private readonly IValidationErrorsDataService _validationErrorsDataService;
 
-        public ValidationErrorHandler(IValidationErrorCache<IValidationError> validationErrorCache, IValidationErrorsDataService validationErrorsDataService)
+        public ValidationErrorHandler(IValidationErrorCache validationErrorCache, IValidationErrorsDataService validationErrorsDataService)
         {
             _validationErrorCache = validationErrorCache;
             _validationErrorsDataService = validationErrorsDataService;
@@ -25,7 +25,14 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler
 
         public IValidationError BuildValidationError(string ruleName, string learnRefNumber, long? aimSequenceNumber, Severity? severity, IEnumerable<IErrorMessageParameter> errorMessageParameters)
         {
-            return new ValidationError(ruleName, learnRefNumber, aimSequenceNumber, severity, errorMessageParameters);
+            return new ValidationError()
+            {
+                RuleName = ruleName,
+                LearnerReferenceNumber = learnRefNumber,
+                AimSequenceNumber = aimSequenceNumber,
+                Severity = severity,
+                ErrorMessageParameters = errorMessageParameters
+            };
         }
 
         public IErrorMessageParameter BuildErrorMessageParameter(string propertyName, object value)

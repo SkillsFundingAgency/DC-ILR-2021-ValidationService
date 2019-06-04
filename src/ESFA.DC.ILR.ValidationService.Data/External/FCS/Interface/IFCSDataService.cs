@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface
 {
     /// <summary>
     /// the FCS data service definition
     /// </summary>
-    public interface IFCSDataService
+    public interface IFCSDataService : IDataService
     {
         /// <summary>
         /// Gets the allocation for (this contract reference).

@@ -1,8 +1,9 @@
 ﻿using System;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
 {
-    public interface IDateTimeQueryService
+    public interface IDateTimeQueryService : IQueryService
     {
         int YearsBetween(DateTime start, DateTime end);
 
