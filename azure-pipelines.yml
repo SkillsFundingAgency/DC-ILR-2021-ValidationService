@@ -191,7 +191,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: NugetPackages'
-  enabled: False
+  enabled: true
   inputs:
     ArtifactName: NugetPackages
     PathtoPublish: '$(build.artifactstagingdirectory)\Nuget'
