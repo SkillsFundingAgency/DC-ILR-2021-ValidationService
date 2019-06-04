@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             var service = NewService(ruleSetResolutionServiceMock.Object, ruleSetExecutionService, validationErrorCache);
 
-            (await service.ExecuteAsync(validationContextMock.Object, validationItems, cancellationToken)).Should().HaveCount(3);
+            (await service.ExecuteAsync(validationContextMock.Object, validationItems, cancellationToken)).Should().HaveCount(6);
         }
 
         private RuleSetOrchestrationService<T> NewService<T>(
