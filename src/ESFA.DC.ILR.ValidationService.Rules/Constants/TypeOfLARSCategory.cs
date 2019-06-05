@@ -16,6 +16,11 @@
         public const int WorkPlacementSFAFunded = 4;
 
         /// <summary>
+        /// Trade Union Aims
+        /// </summary>
+        public const int TradeUnionAims = 19;
+
+        /// <summary>
         /// legal entitlement level 2
         /// </summary>
         public const int LegalEntitlementLevel2 = 37;
