@@ -29,6 +29,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
         int? FullLevel2EntitlementCategory { get; }
 
         /// <summary>
+        /// Gets the full level 2 percentage.
+        /// </summary>
+        decimal? FullLevel2Percent { get; }
+
+        /// <summary>
         /// Gets the full level 3 entitlement category.
         /// </summary>
         int? FullLevel3EntitlementCategory { get; }

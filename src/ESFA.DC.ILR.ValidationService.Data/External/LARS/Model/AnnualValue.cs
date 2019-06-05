@@ -51,6 +51,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Model
         public int? FullLevel2EntitlementCategory { get; set; }
 
         /// <summary>
+        /// Gets or sets the full level 2 percentage.
+        /// </summary>
+        public decimal? FullLevel2Percent { get; set; }
+
+        /// <summary>
         /// Gets or sets the full level 3 entitlement category.
         /// </summary>
         public int? FullLevel3EntitlementCategory { get; set; }
