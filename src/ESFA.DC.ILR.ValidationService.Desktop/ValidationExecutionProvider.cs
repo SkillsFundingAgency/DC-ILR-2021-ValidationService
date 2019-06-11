@@ -25,11 +25,17 @@ namespace ESFA.DC.ILR.ValidationService.Desktop
         public async Task ExecuteAsync(IValidationContext validationContext, IMessage message, CancellationToken cancellationToken)
         {
             _logger.LogDebug("Starting Learner RuleSet Execution");
-            await _learneRuleSetOrchestrationService.ExecuteAsync(validationContext, message?.Learners, cancellationToken).ConfigureAwait(false);
+            if (message?.Learners != null)
+            {
+                await _learneRuleSetOrchestrationService.ExecuteAsync(validationContext, message.Learners, cancellationToken).ConfigureAwait(false);
+            }
             _logger.LogDebug("Finished Learner RuleSet Execution");
 
             _logger.LogDebug("Starting LearnerDP RuleSet Execution");
-            await _learnerDPRuleSetOrchestrationService.ExecuteAsync(validationContext, message?.LearnerDestinationAndProgressions, cancellationToken).ConfigureAwait(false);
+            if (message?.LearnerDestinationAndProgressions != null)
+            {
+                await _learnerDPRuleSetOrchestrationService.ExecuteAsync(validationContext, message.LearnerDestinationAndProgressions, cancellationToken).ConfigureAwait(false);
+            }           
             _logger.LogDebug("Finished LearnerDP RuleSet Execution");
         }
     }
