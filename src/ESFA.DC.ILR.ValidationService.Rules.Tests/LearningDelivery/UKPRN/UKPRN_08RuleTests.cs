@@ -255,11 +255,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var mockItem = new Mock<IFcsContractAllocation>();
             mockItem
                 .SetupGet(y => y.FundingStreamPeriodCode)
-                .Returns(candidate)
-                .Verifiable();
+                .Returns(candidate);
 
             var result = sut.HasQualifyingFundingStream(mockItem.Object);
             result.Should().Be(expected);
+            mockItem.VerifyGet(x => x.FundingStreamPeriodCode, Times.Once);
         }
 
         /// <summary>
