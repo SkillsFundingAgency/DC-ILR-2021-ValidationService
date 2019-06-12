@@ -119,8 +119,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public bool HasQualifyingFundingStream(IFcsContractAllocation allocation) =>
             It.IsInRange(
                 allocation.FundingStreamPeriodCode,
-                FundingStreamPeriodCodeConstants.ALLB1819,
-                FundingStreamPeriodCodeConstants.ALLBC1819);
+                FundingStreamPeriodCodeConstants.ALLB1920,
+                FundingStreamPeriodCodeConstants.ALLBC1920);
 
         /// <summary>
         /// Determines whether [has funding relationship] [this delivery].
