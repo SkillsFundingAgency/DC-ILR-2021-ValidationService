@@ -239,6 +239,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [InlineData("ALLBC1819", false)] // FundingStreamPeriodCodeConstants.ALLBC1819
         [InlineData("ALLB1920", true)] // FundingStreamPeriodCodeConstants.ALLB1920
         [InlineData("ALLBC1920", true)] // FundingStreamPeriodCodeConstants.ALLBC1920
+        [InlineData("AEBC1920", false)] // FundingStreamPeriodCodeConstants.AEBC1920
+        [InlineData("AEBTO-TOL1920", false)] // FundingStreamPeriodCodeConstants.AEBTO_TOL1920
+        [InlineData("AEB-LS1920", false)] // FundingStreamPeriodCodeConstants.AEB_LS1920
+        [InlineData("AEB-TOL1920", false)] // FundingStreamPeriodCodeConstants.AEB_TOL1920
+        [InlineData("ANLAP2018", false)] // FundingStreamPeriodCodeConstants.ANLAP2018
+        [InlineData("APPS1920", false)] // FundingStreamPeriodCodeConstants.APPS1920
+        [InlineData("16-18NLAP2018", false)] // FundingStreamPeriodCodeConstants.C1618_NLAP2018
+        [InlineData("ESF1420", false)] // FundingStreamPeriodCodeConstants.ESF1420
+        [InlineData("LEVY1799", false)] // FundingStreamPeriodCodeConstants.LEVY1799
         public void HasQualifyingFundingStreamMeetsExpectation(string candidate, bool expected)
         {
             // arrange
