@@ -24,7 +24,7 @@
 
         public const string ALLBC1819 = "ALLBC1819";
 
-        
+
         public const string AEBC1920 = "AEBC1920";
 
         public const string AEB_LS1920 = "AEB-LS1920";
@@ -38,6 +38,18 @@
         public const string ALLB1920 = "ALLB1920";
 
         public const string ALLBC1920 = "ALLBC1920";
+
+        public const string AEBC_19TRN1920 = "AEBC-19TRN1920";
+
+        public const string AEBC_ASCL1920 = "AEBC-ASCL1920";
+
+        public const string AEB_19TRLS1920 = "AEB-19TRLS1920";
+
+        public const string AEB_ASLS1920 = "AEB-ASLS1920";
+
+        public const string AEB_19TRN1920 = "AEB-19TRN1920";
+
+        public const string AEB_AS1920 = "AEB-AS1920";
 
     }
 }
