@@ -110,19 +110,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             return !_fcsDataService.FundingRelationshipFCTExists(_fundingStreamPeriodCodes);
         }
 
-        /// <summary>
-        /// Determines whether [has qualifying provider identifier] for [the specified allocation].
-        /// </summary>
-        /// /// <param name="providerID">The provider identifier.</param>
-        /// <param name="allocation">The allocation.</param>
-        /// <returns>
-        ///   <c>true</c> if [has qualifying provider identifier] for [the specified allocation]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasQualifyingProviderID(int providerID, IFcsContractAllocation allocation)
-        {
-            return providerID == allocation.DeliveryUKPRN;
-        }
-
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel)
         {
             return new[]

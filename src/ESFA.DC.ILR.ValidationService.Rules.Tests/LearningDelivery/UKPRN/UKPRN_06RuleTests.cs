@@ -165,36 +165,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Fact]
-        public void QualifyingProviderID_ShouldMatch()
-        {
-            int providerId = 4546;
-            int uKPRN = 4546;
-
-            var mockContractAllocation = new Mock<IFcsContractAllocation>(MockBehavior.Strict);
-            mockContractAllocation.SetupGet(x => x.DeliveryUKPRN).Returns(uKPRN);
-
-            var result = NewRule().HasQualifyingProviderID(providerId, mockContractAllocation.Object);
-
-            result.Should().BeTrue();
-            mockContractAllocation.VerifyGet(x => x.DeliveryUKPRN, Times.Once);
-        }
-
-        [Fact]
-        public void QualifyingProviderID_NotMatched()
-        {
-            int providerId = 4546;
-            int uKPRN = 4547;
-
-            var mockContractAllocation = new Mock<IFcsContractAllocation>(MockBehavior.Strict);
-            mockContractAllocation.SetupGet(x => x.DeliveryUKPRN).Returns(uKPRN);
-
-            var result = NewRule().HasQualifyingProviderID(providerId, mockContractAllocation.Object);
-
-            result.Should().BeFalse();
-            mockContractAllocation.VerifyGet(x => x.DeliveryUKPRN, Times.Once);
-        }
-
-        [Fact]
         public void LearnActEndDateConditionMet_False()
         {
             DateTime learnActEndDate = new DateTime(2018, 5, 1);
