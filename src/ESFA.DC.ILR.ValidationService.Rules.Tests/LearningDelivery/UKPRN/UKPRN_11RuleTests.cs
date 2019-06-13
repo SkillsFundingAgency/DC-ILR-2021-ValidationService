@@ -21,9 +21,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         private readonly int _fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
         private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>()
         {
-            FundingStreamPeriodCodeConstants.APPS1819,
-            FundingStreamPeriodCodeConstants.C1618_NLAP2018,
-            FundingStreamPeriodCodeConstants.ANLAP2018
+            FundingStreamPeriodCodeConstants.APPS1920,
+            FundingStreamPeriodCodeConstants.C1618_NLAP2018
         };
 
         [Fact]
