@@ -88,5 +88,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
             return lds.Any(d => IsTraineeship(d) && IsWorkExperience(d));
         }
+
+        public bool IsInflexibleElementOfTrainingAimLearningDelivery(ILearningDelivery candidate)
+        {
+            It.IsNull(candidate)
+                .AsGuard<ArgumentNullException>(nameof(candidate));
+
+            /*
+                if
+                    LearningDelivery.ProgType = 24
+                    where LearningDelivery.LearnAimRef = LARS_LearnAimRef
+                    and LARS_CategoryRef = 2 or 4
+                        set to Y,
+                        otherwise set to N
+             */
+
+            return IsTraineeship(candidate) && IsWorkExperience(candidate);
+        }
     }
 }

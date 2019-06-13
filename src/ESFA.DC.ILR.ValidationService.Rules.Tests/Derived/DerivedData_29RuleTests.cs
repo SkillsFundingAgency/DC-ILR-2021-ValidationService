@@ -3,6 +3,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived;
 using ESFA.DC.ILR.ValidationService.Utility;
+using FluentAssertions;
 using Moq;
 using System;
 using Xunit;
@@ -25,6 +26,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
             // act / assert
             Assert.Throws<ArgumentNullException>(() => sut.IsInflexibleElementOfTrainingAim(null));
+        }
+
+        /// <summary>
+        /// Determines whether [is inflexible element of training aim with null learneing delivery throws].
+        /// </summary>
+        [Fact]
+        public void IsInflexibleElementOfTrainingAimLearningDeliveryWithNullThrows()
+        {
+            Assert.Throws<ArgumentNullException>(() => NewRule().IsInflexibleElementOfTrainingAimLearningDelivery(null));
         }
 
         /// <summary>
