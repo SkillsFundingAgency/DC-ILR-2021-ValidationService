@@ -39,7 +39,7 @@
 
         public const string ALLBC1920 = "ALLBC1920";
 
-        public const string AEBC_19TRN1920 = "AEBC_19TRN1920";
+        public const string AEBC_19TRN1920 = "AEBC-19TRN1920";
 
         public const string AEBC_ASCL1920 = "AEBC-ASCL1920";
 
