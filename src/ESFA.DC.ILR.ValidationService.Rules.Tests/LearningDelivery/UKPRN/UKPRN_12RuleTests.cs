@@ -6,6 +6,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
@@ -17,9 +18,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 {
     public class UKPRN_12RuleTests : AbstractRuleTests<UKPRN_12Rule>
     {
-        private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>()
+        private readonly HashSet<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
-            "AEB-TOL1819"
+            FundingStreamPeriodCodeConstants.AEB_19TRN1920,
+            FundingStreamPeriodCodeConstants.AEB_AS1920
         };
 
         [Fact]
