@@ -63,32 +63,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         public bool IsWorkExperience(ILARSLearningCategory category) =>
             It.IsInRange(category.CategoryRef, TypeOfLARSCategory.WorkPlacementSFAFunded, TypeOfLARSCategory.WorkPreparationSFATraineeships);
 
-        /// <summary>
-        /// Determines whether [is inflexible element of training aim] [the specified candidate].
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>
-        ///   <c>true</c> if [is inflexible element of training aim] [the specified candidate]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsInflexibleElementOfTrainingAim(ILearner candidate)
-        {
-            It.IsNull(candidate)
-                .AsGuard<ArgumentNullException>(nameof(candidate));
-
-            var lds = candidate.LearningDeliveries.AsSafeReadOnlyList();
-
-            /*
-                if
-                    LearningDelivery.ProgType = 24
-                    where LearningDelivery.LearnAimRef = LARS_LearnAimRef
-                    and LARS_CategoryRef = 2 or 4
-                        set to Y,
-                        otherwise set to N
-             */
-
-            return lds.Any(d => IsTraineeship(d) && IsWorkExperience(d));
-        }
-
         public bool IsInflexibleElementOfTrainingAimLearningDelivery(ILearningDelivery candidate)
         {
             It.IsNull(candidate)

@@ -16,19 +16,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
     public class DerivedData_29RuleTests
     {
         /// <summary>
-        /// Determines whether [is inflexible element of training aim with null learner throws].
-        /// </summary>
-        [Fact]
-        public void IsInflexibleElementOfTrainingAimWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.IsInflexibleElementOfTrainingAim(null));
-        }
-
-        /// <summary>
         /// Determines whether [is inflexible element of training aim with null learneing delivery throws].
         /// </summary>
         [Fact]

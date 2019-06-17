@@ -230,8 +230,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <returns>
         ///   <c>true</c> if [is inflexible element of training aim] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsInflexibleElementOfTrainingAim(ILearner candidate) =>
-            _derivedData29.IsInflexibleElementOfTrainingAim(candidate);
+        public bool IsInflexibleElementOfTrainingAim(ILearningDelivery candidate) =>
+            _derivedData29.IsInflexibleElementOfTrainingAimLearningDelivery(candidate);
 
         /// <summary>
         /// Determines whether the specified delivery is apprenticeship.
@@ -328,16 +328,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <returns>
         ///   <c>true</c> if the specified candidate is excluded; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsExcluded(ILearner candidate)
+        public bool IsExcluded(ILearningDelivery candidate)
         {
             return IsInflexibleElementOfTrainingAim(candidate)
-                || CheckLearningDeliveries(candidate, IsApprenticeship)
-                || CheckLearningDeliveries(candidate, IsBasicSkillsLearner)
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsLearnerInCustody))
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsReleasedOnTemporaryLicence))
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsRestart))
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsSteelWorkerRedundancyTraining))
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, InReceiptOfLowWages));
+                || IsApprenticeship(candidate)
+                || IsBasicSkillsLearner(candidate)
+                || CheckDeliveryFAMs(candidate, IsLearnerInCustody)
+                || CheckDeliveryFAMs(candidate, IsReleasedOnTemporaryLicence)
+                || CheckDeliveryFAMs(candidate, IsRestart)
+                || CheckDeliveryFAMs(candidate, IsSteelWorkerRedundancyTraining)
+                || CheckDeliveryFAMs(candidate, InReceiptOfLowWages);
         }
 
         /// <summary>
@@ -348,11 +348,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             It.IsNull(objectToValidate)
                 .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
-            if (IsExcluded(objectToValidate))
-            {
-                return;
-            }
 
             ValidateDeliveries(objectToValidate);
         }
@@ -366,13 +361,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsNotValid(ILearningDelivery delivery, ILearner learner) =>
-            !IsAdultFundedUnemployedWithBenefits(delivery, learner)
-                && !IsAdultFundedUnemployedWithOtherStateBenefits(delivery, learner)
-                && IsAdultFunding(delivery)
-                && IsViableStart(delivery)
-                && IsTargetAgeGroup(learner, delivery)
-                && CheckDeliveryFAMs(delivery, IsFullyFunded)
-                && IsEarlyStageNVQ(delivery);
+            !IsExcluded(delivery)
+            && !IsAdultFundedUnemployedWithBenefits(delivery, learner)
+            && !IsAdultFundedUnemployedWithOtherStateBenefits(delivery, learner)
+            && IsAdultFunding(delivery)
+            && IsViableStart(delivery)
+            && IsTargetAgeGroup(learner, delivery)
+            && CheckDeliveryFAMs(delivery, IsFullyFunded)
+            && IsEarlyStageNVQ(delivery);
 
         /// <summary>
         /// Validates the deliveries.

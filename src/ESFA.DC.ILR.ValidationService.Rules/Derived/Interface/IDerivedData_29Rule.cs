@@ -9,8 +9,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived.Interface
     /// </summary>
     public interface IDerivedData_29Rule : IDerivedDataRule
     {
-        bool IsInflexibleElementOfTrainingAim(ILearner candidate);
-
         bool IsInflexibleElementOfTrainingAimLearningDelivery(ILearningDelivery candidate);
     }
 }
