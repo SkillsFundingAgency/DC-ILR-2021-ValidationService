@@ -113,11 +113,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             return contractAllocation.StopNewStartsFromDate != null && learnStartDate >= contractAllocation.StopNewStartsFromDate;
         }
 
-        public virtual bool FromDateConditionMet(IFcsContractAllocation contractAllocation, DateTime learnStartDate)
-        {
-            return contractAllocation.StopNewStartsFromDate != null && learnStartDate >= contractAllocation.StopNewStartsFromDate;
-        }
-
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int uKPRN, int fundModel, int? progType, string learnDelFAMType, string learnDelFAMCode, DateTime learnStartDate)
         {
             return new[]
