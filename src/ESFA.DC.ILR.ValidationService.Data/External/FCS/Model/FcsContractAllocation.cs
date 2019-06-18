@@ -35,6 +35,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.FCS.Model
         /// </summary>
         public DateTime? StartDate { get; set; }
 
+        /// <summary>
+        /// Gets or sets the StopNewStartsFromDate
+        /// </summary>
+        public DateTime? StopNewStartsFromDate { get; set;  }
+
         public IEsfEligibilityRule EsfEligibilityRule { get; set; }
 
         /// <summary>

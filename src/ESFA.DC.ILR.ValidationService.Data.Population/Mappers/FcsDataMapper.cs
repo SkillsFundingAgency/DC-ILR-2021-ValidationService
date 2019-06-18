@@ -19,9 +19,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                     ContractAllocationNumber = f.ContractAllocationNumber,
                     DeliveryUKPRN = f.DeliveryUKPRN,
                     StartDate = f.StartDate,
+                    StopNewStartsFromDate = f.StopNewStartsFromDate,
                     FundingStreamPeriodCode = f.FundingStreamPeriodCode,
                     TenderSpecReference = f.TenderSpecReference,
-                    LotReference = f.LotReference,
+                    LotReference = f.LotReference,                    
                     EsfEligibilityRule = EsfEligibilityRuleFromEntity(f)
                 } as IFcsContractAllocation, StringComparer.OrdinalIgnoreCase);
         }

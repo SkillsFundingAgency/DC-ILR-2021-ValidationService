@@ -610,6 +610,7 @@
     <Compile Include="LearningDelivery\StdCode\StdCode_02RuleTests.cs" />
     <Compile Include="LearningDelivery\StdCode\StdCode_01RuleTests.cs" />
     <Compile Include="LearningDelivery\SWSupAimId\SWSupAimId_01RuleTests.cs" />
+    <Compile Include="LearningDelivery\UKPRN\UKPRN_17RuleTests.cs" />
     <Compile Include="LearningDelivery\WithdrawReason\WithdrawReason_02RuleTests.cs" />
     <Compile Include="LearningDelivery\WithdrawReason\WithdrawReason_03RuleTests.cs" />
     <Compile Include="LearningDelivery\WithdrawReason\WithdrawReason_04RuleTests.cs" />
