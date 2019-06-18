@@ -108,10 +108,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// <returns>
         ///   <c>true</c> if this delivery is excluded; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsExcluded(ILearningDelivery thisDelivery) =>
-            _check.IsStandardApprencticeship(thisDelivery)
-            || _check.IsRestart(thisDelivery)
-            || IsCommonComponent(GetLARSLearningDeliveryFor(thisDelivery));
+        public bool IsExcluded(ILearningDelivery thisDelivery)
+        {
+            var larsAim = GetLARSLearningDeliveryFor(thisDelivery);
+            return larsAim == null ||
+                (_check.IsStandardApprencticeship(thisDelivery)
+                    || _check.IsRestart(thisDelivery)
+                    || IsCommonComponent(larsAim));
+        }
 
         /// <summary>
         /// Gets the qualifying frameworks for.
@@ -119,7 +123,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// <param name="thisDelivery">this delivery.</param>
         /// <returns>the filtered list of framework aims</returns>
         public IReadOnlyCollection<ILARSFrameworkAim> GetQualifyingFrameworksFor(ILearningDelivery thisDelivery) =>
-            _larsData.GetFrameworkAimsFor(thisDelivery.LearnAimRef);
+                _larsData.GetFrameworkAimsFor(thisDelivery.LearnAimRef);
 
         /// <summary>
         /// Gets the LARS delivery for.

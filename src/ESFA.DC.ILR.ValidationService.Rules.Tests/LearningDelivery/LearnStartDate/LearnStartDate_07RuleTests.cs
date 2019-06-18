@@ -632,6 +632,86 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             commonOps.VerifyAll();
         }
 
+        [Theory]
+        [InlineData("2016-08-02", "2016-04-01", "2017-04-01")] // inside
+        public void ShonkyLearnAimRefNotCrash(string candidate, string start, string end)
+        {
+            // arrange
+            const string LearnRefNumber = "123456789X";
+            const string learnAimRef = "shonkyRefCode"; // <= any old code for the purpose of the test...
+            var testDate = DateTime.Parse(candidate);
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnStartDate)
+                .Returns(testDate);
+            delivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns(learnAimRef);
+
+            // these are random and meaningless values
+            delivery
+                .SetupGet(x => x.ProgTypeNullable)
+                .Returns(2);
+            delivery
+                .SetupGet(x => x.FworkCodeNullable)
+                .Returns(3);
+            delivery
+                .SetupGet(x => x.PwayCodeNullable)
+                .Returns(4);
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+            var mockLearner = new Mock<ILearner>();
+            mockLearner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            mockLearner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+            ddRule04
+                .Setup(x => x.GetEarliesStartDateFor(delivery.Object, deliveries))
+                .Returns(testDate);
+            var startDate = DateTime.Parse(start);
+            var endDate = string.IsNullOrWhiteSpace(end)
+                ? (DateTime?)null
+                : DateTime.Parse(end);
+            var frameworkAim = new Mock<ILARSFrameworkAim>();
+            frameworkAim
+                .SetupGet(x => x.ProgType)
+                .Returns(2);
+            frameworkAim
+                .SetupGet(x => x.FworkCode)
+                .Returns(3);
+            frameworkAim
+                .SetupGet(x => x.PwayCode)
+                .Returns(4);
+            frameworkAim
+                .SetupGet(x => x.StartDate)
+                .Returns(startDate);
+            frameworkAim
+                .SetupGet(x => x.EndDate)
+                .Returns(endDate);
+            var larsDelivery = new Mock<ILARSLearningDelivery>();
+            larsDelivery
+                .SetupGet(x => x.FrameworkCommonComponent)
+                .Returns(TypeOfLARSCommonComponent.Unknown);
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+            larsData
+                .Setup(x => x.GetDeliveryFor(learnAimRef))
+                .Returns((ILARSLearningDelivery)null);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+
+            // act
+            sut.Validate(mockLearner.Object);
+
+            // assert
+            handler.VerifyAll();
+            ddRule04.VerifyAll();
+            larsData.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
         /// <summary>
         /// New rule.
         /// </summary>
