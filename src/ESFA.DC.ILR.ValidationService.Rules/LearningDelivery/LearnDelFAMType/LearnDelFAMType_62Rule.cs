@@ -225,8 +225,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <returns>
         ///   <c>true</c> if [is inflexible element of training aim] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsInflexibleElementOfTrainingAim(ILearner candidate) =>
-            _derivedData29.IsInflexibleElementOfTrainingAim(candidate);
+        public bool IsInflexibleElementOfTrainingAim(ILearningDelivery candidate) =>
+            _derivedData29.IsInflexibleElementOfTrainingAimLearningDelivery(candidate);
 
         /// <summary>
         /// Determines whether the specified delivery is apprenticeship.
@@ -353,7 +353,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [is not valid] [this delivery for learner]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsNotValid(ILearningDelivery thisDelivery, ILearner forLearner) =>
-            !IsAdultFundedUnemployedWithBenefits(thisDelivery, forLearner)
+                    !IsExcluded(thisDelivery)
+                && !IsAdultFundedUnemployedWithBenefits(thisDelivery, forLearner)
                 && !IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, forLearner)
                 && IsViableStart(thisDelivery)
                 && IsAdultFunding(thisDelivery)
@@ -368,15 +369,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <returns>
         ///   <c>true</c> if the specified candidate is excluded; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsExcluded(ILearner candidate) =>
+        public bool IsExcluded(ILearningDelivery candidate) =>
             IsInflexibleElementOfTrainingAim(candidate)
-                || IsHigherAchiever(candidate)
-                || CheckLearningDeliveries(candidate, IsApprenticeship)
-                || CheckLearningDeliveries(candidate, IsBasicSkillsLearner)
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsLearnerInCustody))
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsReleasedOnTemporaryLicence))
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsRestart))
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsSteelWorkerRedundancyTraining));
+                || IsApprenticeship(candidate)
+                || IsBasicSkillsLearner(candidate)
+                || CheckDeliveryFAMs(candidate, IsLearnerInCustody)
+                || CheckDeliveryFAMs(candidate, IsReleasedOnTemporaryLicence)
+                || CheckDeliveryFAMs(candidate, IsRestart)
+                || CheckDeliveryFAMs(candidate, IsSteelWorkerRedundancyTraining);
 
         /// <summary>
         /// Validates the specified object.
@@ -387,7 +387,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             It.IsNull(objectToValidate)
                 .AsGuard<ArgumentNullException>(nameof(objectToValidate));
 
-            if (IsExcluded(objectToValidate))
+            if (IsHigherAchiever(objectToValidate))
             {
                 return;
             }

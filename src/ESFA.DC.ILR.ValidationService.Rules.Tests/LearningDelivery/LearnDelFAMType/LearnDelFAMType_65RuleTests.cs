@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock
-                .Setup(m => m.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>()))
+                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
                 .Returns(false);
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
@@ -170,7 +170,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock
-                .Setup(m => m.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>()))
+                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
                 .Returns(dd29);
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
@@ -232,7 +232,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock
-                .Setup(m => m.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>()))
+                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
                 .Returns(false);
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
@@ -294,7 +294,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock
-                .Setup(m => m.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>()))
+                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
                 .Returns(false);
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
@@ -356,7 +356,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock
-                .Setup(m => m.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>()))
+                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
                 .Returns(false);
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
@@ -418,7 +418,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock
-                .Setup(m => m.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>()))
+                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
                 .Returns(false);
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
@@ -480,7 +480,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock
-                .Setup(m => m.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>()))
+                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
                 .Returns(false);
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
@@ -544,7 +544,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock
-                .Setup(m => m.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>()))
+                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
                 .Returns(false);
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
@@ -606,7 +606,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock
-                .Setup(m => m.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>()))
+                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
                 .Returns(false);
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
