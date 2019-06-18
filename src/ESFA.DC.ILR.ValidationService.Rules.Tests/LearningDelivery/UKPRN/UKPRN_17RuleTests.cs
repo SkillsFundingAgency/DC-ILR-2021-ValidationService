@@ -41,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [Fact]
         public void FundModelCondition_ShouldNotMatch()
         {
-            var fundModel = 20;
+            var fundModel = 21;
             NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
         }
 
