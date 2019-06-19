@@ -16,9 +16,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor.Context
 
         public IValidationContext Build(ValidationActorModel context)
         {
-            var ignoredRules = _jsonSerializationService.Deserialize<IEnumerable<string>>(context.TaskList);
-
-            return new ValidationActorModelValidationContext(ignoredRules);
+            return new ValidationActorModelValidationContext();
         }
     }
 }

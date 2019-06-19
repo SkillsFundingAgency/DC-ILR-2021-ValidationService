@@ -80,8 +80,8 @@
     <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.1920.Model.Interface.0.1.0-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR.ReferenceDataService.Model, Version=0.1.59.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR.ReferenceDataService.Model.0.1.59\lib\netstandard2.0\ESFA.DC.ILR.ReferenceDataService.Model.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR.ReferenceDataService.Model, Version=0.0.77.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR1920.ReferenceDataService.Model.0.0.77\lib\netstandard2.0\ESFA.DC.ILR.ReferenceDataService.Model.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.IO.AzureStorage, Version=0.1.14.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.IO.AzureStorage.0.1.14-beta0001\lib\netstandard2.0\ESFA.DC.IO.AzureStorage.dll</HintPath>
@@ -387,6 +387,7 @@
     <Compile Include="Configuration\IOConfiguration.cs" />
     <Compile Include="Context\JobContextMessageValidationContext.cs" />
     <Compile Include="Context\JobContextMessageValidationContextFactory.cs" />
+    <Compile Include="EnabledRulesProvider.cs" />
     <Compile Include="Handlers\MessageHandler.cs" />
     <Compile Include="Modules\DerivedDataModule.cs" />
     <Compile Include="Modules\IOModule.cs" />

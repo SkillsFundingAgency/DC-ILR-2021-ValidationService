@@ -7,6 +7,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
 using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Data.External.ValidationRules.Model;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Interface
 {
@@ -56,5 +57,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Interface
         IReadOnlyDictionary<string, IFcsContractAllocation> FCSContractAllocations { get; }
 
         IReadOnlyCollection<ICampusIdentifier> CampusIdentifiers { get; set; }
+
+        /// <summary>
+        /// Gets the Validation Rules
+        /// </summary>
+        IReadOnlyCollection<ValidationRule> ValidationRules { get; }
     }
 }

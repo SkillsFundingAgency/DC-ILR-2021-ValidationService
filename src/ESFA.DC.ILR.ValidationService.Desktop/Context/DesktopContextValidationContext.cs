@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ESFA.DC.ILR.Constants;
 using ESFA.DC.ILR.Desktop.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -51,7 +50,5 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Context
         {
             set => _desktopContext.KeyValuePairs[ILRContextKeys.ValidationTotalWarningCount] = value;
         }
-
-        public IEnumerable<string> IgnoredRules => new List<string>();
     }
 }

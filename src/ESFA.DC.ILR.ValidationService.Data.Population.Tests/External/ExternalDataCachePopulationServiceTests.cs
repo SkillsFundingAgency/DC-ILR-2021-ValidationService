@@ -10,6 +10,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
+using ESFA.DC.ILR.ValidationService.Data.External.ValidationRules.Model;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -34,6 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
             var postcodesDataMapperMock = new Mock<IPostcodesDataMapper>();
             var ulnDataMapperMock = new Mock<IUlnDataMapper>();
             var validationErrorsDataMapperMock = new Mock<IValidationErrorsDataMapper>();
+            var validationRulesDataMapperMock = new Mock<IValidationRulesDataMapper>();
 
             var referenceDataRoot = new ReferenceDataRoot();
 
@@ -49,6 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
             postcodesDataMapperMock.Setup(m => m.MapPostcodes(It.IsAny<List<ReferenceDataService.Model.Postcodes.Postcode>>())).Returns(new List<string>()).Verifiable();
             ulnDataMapperMock.Setup(m => m.MapUlns(It.IsAny<List<long>>())).Returns(new List<long>()).Verifiable();
             validationErrorsDataMapperMock.Setup(m => m.MapValidationErrors(It.IsAny<List<ReferenceDataService.Model.MetaData.ValidationError>>())).Returns(new Dictionary<string, ValidationError>()).Verifiable();
+            validationRulesDataMapperMock.Setup(m => m.MapValidationRules(It.IsAny<List<ReferenceDataService.Model.MetaData.ValidationRule>>())).Returns(new List<ValidationRule>()).Verifiable();
 
             NewService(
                 externalDataCache,
@@ -59,7 +62,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
                 organisationsDataMapperMock.Object,
                 postcodesDataMapperMock.Object,
                 ulnDataMapperMock.Object,
-                validationErrorsDataMapperMock.Object).Populate(referenceDataRoot);
+                validationErrorsDataMapperMock.Object,
+                validationRulesDataMapperMock.Object).Populate(referenceDataRoot);
 
             employersDataMapperMock.VerifyAll();
             epaOrgDataMapperMock.VerifyAll();
@@ -69,6 +73,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
             postcodesDataMapperMock.VerifyAll();
             ulnDataMapperMock.VerifyAll();
             validationErrorsDataMapperMock.VerifyAll();
+            validationRulesDataMapperMock.VerifyAll();
         }
 
         private ExternalDataCachePopulationService NewService(
@@ -80,7 +85,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
             IOrganisationsDataMapper organisationsDataMapper = null,
             IPostcodesDataMapper postcodesDataMapper = null,
             IUlnDataMapper ulnDataMapper = null,
-            IValidationErrorsDataMapper validationErrorsDataMapper = null)
+            IValidationErrorsDataMapper validationErrorsDataMapper = null,
+            IValidationRulesDataMapper validationRulesDataMapper = null)
         {
             return new ExternalDataCachePopulationService(
                 externalDataCache,
@@ -91,7 +97,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
                 organisationsDataMapper,
                 postcodesDataMapper,
                 ulnDataMapper,
-                validationErrorsDataMapper);
+                validationErrorsDataMapper,
+                validationRulesDataMapper);
         }
     }
 }

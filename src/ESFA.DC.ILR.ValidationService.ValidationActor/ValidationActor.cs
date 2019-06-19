@@ -77,8 +77,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                 executionContextObj.TaskKey = _actorId.ToString();
             }
 
-            var validationContext = _validationContextFactory.Build(actorModel);
-
             ILogger logger = _parentLifeTimeScope.Resolve<ILogger>();
 
             InternalDataCache internalDataCache;
@@ -142,7 +140,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                     IRuleSetOrchestrationService<ILearner> preValidationOrchestrationService = childLifeTimeScope
                         .Resolve<IRuleSetOrchestrationService<ILearner>>();
 
-                    errors = await preValidationOrchestrationService.ExecuteAsync(validationContext, message.Learners, cancellationToken);
+                    errors = await preValidationOrchestrationService.ExecuteAsync(message.Learners, cancellationToken);
                     jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} validation done");
                 }
                 catch (Exception ex)

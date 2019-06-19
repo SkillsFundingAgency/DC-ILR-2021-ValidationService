@@ -80,14 +80,11 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             string externalDataCacheAsString = _jsonSerializationService.Serialize(_externalDataCache);
             _logger.LogDebug($"ExternalDataCache: {externalDataCacheAsString.Length}");
 
-            string taskListAsString = _jsonSerializationService.Serialize(validationContext.IgnoredRules);
-            _logger.LogDebug($"taskListAsString {taskListAsString.Length}");
-
             if (learnerMessageShards != null)
             {
                 foreach (IMessage messageShard in learnerMessageShards)
                 {
-                    var actor = CreateValidationActor<IValidationActor, ValidationActorModel>(validationContext, messageShard, learnerValidationActors, internalDataCacheAsString, externalDataCacheAsString, fileDataCacheAsString, taskListAsString, _validationActorServiceName, out var validationActorModel);
+                    var actor = CreateValidationActor<IValidationActor, ValidationActorModel>(validationContext, messageShard, learnerValidationActors, internalDataCacheAsString, externalDataCacheAsString, fileDataCacheAsString, _validationActorServiceName, out var validationActorModel);
 
                     actorTasks.Add(actor.Validate(validationActorModel, cancellationToken));
                 }
@@ -97,7 +94,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             {
                 foreach (IMessage messageShard in learnerDPMessageShards)
                 {
-                    var actor = CreateValidationActor<IValidationDPActor, ValidationDPActorModel>(validationContext, messageShard, learnerDPValidationActors, internalDataCacheAsString, externalDataCacheAsString, fileDataCacheAsString, taskListAsString, _validationDPActorServiceName, out var validationActorModel);
+                    var actor = CreateValidationActor<IValidationDPActor, ValidationDPActorModel>(validationContext, messageShard, learnerDPValidationActors, internalDataCacheAsString, externalDataCacheAsString, fileDataCacheAsString, _validationDPActorServiceName, out var validationActorModel);
 
                     actorTasks.Add(actor.Validate(validationActorModel, cancellationToken));
                 }
@@ -145,7 +142,6 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             string internalDataCacheAsString,
             string externalDataCacheAsString,
             string fileDataCacheAsString,
-            string taskListAsString,
             string actorServiceName,
             out S validationActorModel)
             where T : IActor
@@ -166,8 +162,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
                 Message = ilrMessageAsString,
                 InternalDataCache = internalDataCacheAsString,
                 ExternalDataCache = externalDataCacheAsString,
-                FileDataCache = fileDataCacheAsString,
-                TaskList = taskListAsString
+                FileDataCache = fileDataCacheAsString
             };
 
             return actor;

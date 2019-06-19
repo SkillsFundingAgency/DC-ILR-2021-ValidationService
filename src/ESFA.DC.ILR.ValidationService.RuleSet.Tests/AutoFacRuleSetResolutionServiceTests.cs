@@ -18,15 +18,17 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
         {
             var builder = new ContainerBuilder();
 
-            var validationContextMock = new Mock<IValidationContext>();
+            var enabledRulesProviderMock = new Mock<IEnabledRulesProvider>();
+
+            enabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string>());
 
             var container = builder.Build();
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, enabledRulesProviderMock.Object);
 
-                service.Resolve(validationContextMock.Object).Should().BeEmpty();
+                service.Resolve().Should().BeEmpty();
             }
         }
 
@@ -38,15 +40,17 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>();
             builder.RegisterType<RuleOne>().As<IRule<string>>();
 
-            var validationContextMock = new Mock<IValidationContext>();
+            var enabledRulesProviderMock = new Mock<IEnabledRulesProvider>();
+
+            enabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string> { "RuleOne" });
 
             var container = builder.Build();
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, enabledRulesProviderMock.Object);
 
-                service.Resolve(validationContextMock.Object).First().Should().BeOfType<RuleOne>();
+                service.Resolve().First().Should().BeOfType<RuleOne>();
             }
         }
 
@@ -59,15 +63,17 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             builder.RegisterType<RuleOne>().As<IRule<string>>();
             builder.RegisterType<RuleTwo>().As<IRule<string>>();
 
-            var validationContextMock = new Mock<IValidationContext>();
+            var enabledRulesProviderMock = new Mock<IEnabledRulesProvider>();
+
+            enabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string> { "RuleOne", "RuleTwo" });
 
             var container = builder.Build();
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, enabledRulesProviderMock.Object);
 
-                var rules = service.Resolve(validationContextMock.Object).ToList();
+                var rules = service.Resolve().ToList();
 
                 rules.Should().AllBeAssignableTo<IRule<string>>();
                 rules[0].Should().BeOfType<RuleOne>();
@@ -80,7 +86,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
         {
             var builder = new ContainerBuilder();
 
-            var validationContextMock = new Mock<IValidationContext>();
+            var enabledRulesProviderMock = new Mock<IEnabledRulesProvider>();
+
+            enabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string> { "RuleOne", "RuleTwo" });
 
             builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>().InstancePerLifetimeScope();
             builder.RegisterType<RuleOne>().As<IRule<string>>().InstancePerLifetimeScope();
@@ -92,23 +100,23 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, enabledRulesProviderMock.Object);
 
-                ruleOne = service.Resolve(validationContextMock.Object).First();
+                ruleOne = service.Resolve().First();
             }
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, enabledRulesProviderMock.Object);
 
-                ruleTwo = service.Resolve(validationContextMock.Object).First();
+                ruleTwo = service.Resolve().First();
             }
 
             ruleOne.Should().NotBeSameAs(ruleTwo);
         }
 
         [Fact]
-        public void Resolve_FilteredValidationItems()
+        public void Resolve_DisabledValidationItems()
         {
             var builder = new ContainerBuilder();
 
@@ -116,17 +124,17 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             builder.RegisterType<RuleOne>().As<IRule<string>>();
             builder.RegisterType<RuleTwo>().As<IRule<string>>();
 
-            var validationContextMock = new Mock<IValidationContext>();
+            var enabledRulesProviderMock = new Mock<IEnabledRulesProvider>();
 
-            validationContextMock.SetupGet(x => x.IgnoredRules).Returns(new List<string> { "RuleTwo" });
+            enabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string> { "RuleOne" });
 
             var container = builder.Build();
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, enabledRulesProviderMock.Object);
 
-                var rules = service.Resolve(validationContextMock.Object).ToList();
+                var rules = service.Resolve().ToList();
 
                 rules.Count.Should().Be(1);
                 rules.Should().AllBeAssignableTo<IRule<string>>();
@@ -134,9 +142,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             }
         }
 
-        private IRuleSetResolutionService<string> NewService(ILifetimeScope lifetimeScope)
+        private IRuleSetResolutionService<string> NewService(ILifetimeScope lifetimeScope, IEnabledRulesProvider enabledRulesProvider)
         {
-            return new AutoFacRuleSetResolutionService<string>(lifetimeScope);
+            return new AutoFacRuleSetResolutionService<string>(lifetimeScope, enabledRulesProvider);
         }
     }
 }

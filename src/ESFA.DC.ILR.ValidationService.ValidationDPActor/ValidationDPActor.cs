@@ -77,8 +77,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
                 executionContextObj.TaskKey = _actorId.ToString();
             }
 
-            var validationContext = _validationContextFactory.Build(actorModel);
-
             ILogger logger = _parentLifeTimeScope.Resolve<ILogger>();
 
             InternalDataCache internalDataCache;
@@ -132,7 +130,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
                     IRuleSetOrchestrationService<ILearnerDestinationAndProgression> preValidationOrchestrationService = childLifeTimeScope
                         .Resolve<IRuleSetOrchestrationService<ILearnerDestinationAndProgression>>();
 
-                    errors = await preValidationOrchestrationService.ExecuteAsync(validationContext, message.LearnerDestinationAndProgressions, cancellationToken);
+                    errors = await preValidationOrchestrationService.ExecuteAsync(message.LearnerDestinationAndProgressions, cancellationToken);
                     jobLogger.LogDebug($"{nameof(ValidationDPActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} Destination and Progression validation done");
                 }
                 catch (Exception ex)

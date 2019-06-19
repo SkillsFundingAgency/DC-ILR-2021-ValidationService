@@ -24,9 +24,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet
             _validationErrorCache = validationErrorCache;
         }
 
-        public async Task<IEnumerable<IValidationError>> ExecuteAsync(IValidationContext validationContext, IEnumerable<T> validationItems, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IValidationError>> ExecuteAsync(IEnumerable<T> validationItems, CancellationToken cancellationToken)
         {
-            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve(validationContext).ToList();
+            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve().ToList();
 
             foreach (T validationItem in validationItems)
             {
@@ -38,9 +38,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet
             return _validationErrorCache.ValidationErrors;
         }
 
-        public async Task<IEnumerable<IValidationError>> ExecuteAsync(IValidationContext validationContext, T validationItem, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IValidationError>> ExecuteAsync(T validationItem, CancellationToken cancellationToken)
         {
-            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve(validationContext).ToList();
+            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve().ToList();
 
             cancellationToken.ThrowIfCancellationRequested();
 

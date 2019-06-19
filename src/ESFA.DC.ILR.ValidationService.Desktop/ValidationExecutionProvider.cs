@@ -27,14 +27,14 @@ namespace ESFA.DC.ILR.ValidationService.Desktop
             _logger.LogDebug("Starting Learner RuleSet Execution");
             if (message?.Learners != null)
             {
-                await _learneRuleSetOrchestrationService.ExecuteAsync(validationContext, message.Learners, cancellationToken).ConfigureAwait(false);
+                await _learneRuleSetOrchestrationService.ExecuteAsync(message.Learners, cancellationToken).ConfigureAwait(false);
             }
             _logger.LogDebug("Finished Learner RuleSet Execution");
 
             _logger.LogDebug("Starting LearnerDP RuleSet Execution");
             if (message?.LearnerDestinationAndProgressions != null)
             {
-                await _learnerDPRuleSetOrchestrationService.ExecuteAsync(validationContext, message.LearnerDestinationAndProgressions, cancellationToken).ConfigureAwait(false);
+                await _learnerDPRuleSetOrchestrationService.ExecuteAsync(message.LearnerDestinationAndProgressions, cancellationToken).ConfigureAwait(false);
             }           
             _logger.LogDebug("Finished LearnerDP RuleSet Execution");
         }
