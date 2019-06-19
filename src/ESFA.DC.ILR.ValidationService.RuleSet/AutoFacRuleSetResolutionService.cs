@@ -10,15 +10,19 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet
         where T : class
     {
         private readonly ILifetimeScope _lifetimeScope;
+        private readonly IDisabledRulesProvider _disabledRulesProvider;
 
-        public AutoFacRuleSetResolutionService(ILifetimeScope lifetimeScope)
+        public AutoFacRuleSetResolutionService(ILifetimeScope lifetimeScope, IDisabledRulesProvider disabledRulesProvider)
         {
             _lifetimeScope = lifetimeScope;
+            _disabledRulesProvider = disabledRulesProvider;
         }
 
         public IEnumerable<IRule<T>> Resolve(IValidationContext validationContext)
         {
-            return _lifetimeScope.Resolve<IEnumerable<IRule<T>>>().Where(x => !validationContext.IgnoredRules.Any(y => string.Equals(x.RuleName, y, StringComparison.OrdinalIgnoreCase)));
+            var disabledRules = _disabledRulesProvider.Provide().Union(validationContext.IgnoredRules);
+
+            return _lifetimeScope.Resolve<IEnumerable<IRule<T>>>().Where(x => !disabledRules.Any(y => string.Equals(x.RuleName, y, StringComparison.OrdinalIgnoreCase)));
         }
     }
 }

@@ -29,6 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Modules
             builder.RegisterType<PreValidationOrchestrationSfService>().As<IPreValidationOrchestrationService>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationExecutionProvider>().As<IValidationExecutionProvider>().InstancePerLifetimeScope();
             builder.RegisterType<DesktopContextValidationContextFactory>().As<IValidationContextFactory<IDesktopContext>>();
+            builder.RegisterType<DisabledRulesProvider>().As<IDisabledRulesProvider>().InstancePerLifetimeScope();
         }
     }
 }

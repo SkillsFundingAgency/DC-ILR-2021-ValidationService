@@ -19,12 +19,15 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             var builder = new ContainerBuilder();
 
             var validationContextMock = new Mock<IValidationContext>();
+            var disabledRulesProviderMock = new Mock<IDisabledRulesProvider>();
+
+            disabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string>());
 
             var container = builder.Build();
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, disabledRulesProviderMock.Object);
 
                 service.Resolve(validationContextMock.Object).Should().BeEmpty();
             }
@@ -39,12 +42,15 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             builder.RegisterType<RuleOne>().As<IRule<string>>();
 
             var validationContextMock = new Mock<IValidationContext>();
+            var disabledRulesProviderMock = new Mock<IDisabledRulesProvider>();
+
+            disabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string>());
 
             var container = builder.Build();
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, disabledRulesProviderMock.Object);
 
                 service.Resolve(validationContextMock.Object).First().Should().BeOfType<RuleOne>();
             }
@@ -60,12 +66,15 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             builder.RegisterType<RuleTwo>().As<IRule<string>>();
 
             var validationContextMock = new Mock<IValidationContext>();
+            var disabledRulesProviderMock = new Mock<IDisabledRulesProvider>();
+
+            disabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string>());
 
             var container = builder.Build();
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, disabledRulesProviderMock.Object);
 
                 var rules = service.Resolve(validationContextMock.Object).ToList();
 
@@ -81,6 +90,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             var builder = new ContainerBuilder();
 
             var validationContextMock = new Mock<IValidationContext>();
+            var disabledRulesProviderMock = new Mock<IDisabledRulesProvider>();
+
+            disabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string>());
 
             builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>().InstancePerLifetimeScope();
             builder.RegisterType<RuleOne>().As<IRule<string>>().InstancePerLifetimeScope();
@@ -92,14 +104,14 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, disabledRulesProviderMock.Object);
 
                 ruleOne = service.Resolve(validationContextMock.Object).First();
             }
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, disabledRulesProviderMock.Object);
 
                 ruleTwo = service.Resolve(validationContextMock.Object).First();
             }
@@ -117,6 +129,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             builder.RegisterType<RuleTwo>().As<IRule<string>>();
 
             var validationContextMock = new Mock<IValidationContext>();
+            var disabledRulesProviderMock = new Mock<IDisabledRulesProvider>();
+
+            disabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string>());
 
             validationContextMock.SetupGet(x => x.IgnoredRules).Returns(new List<string> { "RuleTwo" });
 
@@ -124,7 +139,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             using (var scope = container.BeginLifetimeScope())
             {
-                var service = NewService(scope);
+                var service = NewService(scope, disabledRulesProviderMock.Object);
 
                 var rules = service.Resolve(validationContextMock.Object).ToList();
 
@@ -134,9 +149,39 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             }
         }
 
-        private IRuleSetResolutionService<string> NewService(ILifetimeScope lifetimeScope)
+        [Fact]
+        public void Resolve_DisabledValidationItems()
         {
-            return new AutoFacRuleSetResolutionService<string>(lifetimeScope);
+            var builder = new ContainerBuilder();
+
+            builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>();
+            builder.RegisterType<RuleOne>().As<IRule<string>>();
+            builder.RegisterType<RuleTwo>().As<IRule<string>>();
+
+            var validationContextMock = new Mock<IValidationContext>();
+            var disabledRulesProviderMock = new Mock<IDisabledRulesProvider>();
+
+            disabledRulesProviderMock.Setup(x => x.Provide()).Returns(new List<string> { "RuleTwo" });
+
+            validationContextMock.SetupGet(x => x.IgnoredRules).Returns(new List<string>());
+
+            var container = builder.Build();
+
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var service = NewService(scope, disabledRulesProviderMock.Object);
+
+                var rules = service.Resolve(validationContextMock.Object).ToList();
+
+                rules.Count.Should().Be(1);
+                rules.Should().AllBeAssignableTo<IRule<string>>();
+                rules[0].Should().BeOfType<RuleOne>();
+            }
+        }
+
+        private IRuleSetResolutionService<string> NewService(ILifetimeScope lifetimeScope, IDisabledRulesProvider disabledRulesProvider)
+        {
+            return new AutoFacRuleSetResolutionService<string>(lifetimeScope, disabledRulesProvider);
         }
     }
 }

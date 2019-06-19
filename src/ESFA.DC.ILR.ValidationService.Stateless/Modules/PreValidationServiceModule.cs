@@ -60,6 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
             builder.RegisterType<RuleSetExecutionService<IMessage>>().As<IRuleSetExecutionService<IMessage>>();
             builder.RegisterType<ValidationErrorHandler>().As<IValidationErrorHandler>().InstancePerLifetimeScope();
             builder.RegisterType<ActorValidationExecutionProvider>().As<IValidationExecutionProvider>().InstancePerLifetimeScope();
+            builder.RegisterType<DisabledRulesProvider>().As<IDisabledRulesProvider>().InstancePerLifetimeScope();
 
             builder.RegisterType<PreValidationPopulationService>().As<IPopulationService>().InstancePerLifetimeScope();
             builder.RegisterModule<MessageRuleSetModule>();
