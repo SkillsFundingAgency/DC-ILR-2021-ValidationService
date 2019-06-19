@@ -27,7 +27,5 @@ namespace ESFA.DC.ILR.ValidationService.Interface
         int ValidationTotalErrorCount { set; }
 
         int ValidationTotalWarningCount { set; }
-
-        IEnumerable<string> IgnoredRules { get; }
     }
 }

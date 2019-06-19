@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface IDisabledRulesProvider
+    public interface IEnabledRulesProvider
     {
         ICollection<string> Provide();
     }

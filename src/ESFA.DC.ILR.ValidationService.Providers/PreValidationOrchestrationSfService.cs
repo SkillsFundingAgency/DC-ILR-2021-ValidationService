@@ -66,7 +66,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
                 _logger.LogDebug($"Population service completed in: {stopWatch.ElapsedMilliseconds}");
                 
                 // File Validation
-                await _ruleSetOrchestrationService.ExecuteAsync(validationContext, message, cancellationToken).ConfigureAwait(false);
+                await _ruleSetOrchestrationService.ExecuteAsync(message, cancellationToken).ConfigureAwait(false);
 
                 cancellationToken.ThrowIfCancellationRequested();
 

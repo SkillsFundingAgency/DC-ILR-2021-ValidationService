@@ -19,10 +19,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             var output = new List<string> { "1", "2", "3" };
 
             IValidationErrorCache validationErrorCache = new ValidationErrorCache();
-            var validationContextMock = new Mock<IValidationContext>();
 
             var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<string>>();
-            ruleSetResolutionServiceMock.Setup(rs => rs.Resolve(validationContextMock.Object)).Returns(new List<IRule<string>>() { new RuleOne(validationErrorCache), new RuleTwo(validationErrorCache) });
+            ruleSetResolutionServiceMock.Setup(rs => rs.Resolve()).Returns(new List<IRule<string>>() { new RuleOne(validationErrorCache), new RuleTwo(validationErrorCache) });
 
             var cancellationToken = CancellationToken.None;
 
@@ -30,7 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             var service = NewService(ruleSetResolutionServiceMock.Object, validationErrorCache: validationErrorCache, ruleSetExecutionService: ruleSetExecutionService);
 
-            (await service.ExecuteAsync(validationContextMock.Object, new List<string>(),  cancellationToken)).Should().BeEmpty();
+            (await service.ExecuteAsync(new List<string>(),  cancellationToken)).Should().BeEmpty();
         }
 
         [Fact]
@@ -40,11 +39,8 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             var ruleSet = new List<IRule<string>> { new RuleOne(validationErrorCache), new RuleTwo(validationErrorCache) };
 
-            var validationContextMock = new Mock<IValidationContext>();
-            validationContextMock.SetupGet(c => c.IgnoredRules).Returns(new List<string>());
-
             var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<string>>();
-            ruleSetResolutionServiceMock.Setup(rs => rs.Resolve(validationContextMock.Object)).Returns(ruleSet);
+            ruleSetResolutionServiceMock.Setup(rs => rs.Resolve()).Returns(ruleSet);
 
             const string one = "one";
             const string two = "two";
@@ -56,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             var service = NewService(ruleSetResolutionServiceMock.Object, ruleSetExecutionService, validationErrorCache);
 
-            (await service.ExecuteAsync(validationContextMock.Object, validationItems, cancellationToken)).Should().HaveCount(6);
+            (await service.ExecuteAsync(validationItems, cancellationToken)).Should().HaveCount(6);
         }
 
         private RuleSetOrchestrationService<T> NewService<T>(

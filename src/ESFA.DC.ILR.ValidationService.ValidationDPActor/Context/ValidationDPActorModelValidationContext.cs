@@ -6,11 +6,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor.Context
 {
     public class ValidationDPActorModelValidationContext : IValidationContext
     {
-        public ValidationDPActorModelValidationContext(IEnumerable<string> ignoredRules)
-        {
-            IgnoredRules = ignoredRules;
-        }
-
         public string Filename => throw new NotImplementedException();
 
         public string Container => throw new NotImplementedException();
@@ -46,7 +41,5 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor.Context
         {
             set => throw new NotImplementedException();
         }
-
-        public IEnumerable<string> IgnoredRules { get; set; }
     }
 }
