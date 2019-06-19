@@ -27,7 +27,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Abstract
             // It.IsEmpty(ruleName)
             //   .AsGuard<ArgumentNullException>(nameof(ruleName));
             _validationErrorHandler = validationErrorHandler;
-
             RuleName = ruleName;
         }
 
