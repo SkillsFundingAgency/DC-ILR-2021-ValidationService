@@ -18,43 +18,36 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 {
-    public class UKPRN_17RuleTests : AbstractRuleTests<UKPRN_17Rule>
+    public class UKPRN_18RuleTests : AbstractRuleTests<UKPRN_18Rule>
     {
         private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
-             FundingStreamPeriodCodeConstants.C16_18TRN1920
+            FundingStreamPeriodCodeConstants.AEBC_19TRN1920,
+            FundingStreamPeriodCodeConstants.AEBC_ASCL1920
         };
 
         [Fact]
         public void RuleName()
         {
-            NewRule().RuleName.Should().Be("UKPRN_17");
+            NewRule().RuleName.Should().Be("UKPRN_18");
         }
 
         [Fact]
         public void FundModelCondition_ShouldMatch()
         {
-            var fundModel = 25;
+            var fundModel = 35;
             NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
         }
 
         [Fact]
         public void FundModelCondition_ShouldNotMatch()
         {
-            var fundModel = 21;
+            var fundModel = 2;
             NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
         }
 
-        [Theory]
-        [InlineData(1, false)]
-        [InlineData(24, true)]
-        public void IsTraineeshipConditionMet(int? progType, bool expected)
-        {
-            NewRule().TraineeshipConditionMet(progType).Should().Be(expected);
-        }
-
         [Fact]
-        public void LearningDeliveryFAMsConditionMet()
+        public void LearningDeliveryFAMsCondition_ShouldMatch()
         {
             var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>();
             var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
@@ -65,9 +58,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "SOF", "105"))
                 .Returns(result);
 
-            var rule17 = NewRule(learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object);
+            var rule18 = NewRule(learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object);
 
-            rule17.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs).Should().Be(result);
+            rule18.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs).Should().Be(result);
         }
 
         [Fact]
@@ -78,9 +71,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.FundingRelationshipFCTExists(_fundingStreamPeriodCodes))
                 .Returns(true);
 
-            var rule17 = NewRule(fcsDataService: mockfcsDataServices.Object).FCTFundingConditionMet();
+            var rule18 = NewRule(fcsDataService: mockfcsDataServices.Object).FCTFundingConditionMet();
 
-            rule17.Should().BeTrue();
+            rule18.Should().BeTrue();
             mockfcsDataServices.Verify(fcs => fcs.FundingRelationshipFCTExists(_fundingStreamPeriodCodes), Times.Once);
         }
 
@@ -92,9 +85,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.FundingRelationshipFCTExists(_fundingStreamPeriodCodes))
                 .Returns(false);
 
-            var rule17 = NewRule(fcsDataService: mockFcsDataServices.Object).FCTFundingConditionMet();
+            var rule18 = NewRule(fcsDataService: mockFcsDataServices.Object).FCTFundingConditionMet();
 
-            rule17.Should().BeFalse();
+            rule18.Should().BeFalse();
             mockFcsDataServices.Verify(fcs => fcs.FundingRelationshipFCTExists(_fundingStreamPeriodCodes), Times.Once);
         }
 
@@ -111,9 +104,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var mockFcsDataServices = new Mock<IFCSDataService>();
             mockFcsDataServices.Setup(x => x.GetContractAllocationFor(contractRef)).Returns(mockContractAllocation.Object);
 
-            var rule17 = NewRule(fcsDataService: mockFcsDataServices.Object).StopNewStartsFromDateConditionMet(contractRef, startDate);
+            var rule18 = NewRule(fcsDataService: mockFcsDataServices.Object).StopNewStartsFromDateConditionMet(contractRef, startDate);
 
-            rule17.Should().BeFalse();
+            rule18.Should().BeFalse();
 
             mockContractAllocation.VerifyGet(x => x.StopNewStartsFromDate, Times.Once);
             mockFcsDataServices.Verify(x => x.GetContractAllocationFor(contractRef), Times.Once);
@@ -132,9 +125,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var mockFcsDataServices = new Mock<IFCSDataService>();
             mockFcsDataServices.Setup(x => x.GetContractAllocationFor(contractRef)).Returns(mockContractAllocation.Object);
 
-            var rule17 = NewRule(fcsDataService: mockFcsDataServices.Object);
+            var rule18 = NewRule(fcsDataService: mockFcsDataServices.Object);
 
-            rule17.StopNewStartsFromDateConditionMet(contractRef, startDate).Should().BeTrue();
+            rule18.StopNewStartsFromDateConditionMet(contractRef, startDate).Should().BeTrue();
 
             mockContractAllocation.VerifyGet(x => x.StopNewStartsFromDate, Times.AtLeastOnce);
             mockFcsDataServices.Verify(x => x.GetContractAllocationFor(contractRef), Times.Once);
@@ -153,9 +146,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var mockFcsDataServices = new Mock<IFCSDataService>();
             mockFcsDataServices.Setup(x => x.GetContractAllocationFor(contractRef)).Returns(mockContractAllocation.Object);
 
-            var rule17 = NewRule(fcsDataService: mockFcsDataServices.Object);
+            var rule18 = NewRule(fcsDataService: mockFcsDataServices.Object);
 
-            rule17.StopNewStartsFromDateConditionMet(contractRef, startDate).Should().BeTrue();
+            rule18.StopNewStartsFromDateConditionMet(contractRef, startDate).Should().BeTrue();
 
             mockContractAllocation.VerifyGet(x => x.StopNewStartsFromDate, Times.AtLeastOnce);
             mockFcsDataServices.Verify(x => x.GetContractAllocationFor(contractRef), Times.Once);
@@ -174,19 +167,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var mockFcsDataServices = new Mock<IFCSDataService>();
             mockFcsDataServices.Setup(x => x.GetContractAllocationFor(contractRef)).Returns(mockContractAllocation.Object);
 
-            var rule17 = NewRule(fcsDataService: mockFcsDataServices.Object);
+            var rule18 = NewRule(fcsDataService: mockFcsDataServices.Object);
 
-            rule17.StopNewStartsFromDateConditionMet(contractRef, startDate).Should().BeFalse();
+            rule18.StopNewStartsFromDateConditionMet(contractRef, startDate).Should().BeFalse();
 
             mockContractAllocation.VerifyGet(x => x.StopNewStartsFromDate, Times.AtLeastOnce);
             mockFcsDataServices.Verify(x => x.GetContractAllocationFor(contractRef), Times.Once);
         }
 
         [Fact]
+        public void FromDateCondition_Fails_WithNullContractAllocator()
+        {
+            string contractRef = "123";
+            var startDate = DateTime.Now;
+            IFcsContractAllocation obj = null;
+
+            var mockFcsDataServices = new Mock<IFCSDataService>();
+            mockFcsDataServices.Setup(x => x.GetContractAllocationFor(contractRef)).Returns(obj);
+
+            var rule18 = NewRule(fcsDataService: mockFcsDataServices.Object).StopNewStartsFromDateConditionMet(contractRef, startDate);
+
+            rule18.Should().BeFalse();
+            mockFcsDataServices.Verify(x => x.GetContractAllocationFor(contractRef), Times.Once);
+        }
+
+        [Fact]
         public void ConditionMet_Pass()
         {
-            int fundModel = TypeOfFunding.Age16To19ExcludingApprenticeships;
-            var progType = 24;
+            int fundModel = TypeOfFunding.AdultSkills;
             var conRefNumber = "123";
             DateTime startDate = new DateTime(2018, 8, 1);
 
@@ -199,26 +207,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 }
             };
 
-            var rule17 = NewRuleMock();
-            rule17.Setup(x => x.FundModelConditionMet(fundModel)).Returns(true);
-            rule17.Setup(x => x.TraineeshipConditionMet(progType)).Returns(true);
-            rule17.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(true);
-            rule17.Setup(x => x.FCTFundingConditionMet()).Returns(true);
-            rule17.Setup(x => x.StopNewStartsFromDateConditionMet(conRefNumber, startDate)).Returns(true);
+            var result = true;
+            var rule18 = NewRuleMock();
 
-            rule17.Object.ConditionMet(fundModel, progType, learningDeliveryFAMs, conRefNumber, startDate).Should().BeTrue();
+            rule18.Setup(x => x.FundModelConditionMet(fundModel)).Returns(result);
+            rule18.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(result);
+            rule18.Setup(x => x.FCTFundingConditionMet()).Returns(result);
+            rule18.Setup(x => x.StopNewStartsFromDateConditionMet(conRefNumber, startDate)).Returns(result);
+
+            rule18.Object.ConditionMet(fundModel, learningDeliveryFAMs, conRefNumber, startDate).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(true, false, false, false, false)]
-        [InlineData(false, true, false, false, false)]
-        [InlineData(false, false, true, false, false)]
-        [InlineData(false, false, false, true, false)]
-        [InlineData(false, false, false, false, true)]
-        public void ConditionMet_Fails(bool fundCondition, bool isTraineeCondition, bool delFAMSCondition, bool fctCondition, bool fromDateCondition)
+        [InlineData(true, false, false, false)]
+        [InlineData(false, false, false, false)]
+        [InlineData(false, true, false, false)]
+        [InlineData(false, false, true, false)]
+        [InlineData(false, false, false, true)]
+        public void ConditionMet_Fails(bool fundCondition, bool delFAMSCondition, bool fctCondition, bool fromDateCondition)
         {
-            int fundModel = TypeOfFunding.Age16To19ExcludingApprenticeships;
-            var progType = 24;
+            int fundModel = TypeOfFunding.AdultSkills;
             var conRefNumber = "123";
             DateTime startDate = new DateTime(2019, 6, 18);
 
@@ -231,15 +239,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 }
             };
 
-            var rule17 = NewRuleMock();
-            rule17.Setup(x => x.FundModelConditionMet(fundModel)).Returns(fundCondition);
-            rule17.Setup(x => x.TraineeshipConditionMet(progType)).Returns(isTraineeCondition);
-            rule17.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(delFAMSCondition);
-            rule17.Setup(x => x.FCTFundingConditionMet()).Returns(fctCondition);
-            rule17.Setup(x => x.StopNewStartsFromDateConditionMet(conRefNumber, startDate)).Returns(fromDateCondition);
+            var rule18 = NewRuleMock();
+            rule18.Setup(x => x.FundModelConditionMet(fundModel)).Returns(fundCondition);
+            rule18.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(delFAMSCondition);
+            rule18.Setup(x => x.FCTFundingConditionMet()).Returns(fctCondition);
+            rule18.Setup(x => x.StopNewStartsFromDateConditionMet(conRefNumber, startDate)).Returns(fromDateCondition);
 
-            rule17.Object
-                .ConditionMet(fundModel, progType, learningDeliveryFAMs, conRefNumber, startDate).Should().BeFalse();
+            rule18.Object.ConditionMet(fundModel, learningDeliveryFAMs, conRefNumber, startDate).Should().BeFalse();
         }
 
         [Fact]
@@ -249,7 +255,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Fact]
-        public void Validate_Error()
+        public void Validate_WithError()
         {
             int ukprn = 12345678;
             string conRefNumber = "123";
@@ -263,8 +269,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         LearnStartDate = startDate,
-                        ProgTypeNullable = 24,
-                        FundModel = 25,
+                        FundModel = TypeOfFunding.AdultSkills,
                         ConRefNumber = conRefNumber,
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
                         {
@@ -313,7 +318,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         {
             int ukprn = 12345678;
             string conRefNumber = "123";
-            DateTime startDate = new DateTime(2018, 8, 1);
+            DateTime startDate = new DateTime(2018, 8, 1);  // testing condition StartDate is lower than stopNewStartsFromDate
             DateTime stopNewStartsFromDate = startDate.AddMonths(7);
 
             var learner = new TestLearner()
@@ -323,8 +328,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         LearnStartDate = startDate,
-                        ProgTypeNullable = 24,
-                        FundModel = 25,
+                        FundModel = TypeOfFunding.AdultSkills,
                         ConRefNumber = conRefNumber,
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
                         {
@@ -368,7 +372,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             }
         }
 
-        private UKPRN_17Rule NewRule(
+        private UKPRN_18Rule NewRule(
              IFileDataService fileDataService = null,
             IAcademicYearDataService academicYearDataService = null,
             IAcademicYearQueryService academicYearQueryService = null,
@@ -376,7 +380,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
             IValidationErrorHandler validationErrorHandler = null)
         {
-            return new UKPRN_17Rule(fileDataService, academicYearDataService, academicYearQueryService, fcsDataService, learningDeliveryFAMQueryService, validationErrorHandler);
+            return new UKPRN_18Rule(fileDataService, academicYearDataService, academicYearQueryService, fcsDataService, learningDeliveryFAMQueryService, validationErrorHandler);
         }
     }
 }
