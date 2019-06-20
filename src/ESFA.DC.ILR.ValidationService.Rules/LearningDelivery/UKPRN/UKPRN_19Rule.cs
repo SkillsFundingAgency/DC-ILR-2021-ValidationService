@@ -22,31 +22,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             FundingStreamPeriodCodeConstants.AEB_19TRN1920,
             FundingStreamPeriodCodeConstants.AEB_AS1920
         };
-
-        public void Validate(ILearner objectToValidate)
-        {
-            if (objectToValidate?.LearningDeliveries == null)
-            {
-                return;
-            }
-
-            var ukprn = _fileDataService.UKPRN();
-
-            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
-            {
-                if (ConditionMet(learningDelivery.FundModel, learningDelivery.LearningDeliveryFAMs, learningDelivery.ConRefNumber, learningDelivery.LearnStartDate))
-                {
-                    HandleValidationError(objectToValidate.LearnRefNumber,
-                                          learningDelivery.AimSeqNumber,
-                                          BuildErrorMessageParameters(ukprn,
-                                                                      learningDelivery.FundModel,
-                                                                      _learnDelFamType,
-                                                                      _learnDelFAMCode,
-                                                                      learningDelivery.LearnStartDate));
-                }
-            }
-        }
-
+        
         private readonly IFileDataService _fileDataService;
         private readonly IAcademicYearDataService _academicYearDataService;
         private readonly IAcademicYearQueryService _academicYearQueryService;
@@ -73,6 +49,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
          : base(null, null)
         {
 
+        }
+
+        public void Validate(ILearner objectToValidate)
+        {
+            if (objectToValidate?.LearningDeliveries == null)
+            {
+                return;
+            }
+
+            var ukprn = _fileDataService.UKPRN();
+
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
+            {
+                if (ConditionMet(learningDelivery.FundModel, learningDelivery.LearningDeliveryFAMs, learningDelivery.ConRefNumber, learningDelivery.LearnStartDate))
+                {
+                    HandleValidationError(objectToValidate.LearnRefNumber,
+                                          learningDelivery.AimSeqNumber,
+                                          BuildErrorMessageParameters(ukprn,
+                                                                      learningDelivery.FundModel,
+                                                                      _learnDelFamType,
+                                                                      _learnDelFAMCode,
+                                                                      learningDelivery.LearnStartDate));
+                }
+            }
         }
 
         public bool ConditionMet(int fundModel, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, string conRefNumber, DateTime learnStartDate)
