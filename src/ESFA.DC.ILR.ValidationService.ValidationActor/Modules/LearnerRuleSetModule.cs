@@ -530,7 +530,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor.Modules
                 typeof(R112Rule),
                 typeof(R113Rule),
                 typeof(R114Rule),
-                typeof(R115Rule),
                 typeof(R116Rule),
                 typeof(R117Rule),
                 typeof(R118Rule),

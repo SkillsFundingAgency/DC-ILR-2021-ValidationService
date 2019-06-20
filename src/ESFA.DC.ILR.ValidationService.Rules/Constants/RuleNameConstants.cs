@@ -475,6 +475,7 @@
         public const string R66 = "R66";
         public const string R67 = "R67";
         public const string R69 = "R69";
+        public const string R68 = "R68";
         public const string R70 = "R70";
         public const string R71 = "R71";
         public const string R72 = "R72";
@@ -500,7 +501,6 @@
         public const string R112 = "R112";
         public const string R113 = "R113";
         public const string R114 = "R114";
-        public const string R115 = "R115";
         public const string R116 = "R116";
         public const string R117 = "R117";
         public const string R118 = "R118";
