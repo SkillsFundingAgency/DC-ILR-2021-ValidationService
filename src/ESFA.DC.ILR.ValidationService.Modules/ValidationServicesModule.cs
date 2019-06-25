@@ -17,6 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Modules
             builder.RegisterType<ValidationErrorHandler>().As<IValidationErrorHandler>().InstancePerLifetimeScope();
 
             builder.RegisterType<ValidationOutputService>().As<IValidationOutputService>().InstancePerLifetimeScope();
+            builder.RegisterType<ValidIlrFileOutputService>().As<IValidIlrFileOutputService>().InstancePerLifetimeScope();
         }
     }
 }

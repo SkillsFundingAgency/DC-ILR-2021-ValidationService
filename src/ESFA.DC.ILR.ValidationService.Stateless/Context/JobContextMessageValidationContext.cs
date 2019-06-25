@@ -15,7 +15,11 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Context
             _jobContextMessage = jobContextMessage;
         }
 
-        public string Filename => _jobContextMessage.KeyValuePairs[ILRContextKeys.Filename].ToString();
+        public string Filename
+        {
+            get => _jobContextMessage.KeyValuePairs[ILRContextKeys.Filename].ToString();
+            set => _jobContextMessage.KeyValuePairs[ILRContextKeys.Filename] = value;
+        }
 
         public string Container => _jobContextMessage.KeyValuePairs[ILRContextKeys.Container].ToString();
 

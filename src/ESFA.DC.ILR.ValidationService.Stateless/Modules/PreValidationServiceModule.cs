@@ -51,6 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
             builder.RegisterType<MessageFileProviderService>().As<IProvider<IMessage>>().InstancePerLifetimeScope();
             builder.RegisterType<IlrReferenceDataFileProviderService>().As<IProvider<ReferenceDataRoot>>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationOutputService>().As<IValidationOutputService>().WithAttributeFiltering().InstancePerLifetimeScope();
+            builder.RegisterType<ValidIlrFileOutputService>().As<IValidIlrFileOutputService>().InstancePerLifetimeScope();
             builder.RegisterType<LearnerPerActorProviderService>().As<ILearnerPerActorProviderService>().InstancePerLifetimeScope();
             builder.RegisterType<LearnerDPPerActorProviderService>().As<ILearnerDPPerActorProviderService>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>().InstancePerLifetimeScope();
