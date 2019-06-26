@@ -141,7 +141,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(learnStartDate, learnPlanEndDate)).Returns(1);
+            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(learnStartDate, learnPlanEndDate)).Returns(365);
 
             NewRule(dateTimeQueryServiceMock.Object).ApprenticeshipDurationConditionMet(learnStartDate, learnPlanEndDate).Should().BeFalse();
         }
