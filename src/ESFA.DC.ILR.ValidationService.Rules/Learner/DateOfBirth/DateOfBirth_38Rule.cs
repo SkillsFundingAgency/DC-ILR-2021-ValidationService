@@ -106,7 +106,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool ApprenticeshipDurationConditionMet(DateTime learnStartDate, DateTime? learnActEndDate)
         {
             return learnActEndDate.HasValue
-                && _dateTimeQueryService.MonthsBetween(learnStartDate, (DateTime)learnActEndDate) < 12;
+                && _dateTimeQueryService.DaysBetween(learnStartDate, (DateTime)learnActEndDate) < 365;
         }
 
         public bool OutComeConditionMet(int? outCome)
