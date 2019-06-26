@@ -389,10 +389,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
         /// <param name="to">To.</param>
         /// <param name="partnership">The partnership.</param>
         [Theory]
-        [InlineData("2016-04-01", "2016-02-28", "2016-04-10", "LEP001")]
-        [InlineData("2016-01-28", "2016-01-01", "2016-03-10", "LEP002")]
-        [InlineData("2016-01-01", "2016-01-01", null, "LEP001")]
-        [InlineData("2016-01-28", "2016-01-01", null, "LEP002")]
+        [InlineData("2016-02-01", "2016-02-28", "2016-04-10", "LEP001")]
+        [InlineData("2016-03-11", "2016-01-01", "2016-03-10", "LEP002")]
+        [InlineData("2016-01-01", "2016-01-02", null, "LEP001")]
+        [InlineData("2016-01-28", "2016-02-01", null, "LEP002")]
         public void InvalidItemRaisesValidationMessage(string startDate, string from, string to, string partnership)
         {
             // arrange
@@ -513,14 +513,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
         /// <param name="to">To.</param>
         /// <param name="partnership">The partnership.</param>
         [Theory]
-        [InlineData("2016-02-27", "2016-02-28", "2016-03-01", "LEP001")]
-        [InlineData("2016-02-28", "2016-02-01", "2016-02-27", "LEP002")]
-        [InlineData("2016-02-28", "2016-02-01", "2016-02-27", "LEP001")]
-        [InlineData("2016-02-24", "2016-02-25", "2016-03-01", "LEP002")]
-        [InlineData("2016-02-27", "2016-02-28", null, "LEP001")]
-        [InlineData("2016-02-27", "2016-02-28", null, "LEP002")]
-        [InlineData("2016-02-26", "2016-02-27", null, "LEP001")]
-        [InlineData("2016-02-26", "2016-02-27", null, "LEP002")]
+        [InlineData("2016-02-28", "2016-02-28", "2016-03-01", "LEP001")]
+        [InlineData("2016-02-27", "2016-02-01", "2016-02-28", "LEP002")]
+        [InlineData("2016-02-28", "2016-02-01", "2016-02-27", "LEP005")]
+        [InlineData("2016-02-24", "2016-02-25", "2016-03-01", "LEP005")]
+        [InlineData("2016-02-28", "2016-02-27", null, "LEP001")]
+        [InlineData("2016-02-28", "2016-02-27", null, "LEP002")]
+        [InlineData("2016-02-26", "2016-02-27", null, "LEP005")]
         public void ValidItemDoesNotRaiseAValidationMessage(string startDate, string from, string to, string partnership)
         {
             // arrange
