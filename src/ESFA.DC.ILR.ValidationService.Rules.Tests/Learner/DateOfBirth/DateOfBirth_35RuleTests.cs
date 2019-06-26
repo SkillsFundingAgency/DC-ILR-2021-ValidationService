@@ -128,9 +128,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(learnStartDate, learnPlanEndDate)).Returns(0);
+            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(0);
 
-            NewRule(dateTimeQueryServiceMock.Object).ApprenticeshipDurationConditionMet(learnStartDate, learnPlanEndDate).Should().BeTrue();
+            var rule35 = NewRule(dateTimeQueryServiceMock.Object).ApprenticeshipDurationConditionMet(learnStartDate, learnPlanEndDate);
+            rule35.Should().BeTrue();
         }
 
         [Fact]
@@ -141,9 +142,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(learnStartDate, learnPlanEndDate)).Returns(365);
+            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(365);
 
-            NewRule(dateTimeQueryServiceMock.Object).ApprenticeshipDurationConditionMet(learnStartDate, learnPlanEndDate).Should().BeFalse();
+            var rule35 = NewRule(dateTimeQueryServiceMock.Object).ApprenticeshipDurationConditionMet(learnStartDate, learnPlanEndDate);
+            rule35.Should().BeFalse();
         }
 
         [Fact]
