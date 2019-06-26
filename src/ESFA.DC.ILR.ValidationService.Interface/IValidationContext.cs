@@ -4,7 +4,7 @@ namespace ESFA.DC.ILR.ValidationService.Interface
 {
     public interface IValidationContext
     {
-        string Filename { get; }
+        string Filename { get; set; }
 
         string Container { get; }
 
