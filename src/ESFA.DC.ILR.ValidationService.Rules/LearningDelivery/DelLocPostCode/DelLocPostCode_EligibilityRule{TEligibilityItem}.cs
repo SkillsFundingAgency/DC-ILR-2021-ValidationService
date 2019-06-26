@@ -149,7 +149,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 
             return _check.HasQualifyingStart(delivery, FirstViableDate)
                    && eligibilities.Any(x => !string.IsNullOrEmpty(x.Code))
-                   && !HasQualifyingEligibility(delivery, GetONSPostcodes(delivery), eligibilities);
+                   && HasQualifyingEligibility(delivery, GetONSPostcodes(delivery), eligibilities);
         }
 
         /// <summary>
