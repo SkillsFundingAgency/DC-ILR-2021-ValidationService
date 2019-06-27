@@ -36,7 +36,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.MathGrade
 
         [Theory]
         [InlineData(25)]
-        [InlineData(82)]
         public void FundModelConditionMet_True(int fundModel)
         {
             NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
@@ -53,11 +52,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.MathGrade
 
         [Theory]
         [InlineData(null, 25)]
-        [InlineData(null, 82)]
         [InlineData("", 25)]
-        [InlineData("", 82)]
-        [InlineData(" ", 25)]
-        [InlineData(" ", 82)]
+        [InlineData("  ", 25)]
         public void ValidateError(string mathGrade, int fundModel)
         {
             var learner = new TestLearner
