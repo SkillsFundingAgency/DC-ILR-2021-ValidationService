@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                    && learnStartDate >= _mayFirst2017
                    && _dd07.IsApprenticeship(progType)
                    && aimType == TypeOfAim.ProgrammeAim
-                   && _dateTimeQueryService.WholeMonthsBetween(learnStartDate, learnPlanEndDate) < 12;
+                   && _dateTimeQueryService.DaysBetween(learnStartDate, learnPlanEndDate) < 365;
         }
 
         public bool Excluded(int? progType, IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
