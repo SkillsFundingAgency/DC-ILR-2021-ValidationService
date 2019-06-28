@@ -112,8 +112,6 @@
     <Compile Include="CrossEntity\R49RuleTests.cs" />
     <Compile Include="CrossEntity\R101RuleTests.cs" />
     <Compile Include="CrossEntity\R51RuleTests.cs" />
-    <Compile Include="CrossEntity\R111RuleTests.cs" />
-    <Compile Include="CrossEntity\R116RuleTests.cs" />
     <Compile Include="CrossEntity\R58RuleTests.cs" />
     <Compile Include="CrossEntity\R73RuleTests.cs" />
     <Compile Include="CrossEntity\R72RuleTests.cs" />
@@ -132,7 +130,6 @@
     <Compile Include="CrossEntity\R30RuleTests.cs" />
     <Compile Include="CrossEntity\R45RuleTests.cs" />
     <Compile Include="CrossEntity\R43RuleTests.cs" />
-    <Compile Include="CrossEntity\R62RuleTests.cs" />
     <Compile Include="CrossEntity\R50RuleTests.cs" />
     <Compile Include="CrossEntity\R90RuleTests.cs" />
     <Compile Include="CrossEntity\R97RuleTests.cs" />
@@ -145,7 +142,6 @@
     <Compile Include="CrossEntity\R63RuleTests.cs" />
     <Compile Include="CrossEntity\R64RuleTests.cs" />
     <Compile Include="CrossEntity\R69RuleTests.cs" />
-    <Compile Include="CrossEntity\R75RuleTests.cs" />
     <Compile Include="CrossEntity\R71RuleTests.cs" />
     <Compile Include="CrossEntity\R47RuleTests.cs" />
     <Compile Include="CrossEntity\R20RuleTests.cs" />
@@ -153,7 +149,6 @@
     <Compile Include="CrossEntity\R107RuleTests.cs" />
     <Compile Include="CrossEntity\R108RuleTests.cs" />
     <Compile Include="CrossEntity\R66RuleTests.cs" />
-    <Compile Include="CrossEntity\R70RuleTests.cs" />
     <Compile Include="CrossEntity\R112RuleTests.cs" />
     <Compile Include="CrossEntity\R85RuleTests.cs" />
     <Compile Include="CrossEntity\R07RuleTests.cs" />
@@ -390,7 +385,6 @@
     <Compile Include="Learner\ProvSpecLearnMonOccur\ProvSpecLearnMonOccur_01RuleTests.cs" />
     <Compile Include="LearningDelivery\AchDate\AchDate_08RuleTests.cs" />
     <Compile Include="LearningDelivery\AddHours\AddHours_03RuleTests.cs" />
-    <Compile Include="LearningDelivery\AFinDate\AFinDate_02RuleTests.cs" />
     <Compile Include="LearningDelivery\AFinDate\AFinDate_07RuleTests.cs" />
     <Compile Include="LearningDelivery\AFinDate\AFinDate_06RuleTests.cs" />
     <Compile Include="LearningDelivery\AFinDate\AFinDate_05RuleTests.cs" />
