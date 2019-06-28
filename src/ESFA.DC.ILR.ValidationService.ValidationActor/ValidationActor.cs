@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.File;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
+using ESFA.DC.ILR.ValidationService.Data.Internal.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces;
 using ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces.Models;
@@ -79,6 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
 
             ILogger logger = _parentLifeTimeScope.Resolve<ILogger>();
 
+            InternalDataCache internalDataCacheGet;
             InternalDataCache internalDataCache;
             ExternalDataCache externalDataCacheGet;
             ExternalDataCache externalDataCache;
@@ -90,10 +93,19 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
             {
                 logger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} starting");
 
-                internalDataCache = _jsonSerializationService.Deserialize<InternalDataCache>(actorModel.InternalDataCache);
+                internalDataCacheGet = _jsonSerializationService.Deserialize<InternalDataCache>(actorModel.InternalDataCache);
                 externalDataCacheGet = _jsonSerializationService.Deserialize<ExternalDataCache>(actorModel.ExternalDataCache);
                 fileDataCache = _jsonSerializationService.Deserialize<FileDataCache>(actorModel.FileDataCache);
                 message = _jsonSerializationService.Deserialize<Message>(actorModel.Message);
+
+                internalDataCache = new InternalDataCache
+                {
+                    AcademicYear = internalDataCacheGet.AcademicYear,
+                    IntegerLookups = internalDataCacheGet.IntegerLookups,
+                    LimitedLifeLookups = BuildLimitedLifeLookups(internalDataCacheGet.LimitedLifeLookups),
+                    ListItemLookups = BuildListItemLookups(internalDataCacheGet.ListItemLookups),
+                    StringLookups = BuildStringLookups(internalDataCacheGet.StringLookups),
+                };
 
                 externalDataCache = new ExternalDataCache
                 {
@@ -157,6 +169,48 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
             message = null;
 
             return errors;
+        }
+
+        private IDictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>> BuildLimitedLifeLookups(IDictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>> limitedLifeLookups)
+        {
+            var dictionary = new Dictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>>();
+
+            foreach (var kvp in limitedLifeLookups)
+            {
+                dictionary.Add(
+                    kvp.Key,
+                    kvp.Value.ToCaseInsensitiveDictionary());
+            }
+
+            return dictionary;
+        }
+
+        private IDictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> BuildListItemLookups(IDictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> listItemLookups)
+        {
+            var dictionary = new Dictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>>();
+
+            foreach (var kvp in listItemLookups)
+            {
+                dictionary.Add(
+                    kvp.Key,
+                    kvp.Value.ToDictionary(k => k.Key, v => v.Value.ToCaseInsensitiveHashSet() as IReadOnlyCollection<string>, StringComparer.OrdinalIgnoreCase));
+            }
+
+            return dictionary;
+        }
+
+        private IDictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>> BuildStringLookups(IDictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>> stringLookups)
+        {
+            var dictionary = new Dictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>>();
+
+            foreach (var kvp in stringLookups)
+            {
+                dictionary.Add(
+                    kvp.Key,
+                    kvp.Value.ToCaseInsensitiveHashSet());
+            }
+
+            return dictionary;
         }
     }
 }
