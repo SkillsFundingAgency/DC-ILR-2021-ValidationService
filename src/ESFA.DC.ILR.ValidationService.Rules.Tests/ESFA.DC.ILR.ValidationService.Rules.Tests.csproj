@@ -382,11 +382,9 @@
     <Compile Include="Learner\PrimaryLLDD\PrimaryLLDD_02RuleTests.cs" />
     <Compile Include="Learner\PrimaryLLDD\PrimaryLLDD_03RuleTests.cs" />
     <Compile Include="Learner\PrimaryLLDD\PrimaryLLDD_04RuleTests.cs" />
-    <Compile Include="Learner\PriorAttain\PriorAttain_02RuleTests.cs" />
     <Compile Include="Learner\PriorAttain\PriorAttain_01RuleTests.cs" />
     <Compile Include="Learner\PriorAttain\PriorAttain_03RuleTests.cs" />
     <Compile Include="Learner\PriorAttain\PriorAttain_04RuleTests.cs" />
-    <Compile Include="Learner\PriorAttain\PriorAttain_06RuleTests.cs" />
     <Compile Include="Learner\PriorAttain\PriorAttain_07RuleTests.cs" />
     <Compile Include="Learner\Sex\Sex_01RuleTests.cs" />
     <Compile Include="Learner\ProvSpecLearnMonOccur\ProvSpecLearnMonOccur_01RuleTests.cs" />
