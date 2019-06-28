@@ -22,7 +22,7 @@
 
         public const string Addline1_03 = "Addline1_03";
 
-        public const string AFinDate_02 = "AFinDate_02";
+
         public const string AFinDate_03 = "AFinDate_03";
         public const string AFinDate_04 = "AFinDate_04";
         public const string AFinDate_05 = "AFinDate_05";
@@ -73,7 +73,6 @@
 
         public const string DateOfBirth_01 = "DateOfBirth_01";
         public const string DateOfBirth_02 = "DateOfBirth_02";
-        public const string DateOfBirth_03 = "DateOfBirth_03";
         public const string DateOfBirth_04 = "DateOfBirth_04";
         public const string DateOfBirth_05 = "DateOfBirth_05";
         public const string DateOfBirth_06 = "DateOfBirth_06";
@@ -87,8 +86,6 @@
         public const string DateOfBirth_25 = "DateOfBirth_25";
         public const string DateOfBirth_26 = "DateOfBirth_26";
         public const string DateOfBirth_27 = "DateOfBirth_27";
-        public const string DateOfBirth_28 = "DateOfBirth_28";
-        public const string DateOfBirth_29 = "DateOfBirth_29";
         public const string DateOfBirth_30 = "DateOfBirth_30";
         public const string DateOfBirth_32 = "DateOfBirth_32";
         public const string DateOfBirth_34 = "DateOfBirth_34";
@@ -432,7 +429,6 @@
         public const string PrimaryLLDD_04 = "PrimaryLLDD_04";
 
         public const string PriorAttain_01 = "PriorAttain_01";
-        public const string PriorAttain_02 = "PriorAttain_02";
         public const string PriorAttain_03 = "PriorAttain_03";
         public const string PriorAttain_04 = "PriorAttain_04";
         public const string PriorAttain_06 = "PriorAttain_06";
@@ -469,18 +465,15 @@
         public const string R58 = "R58";
         public const string R59 = "R59";
         public const string R61 = "R61";
-        public const string R62 = "R62";
         public const string R63 = "R63";
         public const string R64 = "R64";
         public const string R66 = "R66";
         public const string R67 = "R67";
         public const string R69 = "R69";
         public const string R68 = "R68";
-        public const string R70 = "R70";
         public const string R71 = "R71";
         public const string R72 = "R72";
-        public const string R73 = "R73";
-        public const string R75 = "R75";
+        public const string R73 = "R73";       
         public const string R85 = "R85";
         public const string R89 = "R89";
         public const string R90 = "R90";
@@ -496,12 +489,10 @@
         public const string R105 = "R105";
         public const string R106 = "R106";
         public const string R108 = "R108";
-        public const string R110 = "R110";
-        public const string R111 = "R111";
+        public const string R110 = "R110";     
         public const string R112 = "R112";
         public const string R113 = "R113";
-        public const string R114 = "R114";
-        public const string R116 = "R116";
+        public const string R114 = "R114";  
         public const string R117 = "R117";
         public const string R118 = "R118";
         public const string R119 = "R119";
