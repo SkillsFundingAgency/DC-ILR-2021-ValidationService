@@ -50,9 +50,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             return ProTypeConditionMet(progType)
                 && FundModelConditionMet(fundModel)
                 && PostCodeNullConditionMet(lsdPostcode)
-                && TemporaryPostcodeConditionMet(lsdPostcode)
-                && ValidPostcodeConditionMet(lsdPostcode)
-                && LearnStartDateConditionMet(learnStartDate);
+                && TemporaryPostcodeConditionMet(lsdPostcode)                
+                && LearnStartDateConditionMet(learnStartDate)
+                && ValidPostcodeConditionMet(lsdPostcode);
         }
 
         public bool ProTypeConditionMet(int? progType)

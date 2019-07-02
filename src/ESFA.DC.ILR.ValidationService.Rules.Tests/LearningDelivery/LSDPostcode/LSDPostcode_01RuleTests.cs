@@ -135,7 +135,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
 
             var lsdRule = NewRule(postcodesDataService: mockPostcodesDataService.Object).ConditionMet(progType, fundModel, lsdPostcode, learnStartDate);
             lsdRule.Should().BeFalse();
-            mockPostcodesDataService.Verify(x => x.PostcodeExists(lsdPostcode), Times.AtLeastOnce);
         }
 
         [Fact]
