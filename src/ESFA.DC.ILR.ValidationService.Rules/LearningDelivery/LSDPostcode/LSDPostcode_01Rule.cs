@@ -47,27 +47,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public bool ConditionMet(int? progType, int fundModel, string lsdPostcode, DateTime learnStartDate)
         {
-            var t6 = ProTypeConditionMet(progType);
-            var t1 = FundModelConditionMet(fundModel);
-            var t2 = PostCodeNullConditionMet(lsdPostcode);
-            var t3 = TemporaryPostcodeConditionMet(lsdPostcode);  
-            var t4 = ValidPostcodeConditionMet(lsdPostcode);
-            var t5 = LearnStartDateConditionMet(learnStartDate);
-            
-
-            return t6 
-                && t1
-                && t2
-                && t3
-                && t4
-                && t5;
+            return ProTypeConditionMet(progType)
+                && FundModelConditionMet(fundModel)
+                && PostCodeNullConditionMet(lsdPostcode)
+                && TemporaryPostcodeConditionMet(lsdPostcode)
+                && ValidPostcodeConditionMet(lsdPostcode)
+                && LearnStartDateConditionMet(learnStartDate);
         }
 
         public bool ProTypeConditionMet(int? progType)
         {
-            var res = progType.HasValue
+            return progType.HasValue
                 && progType != TypeOfLearningProgramme.Traineeship;
-            return res;
         }
 
         public bool FundModelConditionMet(int fundModel)
@@ -87,8 +78,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public bool ValidPostcodeConditionMet(string lsdPostcode)
         {
-            var res = _postcodesDataService.PostcodeExists(lsdPostcode);
-            return res;
+            return _postcodesDataService.PostcodeExists(lsdPostcode);
         }      
 
         public bool LearnStartDateConditionMet(DateTime learnStartDate)
