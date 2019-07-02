@@ -85,6 +85,7 @@
         public const string PMUKPRN = "PMUKPRN";
         public const string Postcode = "Postcode";
         public const string PostcodePrior = "PostcodePrior";
+        public const string LSDPostcode = "LSDPostcode";
         public const string PrevUKPRN = "PrevUKPRN";
         public const string ProgType = "ProgType";
         public const string PrimaryLLDD = "PrimaryLLDD";
