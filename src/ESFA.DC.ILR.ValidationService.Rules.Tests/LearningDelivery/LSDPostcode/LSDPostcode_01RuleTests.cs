@@ -91,7 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         [InlineData(TypeOfLearningProgramme.Traineeship, false)]
         public void ProgtypeConditionMet(int? progType, bool asExpected)
         {
-            NewRule().ProTypeConditionMet(progType).Should().Be(asExpected);
+            NewRule().ProgTypeConditionMet(progType).Should().Be(asExpected);
         }
 
         [Theory]

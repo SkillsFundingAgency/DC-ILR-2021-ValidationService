@@ -47,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public bool ConditionMet(int? progType, int fundModel, string lsdPostcode, DateTime learnStartDate)
         {
-            return ProTypeConditionMet(progType)
+            return ProgTypeConditionMet(progType)
                 && FundModelConditionMet(fundModel)
                 && PostCodeNullConditionMet(lsdPostcode)
                 && TemporaryPostcodeConditionMet(lsdPostcode)                
@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                 && ValidPostcodeConditionMet(lsdPostcode);
         }
 
-        public bool ProTypeConditionMet(int? progType)
+        public bool ProgTypeConditionMet(int? progType)
         {
             return progType.HasValue
                 && progType != TypeOfLearningProgramme.Traineeship;
