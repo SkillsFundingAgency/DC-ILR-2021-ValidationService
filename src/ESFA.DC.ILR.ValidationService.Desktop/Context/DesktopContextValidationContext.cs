@@ -15,7 +15,11 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Context
             _desktopContext = desktopContext;
         }
 
-        public string Filename => _desktopContext.KeyValuePairs[ILRContextKeys.Filename].ToString();
+        public string Filename
+        {
+            get => _desktopContext.KeyValuePairs[ILRContextKeys.Filename].ToString();
+            set => _desktopContext.KeyValuePairs[ILRContextKeys.Filename] = value;
+        }
 
         public string Container => _desktopContext.KeyValuePairs[ILRContextKeys.Container].ToString();
 

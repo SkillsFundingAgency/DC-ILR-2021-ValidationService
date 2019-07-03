@@ -6,7 +6,11 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor.Context
 {
     public class ValidationDPActorModelValidationContext : IValidationContext
     {
-        public string Filename => throw new NotImplementedException();
+        public string Filename
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
         public string Container => throw new NotImplementedException();
 
