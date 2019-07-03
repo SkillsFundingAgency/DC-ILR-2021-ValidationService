@@ -116,7 +116,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 return true;
             }
 
-            if (_derivedDataRule29.IsInflexibleElementOfTrainingAim(learner))
+            if (_derivedDataRule29.IsInflexibleElementOfTrainingAimLearningDelivery(learningDelivery))
             {
                 return true;
             }

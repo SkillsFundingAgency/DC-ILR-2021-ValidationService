@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,13 +10,11 @@ using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Cache;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External;
-using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
-using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
 using ESFA.DC.ILR.ValidationService.Data.File;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
+using ESFA.DC.ILR.ValidationService.Data.Internal.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Stateless.Models;
 using ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces;
 using ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces.Models;
 using ESFA.DC.Logging.Interfaces;
@@ -40,6 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
         private readonly ILifetimeScope _parentLifeTimeScope;
         private readonly IExecutionContext _executionContext;
         private readonly IJsonSerializationService _jsonSerializationService;
+        private readonly IValidationContextFactory<ValidationActorModel> _validationContextFactory;
         private readonly ActorId _actorId;
 
         /// <summary>
@@ -50,12 +50,13 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
         /// <param name="parentLifeTimeScope">Autofac Parent Lifetime Scope</param>
         /// <param name="executionContext">The logger execution context.</param>
         /// <param name="jsonSerializationService">JSON serialiser.</param>
-        public ValidationActor(ActorService actorService, ActorId actorId, ILifetimeScope parentLifeTimeScope, IExecutionContext executionContext, IJsonSerializationService jsonSerializationService)
+        public ValidationActor(ActorService actorService, ActorId actorId, ILifetimeScope parentLifeTimeScope, IExecutionContext executionContext, IJsonSerializationService jsonSerializationService, IValidationContextFactory<ValidationActorModel> validationContextFactory)
             : base(actorService, actorId)
         {
             _parentLifeTimeScope = parentLifeTimeScope;
             _executionContext = executionContext;
             _jsonSerializationService = jsonSerializationService;
+            _validationContextFactory = validationContextFactory;
             _actorId = actorId;
         }
 
@@ -80,24 +81,31 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
 
             ILogger logger = _parentLifeTimeScope.Resolve<ILogger>();
 
+            InternalDataCache internalDataCacheGet;
             InternalDataCache internalDataCache;
             ExternalDataCache externalDataCacheGet;
             ExternalDataCache externalDataCache;
             FileDataCache fileDataCache;
             Message message;
-            IEnumerable<string> tasks;
-            ValidationContext validationContext;
             IEnumerable<IValidationError> errors;
 
             try
             {
                 logger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} starting");
 
-                internalDataCache = _jsonSerializationService.Deserialize<InternalDataCache>(actorModel.InternalDataCache);
+                internalDataCacheGet = _jsonSerializationService.Deserialize<InternalDataCache>(actorModel.InternalDataCache);
                 externalDataCacheGet = _jsonSerializationService.Deserialize<ExternalDataCache>(actorModel.ExternalDataCache);
                 fileDataCache = _jsonSerializationService.Deserialize<FileDataCache>(actorModel.FileDataCache);
                 message = _jsonSerializationService.Deserialize<Message>(actorModel.Message);
-                tasks = _jsonSerializationService.Deserialize<IEnumerable<string>>(actorModel.TaskList);
+
+                internalDataCache = new InternalDataCache
+                {
+                    AcademicYear = internalDataCacheGet.AcademicYear,
+                    IntegerLookups = internalDataCacheGet.IntegerLookups,
+                    LimitedLifeLookups = BuildLimitedLifeLookups(internalDataCacheGet.LimitedLifeLookups),
+                    ListItemLookups = BuildListItemLookups(internalDataCacheGet.ListItemLookups),
+                    StringLookups = BuildStringLookups(internalDataCacheGet.StringLookups),
+                };
 
                 externalDataCache = new ExternalDataCache
                 {
@@ -115,11 +123,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                     CampusIdentifiers = externalDataCacheGet.CampusIdentifiers
                 };
 
-                validationContext = new ValidationContext
-                {
-                    Input = message
-                };
-
                 logger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} finished getting input data");
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -133,7 +136,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
 
             using (var childLifeTimeScope = _parentLifeTimeScope.BeginLifetimeScope(c =>
             {
-                c.RegisterInstance(validationContext).As<IValidationContext>();
                 c.RegisterInstance(new Cache<IMessage> { Item = message }).As<ICache<IMessage>>();
                 c.RegisterInstance(internalDataCache).As<IInternalDataCache>();
                 c.RegisterInstance(externalDataCache).As<IExternalDataCache>();
@@ -146,11 +148,11 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                 ILogger jobLogger = childLifeTimeScope.Resolve<ILogger>();
                 try
                 {
-                    jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} started learners: {validationContext.Input.Learners.Count}");
-                    IRuleSetOrchestrationService<ILearner, IValidationError> preValidationOrchestrationService = childLifeTimeScope
-                        .Resolve<IRuleSetOrchestrationService<ILearner, IValidationError>>();
+                    jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} started learners: {message.Learners.Count}");
+                    IRuleSetOrchestrationService<ILearner> preValidationOrchestrationService = childLifeTimeScope
+                        .Resolve<IRuleSetOrchestrationService<ILearner>>();
 
-                    errors = await preValidationOrchestrationService.ExecuteAsync(tasks, cancellationToken);
+                    errors = await preValidationOrchestrationService.ExecuteAsync(message.Learners, cancellationToken);
                     jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} validation done");
                 }
                 catch (Exception ex)
@@ -165,9 +167,50 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
             externalDataCache = null;
             fileDataCache = null;
             message = null;
-            validationContext = null;
 
             return errors;
+        }
+
+        private IDictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>> BuildLimitedLifeLookups(IDictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>> limitedLifeLookups)
+        {
+            var dictionary = new Dictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>>();
+
+            foreach (var kvp in limitedLifeLookups)
+            {
+                dictionary.Add(
+                    kvp.Key,
+                    kvp.Value.ToCaseInsensitiveDictionary());
+            }
+
+            return dictionary;
+        }
+
+        private IDictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> BuildListItemLookups(IDictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> listItemLookups)
+        {
+            var dictionary = new Dictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>>();
+
+            foreach (var kvp in listItemLookups)
+            {
+                dictionary.Add(
+                    kvp.Key,
+                    kvp.Value.ToDictionary(k => k.Key, v => v.Value.ToCaseInsensitiveHashSet() as IReadOnlyCollection<string>, StringComparer.OrdinalIgnoreCase));
+            }
+
+            return dictionary;
+        }
+
+        private IDictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>> BuildStringLookups(IDictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>> stringLookups)
+        {
+            var dictionary = new Dictionary<TypeOfStringCodedLookup, IReadOnlyCollection<string>>();
+
+            foreach (var kvp in stringLookups)
+            {
+                dictionary.Add(
+                    kvp.Key,
+                    kvp.Value.ToCaseInsensitiveHashSet());
+            }
+
+            return dictionary;
         }
     }
 }

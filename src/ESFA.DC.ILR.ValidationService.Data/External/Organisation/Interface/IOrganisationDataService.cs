@@ -1,6 +1,8 @@
-﻿namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface
+﻿using ESFA.DC.ILR.ValidationService.Interface;
+
+namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface
 {
-    public interface IOrganisationDataService
+    public interface IOrganisationDataService : IDataService
     {
         bool UkprnExists(long ukprn);
 

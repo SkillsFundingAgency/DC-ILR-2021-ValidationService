@@ -18,11 +18,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         private const string _ldm034 = "034";
         private const string _ldm357 = "357";
         private const int _fundModel = TypeOfFunding.AdultSkills;
+
         private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
-            FundingStreamPeriodCodeConstants.AEBC1819,
-            FundingStreamPeriodCodeConstants.AEB_LS1819,
-            FundingStreamPeriodCodeConstants.AEB_TOL1819
+            FundingStreamPeriodCodeConstants.AEBC_19TRN1920,
+            FundingStreamPeriodCodeConstants.AEBC_ASCL1920,
+            FundingStreamPeriodCodeConstants.AEB_19TRLS1920,
+            FundingStreamPeriodCodeConstants.AEB_ASLS1920,
+            FundingStreamPeriodCodeConstants.AEB_19TRN1920,
+            FundingStreamPeriodCodeConstants.AEB_AS1920
         }.ToCaseInsensitiveHashSet();
 
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;

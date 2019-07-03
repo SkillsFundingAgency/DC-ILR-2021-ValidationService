@@ -11,20 +11,17 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
     public class MessageCachePopulationService : IMessageCachePopulationService
     {
         private readonly ICache<IMessage> _messageCache;
-        private readonly IValidationItemProviderService<IMessage> _messageValidationItemProviderService;
 
         public MessageCachePopulationService(
-            ICache<IMessage> messageCache,
-            IValidationItemProviderService<IMessage> messageValidationItemProviderService)
+            ICache<IMessage> messageCache)
         {
             _messageCache = messageCache;
-            _messageValidationItemProviderService = messageValidationItemProviderService;
         }
 
-        public async Task PopulateAsync(CancellationToken cancellationToken)
+        public void Populate(IMessage message)
         {
             var messageCache = (Cache<IMessage>)_messageCache;
-            messageCache.Item = await _messageValidationItemProviderService.ProvideAsync(cancellationToken);
+            messageCache.Item = message;
         }
     }
 }

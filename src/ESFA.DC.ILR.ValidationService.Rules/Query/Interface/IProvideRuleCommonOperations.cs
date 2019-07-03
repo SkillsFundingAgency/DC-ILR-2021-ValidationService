@@ -1,13 +1,14 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using System;
 using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
 {
     /// <summary>
     /// i provide common rule operations (definition)
     /// </summary>
-    public interface IProvideRuleCommonOperations
+    public interface IProvideRuleCommonOperations : IQueryService
     {
         /// <summary>
         /// Checks the delivery fams.

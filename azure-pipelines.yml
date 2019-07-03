@@ -7,10 +7,11 @@ resources:
 
 variables:
   VersionNumberMajor: '0'
-  VersionNumberMinor: '1'
+  VersionNumberMinor: '0'
   BuildConfiguration: 'Release'
   BuildPlatform: 'Any CPU'
   BuildPlatformX64: 'x64'  
+  ServiceFabricApplicationParametersFolder: 'src\ESFA.DC.ILR.ValidationService\ApplicationParameters'
 
 pool:
   name: DCT
@@ -21,6 +22,13 @@ pool:
   - IsBuildServer
 
 steps:
+- powershell: |
+   Copy-Item "Cloud.xml" "Local.1Node.xml" -Force
+   Copy-Item "Cloud.xml" "Local.5Node.xml" -Force
+   
+  workingDirectory: '$(ServiceFabricApplicationParametersFolder)'
+  displayName: 'Generate Fake Config Files'
+
 - task: DotNetCoreInstaller@0
   displayName: 'Use .NET Core sdk 2.2.203'
   inputs:
@@ -36,29 +44,6 @@ steps:
   inputs:
     versionSpec: '< 4.8.0'
     checkLatest: true
-
-- task: gittools.gitversion.gitversion-task.GitVersion@3
-  displayName: GitVersion
-  inputs:
-    updateAssemblyInfo: true
-  enabled: false
-
-- powershell: |
-   $var = (gci env:*).GetEnumerator() | Where-Object {$_.Name -Like "*BUILD*" -or $_.Name -Like "*GITVERSION*" -or $_.Name -Like "*CI_Version*" } | Sort-Object Name
-   Foreach ($v in $var) 
-   {
-     Write-Host "Name: " + $v.Name + " | Value : " + $v.Value
-   }
-  displayName: 'Display GitVersion Variables copy'
-  enabled: false
-
-- powershell: |
-   Copy-Item "Cloud.xml" "Local.1Node.xml" -Force
-   Copy-Item "Cloud.xml" "Local.5Node.xml" -Force  
-  workingDirectory: '$(ServiceFabricApplicationParametersFolder)'
-  displayName: 'Generate Fake Config Files'
-  enabled: false
-
 
 - task: DotNetCoreCLI@2
   enabled: true
@@ -78,7 +63,6 @@ steps:
     noCache: true
 
 - task: MSBuild@1
-  enabled: true
   displayName: 'Build solution **/*.sln'
   inputs:
     msbuildVersion: 16.0
@@ -93,7 +77,6 @@ steps:
     createLogFile: true
 
 - task: MSBuild@1
-  enabled: true
   displayName: 'Build and Package - Service Fabric Config'
   inputs:
     solution: '**\*.sfproj'
@@ -140,10 +123,12 @@ steps:
   displayName: 'Copy Database Files - Artifact Databases Directory'
   inputs:
     SourceFolder: '$(build.sourcesdirectory)'
-    Contents: '**\*.dacpac'
+    Contents: |
+     **\*.Database\**\*.dacpac
     TargetFolder: '$(build.artifactstagingdirectory)\Databases'
     CleanTargetFolder: true
     flattenFolders: true
+    
 
 - task: CopyFiles@2
   displayName: 'Copy Files - $(build.artifactstagingdirectory)\ServiceFabric\PublishProfiles'
@@ -165,33 +150,33 @@ steps:
 
 - task: ServiceFabricUpdateManifests@2
   displayName: 'Update Service Fabric Manifests (Manifest versions)'
+  enabled: true
   inputs:
     applicationPackagePath: '$(build.artifactstagingdirectory)\ServiceFabric\ApplicationPackage '
     versionBehavior: Replace
-  enabled: true
    
 - task: DotNetCoreCLI@2
-  enabled: true
   displayName: 'Run xUnit Test - Core Framework'
+  enabled: true
   inputs:
     command: test
     projects: 'src/*Tests/*.csproj'
     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
     
 - task: VSTest@2
-  enabled: false
   displayName: 'VsTest - testAssemblies'
+  enabled: false
   inputs:
     testAssemblyVer2: |
-     **\ESFA.DC.ESF.R2.*tests.dll
+     **\*tests.dll
      !**\*Database.Tests*\**
      !**\packages\**
      !**\obj\**
     configuration: '$(BuildConfiguration)'
 
 - task: PublishSymbols@2
-  enabled: false
   displayName: 'Publish symbols path'
+  enabled: false
   inputs:
     SearchPattern: '**\bin\**\*.pdb'
     PublishSymbols: false
@@ -199,19 +184,21 @@ steps:
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: ServiceFabric'
+  enabled: true
   inputs:
     ArtifactName: ServiceFabric
     PathtoPublish: '$(build.artifactstagingdirectory)\ServiceFabric'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: NugetPackages'
+  enabled: true
   inputs:
     ArtifactName: NugetPackages
     PathtoPublish: '$(build.artifactstagingdirectory)\Nuget'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: Databases'
-  enabled: false
+  enabled: False
   inputs:
     ArtifactName: Databases
     PathtoPublish: '$(build.artifactstagingdirectory)\Databases'

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
 {
     /// <summary>
     /// the lars data service
     /// </summary>
-    public interface ILARSDataService
+    public interface ILARSDataService : IDataService
     {
         /// <summary>
         /// Gets the deliveries for.
@@ -103,6 +104,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
         bool NotionalNVQLevelV2MatchForLearnAimRefAndLevels(string learnAimRef, IEnumerable<string> levels);
 
         bool FullLevel2EntitlementCategoryMatchForLearnAimRef(string learnAimRef, int level);
+
+        bool FullLevel2PercentForLearnAimRefAndDateAndPercentValue(string learnAimRef, DateTime effectiveFromDate, decimal percentValue);
+
+        bool FullLevel2PercentForLearnAimRefNotMatchPercentValue(string learnAimRef, DateTime effectiveFromDate, decimal percentValue);
 
         bool FullLevel3EntitlementCategoryMatchForLearnAimRef(string learnAimRef, int level);
 

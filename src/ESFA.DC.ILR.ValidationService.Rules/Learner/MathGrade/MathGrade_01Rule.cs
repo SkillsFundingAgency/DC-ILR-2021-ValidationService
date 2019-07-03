@@ -9,9 +9,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.MathGrade
 {
     public class MathGrade_01Rule : AbstractRule, IRule<ILearner>
     {
+        private int[] _fundModels = new[] { TypeOfFunding.Age16To19ExcludingApprenticeships };
+
         public MathGrade_01Rule(
-            IValidationErrorHandler validationErrorHandler)
-            : base(validationErrorHandler, RuleNameConstants.MathGrade_01)
+                IValidationErrorHandler validationErrorHandler)
+                : base(validationErrorHandler, RuleNameConstants.MathGrade_01)
         {
         }
 
@@ -37,9 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.MathGrade
 
         public bool FundModelConditionMet(int fundModel)
         {
-            var fundModels = new[] { 25, 82 };
-
-            return fundModels.Contains(fundModel);
+            return _fundModels.Contains(fundModel);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel)

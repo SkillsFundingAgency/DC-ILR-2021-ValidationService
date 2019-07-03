@@ -4,11 +4,11 @@ using System.Threading;
 using Autofac;
 using Autofac.Integration.ServiceFabric;
 using ESFA.DC.FileService.Config;
-using ESFA.DC.ILR.ReferenceDataService.Modules;
-using ESFA.DC.ILR.ValidationService.Modules.Stateless;
+using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Stateless.Configuration;
+using ESFA.DC.ILR.ValidationService.Stateless.Context;
 using ESFA.DC.ILR.ValidationService.Stateless.Handlers;
-using ESFA.DC.ILR.ValidationService.Stateless.Models;
+using ESFA.DC.ILR.ValidationService.Stateless.Modules;
 using ESFA.DC.IO.AzureStorage.Config.Interfaces;
 using ESFA.DC.JobContextManager;
 using ESFA.DC.JobContextManager.Interface;
@@ -40,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
                 builder.RegisterServiceFabricSupport();
 
                 // Register the stateless service.
-                builder.RegisterStatelessService<ESFA.DC.ServiceFabric.Common.Stateless>("ESFA.DC.ILR1819.ValidationService.StatelessType");
+                builder.RegisterStatelessService<ESFA.DC.ServiceFabric.Common.Stateless>("ESFA.DC.ILR1920.ValidationService.StatelessType");
 
                 using (var container = builder.Build())
                 {
@@ -80,9 +80,9 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
 
             containerBuilder.RegisterType<DefaultJobContextMessageMapper<JobContextMessage>>().As<IMapper<JobContextMessage, JobContextMessage>>();
             containerBuilder.RegisterType<MessageHandler>().As<IMessageHandler<JobContextMessage>>();
+            containerBuilder.RegisterType<JobContextMessageValidationContextFactory>().As<IValidationContextFactory<IJobContextMessage>>();
 
             containerBuilder.RegisterType<JobContextManager<JobContextMessage>>().As<IJobContextManager<JobContextMessage>>().InstancePerLifetimeScope();
-            containerBuilder.RegisterType<JobContextMessage>().As<IJobContextMessage>().InstancePerLifetimeScope();
 
             return containerBuilder;
         }

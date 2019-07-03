@@ -117,8 +117,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <returns>
         ///   <c>true</c> if [is inflexible element of training aim] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsInflexibleElementOfTrainingAim(ILearner candidate) =>
-            _derivedData29.IsInflexibleElementOfTrainingAim(candidate);
+        public bool IsInflexibleElementOfTrainingAim(ILearningDelivery candidate) =>
+            _derivedData29.IsInflexibleElementOfTrainingAimLearningDelivery(candidate);
 
         /// <summary>
         /// Checks the delivery fams.
@@ -291,7 +291,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <param name="doAction">do action.</param>
         public void RunChecksFor(ILearningDelivery thisDelivery, ILearner learner, Action<ILearningDeliveryFAM> doAction)
         {
-            if (!IsAdultFundedUnemployedWithBenefits(thisDelivery, learner)
+            if (!IsExcluded(thisDelivery)
+                && !IsAdultFundedUnemployedWithBenefits(thisDelivery, learner)
                 && !IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, learner)
                 && IsViableStart(thisDelivery)
                 && IsAdultFunding(thisDelivery)
@@ -309,7 +310,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <returns>
         ///   <c>true</c> if the specified candidate is excluded; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsExcluded(ILearner candidate)
+        public bool IsExcluded(ILearningDelivery candidate)
         {
             /*
              This rule is not triggered by apprenticeships(DD07 = Y),                         <=IsApprenticeship
@@ -327,13 +328,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                  Steel Industries Redundancy Training(LearningDeliveryFAM.LearnDelFAMType = LDM and LearningDeliveryFAM.LearnDelFAMCode = 347)  <= IsSteelWorkerRedundancyTraining
             */
 
-            return CheckLearningDeliveries(candidate, IsApprenticeship)
+            return IsApprenticeship(candidate)
                 || IsInflexibleElementOfTrainingAim(candidate)
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsLearnerInCustody))
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsReleasedOnTemporaryLicence))
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsRestart))
-                || CheckLearningDeliveries(candidate, IsBasicSkillsLearner)
-                || CheckLearningDeliveries(candidate, x => CheckDeliveryFAMs(x, IsSteelWorkerRedundancyTraining) || IsLegalOrgTypeMatchForUkprn());
+                || CheckDeliveryFAMs(candidate, IsLearnerInCustody)
+                || CheckDeliveryFAMs(candidate, IsReleasedOnTemporaryLicence)
+                || CheckDeliveryFAMs(candidate, IsRestart)
+                || IsBasicSkillsLearner(candidate)
+                || CheckDeliveryFAMs(candidate, IsSteelWorkerRedundancyTraining) || IsLegalOrgTypeMatchForUkprn();
         }
 
         /// <summary>
@@ -343,11 +344,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public void Validate(ILearner objectToValidate)
         {
             if (objectToValidate?.LearningDeliveries == null)
-            {
-                return;
-            }
-
-            if (IsExcluded(objectToValidate))
             {
                 return;
             }

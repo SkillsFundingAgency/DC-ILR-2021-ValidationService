@@ -5,10 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Stateless.Models;
+using ESFA.DC.ILR.ValidationService.Stateless.Configuration;
+using ESFA.DC.ILR.ValidationService.Stateless.Context;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
+using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ExecutionContext = ESFA.DC.Logging.ExecutionContext;
 
@@ -17,37 +19,21 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
     public class MessageHandler : IMessageHandler<JobContextMessage>
     {
         private readonly ILifetimeScope _parentLifeTimeScope;
+        private readonly IValidationContextFactory<IJobContextMessage> _validationContextFactory;
         private readonly StatelessServiceContext _context;
 
-        public MessageHandler(ILifetimeScope parentLifeTimeScope, StatelessServiceContext context)
+        public MessageHandler(ILifetimeScope parentLifeTimeScope, IValidationContextFactory<IJobContextMessage> validationContextFactory, StatelessServiceContext context)
         {
             _parentLifeTimeScope = parentLifeTimeScope;
+            _validationContextFactory = validationContextFactory;
             _context = context;
         }
 
         public async Task<bool> HandleAsync(JobContextMessage jobContextMessage, CancellationToken cancellationToken)
         {
-            using (var childLifeTimeScope = _parentLifeTimeScope
-                .BeginLifetimeScope(c =>
-                {
-                    c.RegisterInstance(
-                        new PreValidationContext
-                        {
-                            JobId = jobContextMessage.JobId.ToString(),
-                            Input = jobContextMessage.KeyValuePairs[JobContextMessageKey.Filename].ToString(),
-                            Container = jobContextMessage.KeyValuePairs[JobContextMessageKey.Container].ToString(),
-                            IlrReferenceDataKey = jobContextMessage.KeyValuePairs[JobContextMessageKey.IlrReferenceData].ToString(),
-                            InvalidLearnRefNumbersKey = jobContextMessage
-                                .KeyValuePairs[JobContextMessageKey.InvalidLearnRefNumbers].ToString(),
-                            ValidLearnRefNumbersKey =
-                                jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidLearnRefNumbers].ToString(),
-                            ValidationErrorsKey = jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidationErrors]
-                                .ToString(),
-                            ValidationErrorMessageLookupKey = jobContextMessage
-                                .KeyValuePairs[JobContextMessageKey.ValidationErrorLookups].ToString(),
-                            Tasks = jobContextMessage.Topics[jobContextMessage.TopicPointer].Tasks.SelectMany(x => x.Tasks)
-                        }).As<IPreValidationContext>();
-                }))
+            var validationContext = _validationContextFactory.Build(jobContextMessage);
+
+            using (var childLifeTimeScope = _parentLifeTimeScope.BeginLifetimeScope())
             {
                 var executionContext = (ExecutionContext)childLifeTimeScope.Resolve<IExecutionContext>();
                 executionContext.JobId = jobContextMessage.JobId.ToString();
@@ -56,27 +42,13 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
                 try
                 {
                     var azureStorageModel = childLifeTimeScope.Resolve<AzureStorageModel>();
-                    azureStorageModel.AzureContainerReference =
-                        jobContextMessage.KeyValuePairs[JobContextMessageKey.Container].ToString();
+                    azureStorageModel.AzureContainerReference = validationContext.Container;
 
                     logger.LogDebug("inside process message validate");
 
-                    var preValidationOrchestrationService = childLifeTimeScope
-                        .Resolve<IPreValidationOrchestrationService<IValidationError>>();
-
-                    var validationContext = childLifeTimeScope.Resolve<IPreValidationContext>();
+                    var preValidationOrchestrationService = childLifeTimeScope.Resolve<IPreValidationOrchestrationService>();
 
                     await preValidationOrchestrationService.ExecuteAsync(validationContext, cancellationToken);
-
-                    // populate the keys into jobcontextmessage
-                    jobContextMessage.KeyValuePairs[JobContextMessageKey.InvalidLearnRefNumbersCount] =
-                        validationContext.InvalidLearnRefNumbersCount;
-                    jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidLearnRefNumbersCount] =
-                        validationContext.ValidLearnRefNumbersCount;
-                    jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidationTotalErrorCount] =
-                        validationContext.ValidationTotalErrorCount;
-                    jobContextMessage.KeyValuePairs[JobContextMessageKey.ValidationTotalWarningCount] =
-                        validationContext.ValidationTotalWarningCount;
 
                     logger.LogDebug("Validation complete");
                     ServiceEventSource.Current.ServiceMessage(_context, "Validation complete");

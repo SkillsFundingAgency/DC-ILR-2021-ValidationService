@@ -6,27 +6,25 @@ using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Model;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population
 {
     public class InternalDataCachePopulationService : IInternalDataCachePopulationService
     {
         private readonly IInternalDataCache _internalDataCache;
-        private readonly ICache<ReferenceDataRoot> _referenceDataCache;
         private readonly ILookupsDataMapper _lookupsDataMapper;
 
-        public InternalDataCachePopulationService(IInternalDataCache internalDataCache, ICache<ReferenceDataRoot> referenceDataCache, ILookupsDataMapper lookupsDataMapper)
+        public InternalDataCachePopulationService(IInternalDataCache internalDataCache, ILookupsDataMapper lookupsDataMapper)
         {
             _internalDataCache = internalDataCache;
-            _referenceDataCache = referenceDataCache;
             _lookupsDataMapper = lookupsDataMapper;
         }
 
-        public async Task PopulateAsync(CancellationToken cancellationToken)
+        public void Populate(ReferenceDataRoot referenceDataRoot)
         {
             var internalDataCache = (InternalDataCache)_internalDataCache;
-            var lookupsFromCache = _referenceDataCache.Item.MetaDatas.Lookups;
-            var lookupsDictionary = _lookupsDataMapper.BuildLookups(lookupsFromCache);
+            var lookupsDictionary = _lookupsDataMapper.BuildLookups(referenceDataRoot.MetaDatas.Lookups);
             var academicYear = BuildAcademicYear();
 
             internalDataCache.AcademicYear = _lookupsDataMapper.MapAcademicYear(academicYear);

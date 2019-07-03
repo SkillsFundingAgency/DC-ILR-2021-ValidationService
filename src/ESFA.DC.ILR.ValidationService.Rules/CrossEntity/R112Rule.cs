@@ -28,29 +28,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 return;
             }
 
-            ILearningDelivery ldToCheck = GetLearningDeliveryWithLatestFAMDateFrom(learner.LearningDeliveries);
-
-            if (ldToCheck == null)
+            foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                return;
-            }
-
-            if (ldToCheck.LearnActEndDateNullable.HasValue &&
-                _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(ldToCheck.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT))
-            {
-                foreach (var ldfam in ldToCheck.LearningDeliveryFAMs)
+                if (learningDelivery.LearnActEndDateNullable == null || learningDelivery.LearningDeliveryFAMs == null)
                 {
-                    if (ldfam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.ACT &&
-                        (!ldfam.LearnDelFAMDateToNullable.HasValue ||
-                        ldfam.LearnDelFAMDateToNullable.Value != ldToCheck.LearnActEndDateNullable))
-                    {
-                        HandleValidationError(
-                            learner.LearnRefNumber,
-                            ldToCheck.AimSeqNumber,
-                            BuildErrorMessageParameters(ldToCheck.LearnActEndDateNullable, LearningDeliveryFAMTypeConstants.ACT, ldfam.LearnDelFAMDateToNullable));
-                    }
+                    continue;
+                }
+
+                var learningDeliveryFamToCheck = GetEligibleLearningDeliveryFam(learningDelivery.LearningDeliveryFAMs);
+
+                if (learningDeliveryFamToCheck != null && ConditionMet(learningDeliveryFamToCheck, learningDelivery.LearnActEndDateNullable.Value))
+                {
+                    HandleValidationError(
+                        learner.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(learningDelivery.LearnActEndDateNullable, LearningDeliveryFAMTypeConstants.ACT, learningDeliveryFamToCheck.LearnDelFAMDateToNullable));
                 }
             }
+        }
+
+        public bool ConditionMet(ILearningDeliveryFAM learningDeliveryFam, DateTime learnActEndDate)
+        {
+            return !learningDeliveryFam.LearnDelFAMDateToNullable.HasValue
+                   || learningDeliveryFam.LearnDelFAMDateToNullable.Value != learnActEndDate;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? learnActEndDateNullable, string learnDelFAMType, DateTime? learnDelFAMDateTo)
@@ -63,34 +63,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             };
         }
 
-        private ILearningDelivery GetLearningDeliveryWithLatestFAMDateFrom(IReadOnlyCollection<ILearningDelivery> learningDeliveries)
+        private ILearningDeliveryFAM GetEligibleLearningDeliveryFam(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
-            DateTime latestACTFAMFrom = DateTime.MinValue;
-            ILearningDelivery result = null;
-            foreach (var learningDelivery in learningDeliveries)
-            {
-                if (learningDelivery.LearningDeliveryFAMs != null)
-                {
-                    ILearningDeliveryFAM ldfamWithLatestDateFrom =
-                        _learningDeliveryFAMQueryService.GetLearningDeliveryFAMsForType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT)
-                            .Where(fam => fam.LearnDelFAMDateFromNullable.HasValue)
-                            .OrderByDescending(f => f.LearnDelFAMDateFromNullable)
-                            .FirstOrDefault();
-
-                    if (ldfamWithLatestDateFrom != null &&
-                        ldfamWithLatestDateFrom.LearnDelFAMDateFromNullable.HasValue &&
-                        ldfamWithLatestDateFrom.LearnDelFAMDateFromNullable.Value > latestACTFAMFrom)
-                    {
-                        latestACTFAMFrom = ldfamWithLatestDateFrom.LearnDelFAMDateFromNullable.Value;
-                        if (learningDelivery.LearnActEndDateNullable.HasValue)
-                        {
-                            result = learningDelivery;
-                        }
-                    }
-                }
-            }
-
-            return result;
+            return _learningDeliveryFAMQueryService.GetLearningDeliveryFAMsForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.ACT)
+                .Where(fam => fam.LearnDelFAMDateFromNullable.HasValue)
+                .OrderByDescending(f => f.LearnDelFAMDateFromNullable)
+                .FirstOrDefault();
         }
     }
 }

@@ -21,9 +21,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         private readonly int _fundModel = TypeOfFunding.AdultSkills;
         private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
-            FundingStreamPeriodCodeConstants.AEBC1819,
-            FundingStreamPeriodCodeConstants.AEB_LS1819,
-            FundingStreamPeriodCodeConstants.AEB_TOL1819
+            FundingStreamPeriodCodeConstants.AEBC_19TRN1920,
+            FundingStreamPeriodCodeConstants.AEBC_ASCL1920,
+            FundingStreamPeriodCodeConstants.AEB_19TRLS1920,
+            FundingStreamPeriodCodeConstants.AEB_ASLS1920,
+            FundingStreamPeriodCodeConstants.AEB_19TRN1920,
+            FundingStreamPeriodCodeConstants.AEB_AS1920
         };
 
         [Fact]
@@ -139,7 +142,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [Fact]
         public void FCTFundingConditionMet_False()
         {
-           var fcsDataServiceMock = new Mock<IFCSDataService>();
+            var fcsDataServiceMock = new Mock<IFCSDataService>();
 
             fcsDataServiceMock.Setup(ds => ds.FundingRelationshipFCTExists(_fundingStreamPeriodCodes)).Returns(true);
 

@@ -6,6 +6,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using FluentAssertions;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -232,20 +233,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         /// Has qualifying funding stream meets expectation
         /// </summary>
         /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        /// <param name="expected">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData("AEBC1819", false)] // FundingStreamPeriodCodeConstants.AEBC1819
-        [InlineData("AEBTO-TOL1819", false)] // FundingStreamPeriodCodeConstants.AEBTO_TOL1819
-        [InlineData("AEB-LS1819", false)] // FundingStreamPeriodCodeConstants.AEB_LS1819
-        [InlineData("AEB-TOL1819", false)] // FundingStreamPeriodCodeConstants.AEB_TOL1819
-        [InlineData("ALLB1819", true)] // FundingStreamPeriodCodeConstants.ALLB1819
-        [InlineData("ALLBC1819", true)] // FundingStreamPeriodCodeConstants.ALLBC1819
+        [InlineData("ALLB1819", false)] // FundingStreamPeriodCodeConstants.AEBC1819
+        [InlineData("ALLBC1819", false)] // FundingStreamPeriodCodeConstants.ALLBC1819
+        [InlineData("ALLB1920", true)] // FundingStreamPeriodCodeConstants.ALLB1920
+        [InlineData("ALLBC1920", true)] // FundingStreamPeriodCodeConstants.ALLBC1920
+        [InlineData("AEBC1920", false)] // FundingStreamPeriodCodeConstants.AEBC1920
+        [InlineData("AEBTO-TOL1920", false)] // FundingStreamPeriodCodeConstants.AEBTO_TOL1920
+        [InlineData("AEB-LS1920", false)] // FundingStreamPeriodCodeConstants.AEB_LS1920
+        [InlineData("AEB-TOL1920", false)] // FundingStreamPeriodCodeConstants.AEB_TOL1920
         [InlineData("ANLAP2018", false)] // FundingStreamPeriodCodeConstants.ANLAP2018
-        [InlineData("APPS1819", false)] // FundingStreamPeriodCodeConstants.APPS1819
+        [InlineData("APPS1920", false)] // FundingStreamPeriodCodeConstants.APPS1920
         [InlineData("16-18NLAP2018", false)] // FundingStreamPeriodCodeConstants.C1618_NLAP2018
         [InlineData("ESF1420", false)] // FundingStreamPeriodCodeConstants.ESF1420
         [InlineData("LEVY1799", false)] // FundingStreamPeriodCodeConstants.LEVY1799
-        public void HasQualifyingFundingStreamMeetsExpectation(string candidate, bool expectation)
+        public void HasQualifyingFundingStreamMeetsExpectation(string candidate, bool expected)
         {
             // arrange
             var sut = NewRule();
@@ -254,11 +257,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .SetupGet(y => y.FundingStreamPeriodCode)
                 .Returns(candidate);
 
-            // act
             var result = sut.HasQualifyingFundingStream(mockItem.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
+            result.Should().Be(expected);
+            mockItem.VerifyGet(x => x.FundingStreamPeriodCode, Times.Once);
         }
 
         /// <summary>
@@ -303,12 +304,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         /// </summary>
         /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData("AEBC1819")] // FundingStreamPeriodCodeConstants.AEBC1819
-        [InlineData("AEBTO-TOL1819")] // FundingStreamPeriodCodeConstants.AEBTO_TOL1819
-        [InlineData("AEB-LS1819")] // FundingStreamPeriodCodeConstants.AEB_LS1819
-        [InlineData("AEB-TOL1819")] // FundingStreamPeriodCodeConstants.AEB_TOL1819
+        [InlineData("AEBC1920")] // FundingStreamPeriodCodeConstants.AEBC1920
+        [InlineData("AEBTO-TOL1920")] // FundingStreamPeriodCodeConstants.AEBTO_TOL1920
+        [InlineData("AEB-LS1920")] // FundingStreamPeriodCodeConstants.AEB_LS1920
+        [InlineData("AEB-TOL1920")] // FundingStreamPeriodCodeConstants.AEB_TOL1920
         [InlineData("ANLAP2018")] // FundingStreamPeriodCodeConstants.ANLAP2018
-        [InlineData("APPS1819")] // FundingStreamPeriodCodeConstants.APPS1819
+        [InlineData("APPS1920")] // FundingStreamPeriodCodeConstants.APPS1920
         [InlineData("16-18NLAP2018")] // FundingStreamPeriodCodeConstants.C1618_NLAP2018
         [InlineData("ESF1420")] // FundingStreamPeriodCodeConstants.ESF1420
         [InlineData("LEVY1799")] // FundingStreamPeriodCodeConstants.LEVY1799
@@ -395,8 +396,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         /// </summary>
         /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData("ALLB1819")] // FundingStreamPeriodCodeConstants.ALLB1819
-        [InlineData("ALLBC1819")] // FundingStreamPeriodCodeConstants.ALLBC1819
+        [InlineData("ALLB1920")] // FundingStreamPeriodCodeConstants.ALLB1920
+        [InlineData("ALLBC1920")] // FundingStreamPeriodCodeConstants.ALLBC1920
         public void ValidItemDoesNotRaiseValidationMessage(string candidate)
         {
             // arrange

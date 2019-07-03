@@ -382,7 +382,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>())).Returns(true);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
-            dd29Mock.Setup(x => x.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>())).Returns(true);
+            dd29Mock.Setup(x => x.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>())).Returns(true);
 
             var ddo07Mock = new Mock<IDerivedData_07Rule>();
             ddo07Mock.Setup(x => x.IsApprenticeship(It.IsAny<int?>())).Returns(true);
@@ -487,7 +487,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>())).Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
-            dd29Mock.Setup(x => x.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>())).Returns(false);
+            dd29Mock.Setup(x => x.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>())).Returns(false);
 
             var ddo07Mock = new Mock<IDerivedData_07Rule>();
             ddo07Mock.Setup(x => x.IsApprenticeship(It.IsAny<int?>())).Returns(false);
@@ -542,7 +542,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             dd28Mock.Setup(x => x.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>())).Returns(false);
 
             var dd29Mock = new Mock<IDerivedData_29Rule>();
-            dd29Mock.Setup(x => x.IsInflexibleElementOfTrainingAim(It.IsAny<ILearner>())).Returns(false);
+            dd29Mock.Setup(x => x.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>())).Returns(false);
 
             var ddo07Mock = new Mock<IDerivedData_07Rule>();
             ddo07Mock.Setup(x => x.IsApprenticeship(It.IsAny<int?>())).Returns(false);

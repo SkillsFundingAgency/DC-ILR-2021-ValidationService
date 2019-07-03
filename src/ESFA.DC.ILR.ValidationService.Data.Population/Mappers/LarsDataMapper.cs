@@ -74,6 +74,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                             BasicSkills = av.BasicSkills,
                             BasicSkillsType = av.BasicSkillsType,
                             FullLevel2EntitlementCategory = av.FullLevel2EntitlementCategory,
+                            FullLevel2Percent = av.FullLevel2Percent,
                             FullLevel3EntitlementCategory = av.FullLevel3EntitlementCategory,
                             FullLevel3Percent = av.FullLevel3Percent,
                             EffectiveFrom = av.EffectiveFrom,

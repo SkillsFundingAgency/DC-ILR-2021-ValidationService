@@ -2,11 +2,14 @@
 using System.Threading;
 using Autofac;
 using Autofac.Integration.ServiceFabric;
+using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Modules;
-using ESFA.DC.ILR.ValidationService.Modules.Actor;
-using ESFA.DC.ILR.ValidationService.Stateless.Models;
+using ESFA.DC.ILR.ValidationService.ValidationActor.Context;
+using ESFA.DC.ILR.ValidationService.ValidationDPActor.Interfaces.Models;
 using ESFA.DC.ServiceFabric.Helpers;
 using Microsoft.ServiceFabric.Actors.Runtime;
+using ActorValidationDPModule = ESFA.DC.ILR.ValidationService.ValidationDPActor.Modules.ActorValidationDPModule;
+using LoggerOptions = ESFA.DC.ILR.ValidationService.ValidationDPActor.Configuration.LoggerOptions;
 
 namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
 {
@@ -47,12 +50,13 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule<ActorValidationDPModule>();
 
+            containerBuilder.RegisterType<ValidationDPActorModelValidationContextFactory>().As<IValidationContextFactory<ValidationDPActorModel>>();
+
             // register logger
             var configHelper = new ConfigurationHelper();
-            var loggerOptions =
-                configHelper.GetSectionValues<LoggerOptions>("LoggerSection");
-            containerBuilder.RegisterInstance(loggerOptions).As<LoggerOptions>().SingleInstance();
-            containerBuilder.RegisterModule<LoggerModule>();
+            var loggerOptions = configHelper.GetSectionValues<LoggerOptions>("LoggerSection");
+
+            containerBuilder.RegisterModule(new LoggerModule(loggerOptions));
 
             return containerBuilder;
         }

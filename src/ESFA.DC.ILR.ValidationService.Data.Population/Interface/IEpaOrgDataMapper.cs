@@ -4,7 +4,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.EPAOrganisation.Model;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
 {
-    public interface IEpaOrgDataMapper
+    public interface IEpaOrgDataMapper : IMapper
     {
         IReadOnlyDictionary<string, List<EPAOrganisations>> MapEpaOrganisations(IReadOnlyCollection<EPAOrganisation> epaOrganisations);
     }

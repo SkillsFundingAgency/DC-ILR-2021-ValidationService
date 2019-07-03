@@ -9,12 +9,10 @@ using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Cache;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External;
-using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
 using ESFA.DC.ILR.ValidationService.Data.File;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Stateless.Models;
 using ESFA.DC.ILR.ValidationService.ValidationDPActor.Interfaces;
 using ESFA.DC.ILR.ValidationService.ValidationDPActor.Interfaces.Models;
 using ESFA.DC.Logging.Interfaces;
@@ -39,6 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
         private readonly ILifetimeScope _parentLifeTimeScope;
         private readonly IExecutionContext _executionContext;
         private readonly IJsonSerializationService _jsonSerializationService;
+        private readonly IValidationContextFactory<ValidationDPActorModel> _validationContextFactory;
         private readonly ActorId _actorId;
 
         /// <summary>
@@ -49,12 +48,13 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
         /// <param name="parentLifeTimeScope">Autofac Parent Lifetime Scope</param>
         /// <param name="executionContext">The logger execution context.</param>
         /// <param name="jsonSerializationService">JSON serialiser.</param>
-        public ValidationDPActor(ActorService actorService, ActorId actorId, ILifetimeScope parentLifeTimeScope, IExecutionContext executionContext, IJsonSerializationService jsonSerializationService)
+        public ValidationDPActor(ActorService actorService, ActorId actorId, ILifetimeScope parentLifeTimeScope, IExecutionContext executionContext, IJsonSerializationService jsonSerializationService, IValidationContextFactory<ValidationDPActorModel> validationContextFactory)
             : base(actorService, actorId)
         {
             _parentLifeTimeScope = parentLifeTimeScope;
             _executionContext = executionContext;
             _jsonSerializationService = jsonSerializationService;
+            _validationContextFactory = validationContextFactory;
             _actorId = actorId;
         }
 
@@ -84,8 +84,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
             ExternalDataCache externalDataCache;
             FileDataCache fileDataCache;
             Message message;
-            IEnumerable<string> tasks;
-            ValidationContext validationContext;
             IEnumerable<IValidationError> errors;
 
             try
@@ -96,17 +94,11 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
                 externalDataCacheGet = _jsonSerializationService.Deserialize<ExternalDataCache>(actorModel.ExternalDataCache);
                 fileDataCache = _jsonSerializationService.Deserialize<FileDataCache>(actorModel.FileDataCache);
                 message = _jsonSerializationService.Deserialize<Message>(actorModel.Message);
-                tasks = _jsonSerializationService.Deserialize<IEnumerable<string>>(actorModel.TaskList);
 
                 externalDataCache = new ExternalDataCache
                 {
                     ULNs = externalDataCacheGet.ULNs,
                     ValidationErrors = externalDataCacheGet.ValidationErrors.ToCaseInsensitiveDictionary()
-                };
-
-                validationContext = new ValidationContext
-                {
-                    Input = message
                 };
 
                 logger.LogDebug($"{nameof(ValidationDPActor)} {_actorId} {GC.GetGeneration(actorModel)} finished getting input data");
@@ -122,7 +114,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
 
             using (var childLifeTimeScope = _parentLifeTimeScope.BeginLifetimeScope(c =>
             {
-                c.RegisterInstance(validationContext).As<IValidationContext>();
                 c.RegisterInstance(new Cache<IMessage> { Item = message }).As<ICache<IMessage>>();
                 c.RegisterInstance(internalDataCache).As<IInternalDataCache>();
                 c.RegisterInstance(externalDataCache).As<IExternalDataCache>();
@@ -135,11 +126,11 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
                 ILogger jobLogger = childLifeTimeScope.Resolve<ILogger>();
                 try
                 {
-                    jobLogger.LogDebug($"{nameof(ValidationDPActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} started Destination and Progressions: {validationContext.Input.LearnerDestinationAndProgressions.Count}");
-                    IRuleSetOrchestrationService<ILearnerDestinationAndProgression, IValidationError> preValidationOrchestrationService = childLifeTimeScope
-                        .Resolve<IRuleSetOrchestrationService<ILearnerDestinationAndProgression, IValidationError>>();
+                    jobLogger.LogDebug($"{nameof(ValidationDPActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} started Destination and Progressions: {message.LearnerDestinationAndProgressions.Count}");
+                    IRuleSetOrchestrationService<ILearnerDestinationAndProgression> preValidationOrchestrationService = childLifeTimeScope
+                        .Resolve<IRuleSetOrchestrationService<ILearnerDestinationAndProgression>>();
 
-                    errors = await preValidationOrchestrationService.ExecuteAsync(tasks, cancellationToken);
+                    errors = await preValidationOrchestrationService.ExecuteAsync(message.LearnerDestinationAndProgressions, cancellationToken);
                     jobLogger.LogDebug($"{nameof(ValidationDPActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} Destination and Progression validation done");
                 }
                 catch (Exception ex)
@@ -154,7 +145,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
             externalDataCache = null;
             fileDataCache = null;
             message = null;
-            validationContext = null;
 
             return errors;
         }

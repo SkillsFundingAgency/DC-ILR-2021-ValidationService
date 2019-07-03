@@ -1,6 +1,9 @@
-﻿namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
+﻿using ESFA.DC.ILR.ReferenceDataService.Model;
+
+namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
 {
-    public interface IInternalDataCachePopulationService : IPopulationService
+    public interface IInternalDataCachePopulationService
     {
+        void Populate(ReferenceDataRoot referenceDataRoot);
     }
 }

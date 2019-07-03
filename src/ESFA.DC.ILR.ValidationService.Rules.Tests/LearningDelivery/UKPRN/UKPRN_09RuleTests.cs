@@ -22,7 +22,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         private readonly IEnumerable<int> _fundModels = new HashSet<int> { 36, 99 };
         private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
-            FundingStreamPeriodCodeConstants.APPS1819
+            FundingStreamPeriodCodeConstants.APPS1920
         };
 
         private readonly HashSet<string> _learnDelFamCodes = new HashSet<string> { "034", "353", "354", "355" };

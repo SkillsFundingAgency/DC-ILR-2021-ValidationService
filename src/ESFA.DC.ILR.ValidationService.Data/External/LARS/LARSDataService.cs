@@ -272,6 +272,20 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             return values.Any(av => av.FullLevel2EntitlementCategory == level);
         }
 
+        public bool FullLevel2PercentForLearnAimRefAndDateAndPercentValue(string learnAimRef, DateTime effectiveFromDate, decimal percentValue)
+        {
+            var values = GetAnnualValuesFor(learnAimRef);
+
+            return values.Any(av => av.FullLevel2Percent == percentValue && av.IsCurrent(effectiveFromDate));
+        }
+
+        public bool FullLevel2PercentForLearnAimRefNotMatchPercentValue(string learnAimRef, DateTime effectiveFromDate, decimal percentValue)
+        {
+            var values = GetAnnualValuesFor(learnAimRef);
+
+            return values.Any(av => (!av.FullLevel2Percent.HasValue || av.FullLevel2Percent.Value != percentValue) && av.IsCurrent(effectiveFromDate));
+        }
+
         // TODO: this should happen in the rule
         public bool FullLevel3EntitlementCategoryMatchForLearnAimRef(string learnAimRef, int level)
         {

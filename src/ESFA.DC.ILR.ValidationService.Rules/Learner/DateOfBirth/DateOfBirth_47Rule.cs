@@ -51,13 +51,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool ConditionMet(int? progType, int fundModel, int compStatus, DateTime learnStartDate, DateTime? learnActEndDate, int aimType, DateTime? dateOfBirth, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return FundModelConditionMet(fundModel)
-            && LearnStartDateConditionMet(learnStartDate)
-            && AimTypeConditionMet(aimType)
-            && ProgTypeConditionMet(progType)
-            && CompStatusConditionMet(compStatus)
-            && DateOfBirthConditionMet(dateOfBirth, learnStartDate)
-            && LearnActEndDateConditionMet(learnStartDate, learnActEndDate)
-            && LearningDeliveryFAMConditionMet(learningDeliveryFAMs);
+                   && LearnStartDateConditionMet(learnStartDate)
+                   && AimTypeConditionMet(aimType)
+                   && ProgTypeConditionMet(progType)
+                   && CompStatusConditionMet(compStatus)
+                   && DateOfBirthConditionMet(dateOfBirth, learnStartDate)
+                   && LearnActEndDateConditionMet(learnStartDate, learnActEndDate)
+                   && LearningDeliveryFAMConditionMet(learningDeliveryFAMs);
         }
 
         public bool FundModelConditionMet(int fundModel)
@@ -95,7 +95,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool LearnActEndDateConditionMet(DateTime learnStartDate, DateTime? learnActEndDate)
         {
             return learnActEndDate.HasValue
-                && _dateTimeQueryService.DaysBetween(learnStartDate, learnActEndDate.Value) < 372;
+                && _dateTimeQueryService.DaysBetween(learnStartDate, learnActEndDate.Value) < 365;
         }
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)

@@ -34,6 +34,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface
         DateTime? StartDate { get; }
 
         /// <summary>
+        /// Gets or sets the StopNewStartsFromDate
+        /// </summary>
+        DateTime? StopNewStartsFromDate { get; set; }
+
+        /// <summary>
         /// Gets the delivery ukprn.
         /// </summary>
         int DeliveryUKPRN { get; }

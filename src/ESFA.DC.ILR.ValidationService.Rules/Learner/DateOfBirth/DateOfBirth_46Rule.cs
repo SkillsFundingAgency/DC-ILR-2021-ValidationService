@@ -12,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
     public class DateOfBirth_46Rule : AbstractRule, IRule<ILearner>
     {
         private const int _age = 16;
-        private const int _days = 372;
+        private const int _days = 365;
         private readonly IEnumerable<int> _fundModels = new HashSet<int>() { TypeOfFunding.ApprenticeshipsFrom1May2017, TypeOfFunding.OtherAdult };
         private readonly DateTime _firstAug2016 = new DateTime(2016, 08, 01);
 
@@ -102,7 +102,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool LearnPlanEndDateConditionMet(DateTime learnStartDate, DateTime learnPlanEndDate)
         {
-            return _dateTimeQueryService.WholeDaysBetween(learnStartDate, learnPlanEndDate) < _days;
+            return _dateTimeQueryService.DaysBetween(learnStartDate, learnPlanEndDate) < _days;
         }
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)

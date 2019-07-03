@@ -6,6 +6,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
+using ESFA.DC.ILR.ValidationService.Data.External.ValidationRules.Model;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External
@@ -62,5 +63,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.External
         /// Gets or Sets Campus Identifiers.
         /// </summary>
         public IReadOnlyCollection<ICampusIdentifier> CampusIdentifiers { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the Validation Rules
+        /// </summary>
+        public IReadOnlyCollection<ValidationRule> ValidationRules { get; set; }
     }
 }

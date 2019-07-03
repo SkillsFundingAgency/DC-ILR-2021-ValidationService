@@ -7,6 +7,7 @@ using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.File;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population;
+using ESFA.DC.ILR.ValidationService.Interface;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -55,15 +56,13 @@ namespace ESFA.DC.ILR.ValidationService.FileData.Tests
                 LearnerDestinationAndProgressions = learnerDestinationAndProgressions
             };
 
-            var messageCacheMock = new Mock<ICache<IMessage>>();
-
-            messageCacheMock.SetupGet(mc => mc.Item).Returns(message);
-
             var fileDataCache = new FileDataCache();
 
-            var fileDataCachePopulationService = new FileDataCachePopulationService(fileDataCache, messageCacheMock.Object);
+            var validationContextMock = new Mock<IValidationContext>();
 
-            await fileDataCachePopulationService.PopulateAsync(CancellationToken.None);
+            var fileDataCachePopulationService = new FileDataCachePopulationService(fileDataCache);
+
+            fileDataCachePopulationService.Populate(validationContextMock.Object, message);
 
             fileDataCache.FilePreparationDate.Should().Be(filePreparationDate);
             fileDataCache.UKPRN.Should().Be(ukprn);

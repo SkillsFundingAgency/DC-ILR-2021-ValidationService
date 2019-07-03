@@ -133,7 +133,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
             IEnumerable<ValidationErrorMessageLookup> validationErrorMessageLookups = new List<ValidationErrorMessageLookup> { new ValidationErrorMessageLookup(), new ValidationErrorMessageLookup(), new ValidationErrorMessageLookup() };
 
             var serializationServiceMock = new Mock<IJsonSerializationService>();
-            var preValidationContextMock = new Mock<IPreValidationContext>();
+            var validationContextMock = new Mock<IValidationContext>();
             var fileServiceMock = new Mock<IFileService>();
 
             serializationServiceMock.Setup(s => s.Serialize(validLearnerRefNumbers)).Returns(serializedValidLearners);
@@ -141,11 +141,11 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
             serializationServiceMock.Setup(s => s.Serialize(validationErrors)).Returns(serializedValidationErrors);
             serializationServiceMock.Setup(s => s.Serialize(validationErrorMessageLookups)).Returns(serializedValidationErrorMessageLookups);
 
-            preValidationContextMock.SetupGet(c => c.ValidLearnRefNumbersKey).Returns(validLearnRefNumbersKey);
-            preValidationContextMock.SetupGet(c => c.InvalidLearnRefNumbersKey).Returns(invalidLearnRefNumbersKey);
-            preValidationContextMock.SetupGet(c => c.ValidationErrorsKey).Returns(validationErrorsKey);
-            preValidationContextMock.SetupGet(c => c.ValidationErrorMessageLookupKey).Returns(validationErrorMessageLookupsKey);
-            preValidationContextMock.SetupGet(c => c.Container).Returns(container);
+            validationContextMock.SetupGet(c => c.ValidLearnRefNumbersKey).Returns(validLearnRefNumbersKey);
+            validationContextMock.SetupGet(c => c.InvalidLearnRefNumbersKey).Returns(invalidLearnRefNumbersKey);
+            validationContextMock.SetupGet(c => c.ValidationErrorsKey).Returns(validationErrorsKey);
+            validationContextMock.SetupGet(c => c.ValidationErrorMessageLookupKey).Returns(validationErrorMessageLookupsKey);
+            validationContextMock.SetupGet(c => c.Container).Returns(container);
 
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes("Stream")))
             {
@@ -154,33 +154,22 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
                 fileServiceMock.Setup(s => s.OpenWriteStreamAsync(validationErrorsKey, container, default(CancellationToken))).ReturnsAsync(stream).Verifiable();
                 fileServiceMock.Setup(s => s.OpenWriteStreamAsync(validationErrorMessageLookupsKey, container, default(CancellationToken))).ReturnsAsync(stream).Verifiable();
 
-                var service = NewService(
-                    fileService: fileServiceMock.Object,
-                    preValidationContext: preValidationContextMock.Object,
-                    jsonSerializationService: serializationServiceMock.Object);
+                var service = NewService(fileServiceMock.Object, serializationServiceMock.Object);
 
-                await service.SaveAsync(validLearnerRefNumbers, invalidLearnerRefNumbers, validationErrors, validationErrorMessageLookups, CancellationToken.None);
+                await service.SaveAsync(validationContextMock.Object, validLearnerRefNumbers, invalidLearnerRefNumbers, validationErrors, validationErrorMessageLookups, CancellationToken.None);
 
                 fileServiceMock.VerifyAll();
             }
-
-         
         }
 
         private ValidationOutputService NewService(
-            IValidationErrorCache<IValidationError> validationErrorCache = null,
-            ICache<IMessage> messageCache = null,
             IFileService fileService = null,
-            IPreValidationContext preValidationContext = null,
             IJsonSerializationService jsonSerializationService = null,
             IValidationErrorsDataService validationErrorsDataService = null
             )
         {
             return new ValidationOutputService(
-                validationErrorCache,
-                messageCache,
                 fileService,
-                preValidationContext,
                 jsonSerializationService,
                 validationErrorsDataService,
                 new Mock<ILogger>().Object);

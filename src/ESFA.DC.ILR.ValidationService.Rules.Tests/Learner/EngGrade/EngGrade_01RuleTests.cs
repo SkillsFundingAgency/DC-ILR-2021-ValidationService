@@ -36,7 +36,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
 
         [Theory]
         [InlineData(25)]
-        [InlineData(82)]
         public void FundModelConditionMet_True(int fundModel)
         {
             NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
@@ -53,11 +52,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
 
         [Theory]
         [InlineData(null, 25)]
-        [InlineData(null, 82)]
         [InlineData("", 25)]
-        [InlineData("", 82)]
         [InlineData(" ", 25)]
-        [InlineData(" ", 82)]
         public void ValidateError(string engGrade, int fundModel)
         {
             var learner = new TestLearner
@@ -80,7 +76,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
 
         [Theory]
         [InlineData("A", 25)]
-        [InlineData("A", 82)]
         [InlineData(null, 1)]
         [InlineData("", 1)]
         [InlineData(" ", 1)]

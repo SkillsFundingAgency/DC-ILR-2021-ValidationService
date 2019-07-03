@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface IValidationErrorsDataService
+    public interface IValidationErrorsDataService : IDataService
     {
         Severity? SeverityForRuleName(string ruleName);
 

@@ -132,7 +132,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         ///   <c>true</c> if [in qualifying period] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool InQualifyingPeriod(ILearningDelivery delivery, IONSPostcode onsPostcode) =>
-            It.IsBetween(delivery.LearnStartDate, onsPostcode.EffectiveFrom, onsPostcode.Termination ?? onsPostcode.EffectiveTo ?? DateTime.MaxValue);
+            delivery.LearnStartDate < onsPostcode.EffectiveFrom
+                || (onsPostcode.EffectiveTo.HasValue && delivery.LearnStartDate > onsPostcode.EffectiveTo)
+                || (onsPostcode.Termination.HasValue && delivery.LearnStartDate >= onsPostcode.Termination);
 
         /// <summary>
         /// Determines whether [is not valid] [the specified delivery].
@@ -147,7 +149,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 
             return _check.HasQualifyingStart(delivery, FirstViableDate)
                    && eligibilities.Any(x => !string.IsNullOrEmpty(x.Code))
-                   && !HasQualifyingEligibility(delivery, GetONSPostcodes(delivery), eligibilities);
+                   && HasQualifyingEligibility(delivery, GetONSPostcodes(delivery), eligibilities);
         }
 
         /// <summary>

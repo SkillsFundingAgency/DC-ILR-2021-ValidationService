@@ -12,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
     public class MessageCachePopulationServiceTests
     {
         [Fact]
-        public async Task Populate()
+        public void Populate()
         {
             var message = new Mock<IMessage>().Object;
 
@@ -20,19 +20,14 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
 
             messageCacheMock.SetupSet(mc => mc.Item = message).Verifiable();
 
-            var messageValidationItemProviderServiceMock = new Mock<IValidationItemProviderService<IMessage>>();
+            NewService(messageCacheMock.Object).Populate(message);
 
-            messageValidationItemProviderServiceMock.Setup(ps => ps.ProvideAsync(It.IsAny<CancellationToken>())).ReturnsAsync(message);
-
-            await NewService(messageCacheMock.Object, messageValidationItemProviderServiceMock.Object).PopulateAsync(CancellationToken.None);
-
-            messageValidationItemProviderServiceMock.Verify();
             messageCacheMock.Verify();
         }
 
-        private MessageCachePopulationService NewService(ICache<IMessage> messageCache = null, IValidationItemProviderService<IMessage> messageValidationItemProviderService = null)
+        private MessageCachePopulationService NewService(ICache<IMessage> messageCache = null)
         {
-            return new MessageCachePopulationService(messageCache, messageValidationItemProviderService);
+            return new MessageCachePopulationService(messageCache);
         }
     }
 }

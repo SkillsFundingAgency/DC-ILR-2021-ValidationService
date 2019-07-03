@@ -4,13 +4,13 @@ using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
+using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population
 {
     public class ExternalDataCachePopulationService : IExternalDataCachePopulationService
     {
         private readonly IExternalDataCache _externalDataCache;
-        private readonly ICache<ReferenceDataRoot> _referenceDataCache;
         private readonly IEmployersDataMapper _employersDataMapper;
         private readonly IEpaOrgDataMapper _epaOrgDataMapper;
         private readonly IFcsDataMapper _fcsDataMapper;
@@ -19,10 +19,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
         private readonly IPostcodesDataMapper _postcodesDataMapper;
         private readonly IUlnDataMapper _ulnDataMapper;
         private readonly IValidationErrorsDataMapper _validationErrorsDataMapper;
+        private readonly IValidationRulesDataMapper _validationRulesDataMapper;
 
         public ExternalDataCachePopulationService(
             IExternalDataCache externalDataCache,
-            ICache<ReferenceDataRoot> referenceDataCache,
             IEmployersDataMapper employersDataMapper,
             IEpaOrgDataMapper epaOrgDataMapper,
             IFcsDataMapper fcsDataMapper,
@@ -30,10 +30,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
             IOrganisationsDataMapper organisationsDataMapper,
             IPostcodesDataMapper postcodesDataMapper,
             IUlnDataMapper ulnDataMapper,
-            IValidationErrorsDataMapper validationErrorsDataMapper)
+            IValidationErrorsDataMapper validationErrorsDataMapper,
+            IValidationRulesDataMapper validationRulesDataMapper)
         {
             _externalDataCache = externalDataCache;
-            _referenceDataCache = referenceDataCache;
             _employersDataMapper = employersDataMapper;
             _epaOrgDataMapper = epaOrgDataMapper;
             _fcsDataMapper = fcsDataMapper;
@@ -42,32 +42,33 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
             _postcodesDataMapper = postcodesDataMapper;
             _ulnDataMapper = ulnDataMapper;
             _validationErrorsDataMapper = validationErrorsDataMapper;
+            _validationRulesDataMapper = validationRulesDataMapper;
         }
 
-        public async Task PopulateAsync(CancellationToken cancellationToken)
+        public void Populate(ReferenceDataRoot referenceDataRoot)
         {
             var externalDataCache = (ExternalDataCache)_externalDataCache;
-            var referenceDataCache = _referenceDataCache.Item;
 
-            externalDataCache.Standards = _larsDataMapper.MapLarsStandards(referenceDataCache.LARSStandards);
-            externalDataCache.StandardValidities = _larsDataMapper.MapLarsStandardValidities(referenceDataCache.LARSStandards);
-            externalDataCache.LearningDeliveries = _larsDataMapper.MapLarsLearningDeliveries(referenceDataCache.LARSLearningDeliveries);
+            externalDataCache.Standards = _larsDataMapper.MapLarsStandards(referenceDataRoot.LARSStandards);
+            externalDataCache.StandardValidities = _larsDataMapper.MapLarsStandardValidities(referenceDataRoot.LARSStandards);
+            externalDataCache.LearningDeliveries = _larsDataMapper.MapLarsLearningDeliveries(referenceDataRoot.LARSLearningDeliveries);
 
-            externalDataCache.ULNs = _ulnDataMapper.MapUlns(referenceDataCache.ULNs);
+            externalDataCache.ULNs = _ulnDataMapper.MapUlns(referenceDataRoot.ULNs);
 
-            externalDataCache.Postcodes = _postcodesDataMapper.MapPostcodes(referenceDataCache.Postcodes);
-            externalDataCache.ONSPostcodes = _postcodesDataMapper.MapONSPostcodes(referenceDataCache.Postcodes);
+            externalDataCache.Postcodes = _postcodesDataMapper.MapPostcodes(referenceDataRoot.Postcodes);
+            externalDataCache.ONSPostcodes = _postcodesDataMapper.MapONSPostcodes(referenceDataRoot.Postcodes);
 
-            externalDataCache.Organisations = _organisationsDataMapper.MapOrganisations(referenceDataCache.Organisations);
-            externalDataCache.CampusIdentifiers = _organisationsDataMapper.MapCampusIdentifiers(referenceDataCache.Organisations);
+            externalDataCache.Organisations = _organisationsDataMapper.MapOrganisations(referenceDataRoot.Organisations);
+            externalDataCache.CampusIdentifiers = _organisationsDataMapper.MapCampusIdentifiers(referenceDataRoot.Organisations);
 
-            externalDataCache.EPAOrganisations = _epaOrgDataMapper.MapEpaOrganisations(referenceDataCache.EPAOrganisations);
+            externalDataCache.EPAOrganisations = _epaOrgDataMapper.MapEpaOrganisations(referenceDataRoot.EPAOrganisations);
 
-            externalDataCache.FCSContractAllocations = _fcsDataMapper.MapFcsContractAllocations(referenceDataCache.FCSContractAllocations);
+            externalDataCache.FCSContractAllocations = _fcsDataMapper.MapFcsContractAllocations(referenceDataRoot.FCSContractAllocations);
 
-            externalDataCache.ERNs = _employersDataMapper.MapEmployers(referenceDataCache.Employers);
+            externalDataCache.ERNs = _employersDataMapper.MapEmployers(referenceDataRoot.Employers);
 
-            externalDataCache.ValidationErrors = _validationErrorsDataMapper.MapValidationErrors(referenceDataCache.MetaDatas?.ValidationErrors);
+            externalDataCache.ValidationErrors = _validationErrorsDataMapper.MapValidationErrors(referenceDataRoot.MetaDatas?.ValidationErrors);
+            externalDataCache.ValidationRules = _validationRulesDataMapper.MapValidationRules(referenceDataRoot.MetaDatas?.ValidationRules);
         }
     }
 }
