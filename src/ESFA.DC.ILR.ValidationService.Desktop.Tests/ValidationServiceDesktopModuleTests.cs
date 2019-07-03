@@ -87,6 +87,7 @@ using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnPlanEndDate;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
+using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDate;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OtherFundAdj;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome;
@@ -470,6 +471,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnStartDate_17Rule),
                 typeof(LearnPlanEndDate_02Rule),
                 typeof(LearnPlanEndDate_03Rule),
+                typeof(LSDPostcode_01Rule),
                 typeof(LLDDCat_01Rule),
                 typeof(LLDDCat_02Rule),
                 typeof(LLDDHealthProb_01Rule),

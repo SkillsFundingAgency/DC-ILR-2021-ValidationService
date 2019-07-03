@@ -452,6 +452,7 @@
     <Compile Include="LearningDelivery\LearnStartDate\LearnStartDate_15RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnStartDate\LearnStartDate_14RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnStartDate\LearnStartDate_13RuleTests.cs" />
+    <Compile Include="LearningDelivery\LSDPostcode\LSDPostcode_01RuleTests.cs" />
     <Compile Include="LearningDelivery\OrigLearnStartDate\OrigLearnStartDate_01RuleTests.cs" />
     <Compile Include="LearningDelivery\OrigLearnStartDate\OrigLearnStartDate_08RuleTests.cs" />
     <Compile Include="LearningDelivery\OrigLearnStartDate\OrigLearnStartDate_09RuleTests.cs" />
