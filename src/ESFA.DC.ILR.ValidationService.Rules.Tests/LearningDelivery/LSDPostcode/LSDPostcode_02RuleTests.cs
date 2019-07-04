@@ -368,6 +368,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
 
             result.Should().BeFalse();
             mockOrganisationDataService.Verify(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType), Times.AtLeastOnce);
+            mockLearningDeliveryFAMQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, learnDelFamType), Times.AtLeastOnce);
         }
 
         [Theory]
