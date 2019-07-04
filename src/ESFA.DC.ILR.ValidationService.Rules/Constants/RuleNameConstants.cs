@@ -326,6 +326,7 @@
         public const string LearnPlanEndDate_03 = "LearnPlanEndDate_03";
 
         public const string LSDPostcode_01 = "LSDPostcode_01";
+        public const string LSDPostcode_02 = "LSDPostcode_02";
 
         public const string MathGrade_01 = "MathGrade_01";
         public const string MathGrade_02 = "MathGrade_02";

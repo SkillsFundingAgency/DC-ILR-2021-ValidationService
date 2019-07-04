@@ -9,5 +9,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Interface
         IReadOnlyCollection<string> MapPostcodes(IReadOnlyCollection<Postcode> postcodes);
 
         IReadOnlyCollection<ONSPostcode> MapONSPostcodes(IReadOnlyCollection<Postcode> postcodes);
+
+        IReadOnlyCollection<McaglaSOFPostcode> MapMcaglaSOFPostcodes(IReadOnlyCollection<Postcode> postcodes);
     }
 }
