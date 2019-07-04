@@ -76,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         public bool ProgTypeConditionMet(int? progType)
         {
             return progType.HasValue
-                        && progType != TypeOfLearningProgramme.Traineeship;
+                      && progType != TypeOfLearningProgramme.Traineeship;
         }
 
         public bool FundModelConditionMet(int fundModel)
