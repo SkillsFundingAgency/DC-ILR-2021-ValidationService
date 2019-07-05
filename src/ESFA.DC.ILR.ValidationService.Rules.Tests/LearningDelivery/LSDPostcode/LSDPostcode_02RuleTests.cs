@@ -272,19 +272,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             };
 
             var lsdPostcode02Rule = NewRuleMock();
-            lsdPostcode02Rule.Setup(x => x.ProgTypeConditionMet(progType)).Returns(progCondition).Verifiable();
-            lsdPostcode02Rule.Setup(x => x.FundModelConditionMet(fundModel)).Returns(fundCondition).Verifiable();
-            lsdPostcode02Rule.Setup(x => x.LearnStartDateConditionMet(startDate)).Returns(startDateCondition).Verifiable();
-            lsdPostcode02Rule.Setup(x => x.CheckQualifyingPeriod(startDate, learningDeliveryFAMs, mcaglaPostcodeList)).Returns(qualifyingCondition).Verifiable();
-            lsdPostcode02Rule.Setup(x => x.OrganisationConditionMet(ukprn)).Returns(organisationCondition).Verifiable();
-            lsdPostcode02Rule.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(delFAMSCondition).Verifiable();
+            lsdPostcode02Rule.Setup(x => x.ProgTypeConditionMet(progType)).Returns(progCondition);
+            lsdPostcode02Rule.Setup(x => x.FundModelConditionMet(fundModel)).Returns(fundCondition);
+            lsdPostcode02Rule.Setup(x => x.LearnStartDateConditionMet(startDate)).Returns(startDateCondition);
+            lsdPostcode02Rule.Setup(x => x.CheckQualifyingPeriod(startDate, learningDeliveryFAMs, mcaglaPostcodeList)).Returns(qualifyingCondition);
+            lsdPostcode02Rule.Setup(x => x.OrganisationConditionMet(ukprn)).Returns(organisationCondition);
+            lsdPostcode02Rule.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(delFAMSCondition);
 
             lsdPostcode02Rule.Object
                 .ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFAMs)
                 .Should()
                 .BeFalse();
-
-            lsdPostcode02Rule.VerifyAll();
         }
 
         [Fact]
