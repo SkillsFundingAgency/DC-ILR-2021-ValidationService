@@ -38,6 +38,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             _postcodeService = postcodeService;
         }
 
+        public LSDPostcode_02Rule()
+       : base(null, null)
+        {
+
+        }
+
         public void Validate(ILearner objectToValidate)
         {
             if (objectToValidate.LearningDeliveries != null)
@@ -73,23 +79,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                  && LearningDeliveryFAMsConditionMet(learningDeliveryFAMs);
         }
 
-        public bool ProgTypeConditionMet(int? progType)
+        public virtual bool ProgTypeConditionMet(int? progType)
         {
             return progType.HasValue
                       && progType != TypeOfLearningProgramme.Traineeship;
         }
 
-        public bool FundModelConditionMet(int fundModel)
+        public virtual bool FundModelConditionMet(int fundModel)
         {
             return _fundModels.Contains(fundModel);
         }
 
-        public bool LearnStartDateConditionMet(DateTime learnStartDate)
+        public virtual bool LearnStartDateConditionMet(DateTime learnStartDate)
         {
             return learnStartDate >= _firstAugust2019;
         }
 
-        public bool CheckQualifyingPeriod(DateTime learnStartDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, IEnumerable<IMcaglaSOFPostcode> mcaglaSOFPostcodes)
+        public virtual bool CheckQualifyingPeriod(DateTime learnStartDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, IEnumerable<IMcaglaSOFPostcode> mcaglaSOFPostcodes)
         {
             return mcaglaSOFPostcodes.Count() > 0
                    && _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, _learnDelFamTypeSOF)
@@ -98,12 +104,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                          .Any(sof => learnStartDate < sof.EffectiveFrom);
         }
 
-        public bool OrganisationConditionMet(int ukprn)
+        public virtual bool OrganisationConditionMet(int ukprn)
         {
             return !_organisationDataService.LegalOrgTypeMatchForUkprn(ukprn, _legalOrgType);
         }
 
-        public bool LearningDeliveryFAMsConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        public virtual bool LearningDeliveryFAMsConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, _learnDelFamTypeRES);
         }

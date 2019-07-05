@@ -237,10 +237,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.Traineeship, 35, "01-08-2019", "SOF", false, true)]
-        public void ConditionMet_Fails_DueToProgType(int progType, int fundModel, string learnStartDate, string learnDelFamType, bool mockOrganisationCondition, bool mockFamsCondition)
+        [InlineData(true, false, false, false, false, false)]
+        [InlineData(false, true, false, false, false, false)]
+        [InlineData(false, false, true, false, false, false)]
+        [InlineData(false, false, false, true, false, false)]
+        [InlineData(false, false, false, false, true, false)]
+        [InlineData(false, false, false, false, false, true)]
+        public void ConditionMet_Fails(bool progCondition, bool fundCondition, bool startDateCondition, bool qualifyingCondition, bool organisationCondition, bool delFAMSCondition)
         {
-            var startDate = DateTime.Parse(learnStartDate);
+            var ukprn = 123;
+            int progType = 24;
+            int fundModel = 25;
+            DateTime startDate = new DateTime(2019, 6, 18);
+
+            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF
+                }
+            };
+
             var mcaglaPostcodeList = new List<McaglaSOFPostcode>()
             {
                 new McaglaSOFPostcode()
@@ -254,155 +271,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 },
             };
 
-            var ukprn = 123;
-            var legalOrgType = "USDC";
-            var mockOrganisationDataService = new Mock<IOrganisationDataService>();
-            mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(mockOrganisationCondition);
+            var lsdPostcode02Rule = NewRuleMock();
+            lsdPostcode02Rule.Setup(x => x.ProgTypeConditionMet(progType)).Returns(progCondition).Verifiable();
+            lsdPostcode02Rule.Setup(x => x.FundModelConditionMet(fundModel)).Returns(fundCondition).Verifiable();
+            lsdPostcode02Rule.Setup(x => x.LearnStartDateConditionMet(startDate)).Returns(startDateCondition).Verifiable();
+            lsdPostcode02Rule.Setup(x => x.CheckQualifyingPeriod(startDate, learningDeliveryFAMs, mcaglaPostcodeList)).Returns(qualifyingCondition).Verifiable();
+            lsdPostcode02Rule.Setup(x => x.OrganisationConditionMet(ukprn)).Returns(organisationCondition).Verifiable();
+            lsdPostcode02Rule.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(delFAMSCondition).Verifiable();
 
-            var learningDeliveryFams = new List<ILearningDeliveryFAM>();
-            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, learnDelFamType)).Returns(mockFamsCondition);
+            lsdPostcode02Rule.Object
+                .ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFAMs)
+                .Should()
+                .BeFalse();
 
-            var ruleToTest = NewRule(learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object, organisationDataService: mockOrganisationDataService.Object);
-            var result = ruleToTest.ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFams);
-
-            result.Should().BeFalse();
-        }
-
-        [Theory]
-        [InlineData(21, 35, "01-08-2018", "SOF", false, true)]
-        public void ConditionMet_Fails_DueToFundModel(int progType, int fundModel, string learnStartDate, string learnDelFamType, bool mockOrganisationCondition, bool mockFamsCondition)
-        {
-            var startDate = DateTime.Parse(learnStartDate);
-            var mcaglaPostcodeList = new List<McaglaSOFPostcode>()
-            {
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2019, 10, 03),
-                    SofCode = "SofCode"
-                },
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2020, 01, 01)
-                },
-            };
-
-            var ukprn = 123;
-            var legalOrgType = "USDC";
-            var mockOrganisationDataService = new Mock<IOrganisationDataService>();
-            mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(mockOrganisationCondition);
-
-            var learningDeliveryFams = new List<ILearningDeliveryFAM>();
-            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, learnDelFamType)).Returns(mockFamsCondition);
-
-            var ruleToTest = NewRule(learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object, organisationDataService: mockOrganisationDataService.Object);
-            var result = ruleToTest.ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFams);
-
-            result.Should().BeFalse();
-        }
-
-        [Theory]
-        [InlineData(21, 35, "01-08-2019", "SOF", false, false)]
-        public void ConditionMet_Fails_DueToQualifyingPeriod(int progType, int fundModel, string learnStartDate, string learnDelFamType, bool mockOrganisationCondition, bool mockFamsCondition)
-        {
-            var startDate = DateTime.Parse(learnStartDate);
-            var mcaglaPostcodeList = new List<McaglaSOFPostcode>()
-            {
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2019, 10, 03),
-                    SofCode = "SofCode"
-                },
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2020, 01, 01)
-                },
-            };
-
-            var ukprn = 123;
-            var legalOrgType = "USDC";
-            var mockOrganisationDataService = new Mock<IOrganisationDataService>();
-            mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(mockOrganisationCondition);
-
-            var learningDeliveryFams = new List<ILearningDeliveryFAM>();
-            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, learnDelFamType)).Returns(mockFamsCondition);
-
-            var ruleToTest = NewRule(learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object, organisationDataService: mockOrganisationDataService.Object);
-            var result = ruleToTest.ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFams);
-
-            result.Should().BeFalse();
-            mockLearningDeliveryFAMQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, learnDelFamType), Times.AtLeastOnce);
-        }
-
-        [Theory]
-        [InlineData(21, 35, "01-08-2019", "SOF", true, true)]
-        public void ConditionMet_Fails_DueToOrganisationCondition(int progType, int fundModel, string learnStartDate, string learnDelFamType, bool mockOrganisationCondition, bool mockFamsCondition)
-        {
-            var startDate = DateTime.Parse(learnStartDate);
-            var mcaglaPostcodeList = new List<McaglaSOFPostcode>()
-            {
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2019, 10, 03),
-                    SofCode = "SofCode"
-                },
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2020, 01, 01)
-                },
-            };
-
-            var ukprn = 123;
-            var legalOrgType = "USDC";
-            var mockOrganisationDataService = new Mock<IOrganisationDataService>();
-            mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(mockOrganisationCondition);
-
-            var learningDeliveryFams = new List<ILearningDeliveryFAM>();
-            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, learnDelFamType)).Returns(mockFamsCondition);
-
-            var ruleToTest = NewRule(learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object, organisationDataService: mockOrganisationDataService.Object);
-            var result = ruleToTest.ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFams);
-
-            result.Should().BeFalse();
-            mockOrganisationDataService.Verify(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType), Times.AtLeastOnce);
-            mockLearningDeliveryFAMQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, learnDelFamType), Times.AtLeastOnce);
-        }
-
-        [Theory]
-        [InlineData(21, 35, "01-08-2019", "SOF", false, false)]
-        public void ConditionMet_Fails_DueToLearningFAMsCondition(int progType, int fundModel, string learnStartDate, string learnDelFamType, bool mockOrganisationCondition, bool mockFamsCondition)
-        {
-            var startDate = DateTime.Parse(learnStartDate);
-            var mcaglaPostcodeList = new List<McaglaSOFPostcode>()
-            {
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2019, 10, 03),
-                    SofCode = "SofCode"
-                },
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2020, 01, 01)
-                },
-            };
-
-            var ukprn = 123;
-            var legalOrgType = "USDC";
-            var mockOrganisationDataService = new Mock<IOrganisationDataService>();
-            mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(mockOrganisationCondition);
-
-            var learningDeliveryFams = new List<ILearningDeliveryFAM>();
-            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, learnDelFamType)).Returns(mockFamsCondition);
-
-            var ruleToTest = NewRule(learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object, organisationDataService: mockOrganisationDataService.Object);
-            var result = ruleToTest.ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFams);
-
-            result.Should().BeFalse();
-            mockLearningDeliveryFAMQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, learnDelFamType), Times.AtLeastOnce);
+            lsdPostcode02Rule.VerifyAll();
         }
 
         [Fact]
@@ -567,7 +449,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             IPostcodesDataService postcodesDataService = null,
             IValidationErrorHandler validationErrorHandler = null)
         {
-            return new LSDPostcode_02Rule(learningDeliveryFAMQueryService, organisationDataService, postcodesDataService,  validationErrorHandler);
+            return new LSDPostcode_02Rule(learningDeliveryFAMQueryService, organisationDataService, postcodesDataService, validationErrorHandler);
         }
     }
 }
