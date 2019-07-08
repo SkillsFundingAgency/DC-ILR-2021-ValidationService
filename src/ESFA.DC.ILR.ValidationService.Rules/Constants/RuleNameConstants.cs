@@ -59,6 +59,7 @@
         public const string CompStatus_04 = "CompStatus_04";
         public const string CompStatus_05 = "CompStatus_05";
         public const string CompStatus_06 = "CompStatus_06";
+        public const string CompStatus_07 = "CompStatus_07";
 
         public const string ConRefNumber_01 = "ConRefNumber_01";
         public const string ConRefNumber_03 = "ConRefNumber_03";
