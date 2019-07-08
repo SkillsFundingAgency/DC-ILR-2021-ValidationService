@@ -11,6 +11,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
     public class AchDate_09Rule : AbstractRule, IRule<ILearner>
     {
         private readonly DateTime _learnStartDate = new DateTime(2015, 7, 31);
+        private readonly int _aimType = TypeOfAim.ProgrammeAim;
         private readonly int _progTypeTraineeship = TypeOfLearningProgramme.Traineeship;
         private readonly int _progTypeApprenticeship = TypeOfLearningProgramme.ApprenticeshipStandard;
         private readonly int _fundModelOtherAdult = TypeOfFunding.OtherAdult;
@@ -63,7 +64,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
 
         public virtual bool ApprenticeshipConditionMet(int aimType, int? progType, int fundModel)
         {
-            return !(aimType == 1 &&
+            return !(aimType == _aimType &&
                      (progType == _progTypeTraineeship ||
                       (progType == _progTypeApprenticeship && fundModel == _fundModelOtherAdult) || 
                       (progType == _progTypeApprenticeship && fundModel == _fundModelApprencticeMay2017)
