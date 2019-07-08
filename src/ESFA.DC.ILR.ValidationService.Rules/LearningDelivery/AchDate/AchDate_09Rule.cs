@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
         {
             return !(aimType == 1 &&
                      (progType == 24 ||
-                      (progType == 25 && fundModel == 81)));
+                      (progType == 25 && fundModel == 81) || (progType == 25 && fundModel == 36)));
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, DateTime learnStartDate, int? progType, DateTime? achDate)
