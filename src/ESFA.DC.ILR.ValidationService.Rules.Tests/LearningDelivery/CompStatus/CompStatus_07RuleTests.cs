@@ -62,12 +62,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.CompStatus
             NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
         }
 
-        [Theory]
-        [InlineData("01/08/2019")]
-        [InlineData("12/12/2019")]
-        public void LearnActEndDateCondition_Pass(string actEndDate)
+        [Fact]
+        public void LearnActEndDateCondition_Pass_AsDateIsEqual()
         {
-            var learnActEndDate = DateTime.Parse(actEndDate);
+            var learnActEndDate = new DateTime(2019, 08, 01);
+            NewRule().LearnActEndDateConditionMet(learnActEndDate).Should().BeTrue();
+        }
+
+        [Fact]
+        public void LearnActEndDateCondition_Pass_AsDateisGreater()
+        {
+            var learnActEndDate = new DateTime(2019, 09, 11);
             NewRule().LearnActEndDateConditionMet(learnActEndDate).Should().BeTrue();
         }
 
