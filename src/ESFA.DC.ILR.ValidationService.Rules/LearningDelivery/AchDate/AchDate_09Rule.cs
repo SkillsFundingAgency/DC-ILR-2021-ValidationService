@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -10,7 +11,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
     public class AchDate_09Rule : AbstractRule, IRule<ILearner>
     {
         private readonly DateTime _learnStartDate = new DateTime(2015, 7, 31);
-
+        private readonly int _progTypeTraineeship = TypeOfLearningProgramme.Traineeship;
+        private readonly int _progTypeApprenticeship = TypeOfLearningProgramme.ApprenticeshipStandard;
+        private readonly int _fundModelOtherAdult = TypeOfFunding.OtherAdult;
+        private readonly int _fundModelApprencticeMay2017 = TypeOfFunding.ApprenticeshipsFrom1May2017;
+    
         public AchDate_09Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.AchDate_09)
         {
@@ -59,8 +64,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
         public virtual bool ApprenticeshipConditionMet(int aimType, int? progType, int fundModel)
         {
             return !(aimType == 1 &&
-                     (progType == 24 ||
-                      (progType == 25 && fundModel == 81) || (progType == 25 && fundModel == 36)));
+                     (progType == _progTypeTraineeship ||
+                      (progType == _progTypeApprenticeship && fundModel == _fundModelOtherAdult) || 
+                      (progType == _progTypeApprenticeship && fundModel == _fundModelApprencticeMay2017)
+                      ));
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, DateTime learnStartDate, int? progType, DateTime? achDate)
