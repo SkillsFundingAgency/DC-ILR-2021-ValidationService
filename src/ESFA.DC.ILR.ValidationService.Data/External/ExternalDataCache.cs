@@ -52,6 +52,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External
         /// </summary>
         public IReadOnlyCollection<IONSPostcode> ONSPostcodes { get; set; }
 
+        /// <summary>
+        /// Gets or sets the McaglaSOF postcodes.
+        /// </summary>
+        public IReadOnlyCollection<IMcaglaSOFPostcode> McaglaSOFPostcodes { get; set; }
+
         public IReadOnlyDictionary<string, ValidationError> ValidationErrors { get; set; }
 
         /// <summary>
@@ -67,6 +72,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External
         /// <summary>
         /// Gets or Sets the Validation Rules
         /// </summary>
-        public IReadOnlyCollection<ValidationRule> ValidationRules { get; set; }
+        public IReadOnlyCollection<ValidationRule> ValidationRules { get; set; }        
     }
 }

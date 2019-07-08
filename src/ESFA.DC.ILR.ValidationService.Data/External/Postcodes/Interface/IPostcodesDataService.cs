@@ -21,5 +21,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface
         /// <param name="fromPostcode">From postcode.</param>
         /// <returns>an ons postcodes (if found)</returns>
         IReadOnlyCollection<IONSPostcode> GetONSPostcodes(string fromPostcode);
+        
+        /// <summary>
+        /// Gets the McaglaSOF postcode.
+        /// </summary>
+        /// <param name="fromPostcode">From postcode.</param>
+        /// <returns>McaglaSOF postcodes (if found)</returns>
+        IReadOnlyCollection<IMcaglaSOFPostcode> GetMcaglaSOFPostcodes(string fromPostcode);
     }
 }

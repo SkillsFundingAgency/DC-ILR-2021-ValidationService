@@ -35,5 +35,23 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 
             return onsPostcodes;
         }
+
+        public IReadOnlyCollection<McaglaSOFPostcode> MapMcaglaSOFPostcodes(IReadOnlyCollection<Postcode> postcodes)
+        {
+            List<McaglaSOFPostcode> mcaglaSOFPostcodes = new List<McaglaSOFPostcode>();
+
+            foreach (var postcode in postcodes.Where(m => m.McaglaSOFs != null))
+            {
+                mcaglaSOFPostcodes.AddRange(postcode?.McaglaSOFs?.Select(m => new McaglaSOFPostcode
+                {
+                    Postcode = postcode.PostCode,
+                    SofCode = m.SofCode,
+                    EffectiveFrom = m.EffectiveFrom,
+                    EffectiveTo = m.EffectiveTo
+                }));
+            }
+
+            return mcaglaSOFPostcodes;
+        }
     }
 }

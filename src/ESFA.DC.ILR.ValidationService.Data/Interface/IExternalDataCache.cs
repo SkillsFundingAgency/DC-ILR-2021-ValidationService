@@ -49,6 +49,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.Interface
         /// </summary>
         IReadOnlyCollection<IONSPostcode> ONSPostcodes { get; }
 
+        /// <summary>
+        /// Gets the McaglaSOF postcodes.
+        /// </summary>
+        IReadOnlyCollection<IMcaglaSOFPostcode> McaglaSOFPostcodes { get; }
+
         IReadOnlyDictionary<string, ValidationError> ValidationErrors { get; }
 
         /// <summary>

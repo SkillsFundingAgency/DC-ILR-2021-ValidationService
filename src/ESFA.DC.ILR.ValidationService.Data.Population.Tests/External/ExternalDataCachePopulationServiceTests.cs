@@ -49,6 +49,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
             organisationsDataMapperMock.Setup(m => m.MapCampusIdentifiers(It.IsAny<List<ReferenceDataService.Model.Organisations.Organisation>>())).Returns(new List<ICampusIdentifier>()).Verifiable();
             postcodesDataMapperMock.Setup(m => m.MapONSPostcodes(It.IsAny<List<ReferenceDataService.Model.Postcodes.Postcode>>())).Returns(new List<ONSPostcode>()).Verifiable();
             postcodesDataMapperMock.Setup(m => m.MapPostcodes(It.IsAny<List<ReferenceDataService.Model.Postcodes.Postcode>>())).Returns(new List<string>()).Verifiable();
+            postcodesDataMapperMock.Setup(m => m.MapMcaglaSOFPostcodes(It.IsAny<List<ReferenceDataService.Model.Postcodes.Postcode>>())).Returns(new List<McaglaSOFPostcode>()).Verifiable();
+
             ulnDataMapperMock.Setup(m => m.MapUlns(It.IsAny<List<long>>())).Returns(new List<long>()).Verifiable();
             validationErrorsDataMapperMock.Setup(m => m.MapValidationErrors(It.IsAny<List<ReferenceDataService.Model.MetaData.ValidationError>>())).Returns(new Dictionary<string, ValidationError>()).Verifiable();
             validationRulesDataMapperMock.Setup(m => m.MapValidationRules(It.IsAny<List<ReferenceDataService.Model.MetaData.ValidationRule>>())).Returns(new List<ValidationRule>()).Verifiable();

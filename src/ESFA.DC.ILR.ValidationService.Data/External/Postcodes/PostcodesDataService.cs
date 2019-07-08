@@ -22,6 +22,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
         private readonly IReadOnlyCollection<IONSPostcode> _onsPostcodes;
 
         /// <summary>
+        /// The McaglaSOF postcodes
+        /// </summary>
+        private readonly IReadOnlyCollection<IMcaglaSOFPostcode> _mcaglaSOFPostcodes;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="PostcodesDataService"/> class.
         /// </summary>
         /// <param name="externalDataCache">The external data cache.</param>
@@ -32,6 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
 
             _externalDataCache = externalDataCache;
             _onsPostcodes = _externalDataCache.ONSPostcodes.AsSafeReadOnlyList();
+            _mcaglaSOFPostcodes = _externalDataCache.McaglaSOFPostcodes.AsSafeReadOnlyList();
         }
 
         public bool PostcodeExists(string postcode)
@@ -47,5 +53,13 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
         /// <returns>an ons postcodes (if found)</returns>
         public IReadOnlyCollection<IONSPostcode> GetONSPostcodes(string fromPostcode) =>
             _onsPostcodes.Where(x => x.Postcode.ComparesWith(fromPostcode)).ToList();
+
+        /// <summary>
+        /// Gets the McaglaSOF postcode.
+        /// </summary>
+        /// <param name="fromPostcode">From postcode.</param>
+        /// <returns>McaglaSOF postcodes (if found)</returns>
+        public IReadOnlyCollection<IMcaglaSOFPostcode> GetMcaglaSOFPostcodes(string fromPostcode) =>
+            _mcaglaSOFPostcodes.Where(x => x.Postcode.ComparesWith(fromPostcode)).ToList();
     }
 }
