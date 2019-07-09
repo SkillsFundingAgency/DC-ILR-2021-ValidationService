@@ -606,6 +606,7 @@
     <Compile Include="LearningDelivery\UKPRN\UKPRN_18RuleTests.cs" />
     <Compile Include="LearningDelivery\UKPRN\UKPRN_19RuleTests.cs" />
     <Compile Include="LearningDelivery\WithdrawReason\WithdrawReason_02RuleTests.cs" />
+    <Compile Include="LearningDelivery\WithdrawReason\WithdrawReason_06RuleTests.cs" />
     <Compile Include="LearningDelivery\WithdrawReason\WithdrawReason_03RuleTests.cs" />
     <Compile Include="LearningDelivery\WithdrawReason\WithdrawReason_04RuleTests.cs" />
     <Compile Include="LearningDelivery\WithdrawReason\WithdrawReason_05RuleTests.cs" />

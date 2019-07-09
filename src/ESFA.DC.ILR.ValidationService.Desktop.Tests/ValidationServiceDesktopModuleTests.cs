@@ -652,6 +652,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(WithdrawReason_03Rule),
                 typeof(WithdrawReason_04Rule),
                 typeof(WithdrawReason_05Rule),
+                typeof(WithdrawReason_06Rule),
                 typeof(WorkPlaceEndDate_01Rule),
                 typeof(WorkPlaceEndDate_02Rule),
                 typeof(WorkPlaceStartDate_01Rule),
