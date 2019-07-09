@@ -15,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     {
         private readonly List<string> _fundingStreamPeriodCodes = new List<string>
         {
-            FundingStreamPeriodCodeConstants.ALLBC1819
+            FundingStreamPeriodCodeConstants.ALLBC1920
         };
 
         private readonly IFCSDataService _fcsDataService;

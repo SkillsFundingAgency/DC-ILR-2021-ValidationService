@@ -64,6 +64,38 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
+        public void FCTFundingConditionMet_Pass()
+        {
+            var fundingStreamPeriodCodes = new List<string>()
+            {
+                 FundingStreamPeriodCodeConstants.ALLBC1920
+            };
+
+            var mockFCSDataService = new Mock<IFCSDataService>();
+            mockFCSDataService.Setup(x => x.FundingRelationshipFCTExists(fundingStreamPeriodCodes)).Returns(true);
+
+            NewRule(fcsDataService: mockFCSDataService.Object).FCTFundingConditionMet().Should().BeTrue();
+
+            mockFCSDataService.Verify(x => x.FundingRelationshipFCTExists(fundingStreamPeriodCodes), Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public void FCTFundingConditionMet_Fails()
+        {
+            var fundingStreamPeriodCodes = new List<string>()
+            {
+                 FundingStreamPeriodCodeConstants.ALLBC1920
+            };
+
+            var mockFCSDataService = new Mock<IFCSDataService>();
+            mockFCSDataService.Setup(x => x.FundingRelationshipFCTExists(fundingStreamPeriodCodes)).Returns(false);
+
+            NewRule(fcsDataService: mockFCSDataService.Object).FCTFundingConditionMet().Should().BeFalse();
+
+            mockFCSDataService.Verify(x => x.FundingRelationshipFCTExists(fundingStreamPeriodCodes), Times.AtLeastOnce);
+        }
+
+        [Fact]
         public void BuildErrorMessageParameters()
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
