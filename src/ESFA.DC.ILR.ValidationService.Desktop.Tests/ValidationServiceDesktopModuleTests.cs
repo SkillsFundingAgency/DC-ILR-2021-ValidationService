@@ -235,6 +235,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(CompStatus_04Rule),
                 typeof(CompStatus_05Rule),
                 typeof(CompStatus_06Rule),
+                typeof(CompStatus_07Rule),
                 typeof(ConRefNumber_01Rule),
                 typeof(ConRefNumber_03Rule),
                 typeof(ContPrefType_01Rule),
