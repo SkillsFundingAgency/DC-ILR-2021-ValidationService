@@ -12,6 +12,7 @@
         public const string AchDate_08 = "AchDate_08";
         public const string AchDate_09 = "AchDate_09";
         public const string AchDate_10 = "AchDate_10";
+        public const string AchDate_11 = "AchDate_11";
 
         public const string AddHours_01 = "AddHours_01";
         public const string AddHours_02 = "AddHours_02";
