@@ -476,7 +476,7 @@
         public const string R68 = "R68";
         public const string R71 = "R71";
         public const string R72 = "R72";
-        public const string R73 = "R73";       
+        public const string R73 = "R73";
         public const string R85 = "R85";
         public const string R89 = "R89";
         public const string R90 = "R90";
@@ -492,10 +492,10 @@
         public const string R105 = "R105";
         public const string R106 = "R106";
         public const string R108 = "R108";
-        public const string R110 = "R110";     
+        public const string R110 = "R110";
         public const string R112 = "R112";
         public const string R113 = "R113";
-        public const string R114 = "R114";  
+        public const string R114 = "R114";
         public const string R117 = "R117";
         public const string R118 = "R118";
         public const string R119 = "R119";
@@ -556,6 +556,7 @@
         public const string WithdrawReason_03 = "WithdrawReason_03";
         public const string WithdrawReason_04 = "WithdrawReason_04";
         public const string WithdrawReason_05 = "WithdrawReason_05";
+        public const string WithdrawReason_06 = "WithdrawReason_06";
 
         public const string WorkPlaceEmpId_01 = "WorkPlaceEmpId_01";
         public const string WorkPlaceEmpId_02 = "WorkPlaceEmpId_02";
