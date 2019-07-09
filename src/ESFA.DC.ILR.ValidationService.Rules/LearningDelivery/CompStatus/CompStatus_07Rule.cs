@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
 
         public bool CompStatusConditionMet(int compStatus)
         {
-            return compStatus != 2;
+            return compStatus != CompletionState.HasCompleted;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel, int? progType, int compStatus, DateTime learnStartDate, DateTime? achDate)
