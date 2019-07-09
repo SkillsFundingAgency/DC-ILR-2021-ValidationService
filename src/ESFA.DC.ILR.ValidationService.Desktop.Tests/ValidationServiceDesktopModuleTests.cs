@@ -196,6 +196,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(AchDate_08Rule),
                 typeof(AchDate_09Rule),
                 typeof(AchDate_10Rule),
+                typeof(AchDate_11Rule),
                 typeof(AddHours_01Rule),
                 typeof(AddHours_02Rule),
                 typeof(AddHours_03Rule),
