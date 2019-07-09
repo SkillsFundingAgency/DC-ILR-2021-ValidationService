@@ -67,7 +67,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
             return !(aimType == _aimType &&
                      (progType == _progTypeTraineeship ||
                       (progType == _progTypeApprenticeship && fundModel == _fundModelOtherAdult) ||
-                      (progType == _progTypeApprenticeship && fundModel == _fundModelApprencticeMay2017)));
+                      (progType == _progTypeApprenticeship && fundModel == _fundModelApprencticeMay2017)
+                      ));
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, DateTime learnStartDate, int? progType, DateTime? achDate)
