@@ -158,7 +158,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void LearningDeliveryFAMConditionMet_True()
         {
-            var ldmCodes = new List<string> { "034", "346", "347", "339" };
+            var ldmCodes = new List<string> { "034",  "347", "339" };
 
             var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
             {
@@ -180,12 +180,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Theory]
         [InlineData("RES", "100", true, false)]
         [InlineData("LDM", "034", false, true)]
-        [InlineData("LDM", "346", false, true)]
         [InlineData("LDM", "347", false, true)]
         [InlineData("LDM", "339", false, true)]
         public void LearningDeliveryFAMConditionMet_False(string famType, string famCode, bool resMock, bool ldmMock)
         {
-            var ldmCodes = new List<string> { "034", "346", "347", "339" };
+            var ldmCodes = new List<string> { "034", "347", "339" };
 
             var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
             {
@@ -279,7 +278,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void ConditionMet_True()
         {
-            var ldmCodes = new List<string> { "034", "346", "347", "339" };
+            var ldmCodes = new List<string> { "034", "347", "339" };
             var nvqLevels = new List<string> { "3", "4", "5", "6", "7", "8", "H" };
             var categoryRef = 19;
             var orgType = "USDC";
@@ -328,7 +327,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void ConditionMet_False()
         {
-            var ldmCodes = new List<string> { "034", "346", "347", "339" };
+            var ldmCodes = new List<string> { "034", "347", "339" };
             var nvqLevels = new List<string> { "3", "4", "5", "6", "7", "8", "H" };
             var categoryRef = 19;
             var orgType = "USDC";
@@ -377,7 +376,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void Validate_Error()
         {
-            var ldmCodes = new List<string> { "034", "346", "347", "339" };
+            var ldmCodes = new List<string> { "034", "347", "339" };
             var nvqLevels = new List<string> { "3", "4", "5", "6", "7", "8", "H" };
             var categoryRef = 19;
             var orgType = "USDC";
@@ -447,7 +446,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void Validate_NoError()
         {
-            var ldmCodes = new List<string> { "034", "346", "347", "339" };
+            var ldmCodes = new List<string> { "034", "347", "339" };
             var nvqLevels = new List<string> { "3", "4", "5", "6", "7", "8", "H" };
             var categoryRef = 19;
             var orgType = "USDC";
