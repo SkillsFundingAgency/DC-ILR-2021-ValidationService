@@ -20,6 +20,103 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             NewRule().RuleName.Should().Be("DateOfBirth_40");
         }
 
+        [Fact]
+        public void ValidatePasses_AsMinDuration_GreaterThan365()
+        {
+            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+
+            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeServiceMock
+                .Setup(m => m.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Returns(370);
+
+            var testLearner = new TestLearner
+            {
+                DateOfBirthNullable = new DateTime(1998, 7, 31),
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    new TestLearningDelivery
+                    {
+                        FundModel = 35,
+                        AimType = 1,
+                        ProgTypeNullable = 25,
+                        LearnStartDate = new DateTime(2016, 7, 31),
+                        LearnActEndDateNullable = new DateTime(2017, 8, 10)
+                    }
+                }
+            };
+
+            NewRule(
+                validationErrorHandler: validationErrorHandlerMock.Object,
+                dateTimeQueryService: dateTimeServiceMock.Object)
+                .Validate(testLearner);
+
+            VerifyErrorHandlerMock(validationErrorHandlerMock);
+        }
+
+        [Fact]
+        public void ValidateFails_AsMinDuration_LessThan365()
+        {
+            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT"
+                }
+            };
+
+            var testLearner = new TestLearner
+            {
+                DateOfBirthNullable = new DateTime(1996, 7, 31),
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    new TestLearningDelivery
+                    {
+                        FundModel = 35,
+                        AimType = 1,
+                        ProgTypeNullable = 25,
+                        LearnStartDate = new DateTime(2016, 7, 31),
+                        LearnActEndDateNullable = null,
+                        OutcomeNullable = 1
+                    },
+                    new TestLearningDelivery
+                    {
+                        FundModel = 35,
+                        AimType = 1,
+                        ProgTypeNullable = 25,
+                        LearnStartDate = new DateTime(2016, 7, 31),
+                        LearnActEndDateNullable = new DateTime(2016, 9, 1),
+                        OutcomeNullable = 1,
+                        LearningDeliveryFAMs = learningDeliveryFAMs
+                    }
+                }
+            };
+
+            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
+
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
+
+            learningDeliveryFAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES"))
+                .Returns(false);
+
+            dateTimeServiceMock.Setup(m => m.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Returns(100);
+
+            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Returns(20);
+
+            dateTimeServiceMock.Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Returns(0);
+
+            NewRule(
+                validationErrorHandler: validationErrorHandlerMock.Object,
+                learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object,
+                dateTimeQueryService: dateTimeServiceMock.Object)
+                .Validate(testLearner);
+            VerifyErrorHandlerMock(validationErrorHandlerMock, 1);
+        }
+
         [Theory]
         [InlineData(35)]
         [InlineData(81)]
@@ -399,6 +496,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
 
             learningDeliveryFAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
+            dateTimeServiceMock
+                .Setup(m => m.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Returns(100);
             dateTimeServiceMock
                 .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);

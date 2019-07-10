@@ -12,8 +12,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 {
     public class DateOfBirth_40Rule : AbstractRule, IRule<ILearner>
     {
+        private const int _days = 365;
         private const int MinAge = 19;
-        private const int MinimumContractMonths = 12;
+        private const int MinimumContractMonths = 12;        
 
         private const int ProgrammeType = TypeOfLearningProgramme.ApprenticeshipStandard;
         private const int AimType = TypeOfAim.ProgrammeAim;
@@ -52,6 +53,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                 {
                     continue;
                 }
+
+                if (learningDelivery.LearnActEndDateNullable.HasValue)
+                {
+                    var duration = _dateTimeQueryService.DaysBetween(learningDelivery.LearnStartDate, learningDelivery.LearnActEndDateNullable.Value);
+                    if (duration > _days)
+                    {
+                        continue;
+                    }                
+                }            
 
                 var age = _dateTimeQueryService.AgeAtGivenDate(
                     learner.DateOfBirthNullable.Value,
@@ -98,8 +108,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         {
             var parameters = new List<IErrorMessageParameter>
             {
+                BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, learner.DateOfBirthNullable),
+                BuildErrorMessageParameter(PropertyNameConstants.AimType, learningDelivery.AimType),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learningDelivery.LearnStartDate),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, learningDelivery.LearnActEndDateNullable)
+                BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, learningDelivery.LearnActEndDateNullable),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, learningDelivery.FundModel),
+                BuildErrorMessageParameter(PropertyNameConstants.ProgType, learningDelivery.ProgTypeNullable),
+                BuildErrorMessageParameter(PropertyNameConstants.Outcome, learningDelivery.OutcomeNullable),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.RES)
             };
 
             HandleValidationError(learner.LearnRefNumber, learningDelivery.AimSeqNumber, parameters);
