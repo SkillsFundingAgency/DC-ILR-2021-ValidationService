@@ -111,9 +111,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                 BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, learner.DateOfBirthNullable),
                 BuildErrorMessageParameter(PropertyNameConstants.AimType, learningDelivery.AimType),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learningDelivery.LearnStartDate),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, learningDelivery.LearnActEndDateNullable),
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, learningDelivery.FundModel),
                 BuildErrorMessageParameter(PropertyNameConstants.ProgType, learningDelivery.ProgTypeNullable),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, learningDelivery.LearnActEndDateNullable),
                 BuildErrorMessageParameter(PropertyNameConstants.Outcome, learningDelivery.OutcomeNullable),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.RES)
             };
