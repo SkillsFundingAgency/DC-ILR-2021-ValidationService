@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours
 
         public bool PlannedHoursConditionMet(int? plannedHours)
         {
-            return plannedHours.HasValue;
+            return !plannedHours.HasValue;
         }
 
         public bool FundModelConditionMet(int fundModel)

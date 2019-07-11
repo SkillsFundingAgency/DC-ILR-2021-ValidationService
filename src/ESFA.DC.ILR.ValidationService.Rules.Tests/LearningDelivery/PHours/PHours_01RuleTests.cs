@@ -42,17 +42,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         }
 
         [Fact]
-        public void PlannedHoursConditionMet_Pass()
+        public void PlannedHoursConditionMet_Fails_AsPHrsNotNull()
         {
             int? pHours = 40;
-            NewRule().PlannedHoursConditionMet(pHours).Should().BeTrue();
+            NewRule().PlannedHoursConditionMet(pHours).Should().BeFalse();
         }
 
         [Fact]
-        public void PlannedHoursConditionMet_Fails_AsNull()
+        public void PlannedHoursConditionMet_Pass_AsNull()
         {
             int? pHours = null;
-            NewRule().PlannedHoursConditionMet(pHours).Should().BeFalse();
+            NewRule().PlannedHoursConditionMet(pHours).Should().BeTrue();
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         public void ConditionMet_Pass()
         {
             var startDate = new DateTime(2019, 12, 1);
-            int? pHours = 60;
+            int? pHours = null;
             int fundModel = 36;
 
             NewRule().ConditionMet(startDate, pHours, fundModel).Should().BeTrue();
@@ -81,8 +81,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
 
         [Theory]
         [InlineData("21/06/2019", 200, 36)]
-        [InlineData("01/09/2019", null, 36)]
-        [InlineData("01/09/2019", 300, 81)]
+        [InlineData("01/09/2019", 250, 36)]
+        [InlineData("01/12/2019", 300, 81)]
         public void ConditionMet_Fails(string startingDate, int? pHours, int fundModel)
         {
             var startDate = DateTime.Parse(startingDate);
@@ -100,7 +100,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
                  {
                      FundModel = 36,
                      AimType = 1,
-                     PHoursNullable = 200,
+                     PHoursNullable = null,
                      LearnStartDate = learnStartDate
                  }
             };
