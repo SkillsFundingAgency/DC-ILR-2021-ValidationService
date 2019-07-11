@@ -531,6 +531,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(PCTLDCS_01Rule),
                 typeof(PCTLDCS_02Rule),
                 typeof(PCOLAB_01Rule),
+                typeof(PHours_01Rule),
                 typeof(PHours_02Rule),
                 typeof(PlanEEPHours_01Rule),
                 typeof(PlanLearnHours_01Rule),
