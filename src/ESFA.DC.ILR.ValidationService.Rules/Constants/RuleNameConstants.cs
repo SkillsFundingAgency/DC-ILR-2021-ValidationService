@@ -412,6 +412,8 @@
 
         public const string PlanEEPHours_01 = "PlanEEPHours_01";
 
+        public const string PHours_02 = "PHours_02";
+
         public const string PlanLearnHours_01 = "PlanLearnHours_01";
         public const string PlanLearnHours_02 = "PlanLearnHours_02";
         public const string PlanLearnHours_03 = "PlanLearnHours_03";

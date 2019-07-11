@@ -79,6 +79,7 @@
         public const string PCFLDCS = "PCFLDCS";
         public const string PCSLDCS = "PCFLDCS";
         public const string PCTLDCS = "PCFLDCS";
+        public const string PHours = "PHours";
         public const string PlanEEPHours = "PlanEEPHours";
         public const string PlanLearnHours = "PlanLearnHours";
         public const string ProvSpecDelMonOccur = "ProvSpecDelMonOccur";
