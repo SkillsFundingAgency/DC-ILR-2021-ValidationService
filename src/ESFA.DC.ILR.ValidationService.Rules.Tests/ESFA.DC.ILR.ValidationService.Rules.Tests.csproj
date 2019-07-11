@@ -473,6 +473,7 @@
     <Compile Include="LearningDelivery\OutGrade\OutGrade_01RuleTests.cs" />
     <Compile Include="LearningDelivery\OutGrade\OutGrade_06RuleTests.cs" />
     <Compile Include="LearningDelivery\OutGrade\OutGrade_07RuleTests.cs" />
+    <Compile Include="LearningDelivery\PHours\PHours_01RuleTests.cs" />
     <Compile Include="LearningDelivery\ProgType\ProgType_12RuleTests.cs" />
     <Compile Include="LearningDelivery\ProvSpecDelMonOccur\ProvSpecDelMonOccur_01RuleTests.cs" />
     <Compile Include="LearningDelivery\UKPRN\UKPRN_05RuleTests.cs" />
