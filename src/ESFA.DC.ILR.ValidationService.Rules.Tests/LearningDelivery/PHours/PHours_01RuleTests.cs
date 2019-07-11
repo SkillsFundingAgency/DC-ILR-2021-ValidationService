@@ -105,7 +105,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         }
 
         [Theory]
-        [InlineData("21/06/2019", 200, 36)]
+        [InlineData("01/06/2019", 200, 36)]
         [InlineData("01/08/2019", 250, 36)]
         [InlineData("01/12/2019", 300, 81)]
         public void ConditionMet_Fails(string startingDate, int? pHours, int fundModel)
