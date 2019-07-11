@@ -14,7 +14,7 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
 {
-    public class PHours_01RuleTests : AbstractRuleTests<LSDPostcode_01Rule>
+    public class PHours_01RuleTests : AbstractRuleTests<PHours_01Rule>
     {
         [Fact]
         public void RuleName()
