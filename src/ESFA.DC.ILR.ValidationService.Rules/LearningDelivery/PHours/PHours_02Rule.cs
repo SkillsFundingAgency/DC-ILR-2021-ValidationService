@@ -13,7 +13,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours
     public class PHours_02Rule : AbstractRule, IRule<ILearner>
     {
         private const int _minPlannedHours = 278;
-        //private readonly string _learnDelFamTypeRES = LearningDeliveryFAMTypeConstants.RES;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public PHours_02Rule(ILearningDeliveryFAMQueryService learningDeliveryFamQueryService, IValidationErrorHandler validationErrorHandler)
