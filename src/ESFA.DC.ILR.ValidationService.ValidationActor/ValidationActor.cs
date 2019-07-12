@@ -121,7 +121,8 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                     StandardValidities = externalDataCacheGet.StandardValidities,
                     ULNs = externalDataCacheGet.ULNs,
                     ValidationErrors = externalDataCacheGet.ValidationErrors.ToCaseInsensitiveDictionary(),
-                    CampusIdentifiers = externalDataCacheGet.CampusIdentifiers
+                    CampusIdentifiers = externalDataCacheGet.CampusIdentifiers,
+                    ValidationRules = externalDataCacheGet.ValidationRules
                 };
 
                 logger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} finished getting input data");

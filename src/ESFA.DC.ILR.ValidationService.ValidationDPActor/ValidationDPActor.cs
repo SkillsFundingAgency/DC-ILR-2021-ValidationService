@@ -98,7 +98,8 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
                 externalDataCache = new ExternalDataCache
                 {
                     ULNs = externalDataCacheGet.ULNs,
-                    ValidationErrors = externalDataCacheGet.ValidationErrors.ToCaseInsensitiveDictionary()
+                    ValidationErrors = externalDataCacheGet.ValidationErrors.ToCaseInsensitiveDictionary(),
+                    ValidationRules = externalDataCacheGet.ValidationRules
                 };
 
                 logger.LogDebug($"{nameof(ValidationDPActor)} {_actorId} {GC.GetGeneration(actorModel)} finished getting input data");
