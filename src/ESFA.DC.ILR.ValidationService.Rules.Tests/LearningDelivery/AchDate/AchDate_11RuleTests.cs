@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ESFA.DC.ILR.Tests.Model;
+using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
@@ -64,21 +65,52 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AchDate
         public void LearnActEndDate_Pass_AsGreaterThanFirstAug2019()
         {
             var learnActEndDate = new DateTime(2019, 09, 01);
-            NewRule().LearnActEndDateConditionMet(learnActEndDate).Should().BeTrue();
+            var academicStartDate = new DateTime(2019, 8, 1);
+
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+
+            NewRule(mockAcademicYearDataService.Object)
+                .LearnActEndDateConditionMet(learnActEndDate)
+                .Should().BeTrue();
         }
 
         [Fact]
         public void LearnActEndDate_Pass_AsEqualsToFirstAug2019()
         {
             var learnActEndDate = new DateTime(2019, 08, 01);
-            NewRule().LearnActEndDateConditionMet(learnActEndDate).Should().BeTrue();
+            var academicStartDate = new DateTime(2019, 8, 1);
+
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+
+            NewRule(mockAcademicYearDataService.Object)
+                .LearnActEndDateConditionMet(learnActEndDate)
+                .Should().BeTrue();
         }
 
         [Fact]
         public void LearnActEndDate_Fails_AsLessThanFirstAug2019()
         {
             var learnActEndDate = new DateTime(2019, 07, 01);
-            NewRule().LearnActEndDateConditionMet(learnActEndDate).Should().BeFalse();
+            var academicStartDate = new DateTime(2019, 8, 1);
+
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+
+            NewRule(mockAcademicYearDataService.Object).LearnActEndDateConditionMet(learnActEndDate).Should().BeFalse();
+        }
+
+        [Fact]
+        public void LearnActEndDate_Fails_AslearnActDateNull()
+        {
+            DateTime? learnActEndDate = null;
+            var academicStartDate = new DateTime(2019, 8, 1);
+
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+
+            NewRule(mockAcademicYearDataService.Object).LearnActEndDateConditionMet(learnActEndDate).Should().BeFalse();
         }
 
         [Fact]
@@ -93,13 +125,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AchDate
         public void AchDateCondition_Fails()
         {
             var learnActEndDate = new DateTime(2019, 09, 15);
-            var achDate = new DateTime(2019, 09, 08);
+            var achDate = new DateTime(2019, 10, 08);
             NewRule().AchDateConditionMet(achDate, learnActEndDate).Should().BeFalse();
-        }
-
-        public AchDate_11Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
-        {
-            return new AchDate_11Rule(validationErrorHandler);
         }
 
         [Fact]
@@ -110,8 +137,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AchDate
             var progType = 25;
             var learnActEndDate = new DateTime(2019, 09, 15);
             var achDate = new DateTime(2019, 09, 05);
+            var academicStartDate = new DateTime(2019, 8, 1);
 
-            NewRule().ConditionMet(aimType, fundModel, progType, learnActEndDate, achDate).Should().BeTrue();
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+
+            NewRule(mockAcademicYearDataService.Object).ConditionMet(aimType, fundModel, progType, learnActEndDate, achDate).Should().BeTrue();
         }
 
         [Theory]
@@ -144,6 +175,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AchDate
         [Fact]
         public void Validate_Error()
         {
+            var academicStartDate = new DateTime(2019, 8, 1);
+
             var learner = new TestLearner()
             {
                 LearnRefNumber = "123",
@@ -161,15 +194,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AchDate
                 }
             };
 
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(mockAcademicYearDataService.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
         [Fact]
         public void Validate_NoErrors()
         {
+            var academicStartDate = new DateTime(2019, 8, 1);
             var learner = new TestLearner()
             {
                 LearningDeliveries = new List<TestLearningDelivery>()
@@ -178,9 +215,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AchDate
                 }
             };
 
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(mockAcademicYearDataService.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -198,9 +238,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AchDate
             validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnActEndDate", "21/08/2019")).Verifiable();
             validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("AchDate", "25/06/2019")).Verifiable();
 
-            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters(aimType, fundModel, progType, new DateTime(2019, 08, 21), new DateTime(2019, 06, 25));
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(aimType, fundModel, progType, new DateTime(2019, 08, 21), new DateTime(2019, 06, 25));
 
             validationErrorHandlerMock.Verify();
+        }
+
+        public AchDate_11Rule NewRule(IAcademicYearDataService academicYearDataService = null, IValidationErrorHandler validationErrorHandler = null)
+        {
+            return new AchDate_11Rule(academicYearDataService, validationErrorHandler);
         }
     }
 }
