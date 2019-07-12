@@ -20,21 +20,61 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.CompStatus
         }
 
         [Fact]
+        public void FundModelConditionMet_Pass()
+        {
+            var fundModel = 81;
+            NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
+        }
+
+        [Fact]
+        public void FundModelConditionMet_Fails()
+        {
+            var fundModel = 36;
+            NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ProgTypeConditionMet_Pass()
+        {
+            var progType = 24;
+            NewRule().ProgTypeConditionMet(progType).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ProgTypeConditionMet_Fails()
+        {
+            var progType = 25;
+            NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
+        }
+
+        [Fact]
         public void ConditionMet_True()
         {
-            NewRule().ConditionMet(new DateTime(2017, 8, 1), 1).Should().BeTrue();
+            NewRule().ConditionMet(new DateTime(2017, 8, 1), 1, 81, 24).Should().BeTrue();
         }
 
         [Fact]
         public void ConditionMet_False_LearnActEndDate()
         {
-            NewRule().ConditionMet(null, 1).Should().BeFalse();
+            NewRule().ConditionMet(null, 1, 81, 24).Should().BeFalse();
         }
 
         [Fact]
         public void ConditionMet_False_CompStatus()
         {
-            NewRule().ConditionMet(new DateTime(2017, 8, 1), 2).Should().BeFalse();
+            NewRule().ConditionMet(new DateTime(2017, 8, 1), 2, 81, 24).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_ForFundModel()
+        {
+            NewRule().ConditionMet(new DateTime(2017, 8, 1), 1, 36, 24).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_ForProgType()
+        {
+            NewRule().ConditionMet(new DateTime(2017, 8, 1), 1, 81, 25).Should().BeFalse();
         }
 
         [Fact]
@@ -48,6 +88,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.CompStatus
                     {
                         LearnActEndDateNullable = new DateTime(2017, 1, 1),
                         CompStatus = 1,
+                        FundModel = 81,
+                        ProgTypeNullable = 24
                     }
                 }
             };
@@ -67,7 +109,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.CompStatus
                 {
                     new TestLearningDelivery()
                     {
-                        LearnActEndDateNullable = null,
+                        LearnActEndDateNullable = null
                     }
                 }
             };
