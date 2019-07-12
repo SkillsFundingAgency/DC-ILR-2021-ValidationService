@@ -18,13 +18,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 if (ConditionMet(
-                    learningDelivery.OutcomeNullable, learningDelivery.CompStatus,
-                    learningDelivery.FundModel, learningDelivery.ProgTypeNullable))
+                             learningDelivery.OutcomeNullable, 
+                             learningDelivery.CompStatus,
+                             learningDelivery.FundModel,
+                             learningDelivery.ProgTypeNullable))
                 {
                     HandleValidationError(
-                        objectToValidate.LearnRefNumber,
-                        learningDelivery.AimSeqNumber,
-                        BuildErrorMessageParameters(learningDelivery.OutcomeNullable, learningDelivery.CompStatus));
+                             objectToValidate.LearnRefNumber,
+                             learningDelivery.AimSeqNumber,
+                             BuildErrorMessageParameters(learningDelivery.OutcomeNullable, learningDelivery.CompStatus));
                 }
             }
         }
