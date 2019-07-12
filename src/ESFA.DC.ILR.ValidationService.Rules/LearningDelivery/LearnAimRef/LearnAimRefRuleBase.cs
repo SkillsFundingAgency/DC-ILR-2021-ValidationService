@@ -94,8 +94,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// <param name="branch">The branch.</param>
         public void GetDebugCategories(ILearningDelivery delivery, IBranchResult branch)
         {
-            var validities = LarsData.GetValiditiesFor(delivery.LearnAimRef)
-                .Where(x => x.ValidityCategory.ComparesWith(branch.Category));
+            var validities = LarsData.GetValiditiesFor(delivery.LearnAimRef);
 
             branch.SetRetrievedCategories(string.Join(", ", validities.Select(x => x.ValidityCategory)));
         }
