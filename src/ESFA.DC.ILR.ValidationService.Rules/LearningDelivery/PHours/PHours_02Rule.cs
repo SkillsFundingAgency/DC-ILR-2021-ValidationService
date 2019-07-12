@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours
     public class PHours_02Rule : AbstractRule, IRule<ILearner>
     {
         private const int _minPlannedHours = 278;
-        private readonly string _learnDelFamTypeRES = LearningDeliveryFAMTypeConstants.RES;
+        //private readonly string _learnDelFamTypeRES = LearningDeliveryFAMTypeConstants.RES;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public PHours_02Rule(ILearningDeliveryFAMQueryService learningDeliveryFamQueryService, IValidationErrorHandler validationErrorHandler)
@@ -59,7 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours
 
         public virtual bool LearningDeliveryFAMsConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, _learnDelFamTypeRES);
+            return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? plannedHours)
