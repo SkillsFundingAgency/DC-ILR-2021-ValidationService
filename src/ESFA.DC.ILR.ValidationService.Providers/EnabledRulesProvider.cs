@@ -3,7 +3,7 @@ using System.Linq;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 
-namespace ESFA.DC.ILR.ValidationService.Stateless
+namespace ESFA.DC.ILR.ValidationService.Providers
 {
     public class EnabledRulesProvider : IEnabledRulesProvider
     {
