@@ -7,6 +7,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
@@ -87,6 +88,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         }
 
         /// <summary>
+        /// Gets the debug categories (on demand)
+        /// </summary>
+        /// <param name="delivery">The delivery.</param>
+        /// <param name="branch">The branch.</param>
+        public void GetDebugCategories(ILearningDelivery delivery, IBranchResult branch)
+        {
+            var validities = LarsData.GetValiditiesFor(delivery.LearnAimRef)
+                .Where(x => x.ValidityCategory.ComparesWith(branch.Category));
+
+            branch.SetRetrievedCategories(string.Join(", ", validities.Select(x => x.ValidityCategory)));
+        }
+
+        /// <summary>
         /// Raises the validation message.
         /// </summary>
         /// <param name="learnRefNumber">The learn reference number.</param>
@@ -94,6 +108,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// <param name="expected">The expected category.</param>
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery, IBranchResult expected)
         {
+            GetDebugCategories(thisDelivery, expected);
             HandleValidationError(learnRefNumber, thisDelivery.AimSeqNumber, BuildMessageParametersFor(thisDelivery, expected));
         }
 
@@ -110,7 +125,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             return new[]
             {
                 BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, thisDelivery.LearnAimRef),
-                BuildErrorMessageParameter("Expected Category", andExpected.Category)
+                BuildErrorMessageParameter("Expected Category", andExpected.Category),
+                BuildErrorMessageParameter("Found Categories", andExpected.RetrievedCategories)
             };
         }
     }
