@@ -113,6 +113,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             handler
                 .Setup(x => x.BuildErrorMessageParameter("Expected Category", category))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("Found Categories", null))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var mockResult = new Mock<IBranchResult>();
             mockResult
@@ -127,6 +130,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(mockResult.Object);
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
+            service
+                .Setup(x => x.GetValiditiesFor(learnAimRef))
+                .Returns(new ILARSLearningDeliveryValidity[] { });
 
             var sut = new LearnAimRefRuleBaseTestRule(handler.Object, provider.Object, service.Object);
 
