@@ -42,12 +42,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
         public bool OutcomeConditionMet(int? outcome)
         {
             return outcome.HasValue
-                   && outcome == 8;
+                   && outcome == OutcomeConstants.LearningActivitiesCompleteButOutcomeNotKnown;
         }
 
         public bool CompStatusConditionMet(int compStatus)
         {
-            return compStatus != 2;
+            return compStatus != CompletionState.HasCompleted;
         }
 
         public bool FundModelConditionMet(int fundModel)
