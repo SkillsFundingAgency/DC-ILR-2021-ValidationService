@@ -69,13 +69,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
             return validities.Any(x => x.IsCurrent(delivery.LearnStartDate))
                 && (annualValues.Any(IsBasicSkillsLearner) || larsFramework.Any(IsCommonComponent));
-        }  
+        }
 
+        /// <summary>
+        /// Determines whether [it is a common component] [the specified larsFramework].
+        /// </summary>
+        /// <param name="larsFramework">The larsFramework.</param>
+        /// <returns>
+        ///   <c>true</c> if [is british sign language] [the specified larsFramework]; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsCommonComponent(ILARSFramework larsFramework )
         {
             return larsFramework
                         .FrameworkCommonComponents
-                        .Any(x => x.CommonComponent.Equals(TypeOfLARSBasicSkill.FunctionalSkillsEnglish));
+                        .Any(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
         }
 
         /// <summary>
