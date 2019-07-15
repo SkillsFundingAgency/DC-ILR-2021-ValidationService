@@ -126,7 +126,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                     && !Check.IsLearnerInCustody(delivery)
                     && !Check.InApprenticeship(delivery)
                     && Check.HasQualifyingStart(delivery, DateTime.MinValue, UnemployedMaximumStart)
-                    && InReceiptOfBenefitsAtStart(delivery, learner?.LearnerEmploymentStatuses.AsSafeReadOnlyList()),
+                    && InReceiptOfBenefitsAtStart(delivery, learner?.LearnerEmploymentStatuses),
                 TypeOfLARSValidity.Unemployed);
 
         /// <summary>

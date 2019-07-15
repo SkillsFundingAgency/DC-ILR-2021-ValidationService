@@ -82,8 +82,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         {
             It.IsNull(delivery)
                 .AsGuard<ArgumentNullException>(nameof(delivery));
-            It.IsEmpty(learnerEmployments)
-                .AsGuard<ArgumentNullException>(nameof(learnerEmployments));
+            var employments = learnerEmployments.AsSafeReadOnlyList();
 
             /*
                 if
@@ -95,7 +94,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
              */
 
             return _check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)
-                && InReceiptOfBenefits(learnerEmployments, delivery.LearnStartDate);
+                && InReceiptOfBenefits(employments, delivery.LearnStartDate);
         }
     }
 }
