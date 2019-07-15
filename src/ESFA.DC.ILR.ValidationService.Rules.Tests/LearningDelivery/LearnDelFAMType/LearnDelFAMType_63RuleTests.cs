@@ -1,5 +1,6 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
+using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
@@ -267,6 +268,51 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             // assert
             Assert.Equal(expectation, result);
+        }
+
+        [Fact]
+        public void IsCommonComponent_ReturnsPass()
+        {
+            // arrange
+            var frameworkComponents = new List<ILARSFrameworkCommonComponent>()
+            {
+                new FrameworkCommonComponent { CommonComponent = 20 },
+                new FrameworkCommonComponent { CommonComponent = 26 }
+            };
+
+            var sut = NewRule();
+            var mocLarsFramework = new Mock<ILARSFramework>();
+            mocLarsFramework
+                    .SetupGet(y => y.FrameworkCommonComponents)
+                    .Returns(frameworkComponents);
+
+            // act
+            var result = sut.IsCommonComponent(mocLarsFramework.Object);
+
+            // assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsCommonComponent_ReturnsFalse()
+        {
+            // arrange
+            var frameworkComponents = new List<ILARSFrameworkCommonComponent>()
+            {
+                new FrameworkCommonComponent { }
+            };
+
+            var sut = NewRule();
+            var mocLarsFramework = new Mock<ILARSFramework>();
+            mocLarsFramework
+                    .SetupGet(y => y.FrameworkCommonComponents)
+                    .Returns(frameworkComponents);
+
+            // act
+            var result = sut.IsCommonComponent(mocLarsFramework.Object);
+
+            // assert
+            Assert.False(result);
         }
 
         /// <summary>
