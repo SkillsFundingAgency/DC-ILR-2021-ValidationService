@@ -59,15 +59,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [is basic skills learner] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is basic skills learner OR exists within CommonComponents for FunctionalSkillsEnglish] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsBasicSkillsLearner(ILearningDelivery delivery)
         {
             var validities = _larsData.GetValiditiesFor(delivery.LearnAimRef);
             var annualValues = _larsData.GetAnnualValuesFor(delivery.LearnAimRef);
+            var larsFramework = _larsData.GetDeliveryFor(delivery.LearnAimRef).Frameworks;
 
             return validities.Any(x => x.IsCurrent(delivery.LearnStartDate))
-                && annualValues.Any(IsBasicSkillsLearner);
+                && (annualValues.Any(IsBasicSkillsLearner) || larsFramework.Any(IsCommonComponent));
+        }
+
+        /// <summary>
+        /// Determines whether [it is a common component] [the specified larsFramework].
+        /// </summary>
+        /// <param name="larsFramework">The larsFramework.</param>
+        /// <returns>
+        ///   <c>true</c> if [is british sign language] [the specified larsFramework]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsCommonComponent(ILARSFramework larsFramework )
+        {
+            return larsFramework
+                        .FrameworkCommonComponents
+                        .Any(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
         }
 
         /// <summary>
