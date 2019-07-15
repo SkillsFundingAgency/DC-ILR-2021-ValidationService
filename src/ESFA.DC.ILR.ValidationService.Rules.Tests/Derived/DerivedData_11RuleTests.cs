@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
@@ -122,6 +123,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
             // act
             var result = sut.InReceiptOfBenefits(empty, DateTime.Today);
+
+            // assert
+            Assert.False(result);
+        }
+
+        /// <summary>
+        /// is adult funded on benefits at start of aim returns false
+        /// this would previously have thrown an empty set exception for the employment records
+        /// </summary>
+        [Fact]
+        public void IsAdultFundedOnBenefitsAtStartOfAimReturnsFalse()
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnStartDate)
+                .Returns(DateTime.Today);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.GetEmploymentStatusOn(DateTime.Today, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()))
+                .Returns((ILearnerEmploymentStatus)null);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, TypeOfFunding.AdultSkills))
+                .Returns(true);
+
+            var sut = new DerivedData_11Rule(commonOps.Object);
+
+            // act
+            var result = sut.IsAdultFundedOnBenefitsAtStartOfAim(delivery.Object, null);
 
             // assert
             Assert.False(result);
