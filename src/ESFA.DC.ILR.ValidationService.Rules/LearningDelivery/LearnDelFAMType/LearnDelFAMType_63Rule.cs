@@ -78,7 +78,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <returns>
         ///   <c>true</c> if [is british sign language] [the specified larsFramework]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsCommonComponent(ILARSFramework larsFramework )
+        public bool IsCommonComponent(ILARSFramework larsFramework)
         {
             return larsFramework
                         .FrameworkCommonComponents
