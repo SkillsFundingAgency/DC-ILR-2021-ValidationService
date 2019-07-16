@@ -22,6 +22,134 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
+        public void Validation_NoError_IrrelevantFamType()
+        {
+            var learnAimRef = "00100309";
+
+            var frameworks = new List<Framework>
+            {
+                new Framework
+                {
+                    FrameworkAim = new FrameworkAim()
+                    {
+                        FworkCode = 1,
+                        ProgType = 2,
+                        PwayCode = 3,
+                    },
+                    FrameworkCommonComponents = new List<FrameworkCommonComponent>
+                    {
+                        new FrameworkCommonComponent
+                        {
+                            FworkCode = 1,
+                            ProgType = 2,
+                            PwayCode = 3,
+                            CommonComponent = 1,
+                            EffectiveFrom = new DateTime(2018, 8, 1),
+                        }
+                    }
+                }
+            };
+
+            var mockDelivery = new Mock<ILARSLearningDelivery>();
+            mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
+
+            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+
+            larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
+
+            larsDataServiceMock
+                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(It.IsAny<IEnumerable<int>>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+                .Returns(false);
+
+            var testLearner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    new TestLearningDelivery
+                    {
+                        LearnAimRef = learnAimRef,
+                        FundModel = 36,
+                        AimType = 3,
+                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+                        {
+                            new TestLearningDeliveryFAM
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF
+                            }
+                        }
+                    }
+                }
+            };
+
+            NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+        }
+
+        [Fact]
+        public void Validation_NoError_BasicSkill()
+        {
+            var learnAimRef = "00100309";
+
+            var frameworks = new List<Framework>
+            {
+                new Framework
+                {
+                    FrameworkAim = new FrameworkAim()
+                    {
+                        FworkCode = 1,
+                        ProgType = 2,
+                        PwayCode = 3,
+                    },
+                    FrameworkCommonComponents = new List<FrameworkCommonComponent>
+                    {
+                        new FrameworkCommonComponent
+                        {
+                            FworkCode = 1,
+                            ProgType = 2,
+                            PwayCode = 3,
+                            CommonComponent = 1,
+                            EffectiveFrom = new DateTime(2018, 8, 1),
+                        }
+                    }
+                }
+            };
+
+            var mockDelivery = new Mock<ILARSLearningDelivery>();
+            mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
+
+            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+
+            larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
+
+            larsDataServiceMock
+                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(It.IsAny<IEnumerable<int>>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+                .Returns(true);
+
+            var testLearner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    new TestLearningDelivery
+                    {
+                        LearnAimRef = learnAimRef,
+                        FundModel = 36,
+                        AimType = 3,
+                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+                        {
+                            new TestLearningDeliveryFAM
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LSF
+                            }
+                        }
+                    }
+                }
+            };
+
+            NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+        }
+
+        [Fact]
         public void ValidationPasses_NoLDs()
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
@@ -106,70 +234,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
-        public void Validation_NoError_IrrelevantFamType()
-        {
-            var learnAimRef = "00100309";
-
-            var frameworks = new List<Framework>
-            {
-                new Framework
-                {
-                    FrameworkAim = new FrameworkAim()
-                    {
-                        FworkCode = 1,
-                        ProgType = 2,
-                        PwayCode = 3,
-                    },
-                    FrameworkCommonComponents = new List<FrameworkCommonComponent>
-                    {
-                        new FrameworkCommonComponent
-                        {
-                            FworkCode = 1,
-                            ProgType = 2,
-                            PwayCode = 3,
-                            CommonComponent = 1,
-                            EffectiveFrom = new DateTime(2018, 8, 1),
-                        }
-                    }
-                }
-            };
-
-            var mockDelivery = new Mock<ILARSLearningDelivery>();
-            mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
-
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-
-            larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
-
-            larsDataServiceMock
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(It.IsAny<IEnumerable<int>>(), It.IsAny<string>(), It.IsAny<DateTime>()))
-                .Returns(false);
-
-            var testLearner = new TestLearner
-            {
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        LearnAimRef = learnAimRef,
-                        FundModel = 36,
-                        AimType = 3,
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF
-                            }
-                        }
-                    }
-                }
-            };
-
-            NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
-        }
-
-        [Fact]
         public void IsCommonComponent_True()
         {
             var frameworkComponents = new List<ILARSFrameworkCommonComponent>()
@@ -219,70 +283,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             result.Should().BeFalse();
             mockLarsFramework.VerifyGet(x => x.FrameworkCommonComponents, Times.AtLeastOnce);
-        }
-
-        [Fact]
-        public void Validation_NoError_BasicSkill()
-        {
-            var learnAimRef = "00100309";
-
-            var frameworks = new List<Framework>
-            {
-                new Framework
-                {
-                    FrameworkAim = new FrameworkAim()
-                    {
-                        FworkCode = 1,
-                        ProgType = 2,
-                        PwayCode = 3,
-                    },
-                    FrameworkCommonComponents = new List<FrameworkCommonComponent>
-                    {
-                        new FrameworkCommonComponent
-                        {
-                            FworkCode = 1,
-                            ProgType = 2,
-                            PwayCode = 3,
-                            CommonComponent = 1,
-                            EffectiveFrom = new DateTime(2018, 8, 1),
-                        }
-                    }
-                }
-            };
-
-            var mockDelivery = new Mock<ILARSLearningDelivery>();
-            mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
-
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-
-            larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
-
-            larsDataServiceMock
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(It.IsAny<IEnumerable<int>>(), It.IsAny<string>(), It.IsAny<DateTime>()))
-                .Returns(true);
-
-            var testLearner = new TestLearner
-            {
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        LearnAimRef = learnAimRef,
-                        FundModel = 36,
-                        AimType = 3,
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LSF
-                            }
-                        }
-                    }
-                }
-            };
-
-            NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
         }
 
         [Fact]
