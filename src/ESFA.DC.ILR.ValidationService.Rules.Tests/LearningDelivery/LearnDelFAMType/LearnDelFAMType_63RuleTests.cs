@@ -1,5 +1,6 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
+using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
@@ -267,6 +268,70 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             // assert
             Assert.Equal(expectation, result);
+        }
+
+        [Fact]
+        public void IsCommonComponent_ReturnsTrue()
+        {
+            // arrange
+            var frameworkComponents = new List<ILARSFrameworkCommonComponent>()
+            {
+                new FrameworkCommonComponent { CommonComponent = TypeOfLARSCommonComponent.BritishSignLanguage },
+                new FrameworkCommonComponent { CommonComponent = TypeOfLARSCommonComponent.FunctionalSkillsEnglish }
+            };
+
+            var sut = NewRule();
+            var mocLarsFramework = new Mock<ILARSFramework>();
+            mocLarsFramework
+                    .SetupGet(y => y.FrameworkCommonComponents)
+                    .Returns(frameworkComponents);
+
+            // act
+            var result = sut.IsCommonComponent(mocLarsFramework.Object);
+
+            // assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsCommonComponent_False_AsWrongCommonComponent()
+        {
+            // arrange
+            var frameworkComponents = new List<ILARSFrameworkCommonComponent>()
+            {
+                new FrameworkCommonComponent { CommonComponent = TypeOfLARSCommonComponent.FunctionalSkillsEnglish }
+            };
+
+            var sut = NewRule();
+            var mocLarsFramework = new Mock<ILARSFramework>();
+            mocLarsFramework
+                    .SetupGet(y => y.FrameworkCommonComponents)
+                    .Returns(frameworkComponents);
+
+            // act
+            var result = sut.IsCommonComponent(mocLarsFramework.Object);
+
+            // assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void IsCommonComponent_False_DueToEmptyList()
+        {
+            // arrange
+            var frameworkComponents = new List<ILARSFrameworkCommonComponent>();
+
+            var sut = NewRule();
+            var mocLarsFramework = new Mock<ILARSFramework>();
+            mocLarsFramework
+                    .SetupGet(y => y.FrameworkCommonComponents)
+                    .Returns(frameworkComponents);
+
+            // act
+            var result = sut.IsCommonComponent(mocLarsFramework.Object);
+
+            // assert
+            Assert.False(result);
         }
 
         /// <summary>

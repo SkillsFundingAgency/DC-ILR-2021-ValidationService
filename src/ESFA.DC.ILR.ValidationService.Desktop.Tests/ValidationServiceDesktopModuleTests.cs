@@ -93,6 +93,7 @@ using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OtherFundAdj;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OutGrade;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PartnerUKPRN;
+using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PriorLearnFundAdj;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProvSpecDelMonOccur;
@@ -530,6 +531,8 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(PCTLDCS_01Rule),
                 typeof(PCTLDCS_02Rule),
                 typeof(PCOLAB_01Rule),
+                typeof(PHours_01Rule),
+                typeof(PHours_02Rule),
                 typeof(PlanEEPHours_01Rule),
                 typeof(PlanLearnHours_01Rule),
                 typeof(PlanLearnHours_02Rule),

@@ -54,8 +54,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
         {
             var outcome = 8;
             var compStatus = 1;
+            var fundModel = 81;
+            var progType = 24;
 
-            NewRule().ConditionMet(outcome, compStatus).Should().BeTrue();
+            NewRule().ConditionMet(outcome, compStatus, fundModel, progType).Should().BeTrue();
         }
 
         [Fact]
@@ -63,8 +65,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
         {
             int? outcome = null;
             var compStatus = 1;
+            var fundModel = 81;
+            var progType = 24;
 
-            NewRule().ConditionMet(outcome, compStatus).Should().BeFalse();
+            NewRule().ConditionMet(outcome, compStatus, fundModel, progType).Should().BeFalse();
         }
 
         [Fact]
@@ -72,8 +76,60 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
         {
             var outcome = 8;
             var compStatus = 2;
+            var fundModel = 81;
+            var progType = 24;
 
-            NewRule().ConditionMet(outcome, compStatus).Should().BeFalse();
+            NewRule().ConditionMet(outcome, compStatus, fundModel, progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_FalseFundModel()
+        {
+            var outcome = 8;
+            var compStatus = 1;
+            var fundModel = 36;
+            var progType = 24;
+
+            NewRule().ConditionMet(outcome, compStatus, fundModel, progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_FalseProgType()
+        {
+            var outcome = 8;
+            var compStatus = 1;
+            var fundModel = 81;
+            var progType = 25;
+
+            NewRule().ConditionMet(outcome, compStatus, fundModel, progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void FundModelConditionMet_Pass()
+        {
+            var fundModel = 81;
+            NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
+        }
+
+        [Fact]
+        public void FundModelConditionMet_Fails()
+        {
+            var fundModel = 36;
+            NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ProgTypeConditionMet_Pass()
+        {
+            var progType = 24;
+            NewRule().ProgTypeConditionMet(progType).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ProgTypeConditionMet_Fails()
+        {
+            var progType = 25;
+            NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
         }
 
         [Fact]
@@ -86,7 +142,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                     new TestLearningDelivery()
                     {
                         OutcomeNullable = 8,
-                        CompStatus = 1
+                        CompStatus = 1,
+                        ProgTypeNullable = 24,
+                        FundModel = 81
                     }
                 }
             };
@@ -107,7 +165,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                     new TestLearningDelivery()
                     {
                         OutcomeNullable = 8,
-                        CompStatus = 2
+                        CompStatus = 2,
+                        ProgTypeNullable = 25,
+                        FundModel = 36
                     }
                 }
             };

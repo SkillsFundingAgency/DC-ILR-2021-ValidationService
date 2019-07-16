@@ -10,7 +10,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_31Rule : AbstractRule, IRule<ILearner>
     {
-        private const int MaxNumberOfLdmFamTypes = 4;
+        private const int MaxNumberOfLdmFamTypes = 6;
 
         public LearnDelFAMType_31Rule(
             IValidationErrorHandler validationErrorHandler)
@@ -36,8 +36,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                     continue;
                 }
 
-                var count = learningDelivery.LearningDeliveryFAMs
-                    .Count(ldf => ldf.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.LDM));
+                var count = learningDelivery
+                            .LearningDeliveryFAMs
+                            .Count(ldf => ldf.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.LDM));
 
                 if (count > MaxNumberOfLdmFamTypes)
                 {

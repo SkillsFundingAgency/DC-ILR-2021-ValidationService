@@ -387,7 +387,6 @@
     <Compile Include="Configuration\IOConfiguration.cs" />
     <Compile Include="Context\JobContextMessageValidationContext.cs" />
     <Compile Include="Context\JobContextMessageValidationContextFactory.cs" />
-    <Compile Include="EnabledRulesProvider.cs" />
     <Compile Include="Handlers\MessageHandler.cs" />
     <Compile Include="Modules\DerivedDataModule.cs" />
     <Compile Include="Modules\IOModule.cs" />

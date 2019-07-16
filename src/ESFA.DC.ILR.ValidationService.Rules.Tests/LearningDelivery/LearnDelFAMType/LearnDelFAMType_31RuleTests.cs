@@ -52,6 +52,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                             new TestLearningDeliveryFAM
                             {
                                 LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM
+                            },
+                            new TestLearningDeliveryFAM
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM
+                            },
+                            new TestLearningDeliveryFAM
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM
                             }
                         }
                     },
@@ -135,6 +143,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                     {
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
                         {
+                            new TestLearningDeliveryFAM
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM
+                            },
+                            new TestLearningDeliveryFAM
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM
+                            },
+                            new TestLearningDeliveryFAM
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM
+                            },
                             new TestLearningDeliveryFAM
                             {
                                 LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM
