@@ -10,11 +10,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_67Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _fundingModel = 36;
-        private readonly int _aimType = 3;
-
-        private readonly int[] _basicSkills =
-            { 01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35 };
+        private readonly IEnumerable<int> _basicSkills = new HashSet<int>()
+        {
+            TypeOfLARSBasicSkill.Certificate_AdultLiteracy,
+            TypeOfLARSBasicSkill.Certificate_AdultNumeracy,
+            TypeOfLARSBasicSkill.GCSE_EnglishLanguage,
+            TypeOfLARSBasicSkill.GCSE_Mathematics,
+            TypeOfLARSBasicSkill.KeySkill_Communication,
+            TypeOfLARSBasicSkill.KeySkill_ApplicationOfNumbers,
+            TypeOfLARSBasicSkill.FunctionalSkillsMathematics,
+            TypeOfLARSBasicSkill.FunctionalSkillsEnglish,
+            TypeOfLARSBasicSkill.UnitsOfTheCertificate_AdultNumeracy,
+            TypeOfLARSBasicSkill.UnitsOfTheCertificate_AdultLiteracy,
+            TypeOfLARSBasicSkill.NonNQF_QCFS4LLiteracy,
+            TypeOfLARSBasicSkill.NonNQF_QCFS4LNumeracy,
+            TypeOfLARSBasicSkill.QCFBasicSkillsEnglishLanguage,
+            TypeOfLARSBasicSkill.QCFBasicSkillsMathematics,
+            TypeOfLARSBasicSkill.UnitQCFBasicSkillsEnglishLanguage,
+            TypeOfLARSBasicSkill.UnitQCFBasicSkillsMathematics,
+            TypeOfLARSBasicSkill.InternationalGCSEEnglishLanguage,
+            TypeOfLARSBasicSkill.InternationalGCSEMathematics,
+            TypeOfLARSBasicSkill.FreeStandingMathematicsQualification
+        };
 
         private readonly ILARSDataService _larsDataService;
 
@@ -39,8 +56,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if (learningDelivery.FundModel != _fundingModel
-                    || learningDelivery.AimType != _aimType
+                if (learningDelivery.FundModel != TypeOfFunding.ApprenticeshipsFrom1May2017
+                    || learningDelivery.AimType != TypeOfAim.ComponentAimInAProgramme
                     || learningDelivery.LearningDeliveryFAMs == null)
                 {
                     continue;
@@ -49,14 +66,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 var basicSkill = _larsDataService
                     .BasicSkillsMatchForLearnAimRefAndStartDate(_basicSkills, learningDelivery.LearnAimRef, learningDelivery.LearnStartDate);
 
+                var larsFramework = _larsDataService.GetDeliveryFor(learningDelivery.LearnAimRef).Frameworks;
+
                 foreach (var deliveryFam in learningDelivery.LearningDeliveryFAMs)
                 {
-                    if (!basicSkill && deliveryFam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.LSF)
+                    if ((!basicSkill || larsFramework.Any(IsCommonComponent)) && deliveryFam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.LSF)
                     {
                         RaiseValidationMessage(learner.LearnRefNumber, learningDelivery, deliveryFam);
                     }
                 }
             }
+        }
+
+        public bool IsCommonComponent(ILARSFramework larsFramework)
+        {
+            return larsFramework
+                        .FrameworkCommonComponents
+                        .Any(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
         }
 
         private void RaiseValidationMessage(string learnRefNum, ILearningDelivery learningDelivery, ILearningDeliveryFAM thisMonitor)
