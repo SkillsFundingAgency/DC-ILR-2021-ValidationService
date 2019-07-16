@@ -337,9 +337,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             handler
                 .Setup(x => x.BuildErrorMessageParameter("Expected Category", category))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("Found Categories", null))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var mockResult = new Mock<IBranchResult>();
             mockResult

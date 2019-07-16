@@ -284,11 +284,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             public bool Passed { get; }
 
             /// <summary>
-            /// Gets the retrieved categories.
-            /// </summary>
-            public string RetrievedCategories { get; set; }
-
-            /// <summary>
             /// Creates the specified result.
             /// </summary>
             /// <param name="filterResult">if set to <c>true</c> [filter result].</param>
@@ -296,13 +291,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             /// <returns>a new branch result</returns>
             public static BranchResult Create(bool filterResult, string category)
                 => new BranchResult(filterResult, category);
-
-            /// <summary>
-            /// Sets the retrieved categories.
-            /// </summary>
-            /// <param name="itemsFound">The items found.</param>
-            public void SetRetrievedCategories(string itemsFound) => 
-                RetrievedCategories = itemsFound;
         }
     }
 }

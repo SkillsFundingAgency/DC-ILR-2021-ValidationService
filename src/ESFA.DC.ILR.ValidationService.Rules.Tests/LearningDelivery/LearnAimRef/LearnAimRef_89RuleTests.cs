@@ -346,15 +346,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
-                .Setup(x => x.Handle("LearnAimRef_89", learnRefNumber, 0, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+                .Setup(x => x.Handle("LearnAimRef_89", learnRefNumber, 0, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
             handler
                 .Setup(x => x.BuildErrorMessageParameter("LearnAimRef", learnAimRef))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
                 .Setup(x => x.BuildErrorMessageParameter("Expected Category", category))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("Found Categories", null))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var mockResult = new Mock<IBranchResult>();

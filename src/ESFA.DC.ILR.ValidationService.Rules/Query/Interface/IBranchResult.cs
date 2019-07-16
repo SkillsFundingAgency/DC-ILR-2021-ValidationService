@@ -15,16 +15,5 @@
         /// Gets the category.
         /// </summary>
         string Category { get; }
-
-        /// <summary>
-        /// Gets the retrieved categories.
-        /// </summary>
-        string RetrievedCategories { get; }
-
-        /// <summary>
-        /// Sets the retrieved categories.
-        /// </summary>
-        /// <param name="itemsFound">The items found.</param>
-        void SetRetrievedCategories(string itemsFound);
     }
 }
