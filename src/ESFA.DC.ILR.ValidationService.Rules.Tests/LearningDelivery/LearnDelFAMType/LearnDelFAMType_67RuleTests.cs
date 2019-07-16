@@ -53,9 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDelivery = new Mock<ILARSLearningDelivery>();
             mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
 
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
             var larsDataServiceMock = new Mock<ILARSDataService>();
-
             larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
 
             larsDataServiceMock
@@ -82,7 +80,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+            }
         }
 
         [Fact]
@@ -117,7 +118,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDelivery = new Mock<ILARSLearningDelivery>();
             mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
 
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
             var larsDataServiceMock = new Mock<ILARSDataService>();
 
             larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
@@ -146,24 +146,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+            }
         }
 
         [Fact]
         public void ValidationPasses_NoLDs()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
             var testLearner = new TestLearner();
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            }
         }
 
         [Fact]
         public void ValidationPasses_NoFAMs()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
             var testLearner = new TestLearner
             {
                 LearningDeliveries = new List<TestLearningDelivery>
@@ -176,14 +178,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            }
         }
 
         [Fact]
         public void ValidationPasses_IrrelevantFundingModel()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
             var testLearner = new TestLearner
             {
                 LearningDeliveries = new List<TestLearningDelivery>
@@ -203,14 +206,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            }
         }
 
         [Fact]
         public void ValidationPasses_IrrelevantAimType()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
             var testLearner = new TestLearner
             {
                 LearningDeliveries = new List<TestLearningDelivery>
@@ -230,7 +234,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            }
         }
 
         [Fact]
@@ -317,7 +324,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDelivery = new Mock<ILARSLearningDelivery>();
             mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
 
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
             var larsDataServiceMock = new Mock<ILARSDataService>();
 
             larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
@@ -346,7 +352,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+            }
         }
 
         [Fact]
@@ -381,8 +390,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDelivery = new Mock<ILARSLearningDelivery>();
             mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
 
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
-
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
 
@@ -410,8 +417,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
-            validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<string>()));
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<string>()));
+            }
         }
 
         [Fact]
@@ -446,8 +456,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockDelivery = new Mock<ILARSLearningDelivery>();
             mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
 
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
-
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
 
@@ -475,8 +483,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
-            validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<string>()));
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<string>()));
+            }
         }
 
         private LearnDelFAMType_67Rule NewRule(IValidationErrorHandler validationErrorHandler = null, ILARSDataService larsDataService = null)
