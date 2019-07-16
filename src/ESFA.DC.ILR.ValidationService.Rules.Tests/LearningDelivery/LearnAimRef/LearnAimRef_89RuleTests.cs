@@ -333,8 +333,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(testDate);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
+            var deliveries = new ILearningDelivery[] { mockDelivery.Object };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -342,11 +341,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
-                .Setup(x => x.Handle("LearnAimRef_89", learnRefNumber, 0, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+                .Setup(x => x.Handle("LearnAimRef_89", learnRefNumber, 0, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
             handler
                 .Setup(x => x.BuildErrorMessageParameter("LearnAimRef", learnAimRef))
                 .Returns(new Mock<IErrorMessageParameter>().Object);

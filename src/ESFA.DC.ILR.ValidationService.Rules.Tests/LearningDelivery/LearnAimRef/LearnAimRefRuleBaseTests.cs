@@ -127,9 +127,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(mockResult.Object);
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            service
-                .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(new ILARSLearningDeliveryValidity[] { });
 
             var sut = new LearnAimRefRuleBaseTestRule(handler.Object, provider.Object, service.Object);
 
