@@ -24,12 +24,39 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             LearningDeliveryFAMCodeConstants.LDM_OLASS,
             LearningDeliveryFAMCodeConstants.LDM_RoTL,
-            LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy,
-            LearningDeliveryFAMCodeConstants.LDM_Military
+            LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy
         };
 
-        private readonly HashSet<string> n = new HashSet<string>(new List<string>() { "E", "1", "2" }).ToCaseInsensitiveHashSet();
-        private readonly HashSet<int> basicSkillTypes = new HashSet<int>() { 01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35 };
+        private readonly HashSet<string> n = new HashSet<string>(new List<string>()
+        {
+            LARSNotionalNVQLevelV2.EntryLevel,
+            LARSNotionalNVQLevelV2.Level1,
+            LARSNotionalNVQLevelV2.Level2
+
+        }).ToCaseInsensitiveHashSet();
+
+        private readonly HashSet<int> basicSkillTypes = new HashSet<int>()
+        {
+            TypeOfLARSBasicSkill.Certificate_AdultLiteracy,
+            TypeOfLARSBasicSkill.Certificate_AdultNumeracy,
+            TypeOfLARSBasicSkill.GCSE_EnglishLanguage,
+            TypeOfLARSBasicSkill.GCSE_Mathematics,
+            TypeOfLARSBasicSkill.KeySkill_Communication,
+            TypeOfLARSBasicSkill.KeySkill_ApplicationOfNumbers,
+            TypeOfLARSBasicSkill.FunctionalSkillsMathematics,
+            TypeOfLARSBasicSkill.FunctionalSkillsEnglish,
+            TypeOfLARSBasicSkill.UnitsOfTheCertificate_AdultNumeracy,
+            TypeOfLARSBasicSkill.UnitsOfTheCertificate_AdultLiteracy,
+            TypeOfLARSBasicSkill.NonNQF_QCFS4LLiteracy,
+            TypeOfLARSBasicSkill.NonNQF_QCFS4LNumeracy,
+            TypeOfLARSBasicSkill.QCFBasicSkillsEnglishLanguage,
+            TypeOfLARSBasicSkill.QCFBasicSkillsMathematics,
+            TypeOfLARSBasicSkill.UnitQCFBasicSkillsEnglishLanguage,
+            TypeOfLARSBasicSkill.UnitQCFBasicSkillsMathematics,
+            TypeOfLARSBasicSkill.InternationalGCSEEnglishLanguage,
+            TypeOfLARSBasicSkill.InternationalGCSEMathematics,
+            TypeOfLARSBasicSkill.FreeStandingMathematicsQualification,
+        };
 
         private readonly ILARSDataService _larsDataService;
         private readonly IDerivedData_07Rule _dd07;
