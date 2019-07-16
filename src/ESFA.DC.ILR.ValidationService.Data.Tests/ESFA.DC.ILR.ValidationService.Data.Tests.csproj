@@ -109,6 +109,7 @@
     <Compile Include="External\LARSDataServiceTests.cs" />
     <Compile Include="External\EPAOrganisationDataServiceTests.cs" />
     <Compile Include="External\FCSDataServiceTests.cs" />
+    <Compile Include="External\FundingWithdrawalHelperTests.cs" />
     <Compile Include="External\PostcodesDataServiceTests.cs" />
     <Compile Include="External\ValidationErrorsDataServiceTests.cs" />
     <Compile Include="File\FileDataServiceTests.cs" />

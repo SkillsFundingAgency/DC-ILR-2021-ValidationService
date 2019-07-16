@@ -110,7 +110,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             return new[]
             {
                 BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, thisDelivery.LearnAimRef),
-                BuildErrorMessageParameter("Expected Category", andExpected.Category)
+                BuildErrorMessageParameter("Expected Category", andExpected.Category),
             };
         }
     }
