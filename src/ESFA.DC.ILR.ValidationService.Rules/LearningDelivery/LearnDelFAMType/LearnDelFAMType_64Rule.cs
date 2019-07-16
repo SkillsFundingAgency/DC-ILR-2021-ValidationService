@@ -12,8 +12,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_64Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { TypeOfFunding.ApprenticeshipsFrom1May2017 };
-        private readonly IEnumerable<int> _basicSkillsType = new HashSet<int>() { 01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35 };
+        private readonly IEnumerable<int> _fundModels = new HashSet<int>()
+        {
+            TypeOfFunding.ApprenticeshipsFrom1May2017
+        };
+
+        private readonly IEnumerable<int> _basicSkillsType = new HashSet<int>()
+        {
+            01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35
+        };
 
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly ILARSDataService _lARSDataService;
@@ -53,16 +60,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         }
 
         public bool ConditionMet(
-            int fundModel,
-            int aimType,
-            IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs,
-            string learnAimRef,
-            DateTime learnStartDate)
+                              int fundModel,
+                              int aimType,
+                              IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs,
+                              string learnAimRef,
+                              DateTime learnStartDate)
         {
             return FundModelConditionMet(fundModel)
                 && LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)
                 && AimTypeConditionMet(aimType, learnAimRef, learnStartDate);
-        }
+        }      
 
         public bool FundModelConditionMet(int fundModel)
         {
@@ -82,7 +89,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool LarsConditionMet(string learnAimRef, DateTime learnStartDate)
         {
-            return _lARSDataService.BasicSkillsMatchForLearnAimRefAndStartDate(_basicSkillsType, learnAimRef, learnStartDate);
+            var larsFramework = _lARSDataService.GetDeliveryFor(learnAimRef).Frameworks;
+
+            return _lARSDataService.BasicSkillsMatchForLearnAimRefAndStartDate(_basicSkillsType, learnAimRef, learnStartDate) ||
+                   larsFramework.Any(IsCommonComponent);
+        }
+
+        public bool IsCommonComponent(ILARSFramework larsFramework)
+        {
+            return larsFramework
+                        .FrameworkCommonComponents
+                        .Any(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, int fundModel, string learnDelFAMType)
