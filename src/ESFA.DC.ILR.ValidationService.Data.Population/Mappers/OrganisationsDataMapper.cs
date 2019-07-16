@@ -29,7 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
             {
                 campusIdentifiers.AddRange(organisation.CampusIdentifers.Select(campusId => new CampusIdentifier
                 {
-                    CampusIdentifer = campusId,
+                    CampusIdentifer = campusId.CampusIdentifier,
                     MasterUKPRN = organisation.UKPRN
                 }));
             }
