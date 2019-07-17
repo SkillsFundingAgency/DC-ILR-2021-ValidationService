@@ -275,7 +275,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData("034")]
         [InlineData("328")]
         [InlineData("347")]
-        [InlineData("346")]
         public void IsLearningDeliveryExcluded_FamCode_True(string famCode)
         {
             var learningDelivery = new TestLearningDelivery()
