@@ -3,6 +3,7 @@ using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode;
@@ -46,21 +47,44 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         public void LearnStartDate_Passes_AsStartDateisEqual()
         {
             var startDate = new DateTime(2019, 08, 01);
-            NewRule().LearnStartDateConditionMet(startDate).Should().BeTrue();
+
+            var academicStartDate = new DateTime(2019, 8, 1);
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+
+            var result = NewRule(academicYearDataService: mockAcademicYearDataService.Object).LearnStartDateConditionMet(startDate);
+            result.Should().BeTrue();
+
+            mockAcademicYearDataService.Verify(x => x.Start(), Times.AtLeastOnce);
         }
 
         [Fact]
         public void LearnStartDate_True_AsStartIsGreater()
         {
             var startDate = new DateTime(2020, 02, 01);
-            NewRule().LearnStartDateConditionMet(startDate).Should().BeTrue();
+
+            var academicStartDate = new DateTime(2019, 8, 1);
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+
+            var result = NewRule(academicYearDataService: mockAcademicYearDataService.Object).LearnStartDateConditionMet(startDate);
+
+            result.Should().BeTrue();
+            mockAcademicYearDataService.Verify(x => x.Start(), Times.AtLeastOnce);
         }
 
         [Fact]
         public void LearnStartDate_Fails_AsStartisLower()
         {
             var startDate = new DateTime(2019, 07, 01);
-            NewRule().LearnStartDateConditionMet(startDate).Should().BeFalse();
+
+            var academicStartDate = new DateTime(2019, 8, 1);
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+            var result = NewRule(academicYearDataService: mockAcademicYearDataService.Object).LearnStartDateConditionMet(startDate);
+
+            result.Should().BeFalse();
+            mockAcademicYearDataService.Verify(x => x.Start(), Times.AtLeastOnce);
         }
 
         [Fact]
@@ -198,6 +222,40 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         [Fact]
+        public void ExclusionConditionMet_Pass()
+        {
+            var famCode = "001";
+            var famType = "DAM";
+
+            var learningDelFams = new List<ILearningDeliveryFAM>();
+
+            var mockLearningDelFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+            mockLearningDelFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDelFams, famType, famCode)).Returns(false);
+
+            var rule = NewRule(learningDeliveryFAMQueryService: mockLearningDelFAMQueryService.Object).ExclusionConditionMet(learningDelFams);
+            rule.Should().BeTrue();
+
+            mockLearningDelFAMQueryService.Verify(x => x.HasLearningDeliveryFAMCodeForType(learningDelFams, famType, famCode), Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public void ExclusionConditionMet_Fails()
+        {
+            var famCode = "001";
+            var famType = "DAM";
+
+            var learningDelFams = new List<ILearningDeliveryFAM>();
+
+            var mockLearningDelFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+            mockLearningDelFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDelFams, famType, famCode)).Returns(true);
+
+            var rule = NewRule(learningDeliveryFAMQueryService: mockLearningDelFAMQueryService.Object).ExclusionConditionMet(learningDelFams);
+            rule.Should().BeFalse();
+
+            mockLearningDelFAMQueryService.Verify(x => x.HasLearningDeliveryFAMCodeForType(learningDelFams, famType, famCode), Times.AtLeastOnce);
+        }
+
+        [Fact]
         public void ConditionMet_True()
         {
             var progType = 25;
@@ -222,28 +280,43 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             var mockOrganisationDataService = new Mock<IOrganisationDataService>();
             mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(false);
 
-            var famType = "SOF";
+            var famTypeSOF = "SOF";
             var learningDeliveryFams = new List<ILearningDeliveryFAM>();
-            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, famType)).Returns(true);
 
-            var rule = NewRule(learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object, organisationDataService: mockOrganisationDataService.Object);
+            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, famTypeSOF)).Returns(true);
+
+            var famCodeDAM = "001";
+            var famTypeDAM = "DAM";
+            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM)).Returns(false);
+
+            var academicStartDate = new DateTime(2019, 8, 1);
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
+
+            var rule = NewRule(
+                            learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
+                            organisationDataService: mockOrganisationDataService.Object,
+                            academicYearDataService: mockAcademicYearDataService.Object);
 
             var result = rule.ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFams);
             result.Should().BeTrue();
 
             mockOrganisationDataService.Verify(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType), Times.AtLeastOnce);
-            mockLearningDeliveryFAMQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, famType), Times.AtLeastOnce);
+            mockLearningDeliveryFAMQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, famTypeSOF), Times.AtLeastOnce);
+            mockLearningDeliveryFAMQueryService.Verify(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM), Times.AtLeastOnce);
+            mockAcademicYearDataService.Verify(x => x.Start(), Times.AtLeastOnce);
         }
 
         [Theory]
-        [InlineData(true, false, false, false, false, false)]
-        [InlineData(false, true, false, false, false, false)]
-        [InlineData(false, false, true, false, false, false)]
-        [InlineData(false, false, false, true, false, false)]
-        [InlineData(false, false, false, false, true, false)]
-        [InlineData(false, false, false, false, false, true)]
-        public void ConditionMet_Fails(bool progCondition, bool fundCondition, bool startDateCondition, bool qualifyingCondition, bool organisationCondition, bool delFAMSCondition)
+        [InlineData(true, false, false, false, false, false, false)]
+        [InlineData(false, true, false, false, false, false, false)]
+        [InlineData(false, false, true, false, false, false, false)]
+        [InlineData(false, false, false, true, false, false, false)]
+        [InlineData(false, false, false, false, true, false, false)]
+        [InlineData(false, false, false, false, false, true, false)]
+        [InlineData(false, false, false, false, false, false, true)]
+        public void ConditionMet_Fails(bool progCondition, bool fundCondition, bool startDateCondition, bool qualifyingCondition, bool organisationCondition, bool delFAMSCondition, bool excludingCondition)
         {
             var ukprn = 123;
             int progType = 24;
@@ -278,6 +351,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             lsdPostcode02Rule.Setup(x => x.CheckQualifyingPeriod(startDate, learningDeliveryFAMs, mcaglaPostcodeList)).Returns(qualifyingCondition);
             lsdPostcode02Rule.Setup(x => x.OrganisationConditionMet(ukprn)).Returns(organisationCondition);
             lsdPostcode02Rule.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(delFAMSCondition);
+            lsdPostcode02Rule.Setup(x => x.ExclusionConditionMet(learningDeliveryFAMs)).Returns(excludingCondition);
 
             lsdPostcode02Rule.Object
                 .ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFAMs)
@@ -336,12 +410,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             mockPostcodeService.Setup(x => x.GetMcaglaSOFPostcodes(lsdPostcode))
                                 .Returns(mcaglaSOFPostcodeList);
 
+            var famCodeDAM = "001";
+            var famTypeDAM = "DAM";
             var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
             mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, "SOF")).Returns(true);
+            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM)).Returns(false);
 
             var legalOrgType = "USDC";
             var mockOrganisationDataService = new Mock<IOrganisationDataService>();
             mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(false);
+
+            var academicStartDate = new DateTime(2019, 8, 1);
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
@@ -349,6 +430,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                     learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
                     postcodesDataService: mockPostcodeService.Object,
                     organisationDataService: mockOrganisationDataService.Object,
+                    academicYearDataService: mockAcademicYearDataService.Object,
                     validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
                 VerifyErrorHandlerMock(validationErrorHandlerMock, 1);
             }
@@ -405,12 +487,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             mockPostcodeService.Setup(x => x.GetMcaglaSOFPostcodes(lsdPostcode))
                                 .Returns(mcaglaSOFPostcodeList);
 
+            var famCodeDAM = "001";
+            var famTypeDAM = "DAM";
             var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
             mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, "SOF")).Returns(true);
+            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM)).Returns(true);
 
             var legalOrgType = "USDC";
             var mockOrganisationDataService = new Mock<IOrganisationDataService>();
             mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(true);
+
+            var academicStartDate = new DateTime(2019, 8, 1);
+            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
@@ -418,6 +507,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                     learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
                     postcodesDataService: mockPostcodeService.Object,
                     organisationDataService: mockOrganisationDataService.Object,
+                    academicYearDataService: mockAcademicYearDataService.Object,
                     validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
             }
         }
@@ -445,9 +535,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
             IOrganisationDataService organisationDataService = null,
             IPostcodesDataService postcodesDataService = null,
+            IAcademicYearDataService academicYearDataService = null,
             IValidationErrorHandler validationErrorHandler = null)
         {
-            return new LSDPostcode_02Rule(learningDeliveryFAMQueryService, organisationDataService, postcodesDataService, validationErrorHandler);
+            return new LSDPostcode_02Rule(learningDeliveryFAMQueryService, organisationDataService, postcodesDataService, academicYearDataService, validationErrorHandler);
         }
     }
 }
