@@ -4,7 +4,6 @@ using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -17,8 +16,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IOrganisationDataService _organisationDataService;
         private readonly IPostcodesDataService _postcodeService;
-        private readonly IAcademicYearDataService _academicYearDataService;
 
+        private readonly DateTime _firstAugust2019 = new DateTime(2019, 08, 01);
         private readonly IEnumerable<int> _fundModels = new HashSet<int>()
         {
             TypeOfFunding.AdultSkills
@@ -27,14 +26,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         public LSDPostcode_02Rule(ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IOrganisationDataService organisationDataService,
             IPostcodesDataService postcodeService,
-            IAcademicYearDataService academicYearDataService,
             IValidationErrorHandler validationErrorHandler)
            : base(validationErrorHandler, RuleNameConstants.LSDPostcode_02)
         {
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _organisationDataService = organisationDataService;
             _postcodeService = postcodeService;
-            _academicYearDataService = academicYearDataService;
         }
 
         public LSDPostcode_02Rule()
@@ -92,7 +89,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public virtual bool LearnStartDateConditionMet(DateTime learnStartDate)
         {
-            return learnStartDate >= _academicYearDataService.Start();
+            return learnStartDate >= _firstAugust2019;
         }
 
         public virtual bool CheckQualifyingPeriod(DateTime learnStartDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, IEnumerable<IMcaglaSOFPostcode> mcaglaSOFPostcodes)
