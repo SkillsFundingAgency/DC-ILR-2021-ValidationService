@@ -18,10 +18,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         private readonly IPostcodesDataService _postcodeService;
 
         private readonly DateTime _firstAugust2019 = new DateTime(2019, 08, 01);
-        private readonly string _learnDelFamTypeSOF = LearningDeliveryFAMTypeConstants.SOF;
-        private readonly string _learnDelFamTypeRES = LearningDeliveryFAMTypeConstants.RES;
-        private const string _legalOrgType = "USDC";
-
         private readonly IEnumerable<int> _fundModels = new HashSet<int>()
         {
             TypeOfFunding.AdultSkills
@@ -62,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                                           BuildErrorMessageParameters(learningDelivery.LearnPlanEndDate,
                                           learningDelivery.FundModel,
                                           learningDelivery.LSDPostcode,
-                                          _learnDelFamTypeSOF));
+                                          LearningDeliveryFAMTypeConstants.SOF));
                         return;
                     }
                 }
@@ -76,7 +72,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                  && LearnStartDateConditionMet(learnStartDate)
                  && CheckQualifyingPeriod(learnStartDate, learningDeliveryFAMs, mcaglaSOFPostcodes)
                  && OrganisationConditionMet(ukprn)
-                 && LearningDeliveryFAMsConditionMet(learningDeliveryFAMs);
+                 && LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)
+                 && ExclusionConditionMet(learningDeliveryFAMs);
         }
 
         public virtual bool ProgTypeConditionMet(int? progType)
@@ -98,20 +95,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         public virtual bool CheckQualifyingPeriod(DateTime learnStartDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, IEnumerable<IMcaglaSOFPostcode> mcaglaSOFPostcodes)
         {
             return mcaglaSOFPostcodes.Count() > 0
-                   && _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, _learnDelFamTypeSOF)
+                   && _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.SOF)
                    && mcaglaSOFPostcodes
-                         .Where(sof => sof.SofCode != _learnDelFamTypeSOF)
+                         .Where(sof => sof.SofCode != LearningDeliveryFAMTypeConstants.SOF)
                          .Any(sof => learnStartDate < sof.EffectiveFrom);
         }
 
         public virtual bool OrganisationConditionMet(int ukprn)
         {
-            return !_organisationDataService.LegalOrgTypeMatchForUkprn(ukprn, _legalOrgType);
+            return !_organisationDataService.LegalOrgTypeMatchForUkprn(ukprn, LegalOrgTypeConstants.USDC);
         }
 
         public virtual bool LearningDeliveryFAMsConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, _learnDelFamTypeRES);
+            return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);
+        }
+
+        public virtual bool ExclusionConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        {
+            return !_learningDeliveryFAMQueryService
+                       .HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_PostcodeExclusion_001);            
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, int fundModel, string lsdPostcode, string famType)
