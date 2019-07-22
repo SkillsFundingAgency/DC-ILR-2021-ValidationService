@@ -5,6 +5,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
@@ -66,11 +67,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 var basicSkill = _larsDataService
                     .BasicSkillsMatchForLearnAimRefAndStartDate(_basicSkills, learningDelivery.LearnAimRef, learningDelivery.LearnStartDate);
 
-                var larsFramework = _larsDataService.GetDeliveryFor(learningDelivery.LearnAimRef).Frameworks;
+                var larsFramework = _larsDataService.GetDeliveryFor(learningDelivery.LearnAimRef)?.Frameworks;
 
                 foreach (var deliveryFam in learningDelivery.LearningDeliveryFAMs)
                 {
-                    if ((!basicSkill || larsFramework.Any(IsCommonComponent)) && deliveryFam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.LSF)
+                    if ((!basicSkill || larsFramework.SafeAny(IsCommonComponent)) && deliveryFam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.LSF)
                     {
                         RaiseValidationMessage(learner.LearnRefNumber, learningDelivery, deliveryFam);
                     }
@@ -82,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             return larsFramework
                         .FrameworkCommonComponents
-                        .Any(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
+                        .SafeAny(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
         }
 
         private void RaiseValidationMessage(string learnRefNum, ILearningDelivery learningDelivery, ILearningDeliveryFAM thisMonitor)

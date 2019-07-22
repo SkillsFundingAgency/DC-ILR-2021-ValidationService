@@ -1,13 +1,14 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
 using ESFA.DC.ILR.ValidationService.Utility;
+using FluentAssertions;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAMType
@@ -271,6 +272,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
+        public void IsBasicSkillLearner_False_withNullListValues()
+        {
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery.SetupGet(x => x.LearnAimRef).Returns("123");
+
+            bool res = NewRule().IsBasicSkillsLearner(mockDelivery.Object);
+
+            res.Should().BeFalse();
+            mockDelivery.VerifyGet(x => x.LearnAimRef, Times.AtLeastOnce);
+        }
+
+        [Fact]
         public void IsCommonComponent_ReturnsTrue()
         {
             // arrange
@@ -471,8 +484,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         /// <returns>a constructed and mocked up validation rule</returns>
         public LearnDelFAMType_63Rule NewRule()
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Default);
+            var service = new Mock<ILARSDataService>(MockBehavior.Default);
 
             return new LearnDelFAMType_63Rule(handler.Object, service.Object);
         }
