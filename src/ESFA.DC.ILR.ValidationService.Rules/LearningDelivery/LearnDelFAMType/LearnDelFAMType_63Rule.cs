@@ -1,4 +1,5 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -65,10 +66,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             var validities = _larsData.GetValiditiesFor(delivery.LearnAimRef);
             var annualValues = _larsData.GetAnnualValuesFor(delivery.LearnAimRef);
-            var larsFramework = _larsData.GetDeliveryFor(delivery.LearnAimRef).Frameworks;
+            var larsFrameworks = _larsData.GetDeliveryFor(delivery.LearnAimRef)?.Frameworks;
 
-            return validities.Any(x => x.IsCurrent(delivery.LearnStartDate))
-                && (annualValues.Any(IsBasicSkillsLearner) || larsFramework.Any(IsCommonComponent));
+            return validities.SafeAny(x => x.IsCurrent(delivery.LearnStartDate))
+                && (annualValues.SafeAny(IsBasicSkillsLearner) || larsFrameworks.SafeAny(IsCommonComponent));
         }
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             return larsFramework
                         .FrameworkCommonComponents
-                        .Any(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
+                        .SafeAny(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
         }
 
         /// <summary>

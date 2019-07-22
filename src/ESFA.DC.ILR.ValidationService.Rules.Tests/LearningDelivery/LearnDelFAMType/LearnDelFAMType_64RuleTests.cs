@@ -349,6 +349,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockLarsFramework.VerifyGet(x => x.FrameworkCommonComponents, Times.AtLeastOnce);
         }
 
+        [Fact]
+        public void IsBasicSkillLearner_False_withNullListValues()
+        {
+            var aimRef = "123";
+            var startDate = new DateTime(2017, 01, 01);
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+
+            bool res = NewRule(lARSDataService: larsDataServiceMock.Object).LarsConditionMet(aimRef, startDate);
+
+            res.Should().BeFalse();
+        }
+
         [Theory]
         [InlineData(TypeOfFunding.AdultSkills, 2, LearningDeliveryFAMTypeConstants.ACT, "00100310", "2017-01-01")]
         [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, 2, LearningDeliveryFAMTypeConstants.ACT, "00100310", "2017-01-01")]

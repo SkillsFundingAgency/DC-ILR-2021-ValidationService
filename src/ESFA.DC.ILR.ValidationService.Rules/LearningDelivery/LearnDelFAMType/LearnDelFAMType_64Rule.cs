@@ -7,6 +7,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
@@ -107,17 +108,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool LarsConditionMet(string learnAimRef, DateTime learnStartDate)
         {
-            var larsFramework = _lARSDataService.GetDeliveryFor(learnAimRef).Frameworks;
+            var larsFramework = _lARSDataService.GetDeliveryFor(learnAimRef)?.Frameworks;
 
             return _lARSDataService.BasicSkillsMatchForLearnAimRefAndStartDate(_basicSkillsType, learnAimRef, learnStartDate) ||
-                   larsFramework.Any(IsCommonComponent);
+                   larsFramework.SafeAny(IsCommonComponent);
         }
 
         public bool IsCommonComponent(ILARSFramework larsFramework)
         {
             return larsFramework
                         .FrameworkCommonComponents
-                        .Any(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
+                        .SafeAny(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, int fundModel, string learnDelFAMType)
