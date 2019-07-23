@@ -35,11 +35,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                         (!ld.LearnActEndDateNullable.HasValue && !mainLearningDelivery.LearnActEndDateNullable.HasValue) ||
                         (mainLearningDelivery.LearnStartDate >= ld.LearnStartDate &&
                          ld.LearnActEndDateNullable.HasValue &&
-                         mainLearningDelivery.LearnStartDate <= ld.LearnActEndDateNullable))))
+                         mainLearningDelivery.LearnStartDate <= ld.LearnActEndDateNullable) ||
+                         ApprenticeshipStandardMet(ld.FundModel, ld.ProgTypeNullable))))
                 {
                     HandleValidationError(objectToValidate.LearnRefNumber, mainLearningDelivery.AimSeqNumber, BuildErrorMessageParameters(mainLearningDelivery));
                 }
             }
+        }
+
+        public bool ApprenticeshipStandardMet(int fundModel, int? progType)
+        {
+            return FundModelConditionMet(fundModel) && ProgTypeConditionMet(progType);
+        }
+
+        public bool FundModelConditionMet(int fundModel)
+        {
+            return fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+        }
+
+        public bool ProgTypeConditionMet(int? progType)
+        {
+            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(ILearningDelivery learningDelivery)
@@ -48,7 +64,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             {
                 BuildErrorMessageParameter(PropertyNameConstants.AimType, learningDelivery.AimType),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learningDelivery.LearnStartDate),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, learningDelivery.LearnActEndDateNullable)
+                BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, learningDelivery.LearnActEndDateNullable),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, learningDelivery.FundModel),
+                BuildErrorMessageParameter(PropertyNameConstants.ProgType, learningDelivery.ProgTypeNullable),
+                BuildErrorMessageParameter(PropertyNameConstants.AchDate, learningDelivery.AchDateNullable)
             };
         }
     }
