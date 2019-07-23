@@ -260,10 +260,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             NewRule().ProgTypeConditionMet(25).Should().BeTrue();
         }
 
-        [Fact]
-        public void ProgTypeConditionMet_Fails()
+        [Theory]
+        [InlineData(null)]
+        [InlineData(21)]
+        public void ProgTypeConditionMet_Fails(int? progType)
         {
-            NewRule().ProgTypeConditionMet(20).Should().BeFalse();
+            NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
         }
 
         [Fact]

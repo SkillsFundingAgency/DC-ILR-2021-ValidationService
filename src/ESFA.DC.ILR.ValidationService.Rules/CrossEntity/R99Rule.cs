@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ProgTypeConditionMet(int? progType)
         {
-            return progType.HasValue && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(ILearningDelivery learningDelivery)
