@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -22,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             }
 
             var duplicates = objectToValidate.LearnerDestinationAndProgressions
-                .GroupBy(ldp => ldp.LearnRefNumber)
+                .GroupBy(ldp => ldp.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
                 .Where(grp => grp.Count() > 1);
 
             foreach (var duplicate in duplicates)
