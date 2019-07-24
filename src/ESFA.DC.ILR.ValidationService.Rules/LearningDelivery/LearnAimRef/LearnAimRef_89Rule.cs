@@ -69,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 .OrderByDescending(x => x.StartDate)
                 .FirstOrDefault();
 
-            return (validity?.EndDate ?? DateTime.MaxValue) > lastYearEnd;
+            return It.Has(validity) && (validity.EndDate ?? DateTime.MaxValue) > lastYearEnd;
         }
 
         /// <summary>
