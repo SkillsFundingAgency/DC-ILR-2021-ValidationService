@@ -22,7 +22,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             }
 
             var duplicates = objectToValidate.LearnerDestinationAndProgressions
-                .GroupBy(ldp => ldp.LearnRefNumber)
+                .GroupBy(ldp => ldp.LearnRefNumber.ToUpper())
                 .Where(grp => grp.Count() > 1);
 
             foreach (var duplicate in duplicates)
