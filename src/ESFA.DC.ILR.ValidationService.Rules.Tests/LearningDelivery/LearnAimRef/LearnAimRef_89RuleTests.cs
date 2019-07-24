@@ -166,6 +166,58 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         /// <summary>
+        /// has valid learning aim returns false for missing validity
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="previousYearEnd">The previous year end.</param>
+        /// <param name="expectedCategory">The expected category.</param>
+        [Theory]
+        [InlineData("2018-04-01", "2017-07-31", "ADULT_SKILLS")]
+        [InlineData("2018-04-01", "2017-07-31", "COMM_LEARN")]
+        [InlineData("2018-04-01", "2017-07-31", "16-19_EFA")]
+        [InlineData("2018-04-01", "2017-07-31", "PURE_INVENTION")]
+        public void HasValidLearningAimReturnsFalseForMissingValidity(string candidate, string previousYearEnd, string expectedCategory)
+        {
+            // arrange
+            const string learnAimRef = "salddfkjeifdnase";
+
+            var testDate = DateTime.Parse(candidate);
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(y => y.LearnAimRef)
+                .Returns(learnAimRef);
+            mockDelivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(testDate);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var provider = new Mock<IProvideLearnAimRefRuleActions>(MockBehavior.Strict);
+
+            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
+            service
+                .Setup(x => x.GetValiditiesFor(learnAimRef))
+                .Returns(new ILARSLearningDeliveryValidity[] { });
+
+            var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            yearData
+                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
+                .Returns(DateTime.Parse(previousYearEnd));
+
+            var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
+
+            // act
+            var result = sut.HasValidLearningAim(mockDelivery.Object, expectedCategory);
+
+            // assert
+            handler.VerifyAll();
+            provider.VerifyAll();
+            service.VerifyAll();
+            yearData.VerifyAll();
+
+            Assert.False(result);
+        }
+
+        /// <summary>
         /// Has valid learning aim meets expectation
         /// </summary>
         /// <param name="candidate">The candidate.</param>
