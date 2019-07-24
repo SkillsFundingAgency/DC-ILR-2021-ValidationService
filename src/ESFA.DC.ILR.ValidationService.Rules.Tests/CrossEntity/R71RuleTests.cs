@@ -21,7 +21,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Fact]
         public void ValidationPasses()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
             var testMessage = new TestMessage()
             {
                 LearnerDestinationAndProgressions = new List<ILearnerDestinationAndProgression>
@@ -37,7 +36,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testMessage);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(testMessage);
+            }
         }
 
         [Fact]
@@ -49,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearnerDestinationAndProgression
                     {
-                        LearnRefNumber = "0r71" // fails due to string comparison i.e. 0R71
+                        LearnRefNumber = "0r71" // fails due to string i.e. 0r71 & 0R71
                     },
                     new TestLearnerDestinationAndProgression
                     {
