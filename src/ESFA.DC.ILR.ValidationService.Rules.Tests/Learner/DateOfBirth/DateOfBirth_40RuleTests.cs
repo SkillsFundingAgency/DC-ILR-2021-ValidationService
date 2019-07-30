@@ -20,15 +20,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             NewRule().RuleName.Should().Be("DateOfBirth_40");
         }
 
-        [Fact]
-        public void ValidatePasses_AsMinDuration_GreaterThan365()
+        [Theory]
+        [InlineData(365)]
+        [InlineData(370)]
+        public void ValidatePasses_AsMinDuration_GreaterThan365(int totalDays)
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
                 .Setup(m => m.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(370);
+                .Returns(totalDays);
 
             var testLearner = new TestLearner
             {
