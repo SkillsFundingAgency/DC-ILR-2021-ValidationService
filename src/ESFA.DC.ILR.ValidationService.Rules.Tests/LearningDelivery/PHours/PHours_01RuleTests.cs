@@ -76,6 +76,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         }
 
         [Fact]
+        public void PlannedHoursConditionMet_Pass_AsZeroValue()
+        {
+            int? pHours = 0;
+            NewRule().PlannedHoursConditionMet(pHours).Should().BeTrue();
+        }
+
+        [Fact]
         public void FundModelConditionMet_Pass()
         {
             var fundModel = 36;
