@@ -115,31 +115,31 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         }
 
         [Fact]
-        public void LearnPlanEndDateConditionMet_True()
+        public void LearnPlanEndDateConditionMet_True_AsEqualsTo365()
         {
-            var learnStartDate = new DateTime(2018, 08, 01);
-            var learnPlanEndDate = new DateTime(2019, 08, 01);
-
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(300);
-
-            var rule46 = NewRule(dateTimeQueryServiceMock.Object).LearnPlanEndDateConditionMet(learnStartDate, learnPlanEndDate);
-            rule46.Should().BeTrue();
-        }
-
-        [Fact]
-        public void LearnPlanEndDate_Fails_AsDaysEqualTo365()
-        {
-            var learnStartDate = new DateTime(2018, 08, 01);
-            var learnPlanEndDate = new DateTime(2019, 08, 01);
+            var learnStartDate = new DateTime(2017, 05, 02);
+            var learnPlanEndDate = new DateTime(2018, 05, 01);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
 
             dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(365);
 
             var rule46 = NewRule(dateTimeQueryServiceMock.Object).LearnPlanEndDateConditionMet(learnStartDate, learnPlanEndDate);
-            rule46.Should().BeFalse();
+            rule46.Should().BeTrue();
+        }
+
+        [Fact]
+        public void LearnPlanEndDateConditionMet_True_asDaysAreLessThan()
+        {
+            var learnStartDate = new DateTime(2016, 09, 30);
+            var learnPlanEndDate = new DateTime(2017, 10, 31);
+
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+
+            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(61);
+
+            var rule46 = NewRule(dateTimeQueryServiceMock.Object).LearnPlanEndDateConditionMet(learnStartDate, learnPlanEndDate);
+            rule46.Should().BeTrue();
         }
 
         [Theory]
