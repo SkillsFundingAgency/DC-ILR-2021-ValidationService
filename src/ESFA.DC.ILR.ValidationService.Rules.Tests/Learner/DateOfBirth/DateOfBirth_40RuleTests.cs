@@ -29,7 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.WholeDaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(totalDays);
 
             var testLearner = new TestLearner
@@ -102,7 +102,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             learningDeliveryFAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES"))
                 .Returns(false);
 
-            dateTimeServiceMock.Setup(m => m.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            dateTimeServiceMock.Setup(m => m.WholeDaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(100);
 
             dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
@@ -499,7 +499,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             learningDeliveryFAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
             dateTimeServiceMock
-                .Setup(m => m.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.WholeDaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(100);
             dateTimeServiceMock
                 .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
