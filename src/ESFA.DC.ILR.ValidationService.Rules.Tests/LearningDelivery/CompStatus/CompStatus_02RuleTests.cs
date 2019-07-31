@@ -34,9 +34,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.CompStatus
         }
 
         [Fact]
-        public void ProgTypeConditionMet_Pass()
+        public void ProgTypeConditionMet_Pass_AsNot25()
         {
-            var progType = 24;
+            int? progType = 24;
+            NewRule().ProgTypeConditionMet(progType).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ProgTypeConditionMet_Pass_NullProgType()
+        {
+            int? progType = null;
             NewRule().ProgTypeConditionMet(progType).Should().BeTrue();
         }
 
