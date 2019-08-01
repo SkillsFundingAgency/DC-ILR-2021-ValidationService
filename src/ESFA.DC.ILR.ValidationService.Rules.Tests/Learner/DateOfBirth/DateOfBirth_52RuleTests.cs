@@ -28,8 +28,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void ConditionMet_True()
         {
-            var learnStartDate = new DateTime(2017, 08, 01);
-            var learnPlanEndDate = new DateTime(2018, 01, 01);
+            var learnStartDate = new DateTime(2017, 12, 02);
+            var learnPlanEndDate = new DateTime(2018, 08, 01);
             var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
             var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
             var aimType = TypeOfAim.ProgrammeAim;
@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(242);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -91,7 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -117,7 +117,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -143,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(false);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -169,7 +169,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(5);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -183,10 +183,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         }
 
         [Fact]
-        public void ConditionMet_False_DifferenceBetweenLearnStartAndEndGreaterThan12()
+        public void ConditionMet_False_DaysEqualTo365()
         {
-            var learnStartDate = new DateTime(2017, 08, 01);
-            var learnPlanEndDate = new DateTime(2019, 01, 01);
+            var learnStartDate = new DateTime(2018, 08, 01);
+            var learnPlanEndDate = new DateTime(2019, 08, 02);
             var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
             var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
             var aimType = TypeOfAim.ProgrammeAim;
@@ -195,7 +195,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(365);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(365);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -206,6 +206,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 .ConditionMet(fundModel, progType, aimType, learnStartDate, learnPlanEndDate, It.IsAny<IEnumerable<ILearningDeliveryFAM>>())
                 .Should()
                 .BeFalse();
+
+            dateTimeQueryServiceMock.Verify(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate), Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public void ConditionMet_False_DaysGreaterThan365()
+        {
+            var learnStartDate = new DateTime(2018, 08, 01);
+            var learnPlanEndDate = new DateTime(2019, 08, 12);
+            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var aimType = TypeOfAim.ProgrammeAim;
+
+            var dd07Mock = new Mock<IDerivedData_07Rule>();
+            dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
+
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(370);
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES))
+                .Returns(false);
+
+            NewRule(dd07Mock.Object, learningDeliveryFamQueryServiceMock.Object, dateTimeQueryServiceMock.Object)
+                .ConditionMet(fundModel, progType, aimType, learnStartDate, learnPlanEndDate, It.IsAny<IEnumerable<ILearningDeliveryFAM>>())
+                .Should()
+                .BeFalse();
+
+            dateTimeQueryServiceMock.Verify(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate), Times.AtLeastOnce);
         }
 
         [Fact]
