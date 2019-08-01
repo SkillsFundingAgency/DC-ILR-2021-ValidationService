@@ -206,7 +206,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .SetupGet(x => x.Today)
+                .Setup(x => x.End())
                 .Returns(todayDate);
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(todayDate, AcademicYearDates.NextYearCommencement))
@@ -259,7 +259,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .SetupGet(x => x.Today)
+                .Setup(x => x.End())
                 .Returns(todayDate);
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(todayDate, AcademicYearDates.NextYearCommencement))
