@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
                 if (learningDelivery.LearnActEndDateNullable.HasValue)
                 {
-                    var duration = _dateTimeQueryService.DaysBetween(learningDelivery.LearnStartDate, learningDelivery.LearnActEndDateNullable.Value);
+                    var duration = _dateTimeQueryService.WholeDaysBetween(learningDelivery.LearnStartDate, learningDelivery.LearnActEndDateNullable.Value);
                     if (duration >= _days)
                     {
                         continue;
