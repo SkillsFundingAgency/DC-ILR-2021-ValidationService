@@ -84,7 +84,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         /// </summary>
         /// <returns>a date time</returns>
         public DateTime GetCurrentAcademicYearCommencementDate() =>
-            _academicYearDataService.GetAcademicYearOfLearningDate(_academicYearDataService.Today, AcademicYearDates.Commencement);
+            _academicYearDataService.Start();
 
         /// <summary>
         /// Determines whether [is not part of this year] [this delivery].

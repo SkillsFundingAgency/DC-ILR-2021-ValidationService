@@ -180,10 +180,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             var academicData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             academicData
-                .SetupGet(x => x.Today)
-                .Returns(DateTime.Today);
-            academicData
-                .Setup(x => x.GetAcademicYearOfLearningDate(DateTime.Today, AcademicYearDates.Commencement))
+                .Setup(x => x.Start())
                 .Returns(DateTime.Parse(commencementDate));
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
@@ -357,10 +354,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 
             var academicData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             academicData
-                .SetupGet(x => x.Today)
-                .Returns(DateTime.Today);
-            academicData
-                .Setup(x => x.GetAcademicYearOfLearningDate(DateTime.Today, AcademicYearDates.Commencement))
+                .Setup(x => x.Start())
                 .Returns(testDate);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
@@ -434,10 +428,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 
             var academicData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             academicData
-                .SetupGet(x => x.Today)
-                .Returns(DateTime.Today);
-            academicData
-                .Setup(x => x.GetAcademicYearOfLearningDate(DateTime.Today, AcademicYearDates.Commencement))
+                .Setup(x => x.Start())
                 .Returns(testDate);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);

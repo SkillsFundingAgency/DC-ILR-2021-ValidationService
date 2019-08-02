@@ -80,7 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.DateEmpStatApp
             // the educational year covers two actual years, in order to determine if
             // an employment status is inside the 'current educational year' we need next
             // years start date
-            var thresholdDate = GetNextAcademicYearDate(_yearData.Today);
+            var thresholdDate = GetNextAcademicYearDate(_yearData.End());
 
             objectToValidate.LearnerEmploymentStatuses
                  .SafeWhere(x => !HasQualifyingEmploymentStatus(x, thresholdDate))
