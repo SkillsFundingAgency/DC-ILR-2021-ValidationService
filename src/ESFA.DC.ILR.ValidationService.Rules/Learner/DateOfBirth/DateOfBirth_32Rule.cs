@@ -79,7 +79,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                         objectToValidate.LearnRefNumber, 
                         learningDelivery.AimSeqNumber, 
                         BuildErrorMessageParameters(objectToValidate.DateOfBirthNullable, learningDelivery.FundModel));
-                    return;
                 }
             }
         }

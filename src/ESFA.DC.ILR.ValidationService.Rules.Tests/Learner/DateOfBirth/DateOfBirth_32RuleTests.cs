@@ -160,7 +160,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void LearningDeliveryFAMConditionMet_True()
         {
-            var ldmCodes = new List<string> { "034",  "347", "339" };
+            var ldmCodes = new List<string> { "034", "347", "339" };
 
             var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
             {
@@ -327,7 +327,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         }
 
         [Fact]
-        public void Test_Bug_ForErrors()
+        public void Error_Multiple_LearningDeliveries()
         {
             int ukprn = 10000275;
             int? progType = 0;
@@ -357,8 +357,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                         LearnAimRef = "00100325",
                         AimSeqNumber = 1,
                         LearnStartDate = new DateTime(2015, 08, 01),
+                        LearnPlanEndDate = new DateTime(2016, 09, 10),
                         FundModel = 35,
-                        // ProgTypeNullable = progType,
+                        CompStatus = 1,
+                        LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
+                    },
+                    new TestLearningDelivery
+                    {
+                        LearnAimRef = "00118776",
+                        AimSeqNumber = 2,
+                        LearnStartDate = new DateTime(2015, 08, 01),
+                        LearnPlanEndDate = new DateTime(2016, 09, 10),
+                        FundModel = 35,
+                        CompStatus = 1,
                         LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
                     }
                 },
@@ -384,8 +395,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var testLearners = new List<TestLearner>()
             {
-                learner1,
-                learner2
+                learner1
             };
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -395,30 +405,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var organisationDataServiceMock = new Mock<IOrganisationDataService>();
             var fileDataServiceMock = new Mock<IFileDataService>();
 
-            foreach (var learner in testLearners)
-            {
-                var learningDelivery = learner.LearningDeliveries.FirstOrDefault();
-                dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
-                dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(learner.DateOfBirthNullable.Value, learningDelivery.LearnStartDate)).Returns(25);
-                larsDataServiceMock.Setup(ds => ds.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(learningDelivery.LearnAimRef, nvqLevels)).Returns(true);
-                larsDataServiceMock.Setup(ds => ds.LearnAimRefExistsForLearningDeliveryCategoryRef(learningDelivery.LearnAimRef, categoryRef)).Returns(false);
-                learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
-                learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", ldmCodes)).Returns(false);
-                organisationDataServiceMock.Setup(ds => ds.LegalOrgTypeMatchForUkprn(ukprn, orgType)).Returns(false);
-                fileDataServiceMock.Setup(fc => fc.UKPRN()).Returns(ukprn);
+            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
+            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(25);
 
-                using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-                {
-                    NewRule(
-                        dd07Mock.Object,
-                        dateTimeQueryServiceMock.Object,
-                        learningDeliveryFAMQueryServiceMock.Object,
-                        larsDataServiceMock.Object,
-                        organisationDataServiceMock.Object,
-                        fileDataServiceMock.Object,
-                        validationErrorHandlerMock.Object)
-                        .Validate(learner);
-                }
+            larsDataServiceMock.Setup(ds => ds.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(It.IsAny<string>(), nvqLevels)).Returns(true);
+            larsDataServiceMock.Setup(ds => ds.LearnAimRefExistsForLearningDeliveryCategoryRef(It.IsAny<string>(), categoryRef)).Returns(false);
+            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
+            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", ldmCodes)).Returns(false);
+            organisationDataServiceMock.Setup(ds => ds.LegalOrgTypeMatchForUkprn(ukprn, orgType)).Returns(false);
+            fileDataServiceMock.Setup(fc => fc.UKPRN()).Returns(ukprn);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(
+                    dd07Mock.Object,
+                    dateTimeQueryServiceMock.Object,
+                    learningDeliveryFAMQueryServiceMock.Object,
+                    larsDataServiceMock.Object,
+                    organisationDataServiceMock.Object,
+                    fileDataServiceMock.Object,
+                    validationErrorHandlerMock.Object)
+                .Validate(learner1);
             }
         }
 
