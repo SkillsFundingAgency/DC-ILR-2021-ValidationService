@@ -7,6 +7,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
@@ -371,6 +372,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                         FundModel = 35,
                         CompStatus = 1,
                         LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
+                    },
+                     new TestLearningDelivery
+                    {
+                        LearnAimRef = "00118775",
+                        AimSeqNumber = 2,
+                        LearnStartDate = new DateTime(2015, 08, 01),
+                        LearnPlanEndDate = new DateTime(2016, 09, 10),
+                        FundModel = 81, // Condition NotMet as FundModel != 35
+                        CompStatus = 1,
+                        LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
                     }
                 },
             };
@@ -382,7 +393,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var organisationDataServiceMock = new Mock<IOrganisationDataService>();
             var fileDataServiceMock = new Mock<IFileDataService>();
 
-            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
+            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false).Verifiable();
             dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(25);
 
             larsDataServiceMock.Setup(ds => ds.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(It.IsAny<string>(), nvqLevels)).Returns(true);
@@ -403,6 +414,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     fileDataServiceMock.Object,
                     validationErrorHandlerMock.Object)
                 .Validate(learner1);
+
+                VerifyErrorHandlerMock(validationErrorHandlerMock, 2);
             }
         }
 
