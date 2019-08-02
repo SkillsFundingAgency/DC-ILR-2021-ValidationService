@@ -53,9 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         ///   <c>true</c> if [is outside valid submission period] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsOutsideValidSubmissionPeriod(ILearningDelivery delivery) =>
-            delivery.LearnStartDate < _yearData
-                .Start()
-                .AddYears(OldestLearningSubmissionOffset);
+            delivery.LearnStartDate < _yearData.Start().AddYears(OldestLearningSubmissionOffset);
 
         /// <summary>
         /// Determines whether [is not valid] [the specified delivery].
