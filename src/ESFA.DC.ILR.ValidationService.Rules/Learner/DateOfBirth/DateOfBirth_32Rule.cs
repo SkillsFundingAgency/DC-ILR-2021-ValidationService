@@ -75,7 +75,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                     learningDelivery.LearningDeliveryFAMs,
                     ukprn))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(objectToValidate.DateOfBirthNullable, learningDelivery.FundModel));
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber, 
+                        learningDelivery.AimSeqNumber, 
+                        BuildErrorMessageParameters(objectToValidate.DateOfBirthNullable, learningDelivery.FundModel));
                     return;
                 }
             }
@@ -105,6 +108,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool DateOfBirthConditionMet(DateTime? dateOfBirth, DateTime learnStartDate)
         {
+            var ageAtTime = _dateTimeQueryService.YearsBetween(dateOfBirth.Value, learnStartDate);
+            var isTrue = _dateTimeQueryService.YearsBetween(dateOfBirth.Value, learnStartDate) >= 24;
             return dateOfBirth.HasValue
                 && _dateTimeQueryService.YearsBetween(dateOfBirth.Value, learnStartDate) >= 24;
         }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
@@ -322,6 +324,102 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 larsDataServiceMock.Object,
                 organisationDataServiceMock.Object,
                 fileDataServiceMock.Object).ConditionMet(fundModel, progType, learnStartDate, dateOfBirth, learnAimRef, learningDeliveryFAMs, ukprn).Should().BeTrue();
+        }
+
+        [Fact]
+        public void Test_Bug_ForErrors()
+        {
+            int ukprn = 10000275;
+            int? progType = 0;
+
+            var ldmCodes = new List<string> { "034", "347", "339" };
+            var nvqLevels = new List<string> { "3", "4", "5", "6", "7", "8", "H" };
+            var categoryRef = 19;
+            var orgType = "USDC";
+
+            IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "LSR",
+                    LearnDelFAMCode = "58"
+                }
+            };
+
+            var learner1 = new TestLearner
+            {
+                LearnRefNumber = "DOB32Trig",
+                DateOfBirthNullable = new DateTime(1991, 08, 01),
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    new TestLearningDelivery
+                    {
+                        LearnAimRef = "00100325",
+                        AimSeqNumber = 1,
+                        LearnStartDate = new DateTime(2015, 08, 01),
+                        FundModel = 35,
+                        // ProgTypeNullable = progType,
+                        LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
+                    }
+                },
+            };
+
+            var learner2 = new TestLearner
+            {
+                LearnRefNumber = "DOB32Trig2",
+                DateOfBirthNullable = new DateTime(1991, 08, 01),
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    new TestLearningDelivery
+                    {
+                        LearnAimRef = "00246176",
+                        AimSeqNumber = 1,
+                        LearnStartDate = new DateTime(2015, 08, 01),
+                        FundModel = 35,
+                        // ProgTypeNullable = progType,
+                        LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
+                    }
+                },
+            };
+
+            var testLearners = new List<TestLearner>()
+            {
+                learner1,
+                learner2
+            };
+
+            var dd07Mock = new Mock<IDerivedData_07Rule>();
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            var organisationDataServiceMock = new Mock<IOrganisationDataService>();
+            var fileDataServiceMock = new Mock<IFileDataService>();
+
+            foreach (var learner in testLearners)
+            {
+                var learningDelivery = learner.LearningDeliveries.FirstOrDefault();
+                dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
+                dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(learner.DateOfBirthNullable.Value, learningDelivery.LearnStartDate)).Returns(25);
+                larsDataServiceMock.Setup(ds => ds.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(learningDelivery.LearnAimRef, nvqLevels)).Returns(true);
+                larsDataServiceMock.Setup(ds => ds.LearnAimRefExistsForLearningDeliveryCategoryRef(learningDelivery.LearnAimRef, categoryRef)).Returns(false);
+                learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
+                learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", ldmCodes)).Returns(false);
+                organisationDataServiceMock.Setup(ds => ds.LegalOrgTypeMatchForUkprn(ukprn, orgType)).Returns(false);
+                fileDataServiceMock.Setup(fc => fc.UKPRN()).Returns(ukprn);
+
+                using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+                {
+                    NewRule(
+                        dd07Mock.Object,
+                        dateTimeQueryServiceMock.Object,
+                        learningDeliveryFAMQueryServiceMock.Object,
+                        larsDataServiceMock.Object,
+                        organisationDataServiceMock.Object,
+                        fileDataServiceMock.Object,
+                        validationErrorHandlerMock.Object)
+                        .Validate(learner);
+                }
+            }
         }
 
         [Fact]
