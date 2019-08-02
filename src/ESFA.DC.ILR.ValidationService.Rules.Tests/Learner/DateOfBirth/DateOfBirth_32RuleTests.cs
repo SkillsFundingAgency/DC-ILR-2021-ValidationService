@@ -330,7 +330,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void Error_Multiple_LearningDeliveries()
         {
             int ukprn = 10000275;
-            int? progType = 0;
+            int? progType = null;
 
             var ldmCodes = new List<string> { "034", "347", "339" };
             var nvqLevels = new List<string> { "3", "4", "5", "6", "7", "8", "H" };
@@ -373,29 +373,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                         LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
                     }
                 },
-            };
-
-            var learner2 = new TestLearner
-            {
-                LearnRefNumber = "DOB32Trig2",
-                DateOfBirthNullable = new DateTime(1991, 08, 01),
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        LearnAimRef = "00246176",
-                        AimSeqNumber = 1,
-                        LearnStartDate = new DateTime(2015, 08, 01),
-                        FundModel = 35,
-                        // ProgTypeNullable = progType,
-                        LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
-                    }
-                },
-            };
-
-            var testLearners = new List<TestLearner>()
-            {
-                learner1
             };
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
