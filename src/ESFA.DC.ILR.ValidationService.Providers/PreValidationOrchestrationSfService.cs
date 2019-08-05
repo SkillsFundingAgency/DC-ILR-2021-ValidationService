@@ -76,6 +76,8 @@ namespace ESFA.DC.ILR.ValidationService.Providers
                 if (_validationErrorCache.ValidationErrors.Any(IsFail))
                 {
                     _logger.LogDebug($"File schema catastrophic error, so will not execute learner validation actors, error count: {_validationErrorCache.ValidationErrors.Count}");
+                    await _validationOutputService.ProcessAsync(validationContext, message, _validationErrorCache.ValidationErrors, cancellationToken).ConfigureAwait(false);
+
                     return;
                 }
 
