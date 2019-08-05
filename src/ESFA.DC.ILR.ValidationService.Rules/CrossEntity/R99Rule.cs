@@ -29,6 +29,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var mainLearningDelivery in mainLearningDeliveries)
             {
+                var deliveryStartDate = mainLearningDelivery.LearnStartDate;
+                var exceptionConditionMet = mainLearningDeliveries.Any(x => x.AimSeqNumber != mainLearningDelivery.AimSeqNumber
+                                                  && deliveryStartDate >= x.LearnStartDate
+                                                  && x.AchDateNullable.HasValue && deliveryStartDate <= x.AchDateNullable.Value)
+                                                  && ApprenticeshipStandardMet(mainLearningDelivery.FundModel, mainLearningDelivery.ProgTypeNullable);
+
                 if (mainLearningDeliveries.Any(ld =>
                     ld.AimSeqNumber != mainLearningDelivery.AimSeqNumber &&
                     (
@@ -36,7 +42,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                         (mainLearningDelivery.LearnStartDate >= ld.LearnStartDate &&
                          ld.LearnActEndDateNullable.HasValue &&
                          mainLearningDelivery.LearnStartDate <= ld.LearnActEndDateNullable) ||
-                         ApprenticeshipStandardMet(ld.FundModel, ld.ProgTypeNullable))))
+                         exceptionConditionMet
+                         )))
                 {
                     HandleValidationError(objectToValidate.LearnRefNumber, mainLearningDelivery.AimSeqNumber, BuildErrorMessageParameters(mainLearningDelivery));
                 }

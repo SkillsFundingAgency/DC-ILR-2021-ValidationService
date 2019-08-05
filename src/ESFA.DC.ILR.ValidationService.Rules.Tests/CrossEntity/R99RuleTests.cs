@@ -294,31 +294,42 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void ValidateError_dueToFundModelAndProgType()
+        public void ValidateNoError_ForAcheDate()
         {
             var testLearner = new TestLearner()
             {
-                LearnRefNumber = "123456789",
+                LearnRefNumber = "ZPROG001",
                 LearningDeliveries = new TestLearningDelivery[]
                 {
                     new TestLearningDelivery()
                     {
+                        LearnAimRef = "ZPROG001",
                         AimType = TypeOfAim.ProgrammeAim,
-                        AimSeqNumber = 1,
+                        AimSeqNumber = 5,
+                        LearnStartDate = new DateTime(2018, 08, 09),
+                        LearnPlanEndDate = new DateTime(2019, 10, 09),
                         FundModel = 36,
-                        ProgTypeNullable = 25
+                        ProgTypeNullable = 25,
+                        LearnActEndDateNullable = new DateTime(2020, 03, 01),
+                        AchDateNullable = new DateTime(2020, 03, 08)
                     },
                     new TestLearningDelivery()
                     {
-                        AimSeqNumber = 2,
+                        LearnAimRef = "ZPROG001",
                         AimType = TypeOfAim.ProgrammeAim,
+                        AimSeqNumber = 2,
+                        LearnStartDate = new DateTime(2020, 05, 30),
+                        LearnPlanEndDate = new DateTime(2021, 10, 30),
+                        FundModel = 36,
                         ProgTypeNullable = 25
                     }
                 }
             };
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
                 NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
             }
         }
 
