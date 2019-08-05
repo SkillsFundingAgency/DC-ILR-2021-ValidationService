@@ -269,22 +269,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void ApprenticeshipStandardMet_Pass()
-        {
-            NewRule().ApprenticeshipStandardMet(36, 25).Should().BeTrue();
-        }
-
-        [Theory]
-        [InlineData(35, 25, false)] // Fails due to wrong fundModel
-        [InlineData(36, null, false)] // Fails due to null progType
-        [InlineData(36, 21, false)] // Fails due to wrong progType
-        public void ApprenticeshipStandardMet_Fails(int fundModel, int? progType, bool asExpected)
-        {
-            NewRule().ApprenticeshipStandardMet(fundModel, progType)
-                     .Should().Be(asExpected);
-        }
-
-        [Fact]
         public void Validate_Null_LearningDeliveries()
         {
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())

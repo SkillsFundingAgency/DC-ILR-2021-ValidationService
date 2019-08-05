@@ -29,30 +29,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var mainLearningDelivery in mainLearningDeliveries)
             {
-                var deliveryStartDate = mainLearningDelivery.LearnStartDate;
-                var exceptionConditionMet = mainLearningDeliveries.Any(x => x.AimSeqNumber != mainLearningDelivery.AimSeqNumber
-                                                  && deliveryStartDate >= x.LearnStartDate
-                                                  && x.AchDateNullable.HasValue && deliveryStartDate <= x.AchDateNullable.Value)
-                                                  && ApprenticeshipStandardMet(mainLearningDelivery.FundModel, mainLearningDelivery.ProgTypeNullable);
-
-                if (mainLearningDeliveries.Any(ld =>
-                    ld.AimSeqNumber != mainLearningDelivery.AimSeqNumber &&
+                if (mainLearningDeliveries.Any(ld => ld.AimSeqNumber != mainLearningDelivery.AimSeqNumber &&
                     (
                         (!ld.LearnActEndDateNullable.HasValue && !mainLearningDelivery.LearnActEndDateNullable.HasValue) ||
-                        (mainLearningDelivery.LearnStartDate >= ld.LearnStartDate &&
-                         ld.LearnActEndDateNullable.HasValue &&
-                         mainLearningDelivery.LearnStartDate <= ld.LearnActEndDateNullable) ||
-                         exceptionConditionMet
-                         )))
+                        (mainLearningDelivery.LearnStartDate >= ld.LearnStartDate
+                                    && ld.LearnActEndDateNullable.HasValue
+                                    && mainLearningDelivery.LearnStartDate <= ld.LearnActEndDateNullable) ||
+                         ExceptionConditionMet(mainLearningDeliveries, mainLearningDelivery)
+                     )))
                 {
                     HandleValidationError(objectToValidate.LearnRefNumber, mainLearningDelivery.AimSeqNumber, BuildErrorMessageParameters(mainLearningDelivery));
                 }
             }
         }
 
-        public bool ApprenticeshipStandardMet(int fundModel, int? progType)
+        private bool ExceptionConditionMet(List<ILearningDelivery> mainLearningDeliveries, ILearningDelivery mainLearningDelivery)
         {
-            return FundModelConditionMet(fundModel) && ProgTypeConditionMet(progType);
+            var deliveryStartDate = mainLearningDelivery.LearnStartDate;
+            var exceptionMet = mainLearningDeliveries.Any(x => x.AimSeqNumber != mainLearningDelivery.AimSeqNumber
+                                              && deliveryStartDate >= x.LearnStartDate
+                                              && x.AchDateNullable.HasValue && deliveryStartDate <= x.AchDateNullable.Value)
+                                              && FundModelConditionMet(mainLearningDelivery.FundModel)
+                                              && ProgTypeConditionMet(mainLearningDelivery.ProgTypeNullable);
+            return exceptionMet;
         }
 
         public bool FundModelConditionMet(int fundModel)
