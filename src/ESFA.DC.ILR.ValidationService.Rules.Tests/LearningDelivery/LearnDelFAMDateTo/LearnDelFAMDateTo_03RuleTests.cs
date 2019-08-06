@@ -1,178 +1,381 @@
-﻿using System;
-using System.Collections.Generic;
-using ESFA.DC.ILR.Tests.Model;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo;
-using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
-using FluentAssertions;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAMDateTo
 {
-    public class LearnDelFAMDateTo_03RuleTests : AbstractRuleTests<LearnDelFAMDateTo_03Rule>
+    public class LearnDelFAMDateTo_03RuleTests
     {
+        /// <summary>
+        /// New rule with null message handler throws.
+        /// </summary>
         [Fact]
-        public void RuleName()
+        public void NewRuleWithNullMessageHandlerThrows()
         {
-            NewRule().RuleName.Should().Be("LearnDelFAMDateTo_03");
+            // arrange
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMDateTo_03Rule(null, commonOps.Object));
         }
 
         [Fact]
-        public void ConditionMet_True()
+        public void NewRuleWithNullCommonOperationsThrows()
         {
-            var learnDelFamDateTo = new DateTime(2017, 1, 1);
-            var learnActEndDate = new DateTime(2017, 1, 1);
-            var fundModel = 1;
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            var ruleMock = NewRuleMock();
-
-            ruleMock.Setup(r => r.DatesConditionMet(learnDelFamDateTo, learnActEndDate)).Returns(true);
-            ruleMock.Setup(r => r.FundModelConditionMet(fundModel)).Returns(true);
-
-            ruleMock.Object.ConditionMet(learnDelFamDateTo, learnActEndDate, fundModel).Should().BeTrue();
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMDateTo_03Rule(handler.Object, null));
         }
 
+        /// <summary>
+        /// Rule name 1, matches a literal.
+        /// </summary>
         [Fact]
-        public void ConditionMet_False_Dates()
+        public void RuleName1()
         {
-            var learnDelFamDateTo = new DateTime(2017, 1, 1);
-            var learnActEndDate = new DateTime(2017, 1, 1);
-            var fundModel = 1;
+            // arrange
+            var sut = NewRule();
 
-            var ruleMock = NewRuleMock();
+            // act
+            var result = sut.RuleName;
 
-            ruleMock.Setup(r => r.DatesConditionMet(learnDelFamDateTo, learnActEndDate)).Returns(false);
-
-            ruleMock.Object.ConditionMet(learnDelFamDateTo, learnActEndDate, fundModel).Should().BeFalse();
+            // assert
+            Assert.Equal("LearnDelFAMDateTo_03", result);
         }
 
+        /// <summary>
+        /// Rule name 2, matches the constant.
+        /// </summary>
         [Fact]
-        public void ConditionMet_False_FundModel()
+        public void RuleName2()
         {
-            var learnDelFamDateTo = new DateTime(2017, 1, 1);
-            var learnActEndDate = new DateTime(2017, 1, 1);
-            var fundModel = 1;
+            // arrange
+            var sut = NewRule();
 
-            var ruleMock = NewRuleMock();
+            // act
+            var result = sut.RuleName;
 
-            ruleMock.Setup(r => r.DatesConditionMet(learnDelFamDateTo, learnActEndDate)).Returns(true);
-            ruleMock.Setup(r => r.FundModelConditionMet(fundModel)).Returns(false);
-
-            ruleMock.Object.ConditionMet(learnDelFamDateTo, learnActEndDate, fundModel).Should().BeFalse();
+            // assert
+            Assert.Equal(RuleNameConstants.LearnDelFAMDateTo_03, result);
         }
 
+        /// <summary>
+        /// Rule name 3 test, account for potential false positives.
+        /// </summary>
         [Fact]
-        public void DatesConditionMet_True()
+        public void RuleName3()
         {
-            NewRule().DatesConditionMet(new DateTime(2017, 1, 1), new DateTime(2016, 1, 1)).Should().BeTrue();
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.NotEqual("SomeOtherRuleName_07", result);
         }
 
+        /// <summary>
+        /// Validate with null learner throws.
+        /// </summary>
         [Fact]
-        public void DatesConditionMet_False()
+        public void ValidateWithNullLearnerThrows()
         {
-            NewRule().DatesConditionMet(new DateTime(2016, 1, 1), new DateTime(2017, 1, 1)).Should().BeFalse();
+            // arrange
+            var sut = NewRule();
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
-        [Fact]
-        public void DatesConditionMet_False_LearnDelFamDateToNull()
-        {
-            NewRule().DatesConditionMet(null, new DateTime(2016, 1, 1)).Should().BeFalse();
-        }
-
-        [Fact]
-        public void DatesConditionMet_False_LearnActEndDateNull()
-        {
-            NewRule().DatesConditionMet(new DateTime(2016, 1, 1), null).Should().BeFalse();
-        }
-
+        /// <summary>
+        /// Has qualifying funding meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(35)]
-        [InlineData(36)]
-        [InlineData(81)]
-        [InlineData(99)]
-        public void FundModelConditionMet_True(int fundModel)
+        [InlineData(true)]
+        [InlineData(false)]
+        public void HasQualifyingFundingMeetsExpectation(bool expectation)
         {
-            NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 36, 81, 99))
+                .Returns(expectation);
+
+            var sut = new LearnDelFAMDateTo_03Rule(handler.Object, commonOps.Object);
+
+            // act
+            var result = sut.HasQualifyingFunding(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+            handler.VerifyAll();
+            commonOps.VerifyAll();
         }
 
-        [Fact]
-        public void FundModelConditionMet_False()
+        /// <summary>
+        /// Is qualifying monitor meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData("ADL", true)] // Monitoring.Delivery.Types.AdvancedLearnerLoan
+        [InlineData("ALB", true)] // Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding
+        [InlineData("ACT", false)] // Monitoring.Delivery.Types.ApprenticeshipContract
+        [InlineData("ASL", true)] // Monitoring.Delivery.Types.CommunityLearningProvision
+        [InlineData("EEF", true)] // Monitoring.Delivery.Types.EligibilityForEnhancedApprenticeshipFunding
+        [InlineData("FLN", true)] // Monitoring.Delivery.Types.FamilyEnglishMathsAndLanguage
+        [InlineData("FFI", true)] // Monitoring.Delivery.Types.FullOrCoFunding
+        [InlineData("HEM", true)] // Monitoring.Delivery.Types.HEMonitoring
+        [InlineData("HHS", true)] // Monitoring.Delivery.Types.HouseholdSituation
+        [InlineData("LDM", true)] // Monitoring.Delivery.Types.Learning
+        [InlineData("LSF", true)] // Monitoring.Delivery.Types.LearningSupportFunding
+        [InlineData("NSA", true)] // Monitoring.Delivery.Types.NationalSkillsAcademy
+        [InlineData("POD", true)] // Monitoring.Delivery.Types.PercentageOfOnlineDelivery
+        [InlineData("RES", true)] // Monitoring.Delivery.Types.Restart
+        [InlineData("SOF", true)] // Monitoring.Delivery.Types.SourceOfFunding
+        [InlineData("WPP", true)] // Monitoring.Delivery.Types.WorkProgrammeParticipation
+        public void IsQualifyingMonitorMeetsExpectation(string candidate, bool expectation)
         {
-            NewRule().FundModelConditionMet(1).Should().BeFalse();
+            // arrange
+            var fam = new Mock<ILearningDeliveryFAM>();
+            fam
+                .SetupGet(x => x.LearnDelFAMType)
+                .Returns(candidate);
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.IsQualifyingMonitor(fam.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
         }
 
-        [Fact]
-        public void Validate_Error()
+        /// <summary>
+        /// Has disqualifying dates meets expectation
+        /// </summary>
+        /// <param name="dateTo">The date to.</param>
+        /// <param name="actEnd">The act end.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData("2017-12-30", null, false)]
+        [InlineData(null, "2017-12-31", false)]
+        [InlineData("2017-12-30", "2017-12-31", false)]
+        [InlineData("2017-12-31", "2017-12-31", false)]
+        [InlineData("2018-01-01", "2017-12-31", true)]
+        public void HasDisqualifyingDatesMeetsExpectation(string dateTo, string actEnd, bool expectation)
         {
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = new List<TestLearningDelivery>()
-                {
-                    new TestLearningDelivery()
-                    {
-                        FundModel = 35,
-                        LearnActEndDateNullable = new DateTime(2016, 1, 1),
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
-                        {
-                            new TestLearningDeliveryFAM()
-                            {
-                                LearnDelFAMDateToNullable = new DateTime(2017, 1, 1),
-                            }
-                        }
-                    }
-                }
-            };
+            // arrange
+            var fam = new Mock<ILearningDeliveryFAM>();
+            fam
+                .SetupGet(x => x.LearnDelFAMDateToNullable)
+                .Returns(GetNullableDate(dateTo));
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-            {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
-            }
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnActEndDateNullable)
+                .Returns(GetNullableDate(actEnd));
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.HasDisqualifyingDates(delivery.Object, fam.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
         }
 
-        [Fact]
-        public void Validate_NoErrors()
-        {
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = new List<TestLearningDelivery>()
-                {
-                    new TestLearningDelivery()
-                    {
-                        FundModel = 1,
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
-                        {
-                            new TestLearningDeliveryFAM()
-                            {
-                                LearnDelFAMDateToNullable = null
-                            }
-                        }
-                    }
-                }
-            };
+        /// <summary>
+        /// Gets the nullable date.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <returns>a nullable date</returns>
+        public DateTime? GetNullableDate(string candidate) =>
+            Utility.It.Has(candidate) ? DateTime.Parse(candidate) : (DateTime?)null;
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
-            }
+        /// <summary>
+        /// Invalid item raises validation message.
+        /// </summary>
+        /// <param name="famType">Type of FAM.</param>
+        /// <param name="dateOffset">The date offset, determines the state of the final condition</param>
+        [Theory]
+        [InlineData("ADL", 1)] // Monitoring.Delivery.Types.AdvancedLearnerLoan
+        [InlineData("ALB", 1)] // Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding
+        [InlineData("ASL", 1)] // Monitoring.Delivery.Types.CommunityLearningProvision
+        [InlineData("EEF", 1)] // Monitoring.Delivery.Types.EligibilityForEnhancedApprenticeshipFunding
+        [InlineData("FLN", 1)] // Monitoring.Delivery.Types.FamilyEnglishMathsAndLanguage
+        [InlineData("FFI", 1)] // Monitoring.Delivery.Types.FullOrCoFunding
+        [InlineData("HEM", 1)] // Monitoring.Delivery.Types.HEMonitoring
+        [InlineData("HHS", 1)] // Monitoring.Delivery.Types.HouseholdSituation
+        [InlineData("LDM", 1)] // Monitoring.Delivery.Types.Learning
+        [InlineData("LSF", 1)] // Monitoring.Delivery.Types.LearningSupportFunding
+        [InlineData("NSA", 1)] // Monitoring.Delivery.Types.NationalSkillsAcademy
+        [InlineData("POD", 1)] // Monitoring.Delivery.Types.PercentageOfOnlineDelivery
+        [InlineData("RES", 1)] // Monitoring.Delivery.Types.Restart
+        [InlineData("SOF", 1)] // Monitoring.Delivery.Types.SourceOfFunding
+        [InlineData("WPP", 1)] // Monitoring.Delivery.Types.WorkProgrammeParticipation
+        public void InvalidItemRaisesValidationMessage(string famType, int dateOffset)
+        {
+            // arrange
+            const string learnRefNumber = "123456789X";
+
+            var testDate = DateTime.Parse("2017-12-30");
+
+            var fam = new Mock<ILearningDeliveryFAM>();
+            fam
+                .SetupGet(x => x.LearnDelFAMType)
+                .Returns(famType);
+            fam
+                .SetupGet(x => x.LearnDelFAMDateToNullable)
+                .Returns(testDate.AddDays(dateOffset));
+
+            var fams = new ILearningDeliveryFAM[] { fam.Object };
+
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnActEndDateNullable)
+                .Returns(testDate);
+            delivery
+                .SetupGet(x => x.FundModel)
+                .Returns(35); // TypeOfFunding.AdultSkills
+            delivery
+                .SetupGet(x => x.LearningDeliveryFAMs)
+                .Returns(fams);
+
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(learnRefNumber);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            handler
+                .Setup(x => x.Handle(RuleNameConstants.LearnDelFAMDateTo_03, learnRefNumber, 0, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnActEndDate", AbstractRule.AsRequiredCultureDate(testDate)))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMDateTo", AbstractRule.AsRequiredCultureDate(testDate.AddDays(dateOffset))))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 36, 81, 99))
+                .Returns(true);
+
+            var sut = new LearnDelFAMDateTo_03Rule(handler.Object, commonOps.Object);
+
+            // act
+            sut.Validate(learner.Object);
+
+            // assert
+            handler.VerifyAll();
+            commonOps.VerifyAll();
         }
 
-        [Fact]
-        public void BuildErrorMessageParameters()
+        /// <summary>
+        /// Valid item does not raise validation message.
+        /// </summary>
+        /// <param name="famType">Type of FAM.</param>
+        /// <param name="dateOffset">The date offset, determines the state of the final condition</param>
+        [Theory]
+        [InlineData("ACT", 1)] // Monitoring.Delivery.Types.ApprenticeshipContract
+        [InlineData("ADL", 0)] // Monitoring.Delivery.Types.AdvancedLearnerLoan
+        [InlineData("ALB", 0)] // Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding
+        [InlineData("ASL", 0)] // Monitoring.Delivery.Types.CommunityLearningProvision
+        [InlineData("EEF", 0)] // Monitoring.Delivery.Types.EligibilityForEnhancedApprenticeshipFunding
+        [InlineData("FLN", 0)] // Monitoring.Delivery.Types.FamilyEnglishMathsAndLanguage
+        [InlineData("FFI", 0)] // Monitoring.Delivery.Types.FullOrCoFunding
+        [InlineData("HEM", 0)] // Monitoring.Delivery.Types.HEMonitoring
+        [InlineData("HHS", 0)] // Monitoring.Delivery.Types.HouseholdSituation
+        [InlineData("LDM", 0)] // Monitoring.Delivery.Types.Learning
+        [InlineData("LSF", 0)] // Monitoring.Delivery.Types.LearningSupportFunding
+        [InlineData("NSA", 0)] // Monitoring.Delivery.Types.NationalSkillsAcademy
+        [InlineData("POD", 0)] // Monitoring.Delivery.Types.PercentageOfOnlineDelivery
+        [InlineData("RES", 0)] // Monitoring.Delivery.Types.Restart
+        [InlineData("SOF", 0)] // Monitoring.Delivery.Types.SourceOfFunding
+        [InlineData("WPP", 0)] // Monitoring.Delivery.Types.WorkProgrammeParticipation
+        public void ValidItemDoesNotRaiseValidationMessage(string famType, int dateOffset)
         {
-            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
+            // arrange
+            const string learnRefNumber = "123456789X";
 
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnActEndDate", "01/01/2016")).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnDelFAMDateTo", "01/01/2017")).Verifiable();
+            var testDate = DateTime.Parse("2017-12-30");
 
-            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters(new DateTime(2016, 1, 1), new DateTime(2017, 1, 1));
+            var fam = new Mock<ILearningDeliveryFAM>();
+            fam
+                .SetupGet(x => x.LearnDelFAMType)
+                .Returns(famType);
+            fam
+                .SetupGet(x => x.LearnDelFAMDateToNullable)
+                .Returns(testDate.AddDays(dateOffset));
 
-            validationErrorHandlerMock.Verify();
+            var fams = new ILearningDeliveryFAM[] { fam.Object };
+
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnActEndDateNullable)
+                .Returns(testDate);
+            delivery
+                .SetupGet(x => x.FundModel)
+                .Returns(35); // TypeOfFunding.AdultSkills
+            delivery
+                .SetupGet(x => x.LearningDeliveryFAMs)
+                .Returns(fams);
+
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(learnRefNumber);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 36, 81, 99))
+                .Returns(true);
+
+            var sut = new LearnDelFAMDateTo_03Rule(handler.Object, commonOps.Object);
+
+            // act
+            sut.Validate(learner.Object);
+
+            // assert
+            handler.VerifyAll();
+            commonOps.VerifyAll();
         }
 
-        private LearnDelFAMDateTo_03Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
+        /// <summary>
+        /// New rule.
+        /// </summary>
+        /// <returns>a constructed and mocked up validation rule</returns>
+        public LearnDelFAMDateTo_03Rule NewRule()
         {
-            return new LearnDelFAMDateTo_03Rule(validationErrorHandler);
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            return new LearnDelFAMDateTo_03Rule(handler.Object, commonOps.Object);
         }
     }
 }
