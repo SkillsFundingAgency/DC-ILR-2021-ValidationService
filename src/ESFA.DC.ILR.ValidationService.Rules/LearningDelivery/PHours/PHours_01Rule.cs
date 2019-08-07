@@ -11,17 +11,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours
 {
     public class PHours_01Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IAcademicYearDataService _academicYearDataService;
+        private readonly DateTime _firstAugust2019 = new DateTime(2019, 08, 01);
 
         private readonly IEnumerable<int> _fundModels = new HashSet<int>()
         {
             TypeOfFunding.ApprenticeshipsFrom1May2017
         };
 
-        public PHours_01Rule(IAcademicYearDataService academicYearDataService, IValidationErrorHandler validationErrorHandler)
+        public PHours_01Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.PHours_01)
-        {
-            _academicYearDataService = academicYearDataService;
+        {            
         }
 
         public void Validate(ILearner objectToValidate)
@@ -51,12 +50,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours
 
         public bool StartDateConditionMet(DateTime startDate)
         {
-            return startDate >= _academicYearDataService.Start();
+            return startDate >= _firstAugust2019;
         }
 
         public bool PlannedHoursConditionMet(int? plannedHours)
         {
-            return plannedHours == null || plannedHours  <= 0;
+            return plannedHours == null;
         }
 
         public bool FundModelConditionMet(int fundModel)
