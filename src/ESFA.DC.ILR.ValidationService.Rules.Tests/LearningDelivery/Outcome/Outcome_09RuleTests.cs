@@ -121,6 +121,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
         }
 
         [Fact]
+        public void ExceptionConditionMet_Fails_DuetoNullProgType()
+        {
+            var fundModel = 35;
+            int? progType = null;
+            NewRule().ExceptionConditionMet(fundModel, progType).Should().BeTrue();
+        }
+
+        [Fact]
         public void ValidateError()
         {
             var learner = new TestLearner
