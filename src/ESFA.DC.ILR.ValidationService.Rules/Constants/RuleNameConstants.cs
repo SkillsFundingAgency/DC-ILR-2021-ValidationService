@@ -245,6 +245,7 @@
         public const string LearnDelFAMDateTo_02 = "LearnDelFAMDateTo_02";
         public const string LearnDelFAMDateTo_03 = "LearnDelFAMDateTo_03";
         public const string LearnDelFAMDateTo_04 = "LearnDelFAMDateTo_04";
+        public const string LearnDelFAMDateTo_05 = "LearnDelFAMDateTo_05";
 
         public const string LearnDelFAMType_02 = "LearnDelFAMType_02";
         public const string LearnDelFAMType_03 = "LearnDelFAMType_03";
