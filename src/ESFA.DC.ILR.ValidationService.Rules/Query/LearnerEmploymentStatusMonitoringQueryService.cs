@@ -11,8 +11,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         public bool HasAnyEmploymentStatusMonitoringTypeAndCodeForLearnerEmploymentStatus(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, string esmType, int esmCode)
         {
             return learnerEmploymentStatuses?
-                .Select(esm => esm.EmploymentStatusMonitorings?
-                .Any(esmt => esmt.ESMType.CaseInsensitiveEquals(esmType) && esmt.ESMCode == esmCode)).SingleOrDefault() ?? false;
+                       .Select(les => les.EmploymentStatusMonitorings?
+                           .Any(esmt => esmt.ESMType.CaseInsensitiveEquals(esmType) && esmt.ESMCode == esmCode)).FirstOrDefault() ?? false;
         }
 
         public bool HasAnyEmploymentStatusMonitoringTypeMoreThanOnce(IEnumerable<IEmploymentStatusMonitoring> employmentStatusMonitorings, IEnumerable<string> esmTypes)
