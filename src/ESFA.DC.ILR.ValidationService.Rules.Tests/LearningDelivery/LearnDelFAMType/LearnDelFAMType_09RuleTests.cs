@@ -159,6 +159,42 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         /// <summary>
+        /// First inviable date meets expectation.
+        /// </summary>
+        [Fact]
+        public void FirstInviableDateMeetsExpectation()
+        {
+            // arrange / act / assert
+            Assert.Equal(DateTime.Parse("2019-08-01"), LearnDelFAMType_09Rule.FirstInviableDate);
+        }
+
+        [Fact]
+        public void ESFAAdultFundingMeetsExpectation()
+        {
+            // arrange / act / assert
+            Assert.Equal("SOF105", Monitoring.Delivery.ESFAAdultFunding);
+        }
+
+        [Fact]
+        public void SourceOfFundingMeetsExpectation()
+        {
+            // arrange / act / assert
+            Assert.Equal("SOF", Monitoring.Delivery.Types.SourceOfFunding);
+        }
+
+        [Theory]
+        [InlineData(10, TypeOfFunding.CommunityLearning)]
+        [InlineData(35, TypeOfFunding.AdultSkills)]
+        [InlineData(36, TypeOfFunding.ApprenticeshipsFrom1May2017)]
+        [InlineData(70, TypeOfFunding.EuropeanSocialFund)]
+        [InlineData(81, TypeOfFunding.OtherAdult)]
+        public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
+        {
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
+        }
+
+        /// <summary>
         /// Has qualifying fund model meets expectation
         /// </summary>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
