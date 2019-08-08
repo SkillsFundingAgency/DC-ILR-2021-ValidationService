@@ -105,54 +105,40 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         /// <param name="famCode">The Learning Delivery FAM Code.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData("LDM", "034", false)] // Monitoring.Delivery.OLASSOffendersInCustody
-        [InlineData("FFI", "1", false)] // Monitoring.Delivery.FullyFundedLearningAim
-        [InlineData("FFI", "2", false)] // Monitoring.Delivery.CoFundedLearningAim
-        [InlineData("LDM", "363", false)] // Monitoring.Delivery.InReceiptOfLowWages
-        [InlineData("LDM", "318", false)] // Monitoring.Delivery.MandationToSkillsTraining
-        [InlineData("LDM", "328", false)] // Monitoring.Delivery.ReleasedOnTemporaryLicence
-        [InlineData("LDM", "347", false)] // Monitoring.Delivery.SteelIndustriesRedundancyTraining
-        [InlineData("SOF", "1", true)] // Monitoring.Delivery.HigherEducationFundingCouncilEngland
-        [InlineData("SOF", "107", true)] // Monitoring.Delivery.ESFA16To19Funding
-        [InlineData("SOF", "105", false)] // Monitoring.Delivery.ESFAAdultFunding
-        public void HasESFAAdultFundingMeetsExpectation(string famType, string famCode, bool expectation)
+        [InlineData("LDM", "034", true)] // Monitoring.Delivery.OLASSOffendersInCustody
+        [InlineData("FFI", "1", true)] // Monitoring.Delivery.FullyFundedLearningAim
+        [InlineData("FFI", "2", true)] // Monitoring.Delivery.CoFundedLearningAim
+        [InlineData("LDM", "363", true)] // Monitoring.Delivery.InReceiptOfLowWages
+        [InlineData("LDM", "318", true)] // Monitoring.Delivery.MandationToSkillsTraining
+        [InlineData("LDM", "328", true)] // Monitoring.Delivery.ReleasedOnTemporaryLicence
+        [InlineData("LDM", "347", true)] // Monitoring.Delivery.SteelIndustriesRedundancyTraining
+        [InlineData("SOF", "1", false)] // Monitoring.Delivery.HigherEducationFundingCouncilEngland
+        [InlineData("SOF", "107", false)] // Monitoring.Delivery.ESFA16To19Funding
+        [InlineData("SOF", "105", true)] // Monitoring.Delivery.ESFAAdultFunding
+        public void HasQualifyingMonitorMeetsExpectation(string famType, string famCode, bool expectation)
         {
             // arrange
             var sut = NewRule();
-            var mockItem = new Mock<ILearningDeliveryFAM>();
-            mockItem
+            var fam = new Mock<ILearningDeliveryFAM>();
+            fam
                 .SetupGet(y => y.LearnDelFAMType)
                 .Returns(famType);
-            mockItem
+            fam
                 .SetupGet(y => y.LearnDelFAMCode)
                 .Returns(famCode);
 
             // act
-            var result = sut.HasESFAAdultFunding(mockItem.Object);
+            var result = sut.HasQualifyingMonitor(fam.Object);
 
             // assert
             Assert.Equal(expectation, result);
         }
 
-        [Fact]
-        public void HasESFAAdultFundingMeetsExpectation_NullCheck()
-        {
-            // arrange
-            var sut = NewRule();
-            ILearningDeliveryFAM learningDeliverFAM = null;
-
-            // act
-            var result = sut.HasESFAAdultFunding(learningDeliverFAM);
-
-            // assert
-            Assert.False(result);
-        }
-
         /// <summary>
-        /// Has esfa adult funding with null fams returns false
+        /// Has qualifying monitor with null fams returns false
         /// </summary>
         [Fact]
-        public void HasESFAAdultFundingWithNullFAMsReturnsFalse()
+        public void HasQualifyingMonitorWithNullFAMsReturnsFalse()
         {
             // arrange
             var mockItem = new Mock<ILearningDelivery>();
@@ -160,16 +146,52 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.CheckDeliveryFAMs(mockItem.Object, Moq.It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
+                .Setup(x => x.CheckDeliveryFAMs(mockItem.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
                 .Returns(false);
 
             var sut = new LearnDelFAMType_09Rule(handler.Object, commonOps.Object);
 
             // act
-            var result = sut.HasESFAAdultFunding(mockItem.Object);
+            var result = sut.HasQualifyingMonitor(mockItem.Object);
 
             // assert
             Assert.False(result);
+        }
+
+        /// <summary>
+        /// First inviable date meets expectation.
+        /// </summary>
+        [Fact]
+        public void FirstInviableDateMeetsExpectation()
+        {
+            // arrange / act / assert
+            Assert.Equal(DateTime.Parse("2019-08-01"), LearnDelFAMType_09Rule.FirstInviableDate);
+        }
+
+        [Fact]
+        public void ESFAAdultFundingMeetsExpectation()
+        {
+            // arrange / act / assert
+            Assert.Equal("SOF105", Monitoring.Delivery.ESFAAdultFunding);
+        }
+
+        [Fact]
+        public void SourceOfFundingMeetsExpectation()
+        {
+            // arrange / act / assert
+            Assert.Equal("SOF", Monitoring.Delivery.Types.SourceOfFunding);
+        }
+
+        [Theory]
+        [InlineData(10, TypeOfFunding.CommunityLearning)]
+        [InlineData(35, TypeOfFunding.AdultSkills)]
+        [InlineData(36, TypeOfFunding.ApprenticeshipsFrom1May2017)]
+        [InlineData(70, TypeOfFunding.EuropeanSocialFund)]
+        [InlineData(81, TypeOfFunding.OtherAdult)]
+        public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
+        {
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
         }
 
         /// <summary>
@@ -219,26 +241,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             // arrange
             const string LearnRefNumber = "123456789X";
-            const string learnAimRef = "salddfkjeifdnase";
+            const string LearnAimRef = "salddfkjeifdnase";
 
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
+            var fam = new Mock<ILearningDeliveryFAM>();
+            var fams = new ILearningDeliveryFAM[] { fam.Object };
+
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
                 .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
-            mockDelivery
+                .Returns(LearnAimRef);
+            delivery
                 .SetupGet(y => y.FundModel)
                 .Returns(candidate);
-            mockDelivery
-                .SetupGet(y => y.AimSeqNumber)
-                .Returns(0);
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(DateTime.Parse("2019-07-31"));
+            delivery
+                .SetupGet(y => y.LearningDeliveryFAMs)
+                .Returns(fams);
 
-            var deliveries = new ILearningDelivery[] { mockDelivery.Object };
+            var deliveries = new ILearningDelivery[] { delivery.Object };
 
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
+            var learner = new Mock<ILearner>();
+            learner
                 .SetupGet(x => x.LearnRefNumber)
                 .Returns(LearnRefNumber);
-            mockLearner
+            learner
                 .SetupGet(x => x.LearningDeliveries)
                 .Returns(deliveries);
 
@@ -259,7 +287,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(
-                    mockDelivery.Object,
+                    delivery.Object,
                     10, // TypeOfFunding.CommunityLearning,
                     35, // TypeOfFunding.AdultSkills
                     36, // TypeOfFunding.ApprenticeshipsFrom1May2017,
@@ -267,13 +295,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                     81)) // TypeOfFunding.OtherAdult
                 .Returns(true);
             commonOps
-                .Setup(x => x.CheckDeliveryFAMs(mockDelivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
-                .Returns(true);
+                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
+                .Returns(false);
 
             var sut = new LearnDelFAMType_09Rule(handler.Object, commonOps.Object);
 
             // act
-            sut.Validate(mockLearner.Object);
+            sut.Validate(learner.Object);
 
             // assert
             handler.VerifyAll();
@@ -294,23 +322,31 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             // arrange
             const string LearnRefNumber = "123456789X";
-            const string learnAimRef = "salddfkjeifdnase";
+            const string LearnAimRef = "salddfkjeifdnase";
+            var fam = new Mock<ILearningDeliveryFAM>();
+            var fams = new ILearningDeliveryFAM[] { fam.Object };
 
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
                 .SetupGet(y => y.LearnAimRef)
-                .Returns(learnAimRef);
-            mockDelivery
+                .Returns(LearnAimRef);
+            delivery
                 .SetupGet(y => y.FundModel)
                 .Returns(candidate);
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(DateTime.Parse("2019-07-31"));
+            delivery
+                .SetupGet(y => y.LearningDeliveryFAMs)
+                .Returns(fams);
 
-            var deliveries = new ILearningDelivery[] { mockDelivery.Object };
+            var deliveries = new ILearningDelivery[] { delivery.Object };
 
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
+            var learner = new Mock<ILearner>();
+            learner
                 .SetupGet(x => x.LearnRefNumber)
                 .Returns(LearnRefNumber);
-            mockLearner
+            learner
                 .SetupGet(x => x.LearningDeliveries)
                 .Returns(deliveries);
 
@@ -320,7 +356,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(
-                    mockDelivery.Object,
+                    delivery.Object,
                     10, // TypeOfFunding.CommunityLearning,
                     35, // TypeOfFunding.AdultSkills
                     36, // TypeOfFunding.ApprenticeshipsFrom1May2017,
@@ -329,13 +365,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(true);
 
             commonOps
-                .Setup(x => x.CheckDeliveryFAMs(mockDelivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
-                .Returns(false);
+                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
+                .Returns(true);
 
             var sut = new LearnDelFAMType_09Rule(handler.Object, commonOps.Object);
 
             // act
-            sut.Validate(mockLearner.Object);
+            sut.Validate(learner.Object);
 
             // assert
             handler.VerifyAll();
