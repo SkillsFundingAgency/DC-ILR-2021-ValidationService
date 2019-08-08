@@ -176,7 +176,6 @@
     <Compile Include="Context\ValidationDPActorModelValidationContext.cs" />
     <Compile Include="Context\ValidationDPActorModelValidationContextFactory.cs" />
     <Compile Include="Modules\DerivedDataModule.cs" />
-    <Compile Include="Modules\LearnerDPRuleSetModule.cs" />
     <Compile Include="Modules\LoggerModule.cs" />
     <Compile Include="Modules\QueryServiceModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

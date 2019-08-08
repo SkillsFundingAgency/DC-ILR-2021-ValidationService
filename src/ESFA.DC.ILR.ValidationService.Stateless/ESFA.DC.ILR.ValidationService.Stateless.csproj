@@ -390,7 +390,6 @@
     <Compile Include="Handlers\MessageHandler.cs" />
     <Compile Include="Modules\DerivedDataModule.cs" />
     <Compile Include="Modules\IOModule.cs" />
-    <Compile Include="Modules\MessageRuleSetModule.cs" />
     <Compile Include="Modules\PreValidationServiceModule.cs" />
     <Compile Include="Modules\QueryServiceModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

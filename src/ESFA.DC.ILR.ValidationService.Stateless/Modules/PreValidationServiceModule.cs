@@ -36,6 +36,7 @@ using ESFA.DC.ILR.ValidationService.Data.Population.Mappers;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Providers;
 using ESFA.DC.ILR.ValidationService.Providers.Output;
+using ESFA.DC.ILR.ValidationService.Rules.Modules;
 using ESFA.DC.ILR.ValidationService.RuleSet;
 using ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler;
 using Module = Autofac.Module;
@@ -64,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
             builder.RegisterType<EnabledRulesProvider>().As<IEnabledRulesProvider>().InstancePerLifetimeScope();
 
             builder.RegisterType<PreValidationPopulationService>().As<IPopulationService>().InstancePerLifetimeScope();
-            builder.RegisterModule<MessageRuleSetModule>();
+            builder.RegisterModule<RuleSetModule<IMessage>>();
             builder.RegisterModule<DerivedDataModule>();
             builder.RegisterModule<QueryServiceModule>();
 

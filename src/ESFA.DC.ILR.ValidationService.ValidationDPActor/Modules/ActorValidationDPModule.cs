@@ -32,9 +32,9 @@ using ESFA.DC.ILR.ValidationService.Data.Population;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Providers;
+using ESFA.DC.ILR.ValidationService.Rules.Modules;
 using ESFA.DC.ILR.ValidationService.RuleSet;
 using ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler;
-using ESFA.DC.ILR.ValidationService.RuleSet.Modules;
 using ESFA.DC.Serialization.Interfaces;
 using ESFA.DC.Serialization.Json;
 using ESFA.DC.Serialization.Xml;
@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor.Modules
             builder.RegisterType<JsonSerializationService>().As<IJsonSerializationService>().InstancePerLifetimeScope();
             builder.RegisterType<XmlSerializationService>().As<IXmlSerializationService>().InstancePerLifetimeScope();
 
-            builder.RegisterModule<LearnerDPRuleSetModule>();
+            builder.RegisterModule<RuleSetModule<ILearnerDestinationAndProgression>>();
             builder.RegisterModule<DerivedDataModule>();
             builder.RegisterModule<QueryServiceModule>();
 
