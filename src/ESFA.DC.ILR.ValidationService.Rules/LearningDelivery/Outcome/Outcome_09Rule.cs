@@ -46,13 +46,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
 
         public bool CompStatusConditionMet(int compStatus)
         {
-            return  compStatus != CompletionState.HasCompleted;
+            return compStatus != CompletionState.HasCompleted;
         }
 
         public bool ExceptionConditionMet(int fundModel, int? progType)
         {
-            return fundModel != TypeOfFunding.ApprenticeshipsFrom1May2017
-                && progType != TypeOfLearningProgramme.ApprenticeshipStandard;
+            return (!progType.HasValue || progType != TypeOfLearningProgramme.ApprenticeshipStandard)
+                && fundModel != TypeOfFunding.ApprenticeshipsFrom1May2017;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? outcome, int compStatus)

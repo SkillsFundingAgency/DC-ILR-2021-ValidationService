@@ -27,11 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         {
             var startDate = new DateTime(2019, 8, 1);
 
-            var academicStartDate = new DateTime(2019, 8, 1);
-            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
-            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
-
-            var rule = NewRule(academicYearDataService: mockAcademicYearDataService.Object).StartDateConditionMet(startDate);
+            var rule = NewRule().StartDateConditionMet(startDate);
             rule.Should().BeTrue();
         }
 
@@ -40,11 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         {
             var startDate = new DateTime(2019, 12, 1);
 
-            var academicStartDate = new DateTime(2019, 8, 1);
-            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
-            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
-
-            var rule = NewRule(academicYearDataService: mockAcademicYearDataService.Object).StartDateConditionMet(startDate);
+            var rule = NewRule().StartDateConditionMet(startDate);
             rule.Should().BeTrue();
         }
 
@@ -53,11 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         {
             var startDate = new DateTime(2019, 6, 1);
 
-            var academicStartDate = new DateTime(2019, 8, 1);
-            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
-            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
-
-            var rule = NewRule(academicYearDataService: mockAcademicYearDataService.Object).StartDateConditionMet(startDate);
+            var rule = NewRule().StartDateConditionMet(startDate);
             rule.Should().BeFalse();
         }
 
@@ -79,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         public void PlannedHoursConditionMet_Pass_AsZeroValue()
         {
             int? pHours = 0;
-            NewRule().PlannedHoursConditionMet(pHours).Should().BeTrue();
+            NewRule().PlannedHoursConditionMet(pHours).Should().BeFalse();
         }
 
         [Fact]
@@ -103,11 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
             int? pHours = null;
             int fundModel = 36;
 
-            var academicStartDate = new DateTime(2019, 8, 1);
-            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
-            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
-
-            var rule = NewRule(academicYearDataService: mockAcademicYearDataService.Object).ConditionMet(startDate, pHours, fundModel);
+            var rule = NewRule().ConditionMet(startDate, pHours, fundModel);
             rule.Should().BeTrue();
         }
 
@@ -118,12 +102,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         public void ConditionMet_Fails(string startingDate, int? pHours, int fundModel)
         {
             var startDate = DateTime.Parse(startingDate);
-            var academicStartDate = new DateTime(2019, 8, 1);
-
-            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
-            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
-
-            var rule = NewRule(academicYearDataService: mockAcademicYearDataService.Object).ConditionMet(startDate, pHours, fundModel);
+            var rule = NewRule().ConditionMet(startDate, pHours, fundModel);
             rule.Should().BeFalse();
         }
 
@@ -131,7 +110,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         public void Validate_Error()
         {
             var learnStartDate = new DateTime(2019, 12, 01);
-            var academicStartDate = new DateTime(2019, 8, 1);
 
             var learningDeliveries = new List<TestLearningDelivery>()
             {
@@ -150,12 +128,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
                 LearningDeliveries = learningDeliveries
             };
 
-            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
-            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
-
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(mockAcademicYearDataService.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -163,8 +138,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         public void Validate_NoError()
         {
             var learnStartDate = new DateTime(2019, 12, 01);
-            var academicStartDate = new DateTime(2019, 8, 1);
-
             var learningDeliveries = new List<TestLearningDelivery>()
             {
                  new TestLearningDelivery
@@ -182,12 +155,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
                 LearningDeliveries = learningDeliveries
             };
 
-            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
-            mockAcademicYearDataService.Setup(x => x.Start()).Returns(academicStartDate);
-
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(mockAcademicYearDataService.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -206,9 +176,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
             validationErrorHandlerMock.Verify();
         }
 
-        public PHours_01Rule NewRule(IAcademicYearDataService academicYearDataService = null, IValidationErrorHandler validationErrorHandler = null)
+        public PHours_01Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
         {
-            return new PHours_01Rule(academicYearDataService, validationErrorHandler);
+            return new PHours_01Rule(validationErrorHandler);
         }
     }
 }
