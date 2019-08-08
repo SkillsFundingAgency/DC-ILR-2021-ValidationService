@@ -97,6 +97,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             NewService().HasAnyEmploymentStatusMonitoringTypeAndCodeForLearnerEmploymentStatus(learnerEmploymentStatuses, "SEI", 0).Should().BeFalse();
         }
 
+        [Fact]
+        public void HasAnyEmploymentStatusMonitoringTypeAndCodeForLearnerEmploymentStatus_True_WithDuplicates()
+        {
+            var learnerEmploymentStatuses = new TestLearnerEmploymentStatus[]
+            {
+                new TestLearnerEmploymentStatus
+                {
+                    EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
+                    {
+                        new TestEmploymentStatusMonitoring() { ESMType = "EII", ESMCode = 2 },
+                        new TestEmploymentStatusMonitoring() { ESMType = "EII", ESMCode = 2 },
+                    }
+                },
+                new TestLearnerEmploymentStatus
+                {
+                    EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
+                    {
+                        new TestEmploymentStatusMonitoring() { ESMType = "EII", ESMCode = 2 },
+                        new TestEmploymentStatusMonitoring() { ESMType = "EII", ESMCode = 2 },
+                    }
+                }
+            };
+
+            NewService().HasAnyEmploymentStatusMonitoringTypeAndCodeForLearnerEmploymentStatus(learnerEmploymentStatuses, "EII", 2).Should().BeTrue();
+        }
+
         [Theory]
         [InlineData("SEI")]
         [InlineData("eII")]
