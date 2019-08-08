@@ -182,7 +182,6 @@
     <Compile Include="Context\ValidationActorModelValidationContext.cs" />
     <Compile Include="Modules\ActorValidationModule.cs" />
     <Compile Include="Modules\DerivedDataModule.cs" />
-    <Compile Include="Modules\LearnerRuleSetModule.cs" />
     <Compile Include="Modules\LoggerModule.cs" />
     <Compile Include="Modules\QueryServiceModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
