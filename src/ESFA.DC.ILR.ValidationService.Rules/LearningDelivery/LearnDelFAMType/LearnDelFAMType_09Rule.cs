@@ -9,6 +9,11 @@ using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
+    /// <summary>
+    /// learning delivery funding amd monitoring rule 09
+    /// </summary>
+    /// <seealso cref="AbstractRule" />
+    /// <seealso cref="Interface.IRule{ILearner}" />
     public class LearnDelFAMType_09Rule :
         AbstractRule,
         IRule<ILearner>
@@ -37,26 +42,44 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         }
 
         /// <summary>
-        /// Determines whether [has esfa adultfunding] [the specified monitor].
+        /// Gets the first inviable date.
+        /// </summary>
+        public static DateTime FirstInviableDate => new DateTime(2019, 08, 01);
+
+        /// <summary>
+        /// Determines whether [has qualifying start] [the specified the delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying start] [the specified the delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingStart(ILearningDelivery theDelivery) =>
+            theDelivery.LearnStartDate < FirstInviableDate;
+
+        /// <summary>
+        /// Determines whether [has qualifying monitor] [the specified monitor].
+        /// there can only be one SOF code on a delivery
         /// </summary>
         /// <param name="monitor">The monitor.</param>
         /// <returns>
-        ///   <c>true</c> if [has esfa adultfunding] [the specified monitor]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [has qualifying monitor] [the specified monitor]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasESFAAdultFunding(ILearningDeliveryFAM monitor) =>
-            !It.IsNull(monitor)
-            && It.IsInRange(monitor.LearnDelFAMType, LearningDeliveryFAMTypeConstants.SOF)
-            && !It.IsInRange(monitor.LearnDelFAMCode, LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
+        public bool HasQualifyingMonitor(ILearningDeliveryFAM monitor) =>
+            It.IsOutOfRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding)
+            || It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
 
         /// <summary>
-        /// Determines whether [has esfa adultfunding] [the specified delivery].
+        /// Determines whether [has qualifying monitor] [the specified delivery].
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [has esfa adultfunding] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [has qualifying monitor] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasESFAAdultFunding(ILearningDelivery delivery) =>
-            _check.CheckDeliveryFAMs(delivery, HasESFAAdultFunding);
+        public bool HasQualifyingMonitor(ILearningDelivery delivery) =>
+            _check.CheckDeliveryFAMs(delivery, HasQualifyingMonitor);
+
+        public bool HasMonitors(ILearningDelivery delivery) =>
+            It.HasValues(delivery.LearningDeliveryFAMs);
 
         /// <summary>
         /// Determines whether [has qualifying funding] [the specified delivery].
@@ -82,8 +105,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsNotValid(ILearningDelivery delivery) =>
-            HasQualifyingFunding(delivery)
-            && HasESFAAdultFunding(delivery);
+            HasQualifyingStart(delivery)
+            && HasQualifyingFunding(delivery)
+            && (!HasMonitors(delivery) || !HasQualifyingMonitor(delivery));
 
         /// <summary>
         /// Validates the specified object.
