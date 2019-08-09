@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ESFA.DC.ILR.ValidationService.Rules.Constants
+﻿namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 {
     /// <summary>
     /// type(s) of monitoring (learner, learning delivery and employment status)
@@ -149,6 +147,41 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
             /// local authority community learning funds
             /// </summary>
             public const string LocalAuthorityCommunityLearningFunds = "SOF108";
+
+            /// <summary>
+            /// The greater manchester combined authority
+            /// </summary>
+            public const string GreaterManchesterCombinedAuthority = "SOF110";
+
+            /// <summary>
+            /// The liverpool city region combined authority
+            /// </summary>
+            public const string LiverpoolCityRegionCombinedAuthority = "SOF111";
+
+            /// <summary>
+            /// The west midlands combined authority
+            /// </summary>
+            public const string WestMidlandsCombinedAuthority = "SOF112";
+
+            /// <summary>
+            /// The west of england combined authority
+            /// </summary>
+            public const string WestOfEnglandCombinedAuthority = "SOF113";
+
+            /// <summary>
+            /// The tees valley combined authority
+            /// </summary>
+            public const string TeesValleyCombinedAuthority = "SOF114";
+
+            /// <summary>
+            /// The cambridgeshire and peterborough combined authority
+            /// </summary>
+            public const string CambridgeshireAndPeterboroughCombinedAuthority = "SOF115";
+
+            /// <summary>
+            /// The greater london authority
+            /// </summary>
+            public const string GreaterLondonAuthority = "SOF116";
 
             /// <summary>
             /// financed by advanced learner loans
