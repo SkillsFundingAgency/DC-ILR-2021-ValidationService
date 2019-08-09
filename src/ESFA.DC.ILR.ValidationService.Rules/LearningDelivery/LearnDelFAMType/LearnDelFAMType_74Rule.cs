@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     /// </summary>
     /// <seealso cref="AbstractRule" />
     /// <seealso cref="Interface.IRule{ILearner}" />
-    public class LearnDelFAMType_09Rule :
+    public class LearnDelFAMType_74Rule :
         AbstractRule,
         IRule<ILearner>
     {
@@ -24,14 +24,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly IProvideRuleCommonOperations _check;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LearnDelFAMType_09Rule" /> class.
+        /// Initializes a new instance of the <see cref="LearnDelFAMType_74Rule" /> class.
         /// </summary>
         /// <param name="validationErrorHandler">The validation error handler.</param>
         /// <param name="commonOperations">The common operations.</param>
-        public LearnDelFAMType_09Rule(
+        public LearnDelFAMType_74Rule(
             IValidationErrorHandler validationErrorHandler,
             IProvideRuleCommonOperations commonOperations)
-            : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_09)
+            : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_74)
         {
             It.IsNull(validationErrorHandler)
                 .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
@@ -42,9 +42,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         }
 
         /// <summary>
-        /// Gets the first inviable date.
+        /// Gets the last inviable date.
         /// </summary>
-        public static DateTime FirstInviableDate => new DateTime(2019, 08, 01);
+        public static DateTime LastInviableDate => new DateTime(2019, 07, 31);
 
         /// <summary>
         /// Determines whether [has qualifying start] [the specified the delivery].
@@ -54,7 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [has qualifying start] [the specified the delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasQualifyingStart(ILearningDelivery theDelivery) =>
-            theDelivery.LearnStartDate < FirstInviableDate;
+            theDelivery.LearnStartDate > LastInviableDate;
 
         /// <summary>
         /// Determines whether [has qualifying monitor] [the specified monitor].
@@ -66,7 +66,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// </returns>
         public bool HasQualifyingMonitor(ILearningDeliveryFAM monitor) =>
             It.IsOutOfRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding)
-            || It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
+            || It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", 
+                    Monitoring.Delivery.ESFAAdultFunding,
+                    Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority,
+                    Monitoring.Delivery.GreaterLondonAuthority,
+                    Monitoring.Delivery.GreaterManchesterCombinedAuthority,
+                    Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority,
+                    Monitoring.Delivery.TeesValleyCombinedAuthority,
+                    Monitoring.Delivery.WestMidlandsCombinedAuthority,
+                    Monitoring.Delivery.WestOfEnglandCombinedAuthority);
 
         /// <summary>
         /// Determines whether [has qualifying monitor] [the specified delivery].

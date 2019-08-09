@@ -11,9 +11,9 @@ using Xunit;
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAMType
 {
     /// <summary>
-    /// learning delivery funding and monitoring rule 09 tests
+    /// learning delivery funding and monitoring rule 74 tests
     /// </summary>
-    public class LearnDelFAMType_09RuleTests
+    public class LearnDelFAMType_74RuleTests
     {
         /// <summary>
         /// New rule with null message handler throws.
@@ -26,7 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_09Rule(null, commonOps.Object));
+            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_74Rule(null, commonOps.Object));
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
             // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_09Rule(handler.Object, null));
+            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_74Rule(handler.Object, null));
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var result = sut.RuleName;
 
             // assert
-            Assert.Equal("LearnDelFAMType_09", result);
+            Assert.Equal("LearnDelFAMType_74", result);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var result = sut.RuleName;
 
             // assert
-            Assert.Equal(RuleNameConstants.LearnDelFAMType_09, result);
+            Assert.Equal(RuleNameConstants.LearnDelFAMType_74, result);
         }
 
         /// <summary>
@@ -92,16 +92,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         /// <summary>
-        /// Faulty fam code meets expectation.
-        /// </summary>
-        [Fact]
-        public void FaultyFAMCodeMeetsExpectation()
-        {
-            // arrange / act / assert
-            Assert.Equal("105", LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
-        }
-
-        /// <summary>
         /// Has qualifying monitor meets expectation
         /// </summary>
         /// <param name="famType">The Learning Delivery FAM Type.</param>
@@ -118,13 +108,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData("SOF", "1", false)] // Monitoring.Delivery.HigherEducationFundingCouncilEngland
         [InlineData("SOF", "107", false)] // Monitoring.Delivery.ESFA16To19Funding
         [InlineData("SOF", "105", true)] // Monitoring.Delivery.ESFAAdultFunding
-        [InlineData("SOF", "110", false)] // Monitoring.Delivery.GreaterManchesterCombinedAuthority
-        [InlineData("SOF", "111", false)] // Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority
-        [InlineData("SOF", "112", false)] // Monitoring.Delivery.WestMidlandsCombinedAuthority
-        [InlineData("SOF", "113", false)] // Monitoring.Delivery.WestOfEnglandCombinedAuthority
-        [InlineData("SOF", "114", false)] // Monitoring.Delivery.TeesValleyCombinedAuthority
-        [InlineData("SOF", "115", false)] // Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority
-        [InlineData("SOF", "116", false)] // Monitoring.Delivery.GreaterLondonAuthority
+        [InlineData("SOF", "110", true)] // Monitoring.Delivery.GreaterManchesterCombinedAuthority
+        [InlineData("SOF", "111", true)] // Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority
+        [InlineData("SOF", "112", true)] // Monitoring.Delivery.WestMidlandsCombinedAuthority
+        [InlineData("SOF", "113", true)] // Monitoring.Delivery.WestOfEnglandCombinedAuthority
+        [InlineData("SOF", "114", true)] // Monitoring.Delivery.TeesValleyCombinedAuthority
+        [InlineData("SOF", "115", true)] // Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority
+        [InlineData("SOF", "116", true)] // Monitoring.Delivery.GreaterLondonAuthority
         public void HasQualifyingMonitorMeetsExpectation(string famType, string famCode, bool expectation)
         {
             // arrange
@@ -159,7 +149,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.CheckDeliveryFAMs(mockItem.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
                 .Returns(false);
 
-            var sut = new LearnDelFAMType_09Rule(handler.Object, commonOps.Object);
+            var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
 
             // act
             var result = sut.HasQualifyingMonitor(mockItem.Object);
@@ -172,20 +162,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         /// First inviable date meets expectation.
         /// </summary>
         [Fact]
-        public void FirstInviableDateMeetsExpectation()
+        public void LastInviableDateMeetsExpectation()
         {
             // arrange / act / assert
-            Assert.Equal(DateTime.Parse("2019-08-01"), LearnDelFAMType_09Rule.FirstInviableDate);
+            Assert.Equal(DateTime.Parse("2019-07-31"), LearnDelFAMType_74Rule.LastInviableDate);
         }
 
         /// <summary>
-        /// Esfa adult funding meets expectation.
+        /// Monitoring code meets expectation.
         /// </summary>
-        [Fact]
-        public void ESFAAdultFundingMeetsExpectation()
+        /// <param name="expectation">The expectation.</param>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData("SOF105", Monitoring.Delivery.ESFAAdultFunding)]
+        [InlineData("SOF115", Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority)]
+        [InlineData("SOF116", Monitoring.Delivery.GreaterLondonAuthority)]
+        [InlineData("SOF110", Monitoring.Delivery.GreaterManchesterCombinedAuthority)]
+        [InlineData("SOF111", Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority)]
+        [InlineData("SOF114", Monitoring.Delivery.TeesValleyCombinedAuthority)]
+        [InlineData("SOF112", Monitoring.Delivery.WestMidlandsCombinedAuthority)]
+        [InlineData("SOF113", Monitoring.Delivery.WestOfEnglandCombinedAuthority)]
+        public void MonitoringCodeMeetsExpectation(string expectation, string candidate)
         {
             // arrange / act / assert
-            Assert.Equal("SOF105", Monitoring.Delivery.ESFAAdultFunding);
+            Assert.Equal(expectation, candidate);
         }
 
         /// <summary>
@@ -196,6 +196,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             // arrange / act / assert
             Assert.Equal("SOF", Monitoring.Delivery.Types.SourceOfFunding);
+        }
+
+        /// <summary>
+        /// Faulty fam code meets expectation.
+        /// </summary>
+        [Fact]
+        public void FaultyFAMCodeMeetsExpectation()
+        {
+            // arrange / act / assert
+            Assert.Equal("105", LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
         }
 
         /// <summary>
@@ -239,7 +249,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                     81)) // TypeOfFunding.OtherAdult
                 .Returns(expectation);
 
-            var sut = new LearnDelFAMType_09Rule(handler.Object, commonOps.Object);
+            var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
 
             // act
             var result = sut.HasQualifyingFunding(mockItem.Object);
@@ -276,7 +286,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(candidate);
             delivery
                 .SetupGet(y => y.LearnStartDate)
-                .Returns(DateTime.Parse("2019-07-31"));
+                .Returns(DateTime.Parse("2019-08-01"));
             delivery
                 .SetupGet(y => y.LearningDeliveryFAMs)
                 .Returns(fams);
@@ -293,7 +303,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
-                .Setup(x => x.Handle(RuleNameConstants.LearnDelFAMType_09, LearnRefNumber, 0, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+                .Setup(x => x.Handle(RuleNameConstants.LearnDelFAMType_74, LearnRefNumber, 0, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
             handler
                 .Setup(x => x.BuildErrorMessageParameter("FundModel", candidate))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
@@ -319,7 +329,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
                 .Returns(false);
 
-            var sut = new LearnDelFAMType_09Rule(handler.Object, commonOps.Object);
+            var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
 
             // act
             sut.Validate(learner.Object);
@@ -357,7 +367,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(candidate);
             delivery
                 .SetupGet(y => y.LearnStartDate)
-                .Returns(DateTime.Parse("2019-07-31"));
+                .Returns(DateTime.Parse("2019-08-01"));
             delivery
                 .SetupGet(y => y.LearningDeliveryFAMs)
                 .Returns(fams);
@@ -390,7 +400,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
                 .Returns(true);
 
-            var sut = new LearnDelFAMType_09Rule(handler.Object, commonOps.Object);
+            var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
 
             // act
             sut.Validate(learner.Object);
@@ -404,12 +414,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         /// New rule.
         /// </summary>
         /// <returns>a constructed and mocked up validation rule</returns>
-        public LearnDelFAMType_09Rule NewRule()
+        public LearnDelFAMType_74Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            return new LearnDelFAMType_09Rule(handler.Object, commonOps.Object);
+            return new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
         }
     }
 }

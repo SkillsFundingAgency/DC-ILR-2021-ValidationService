@@ -13,6 +13,10 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
 {
+
+    /// <summary>
+    /// learn start date rule 07 tests
+    /// </summary>
     public class LearnStartDate_07RuleTests
     {
         /// <summary>
@@ -63,6 +67,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             Assert.Throws<ArgumentNullException>(() => new LearnStartDate_07Rule(handler.Object, ddRule04.Object, null, commonOps.Object));
         }
 
+        /// <summary>
+        /// New rule with null common operations throws.
+        /// </summary>
         [Fact]
         public void NewRuleWithNullCommonOperationsThrows()
         {
@@ -180,6 +187,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         /// </summary>
         /// <param name="isSP">if set to <c>true</c> [is sp].</param>
         /// <param name="isRES">if set to <c>true</c> [is resource].</param>
+        /// <param name="fwkCC">The framework common component.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(false, false, TypeOfLARSCommonComponent.Unknown, false)]
@@ -365,11 +373,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             Assert.True(result);
         }
 
+        /// <summary>
+        /// Determines whether [has qualifying framework aim meets expectation] [the specified candidate].
+        /// this isn't going to happen
+        /// [InlineData("2016-03-31", "2016-04-01", "2017-04-01", false, Skip = "no lower range checks till next year (19/20)")] // outside lower limit
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData("2016-08-02", "2016-04-01", "2017-04-01", true)] // inside
         [InlineData("2016-04-01", "2016-04-01", "2017-04-01", true)] // lower limit
         [InlineData("2017-04-01", "2016-04-01", "2017-04-01", true)] // upper limit
-        [InlineData("2016-03-31", "2016-04-01", "2017-04-01", false, Skip = "no lower range checks till next year (19/20)")] // outside lower limit
         [InlineData("2017-04-02", "2016-04-01", "2017-04-01", false)] // outside upper limit
         [InlineData("2016-04-01", "2016-04-01", "2016-03-31", false)] // withdrawn lower limit
         [InlineData("2017-04-01", "2016-04-01", "2016-03-31", false)] // withdrawn upper limit
@@ -392,12 +408,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
         /// <summary>
         /// Invalid item raises validation message.
+        /// this isn't going to happen
+        /// [InlineData("2016-03-31", "2016-04-01", "2017-04-01", Skip = "no lower range checks till next year (19/20)")] // outside lower limit
         /// </summary>
         /// <param name="candidate">The candidate.</param>
         /// <param name="start">The start.</param>
         /// <param name="end">The end.</param>
         [Theory]
-        [InlineData("2016-03-31", "2016-04-01", "2017-04-01", Skip = "no lower range checks till next year (19/20)")] // outside lower limit
         [InlineData("2017-04-02", "2016-04-01", "2017-04-01")] // outside upper limit
         [InlineData("2016-04-01", "2016-04-01", "2016-03-31")] // withdrawn lower limit
         [InlineData("2017-04-01", "2016-04-01", "2016-03-31")] // withdrawn upper limit
@@ -632,6 +649,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             commonOps.VerifyAll();
         }
 
+        /// <summary>
+        /// Shonky learn aim reference not crash.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
         [Theory]
         [InlineData("2016-08-02", "2016-04-01", "2017-04-01")] // inside
         public void ShonkyLearnAimRefNotCrash(string candidate, string start, string end)
