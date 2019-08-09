@@ -13,7 +13,6 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
 {
-
     /// <summary>
     /// learn start date rule 07 tests
     /// </summary>
