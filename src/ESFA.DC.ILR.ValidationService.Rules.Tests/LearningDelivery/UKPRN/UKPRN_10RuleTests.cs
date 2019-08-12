@@ -226,6 +226,179 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         /// <summary>
+        /// Gets the nullable date.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <returns>a nullable date</returns>
+        public DateTime? GetNullableDate(string candidate) =>
+            string.IsNullOrWhiteSpace(candidate) ? (DateTime?)null : DateTime.Parse(candidate);
+
+        /// <summary>
+        /// Has disqualifying end date meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="yearStart">The year start.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(null, "2018-03-01", false)]
+        [InlineData("2018-04-02", "2018-04-01", false)]
+        [InlineData("2018-04-01", "2018-04-01", false)]
+        [InlineData("2018-03-31", "2018-04-01", true)]
+        public void HasDisqualifyingEndDateMeetsExpectation(string candidate, string yearStart, bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnActEndDateNullable)
+                .Returns(GetNullableDate(candidate));
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
+
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.Start())
+                .Returns(DateTime.Parse(yearStart));
+
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+
+            var sut = new UKPRN_10Rule(handler.Object, fileData.Object, academicYear.Object, commonOps.Object, fcsData.Object);
+
+            // act
+            var result = sut.HasDisqualifyingEndDate(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            fileData.VerifyAll();
+            academicYear.VerifyAll();
+            fcsData.VerifyAll();
+        }
+
+        /// <summary>
+        /// Type of funding meets expectation.
+        /// </summary>
+        /// <param name="expectation">The expectation.</param>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData(36, TypeOfFunding.ApprenticeshipsFrom1May2017)]
+        public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
+        {
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
+        }
+
+        /// <summary>
+        /// Has qualifying (fund) model meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var mockItem = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(mockItem.Object, 36)) // TypeOfFunding.ApprenticeshipsFrom1May2017,
+                .Returns(expectation);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
+
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.Start())
+                .Returns(TestStartDate);
+
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+
+            var sut = new UKPRN_10Rule(handler.Object, fileData.Object, academicYear.Object, commonOps.Object, fcsData.Object);
+
+            // act
+            var result = sut.HasQualifyingModel(mockItem.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            fileData.VerifyAll();
+            academicYear.VerifyAll();
+            fcsData.VerifyAll();
+        }
+
+        /// <summary>
+        /// Has qualifying start meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void HasQualifyingStartMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingStart(delivery.Object, DateTime.Parse("2017-05-01"), null))
+                .Returns(expectation);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
+
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.Start())
+                .Returns(TestStartDate);
+
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+
+            var sut = new UKPRN_10Rule(handler.Object, fileData.Object, academicYear.Object, commonOps.Object, fcsData.Object);
+
+            // act
+            var result = sut.HasQualifyingStart(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            fileData.VerifyAll();
+            academicYear.VerifyAll();
+            fcsData.VerifyAll();
+        }
+
+        /// <summary>
+        /// Monitoring code meets expectation.
+        /// </summary>
+        /// <param name="expectation">The expectation.</param>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData("ACT1", Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer)]
+        public void MonitoringCodeMeetsExpectation(string expectation, string candidate)
+        {
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
+        }
+
+        /// <summary>
         /// Has qualifying monitor meets expectation
         /// </summary>
         /// <param name="famType">The Learning Delivery FAM Type.</param>
@@ -312,48 +485,35 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         /// <summary>
-        /// Monitoring code meets expectation.
+        /// Has funding relationship meets expectation
         /// </summary>
-        /// <param name="expectation">The expectation.</param>
         /// <param name="candidate">The candidate.</param>
-        [Theory]
-        [InlineData("ACT1", Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer)]
-        public void MonitoringCodeMeetsExpectation(string expectation, string candidate)
-        {
-            // arrange / act / assert
-            Assert.Equal(expectation, candidate);
-        }
-
-        /// <summary>
-        /// Type of funding meets expectation.
-        /// </summary>
-        /// <param name="expectation">The expectation.</param>
-        /// <param name="candidate">The candidate.</param>
-        [Theory]
-        [InlineData(36, TypeOfFunding.ApprenticeshipsFrom1May2017)]
-        public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
-        {
-            // arrange / act / assert
-            Assert.Equal(expectation, candidate);
-        }
-
-        /// <summary>
-        /// Has qualifying (fund) model meets expectation
-        /// </summary>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        [InlineData(FundingStreamPeriodCodeConstants.LEVY1799, true)]
+        [InlineData(FundingStreamPeriodCodeConstants.NONLEVY2019, true)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC1819, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_19TRN1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_ASCL1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBTO_TOL1819, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBTO_TOL1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_19TRLS1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_19TRN1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_AS1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_ASLS1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_LS1819, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_LS1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_TOL1819, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_TOL1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.ALLB1819, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.ALLB1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN1920, false)]
+        public void HasFundingRelationshipMeetsExpectation(string candidate, bool expectation)
         {
             // arrange
-            var mockItem = new Mock<ILearningDelivery>();
-
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockItem.Object, 36)) // TypeOfFunding.ApprenticeshipsFrom1May2017,
-                .Returns(expectation);
 
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             fileData
@@ -365,12 +525,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.Start())
                 .Returns(TestStartDate);
 
+            var allocation = new Mock<IFcsContractAllocation>(MockBehavior.Strict);
+            allocation
+                .SetupGet(x => x.FundingStreamPeriodCode)
+                .Returns(candidate);
+
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+            fcsData
+                .Setup(x => x.GetContractAllocationsFor(TestProviderID))
+                .Returns(new IFcsContractAllocation[] { allocation.Object });
 
             var sut = new UKPRN_10Rule(handler.Object, fileData.Object, academicYear.Object, commonOps.Object, fcsData.Object);
 
             // act
-            var result = sut.HasQualifyingModel(mockItem.Object);
+            var result = sut.HasFundingRelationship();
 
             // assert
             Assert.Equal(expectation, result);
