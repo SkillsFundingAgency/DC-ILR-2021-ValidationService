@@ -91,10 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
         public bool IsOverlappingLearnDelFAMDates(DateTime? dateTo, DateTime? dateFrom)
         {
-            return
-                 dateTo == null ? true
-                 : dateFrom == null ? false
-                 : dateTo >= dateFrom;
+            return dateTo == null || (dateFrom != null && dateTo >= dateFrom);
         }
 
         public bool HasFamType(ILearningDeliveryFAM learningDeliveryFam, string famType)
