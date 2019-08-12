@@ -4,16 +4,18 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using System.Collections.Generic;
 using System.Linq;
+using ESFA.DC.ILR.ValidationService.Data.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WithdrawReason
 {
     public class WithdrawReason_02Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int?[] validWithdrawReasons = { 2, 3, 7, 28, 29, 40, 41, 42, 43, 44, 45, 46, 47, 97, 98 };
+        private readonly IProvideLookupDetails _lookupDetails;
 
-        public WithdrawReason_02Rule(IValidationErrorHandler validationErrorHandler)
+        public WithdrawReason_02Rule(IValidationErrorHandler validationErrorHandler, IProvideLookupDetails lookupDetails)
             : base(validationErrorHandler, RuleNameConstants.WithdrawReason_02)
         {
+            _lookupDetails = lookupDetails;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -33,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WithdrawReason
         public bool ConditionMet(int? withdrawReason)
         {
             return withdrawReason.HasValue
-                   && !validWithdrawReasons.Contains(withdrawReason);
+                   && !_lookupDetails.Contains(TypeOfIntegerCodedLookup.WithdrawReason, withdrawReason.Value);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? withdrawReason)

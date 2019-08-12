@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Tests.Model;
+using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WithdrawReason;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
@@ -20,9 +21,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
         [Fact]
         public void ConditionMet_True()
         {
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
             var withdrawReason = 1;
 
-            NewRule().ConditionMet(withdrawReason).Should().BeTrue();
+            NewRule(lookupDetails: lookupDetailsMock.Object).ConditionMet(withdrawReason).Should().BeTrue();
         }
 
         [Theory]
@@ -43,7 +45,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
         [InlineData(98)]
         public void ConditionMet_False(int? withdrawReason)
         {
-            NewRule().ConditionMet(withdrawReason).Should().BeFalse();
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+            lookupDetailsMock.Setup(l => l.Contains(TypeOfIntegerCodedLookup.WithdrawReason, withdrawReason.Value)).Returns(true);
+            NewRule(lookupDetails: lookupDetailsMock.Object).ConditionMet(withdrawReason).Should().BeFalse();
         }
 
         [Fact]
@@ -55,6 +59,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
         [Fact]
         public void ValidateError()
         {
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+
             var learner = new TestLearner()
             {
                 LearningDeliveries = new List<TestLearningDelivery>()
@@ -68,7 +74,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, lookupDetailsMock.Object).Validate(learner);
             }
         }
 
@@ -90,6 +96,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
         [InlineData(98)]
         public void ValidateNoError(int? withdrawReason)
         {
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+            lookupDetailsMock.Setup(l => l.Contains(TypeOfIntegerCodedLookup.WithdrawReason, withdrawReason.Value))
+                .Returns(true);
+
             var learner = new TestLearner()
             {
                 LearningDeliveries = new List<TestLearningDelivery>()
@@ -103,7 +113,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, lookupDetailsMock.Object).Validate(learner);
             }
         }
 
@@ -121,9 +131,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
             validationErrorHandlerMock.Verify();
         }
 
-        private WithdrawReason_02Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
+        [Fact]
+        public void CallLookupProvider()
         {
-            return new WithdrawReason_02Rule(validationErrorHandler);
+            int? withdrawReason = 1;
+
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+
+            lookupDetailsMock.Setup(l => l.Contains(TypeOfIntegerCodedLookup.WithdrawReason, withdrawReason.Value)).Verifiable();
+
+            NewRule(lookupDetails: lookupDetailsMock.Object).ConditionMet(withdrawReason);
+
+            lookupDetailsMock.Verify();
+        }
+
+        private WithdrawReason_02Rule NewRule(IValidationErrorHandler validationErrorHandler = null, IProvideLookupDetails lookupDetails = null)
+        {
+            return new WithdrawReason_02Rule(validationErrorHandler, lookupDetails);
         }
     }
 }
