@@ -108,13 +108,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData("SOF", "1", false)] // Monitoring.Delivery.HigherEducationFundingCouncilEngland
         [InlineData("SOF", "107", false)] // Monitoring.Delivery.ESFA16To19Funding
         [InlineData("SOF", "105", true)] // Monitoring.Delivery.ESFAAdultFunding
-        [InlineData("SOF", "110", true)] // Monitoring.Delivery.GreaterManchesterCombinedAuthority
-        [InlineData("SOF", "111", true)] // Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority
-        [InlineData("SOF", "112", true)] // Monitoring.Delivery.WestMidlandsCombinedAuthority
-        [InlineData("SOF", "113", true)] // Monitoring.Delivery.WestOfEnglandCombinedAuthority
-        [InlineData("SOF", "114", true)] // Monitoring.Delivery.TeesValleyCombinedAuthority
-        [InlineData("SOF", "115", true)] // Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority
-        [InlineData("SOF", "116", true)] // Monitoring.Delivery.GreaterLondonAuthority
+        [InlineData("SOF", "110", false)] // Monitoring.Delivery.GreaterManchesterCombinedAuthority
+        [InlineData("SOF", "111", false)] // Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority
+        [InlineData("SOF", "112", false)] // Monitoring.Delivery.WestMidlandsCombinedAuthority
+        [InlineData("SOF", "113", false)] // Monitoring.Delivery.WestOfEnglandCombinedAuthority
+        [InlineData("SOF", "114", false)] // Monitoring.Delivery.TeesValleyCombinedAuthority
+        [InlineData("SOF", "115", false)] // Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority
+        [InlineData("SOF", "116", false)] // Monitoring.Delivery.GreaterLondonAuthority
         public void HasQualifyingMonitorMeetsExpectation(string famType, string famCode, bool expectation)
         {
             // arrange
@@ -243,7 +243,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.HasQualifyingFunding(
                     mockItem.Object,
                     10, // TypeOfFunding.CommunityLearning,
-                    35, // TypeOfFunding.AdultSkills
                     36, // TypeOfFunding.ApprenticeshipsFrom1May2017,
                     70, // TypeOfFunding.EuropeanSocialFund,
                     81)) // TypeOfFunding.OtherAdult
@@ -256,6 +255,38 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             // assert
             Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void HasTraineeshipFundingMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35)) // TypeOfFunding.AdultSkills
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
+                .Returns(expectation);
+
+            var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
+
+            // act
+            var result = sut.HasTraineeshipFunding(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
         }
 
         /// <summary>
@@ -284,6 +315,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             delivery
                 .SetupGet(y => y.FundModel)
                 .Returns(candidate);
+            delivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(24);
             delivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(DateTime.Parse("2019-08-01"));
@@ -314,16 +348,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMCode", "105"))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            // these two operations control the path
+            // return false here to make sure the next two are called
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(
                     delivery.Object,
                     10, // TypeOfFunding.CommunityLearning,
-                    35, // TypeOfFunding.AdultSkills
                     36, // TypeOfFunding.ApprenticeshipsFrom1May2017,
                     70, // TypeOfFunding.EuropeanSocialFund,
                     81)) // TypeOfFunding.OtherAdult
+                .Returns(false);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35)) // TypeOfFunding.AdultSkills
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
                 .Returns(true);
             commonOps
                 .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
@@ -366,6 +405,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(y => y.FundModel)
                 .Returns(candidate);
             delivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(24);
+            delivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(DateTime.Parse("2019-08-01"));
             delivery
@@ -384,18 +426,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            // these two operations control the path
+            // return false here to make sure the next two are called
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(
                     delivery.Object,
                     10, // TypeOfFunding.CommunityLearning,
-                    35, // TypeOfFunding.AdultSkills
                     36, // TypeOfFunding.ApprenticeshipsFrom1May2017,
                     70, // TypeOfFunding.EuropeanSocialFund,
                     81)) // TypeOfFunding.OtherAdult
+                .Returns(false);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35)) // TypeOfFunding.AdultSkills
                 .Returns(true);
-
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
+                .Returns(true);
             commonOps
                 .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
                 .Returns(true);
