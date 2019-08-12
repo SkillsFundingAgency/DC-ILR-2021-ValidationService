@@ -4,6 +4,8 @@
     {
         public const string LEVY1799 = "LEVY1799";
 
+        public const string NONLEVY2019 = "NONLEVY2019";
+
         public const string AEBC1819 = "AEBC1819";
 
         public const string AEB_LS1819 = "AEB-LS1819";

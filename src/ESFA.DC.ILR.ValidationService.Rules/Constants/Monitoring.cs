@@ -189,6 +189,11 @@
             public const string FinancedByAdvancedLearnerLoans = "ADL1";
 
             /// <summary>
+            /// The apprenticeship funded through a contract for services with employer
+            /// </summary>
+            public const string ApprenticeshipFundedThroughAContractForServicesWithEmployer = "ACT1";
+
+            /// <summary>
             /// funding and monitoring types
             /// </summary>
             public static class Types
