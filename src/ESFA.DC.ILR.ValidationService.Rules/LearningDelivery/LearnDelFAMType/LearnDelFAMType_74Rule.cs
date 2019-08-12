@@ -67,13 +67,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool HasQualifyingMonitor(ILearningDeliveryFAM monitor) =>
             It.IsOutOfRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding)
             || It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
-                    //Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority,
-                    //Monitoring.Delivery.GreaterLondonAuthority,
-                    //Monitoring.Delivery.GreaterManchesterCombinedAuthority,
-                    //Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority,
-                    //Monitoring.Delivery.TeesValleyCombinedAuthority,
-                    //Monitoring.Delivery.WestMidlandsCombinedAuthority,
-                    //Monitoring.Delivery.WestOfEnglandCombinedAuthority);
 
         /// <summary>
         /// Determines whether [has qualifying monitor] [the specified delivery].
@@ -118,8 +111,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [has traineeship funding] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasTraineeshipFunding(ILearningDelivery delivery) =>
-            _check.HasQualifyingFunding(delivery,TypeOfFunding.AdultSkills) 
-            && It.IsInRange( delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship);
+            _check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)
+            && _check.IsTraineeship(delivery);
 
         /// <summary>
         /// Determines whether [is not valid] [the specified delivery].

@@ -261,27 +261,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(null, false)]
-        [InlineData(14, false)]
-        [InlineData(24, true)]
-        public void HasTraineeshipFundingMeetsExpectation(int? candidate, bool expectation)
+        [InlineData(false)]
+        [InlineData(true)]
+        public void HasTraineeshipFundingMeetsExpectation(bool expectation)
         {
             // arrange
-            var mockItem = new Mock<ILearningDelivery>();
-            mockItem
-                .Setup(x => x.ProgTypeNullable)
-                .Returns(candidate);
+            var delivery = new Mock<ILearningDelivery>();
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.HasQualifyingFunding(mockItem.Object, 35)) // TypeOfFunding.AdultSkills
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35)) // TypeOfFunding.AdultSkills
                 .Returns(true);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
+                .Returns(expectation);
 
             var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
 
             // act
-            var result = sut.HasTraineeshipFunding(mockItem.Object);
+            var result = sut.HasTraineeshipFunding(delivery.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -349,7 +348,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMCode", "105"))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            // these two operations control the path
+            // return false here to make sure the next two are called
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(
@@ -361,6 +360,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(false);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 35)) // TypeOfFunding.AdultSkills
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
                 .Returns(true);
             commonOps
                 .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
@@ -424,7 +426,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            // these two operations control the path
+            // return false here to make sure the next two are called
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(
@@ -436,6 +438,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(false);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 35)) // TypeOfFunding.AdultSkills
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
                 .Returns(true);
             commonOps
                 .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
