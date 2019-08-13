@@ -123,8 +123,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         public void FromDateCondition_IsTrue_AsStartDateIsGreater()
         {
             string contractRef = "123";
-            var startDate = new DateTime(2019, 04, 15);
-            var stopNewStartsFromDate = new DateTime(2019, 01, 11);
+            var startDate = new DateTime(2019, 08, 03);
+            var stopNewStartsFromDate = new DateTime(2019, 08, 02);
 
             var mockContractAllocation = new Mock<IFcsContractAllocation>();
             mockContractAllocation.SetupGet(x => x.StopNewStartsFromDate).Returns(stopNewStartsFromDate);
@@ -253,8 +253,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         {
             int ukprn = 12345678;
             string conRefNumber = "123";
-            DateTime stopNewStartsFromDate = new DateTime(2018, 8, 1);
-            DateTime startDate = stopNewStartsFromDate.AddYears(1);
+            var startDate = new DateTime(2019, 08, 03);
+            var stopNewStartsFromDate = new DateTime(2019, 08, 02);
 
             var learner = new TestLearner()
             {

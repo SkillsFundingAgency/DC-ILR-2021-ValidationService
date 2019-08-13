@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                                                                       _learnDelFamType,
                                                                       _learnDelFAMCodeSOF,
                                                                       learningDelivery.LearnStartDate));
-                }                                                     
+                }
             }
         }
 
@@ -110,7 +110,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             if (contractAllocation == null)
                 return false;
 
-            return contractAllocation.StopNewStartsFromDate != null && learnStartDate >= contractAllocation.StopNewStartsFromDate;
+            return contractAllocation.StopNewStartsFromDate.HasValue && learnStartDate >= contractAllocation.StopNewStartsFromDate;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int uKPRN, int fundModel, int? progType, string learnDelFAMType, string learnDelFAMCode, DateTime learnStartDate)
