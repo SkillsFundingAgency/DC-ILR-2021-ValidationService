@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -21,499 +22,355 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         }
 
         [Theory]
-        [InlineData(365)]
-        [InlineData(370)]
-        public void ValidatePasses_AsMinDuration_GreaterThan365(int totalDays)
+        [InlineData(35)]
+        [InlineData(81)]
+        public void FundModelCondition_Pass(int fundModel)
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock
-                .Setup(m => m.WholeDaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(totalDays);
-
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1998, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = 35,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2017, 8, 10)
-                    }
-                }
-            };
-
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
+            NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
         }
 
         [Fact]
-        public void ValidateFails_AsMinDuration_LessThan365()
+        public void AimStartConditionMet_Pass_asLessThanDate()
         {
+            var startDate = new DateTime(2016, 5, 31);
+            NewRule().AimsStartDateConditionMet(startDate).Should().BeTrue();
+        }
+
+        [Fact]
+        public void AimStartConditionMet_Pass_asEqualDate()
+        {
+            var startDate = new DateTime(2016, 7, 31);
+            NewRule().AimsStartDateConditionMet(startDate).Should().BeTrue();
+        }
+
+        [Fact]
+        public void AimStartConditionMet_Fails_asGreaterThanDate()
+        {
+            var startDate = new DateTime(2016, 9, 18);
+            NewRule().AimsStartDateConditionMet(startDate).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(31)]
+        [InlineData(19)]
+        public void FundModelCondition_Fails(int fundModel)
+        {
+            NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AimTypeCondition_Pass()
+        {
+            NewRule().AimTypeConditionMet(1).Should().BeTrue();
+        }
+
+        [Fact]
+        public void AimTypeCondition_Fails()
+        {
+            NewRule().AimTypeConditionMet(2).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ProgtypeCondition_Pass()
+        {
+            NewRule().ProgTypeConditionMet(25).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(19)]
+        public void ProgtypeCondition_Fails(int? progType)
+        {
+            NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void OutcomeCondition_Pass()
+        {
+            NewRule().OutcomeConditionMet(1).Should().BeTrue();
+        }
+
+        [Fact]
+        public void OutcomeCondition_Fails()
+        {
+            NewRule().OutcomeConditionMet(2).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AgeConditionMet_Pass()
+        {
+            var dateOfBirth = new DateTime(1996, 5, 30);
+            var startDate = new DateTime(2016, 07, 31);
+
+            var mockDateTimeService = new Mock<IDateTimeQueryService>();
+
+            // DOB
+            var years = startDate.Year - dateOfBirth.Year;
+            var dob = dateOfBirth < startDate.AddYears(years) ? years - 1 : years;
+            mockDateTimeService.Setup(x => x.YearsBetween(dateOfBirth, startDate)).Returns(dob);
+
+            var rule = NewRule(dateTimeQueryService: mockDateTimeService.Object);
+
+            var result = rule.AgeConditionMet(dateOfBirth, startDate);
+            result.Should().BeTrue();
+
+            mockDateTimeService.Verify(x => x.YearsBetween(dateOfBirth, startDate), Times.Exactly(1));
+        }
+
+        [Fact]
+        public void AgeConditionMet_Fails()
+        {
+            var dateOfBirth = new DateTime(1997, 5, 30);
+            var startDate = new DateTime(2016, 07, 31);
+
+            var mockDateTimeService = new Mock<IDateTimeQueryService>();
+
+            // DOB
+            var years = startDate.Year - dateOfBirth.Year;
+            var dob = dateOfBirth < startDate.AddYears(years) ? years - 1 : years;
+            mockDateTimeService.Setup(x => x.YearsBetween(dateOfBirth, startDate)).Returns(dob);
+
+            var rule = NewRule(dateTimeQueryService: mockDateTimeService.Object);
+
+            var result = rule.AgeConditionMet(dateOfBirth, startDate);
+            result.Should().BeFalse();
+
+            mockDateTimeService.Verify(x => x.YearsBetween(dateOfBirth, startDate), Times.Exactly(1));
+        }
+
+        [Theory]
+        [InlineData("2016-07-31", "2017-07-29", true)] // triggers due to 364 Days
+        [InlineData("2016-07-31", "2017-07-30", false)] // doesn't trigger due to 365 days
+        [InlineData("2016-07-31", "2017-07-31", false)] // doesn't trigger due to 366 days
+        public void DurationConditionMet_ExpectedResult(string learnStartDate, string learnActEndDate, bool expectedResult)
+        {
+            DateTime startDate = DateTime.Parse(learnStartDate);
+            DateTime actEndDateNullable = DateTime.Parse(learnActEndDate);
+
+            var mockDateTimeService = new Mock<IDateTimeQueryService>();
+
+            var days = (actEndDateNullable - startDate).TotalDays;
+            double totalWholeDays = Math.Abs(days) + 1;
+            mockDateTimeService.Setup(x => x.WholeDaysBetween(startDate, actEndDateNullable)).Returns(totalWholeDays);
+
+            var rule = NewRule(dateTimeQueryService: mockDateTimeService.Object);
+
+            var result = rule.DurationConditionMet(startDate, actEndDateNullable);
+            result.Should().Be(expectedResult);
+
+            mockDateTimeService.Verify(x => x.WholeDaysBetween(startDate, actEndDateNullable), Times.Exactly(1));
+        }
+
+        [Fact]
+        public void DurationConditionMet_Fails_DuetoNull()
+        {
+            DateTime startDate = new DateTime(2016, 07, 31);
+            DateTime? actEndDateNullable = null;
+
+            NewRule().DurationConditionMet(startDate, actEndDateNullable).Should().BeFalse();
+        }
+
+        [Fact]
+        public void RestartConditionMet_Pass()
+        {
+            IEnumerable<ILearningDeliveryFAM> deliveryFAMs = new List<TestLearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM() { LearnDelFAMType = "ADL" }
+            };
+
+            var mockFamQuerySrvc = new Mock<ILearningDeliveryFAMQueryService>();
+            mockFamQuerySrvc.Setup(x => x.HasLearningDeliveryFAMType(deliveryFAMs, "RES")).Returns(false); // results True
+
+            var result = NewRule(learningDeliveryFAMQueryService: mockFamQuerySrvc.Object).RestartConditionMet(deliveryFAMs);
+
+            result.Should().BeTrue();
+            mockFamQuerySrvc.Verify(x => x.HasLearningDeliveryFAMType(deliveryFAMs, "RES"), Times.Exactly(1));
+        }
+
+        [Fact]
+        public void RestartConditionMet_Fails()
+        {
+            IEnumerable<ILearningDeliveryFAM> deliveryFAMs = new List<TestLearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM() { LearnDelFAMType = "RES" }
+            };
+
+            var mockFamQuerySrvc = new Mock<ILearningDeliveryFAMQueryService>();
+            mockFamQuerySrvc.Setup(x => x.HasLearningDeliveryFAMType(deliveryFAMs, "RES")).Returns(true); // results False
+
+            var result = NewRule(learningDeliveryFAMQueryService: mockFamQuerySrvc.Object).RestartConditionMet(deliveryFAMs);
+
+            result.Should().BeFalse();
+            mockFamQuerySrvc.Verify(x => x.HasLearningDeliveryFAMType(deliveryFAMs, "RES"), Times.Exactly(1));
+        }
+
+        [Fact]
+        public void ConditionMet_Pass()
+        {
+            int fundModel = 36;
+            var progType = 25;
+            var aimType = 1;
+            var outcome = 1;
+
+            var dateOfBirth = new DateTime(1996, 5, 30);
+            var startDate = new DateTime(2016, 07, 31);
+            var actEndDate = new DateTime(2017, 07, 29);
+
             var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
             {
                 new TestLearningDeliveryFAM
                 {
-                    LearnDelFAMType = "ACT"
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.RES,
+                    LearnDelFAMCode = "105"
                 }
             };
 
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1996, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = 35,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = null,
-                        OutcomeNullable = 1
-                    },
-                    new TestLearningDelivery
-                    {
-                        FundModel = 35,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2016, 9, 1),
-                        OutcomeNullable = 1,
-                        LearningDeliveryFAMs = learningDeliveryFAMs
-                    }
-                }
-            };
+            var rule = NewRuleMock();
+            rule.Setup(x => x.AimsStartDateConditionMet(startDate)).Returns(true);
+            rule.Setup(x => x.FundModelConditionMet(fundModel)).Returns(true);
+            rule.Setup(x => x.AimTypeConditionMet(aimType)).Returns(true);
+            rule.Setup(x => x.ProgTypeConditionMet(progType)).Returns(true);
+            rule.Setup(x => x.OutcomeConditionMet(outcome)).Returns(true);
+            rule.Setup(x => x.AgeConditionMet(dateOfBirth, startDate)).Returns(true);
+            rule.Setup(x => x.DurationConditionMet(startDate, actEndDate)).Returns(true);
+            rule.Setup(x => x.RestartConditionMet(learningDeliveryFAMs)).Returns(true);
 
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
+            var result = rule.Object.ConditionMet(fundModel, aimType, progType, outcome, startDate, dateOfBirth, actEndDate, learningDeliveryFAMs);
 
-            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-
-            learningDeliveryFAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES"))
-                .Returns(false);
-
-            dateTimeServiceMock.Setup(m => m.WholeDaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(100);
-
-            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(20);
-
-            dateTimeServiceMock.Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(0);
-
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock, 1);
+            result.Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(35)]
-        [InlineData(81)]
-        public void ValidatePasses_OutsideAgeRange(int fundModel)
+        [InlineData("2016-07-31", "2017-07-30")] // doesn't trigger due to 365 days
+        [InlineData("2016-07-31", "2017-07-31")] // doesn't trigger due to 366 days
+        public void Validate_NoError(string learnStartDate, string learnActEndDate)
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+            int fundModel = 81;
+            var progType = 25;
+            var aimType = 1;
+            var outcome = 1;
 
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(18);
+            var dateOfBirth = new DateTime(1996, 5, 30);
 
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1998, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = fundModel,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2016, 9, 1)
-                    }
-                }
-            };
+            DateTime startDate = DateTime.Parse(learnStartDate);
+            DateTime actEndDate = DateTime.Parse(learnActEndDate);
 
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Fact]
-        public void ValidatePassesIrrelevantFundingModel()
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(20);
-
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1996, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = TypeOfFunding.CommunityLearning,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2016, 9, 1)
-                    }
-                }
-            };
-
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Theory]
-        [InlineData(35)]
-        [InlineData(81)]
-        public void ValidatePassesIrrelevantProgType(int fundModel)
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(20);
-
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1996, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = fundModel,
-                        AimType = 1,
-                        ProgTypeNullable = 20,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2016, 9, 1)
-                    }
-                }
-            };
-
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Theory]
-        [InlineData(35)]
-        [InlineData(81)]
-        public void ValidatePassesIrrelevantAimType(int fundModel)
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(20);
-
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1996, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = fundModel,
-                        AimType = 4,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2016, 9, 1)
-                    }
-                }
-            };
-
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Theory]
-        [InlineData(35)]
-        [InlineData(81)]
-        public void ValidatePassesStartDateAfterCutOff(int fundModel)
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(20);
-
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1996, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = fundModel,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2018, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2018, 9, 1)
-                    }
-                }
-            };
-
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Theory]
-        [InlineData(35)]
-        [InlineData(81)]
-        public void ValidatePassesRestartException(int fundModel)
-        {
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+            var deliveryFAMs = new List<TestLearningDeliveryFAM>
             {
                 new TestLearningDeliveryFAM
                 {
-                    LearnDelFAMType = "RES"
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.RES,
+                    LearnDelFAMCode = "105"
                 }
             };
 
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var fAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-
-            fAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
-            dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(20);
-
-            var testLearner = new TestLearner
+            var learner = new TestLearner
             {
-                DateOfBirthNullable = new DateTime(1996, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
+                DateOfBirthNullable = dateOfBirth,
+                LearningDeliveries = new List<TestLearningDelivery>()
                 {
-                    new TestLearningDelivery
+                    new TestLearningDelivery()
                     {
                         FundModel = fundModel,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2016, 9, 1),
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = "RES"
-                            }
-                        }
+                        AimType = aimType,
+                        ProgTypeNullable = progType,
+                        OutcomeNullable = outcome,
+                        CompStatus = 1,
+                        LearnActEndDateNullable = actEndDate,
+                        LearnStartDate = startDate,
+                        LearningDeliveryFAMs = deliveryFAMs
                     }
                 }
             };
 
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                learningDeliveryFAMQueryService: fAMsQueryServiceMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
+            var mockDateTimeService = new Mock<IDateTimeQueryService>();
+
+            var days = (actEndDate - startDate).TotalDays;
+            double totalWholeDays = Math.Abs(days) + 1;
+            mockDateTimeService.Setup(x => x.WholeDaysBetween(startDate, actEndDate)).Returns(totalWholeDays);
+
+            // DOB
+            var years = startDate.Year - dateOfBirth.Year;
+            var dob = dateOfBirth < startDate.AddYears(years) ? years - 1 : years;
+            mockDateTimeService.Setup(x => x.YearsBetween(dateOfBirth, startDate)).Returns(dob);
+
+            var mockFamQuerySrvc = new Mock<ILearningDeliveryFAMQueryService>();
+            mockFamQuerySrvc.Setup(x => x.HasLearningDeliveryFAMType(deliveryFAMs, "RES")).Returns(false); // results True
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(
+                        validationErrorHandlerMock.Object,
+                        mockFamQuerySrvc.Object,
+                        mockDateTimeService.Object)
+                .Validate(learner);
+            }
         }
 
         [Theory]
-        [InlineData(35)]
-        [InlineData(81)]
-        public void ValidatePassesNoCourseEndDate(int fundModel)
+        [InlineData("2016-07-31", "2017-07-29")] // triggers due to 364 Days
+        public void Validate_Error(string learnStartDate, string learnActEndDate)
         {
-            TestLearningDeliveryFAM[] learningDeliveryFAMs = null;
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
+            int fundModel = 81;
+            var progType = 25;
+            var aimType = 1;
+            var outcome = 1;
 
-            dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(20);
+            var dateOfBirth = new DateTime(1996, 5, 30);
 
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1996, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = fundModel,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        OutcomeNullable = 1,
-                        LearnActEndDateNullable = null
-                    }
-                }
-            };
+            DateTime startDate = DateTime.Parse(learnStartDate);
+            DateTime actEndDate = DateTime.Parse(learnActEndDate);
 
-            learningDeliveryFAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Theory]
-        [InlineData(35)]
-        [InlineData(81)]
-        public void ValidatePassesCourse12Months(int fundModel)
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-
-            dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(20);
-            dateTimeServiceMock
-                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(1);
-
-            TestLearningDeliveryFAM[] learningDeliveryFAMs = null;
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1996, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = fundModel,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2017, 8, 31),
-                        OutcomeNullable = 1
-                    }
-                }
-            };
-
-            learningDeliveryFAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Fact]
-        public void ValidatePasses_NoLDs()
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1998, 8, 31),
-                LearnerFAMs = new List<TestLearnerFAM>()
-            };
-
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Theory]
-        [InlineData(35)]
-        [InlineData(81)]
-        public void ValidateFails(int fundModel)
-        {
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+            var deliveryFAMs = new List<TestLearningDeliveryFAM>
             {
                 new TestLearningDeliveryFAM
                 {
-                    LearnDelFAMType = "ACT"
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.ALB,
+                    LearnDelFAMCode = "105"
                 }
             };
 
-            var testLearner = new TestLearner
+            var learner = new TestLearner
             {
-                DateOfBirthNullable = new DateTime(1996, 7, 31),
-                LearningDeliveries = new List<TestLearningDelivery>
+                DateOfBirthNullable = dateOfBirth,
+                LearningDeliveries = new List<TestLearningDelivery>()
                 {
-                    new TestLearningDelivery
+                    new TestLearningDelivery()
                     {
                         FundModel = fundModel,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2016, 9, 1)
-                    },
-                    new TestLearningDelivery
-                    {
-                        FundModel = fundModel,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = null,
-                        OutcomeNullable = 1
-                    },
-                    new TestLearningDelivery
-                    {
-                        FundModel = fundModel,
-                        AimType = 1,
-                        ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2016, 7, 31),
-                        LearnActEndDateNullable = new DateTime(2016, 9, 1),
-                        OutcomeNullable = 1,
-                        LearningDeliveryFAMs = learningDeliveryFAMs
+                        AimType = aimType,
+                        ProgTypeNullable = progType,
+                        OutcomeNullable = outcome,
+                        CompStatus = 1,
+                        LearnActEndDateNullable = actEndDate,
+                        LearnStartDate = startDate,
+                        LearningDeliveryFAMs = deliveryFAMs
                     }
                 }
             };
 
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
+            var mockDateTimeService = new Mock<IDateTimeQueryService>();
 
-            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
+            var days = (actEndDate - startDate).TotalDays;
+            double totalWholeDays = Math.Abs(days) + 1;
+            mockDateTimeService.Setup(x => x.WholeDaysBetween(startDate, actEndDate)).Returns(totalWholeDays);
 
-            learningDeliveryFAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
-            dateTimeServiceMock
-                .Setup(m => m.WholeDaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(100);
-            dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(20);
-            dateTimeServiceMock
-                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(0);
+            // DOB
+            var years = startDate.Year - dateOfBirth.Year;
+            var dob = dateOfBirth < startDate.AddYears(years) ? years - 1 : years;
+            mockDateTimeService.Setup(x => x.YearsBetween(dateOfBirth, startDate)).Returns(dob);
 
-            NewRule(
-                validationErrorHandler: validationErrorHandlerMock.Object,
-                learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object,
-                dateTimeQueryService: dateTimeServiceMock.Object)
-                .Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock, 1);
+            var mockFamQuerySrvc = new Mock<ILearningDeliveryFAMQueryService>();
+            mockFamQuerySrvc.Setup(x => x.HasLearningDeliveryFAMType(deliveryFAMs, "ALB")).Returns(false); // results True
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(
+                        validationErrorHandlerMock.Object,
+                        mockFamQuerySrvc.Object,
+                        mockDateTimeService.Object)
+                .Validate(learner);
+            }
         }
 
         private DateOfBirth_40Rule NewRule(
