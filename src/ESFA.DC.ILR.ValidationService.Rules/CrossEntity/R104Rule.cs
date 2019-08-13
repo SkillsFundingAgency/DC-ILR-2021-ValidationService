@@ -27,12 +27,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (learningDelivery.LearningDeliveryFAMs == null || !HasValidFamsToCheck(learningDelivery.LearningDeliveryFAMs))
+                if (learningDelivery.LearningDeliveryFAMs == null)
                 {
                     continue;
                 }
 
-                var nonConsecutiveLearningDeliveryFAMs = GetNonConsecutiveLearningDeliveryFAMsForType(learningDelivery.LearningDeliveryFAMs);
+                var learnDelFAMsToCheck = learningDelivery.LearningDeliveryFAMs?
+                    .Where(fam => fam.LearnDelFAMType.CaseInsensitiveEquals(_famTypeACT))
+                    .OrderBy(ld => ld.LearnDelFAMDateFromNullable ?? DateTime.MaxValue);
+
+                if (!HasValidFamsToCheck(learnDelFAMsToCheck))
+                {
+                    continue;
+                }
+
+                var nonConsecutiveLearningDeliveryFAMs = GetNonConsecutiveLearningDeliveryFAMs(learnDelFAMsToCheck);
 
                 foreach (var learningDeliveryFAM in nonConsecutiveLearningDeliveryFAMs)
                 {
@@ -52,16 +61,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool HasValidFamsToCheck(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
-            var learnDelFAMsToCheck =
-                learningDeliveryFams?
-                    .Where(fam => fam.LearnDelFAMType.CaseInsensitiveEquals(_famTypeACT))
-                    .OrderBy(ld => ld.LearnDelFAMDateFromNullable ?? DateTime.MaxValue);
-
-            return learnDelFAMsToCheck.Any(ldf => ldf.LearnDelFAMDateFromNullable != null) &&
-                   learnDelFAMsToCheck.Count() >= 2;
+            return learningDeliveryFams.Any(ldf => ldf.LearnDelFAMDateFromNullable != null) &&
+                   learningDeliveryFams.Count() >= 2;
         }
 
-        public IEnumerable<ILearningDeliveryFAM> GetNonConsecutiveLearningDeliveryFAMsForType(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
+        public IEnumerable<ILearningDeliveryFAM> GetNonConsecutiveLearningDeliveryFAMs(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
             var nonConsecutiveLearningDeliveryFAMs = new List<ILearningDeliveryFAM>();
 

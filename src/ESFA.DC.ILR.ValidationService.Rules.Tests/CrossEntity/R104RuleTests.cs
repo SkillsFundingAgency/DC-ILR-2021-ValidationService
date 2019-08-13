@@ -44,7 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDeliveryFAM
                 {
                     LearnDelFAMType = "XXX",
-                    LearnDelFAMDateFromNullable = new DateTime(2018, 8, 1),
+                    LearnDelFAMDateFromNullable = null,
                     LearnDelFAMDateToNullable = new DateTime(2018, 8, 31)
                 }
             };
@@ -60,12 +60,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDeliveryFAM
                 {
                     LearnDelFAMType = "ACT",
-                    LearnDelFAMDateFromNullable = new DateTime(2018, 8, 1),
-                    LearnDelFAMDateToNullable = new DateTime(2018, 8, 31)
-                },
-                new TestLearningDeliveryFAM
-                {
-                    LearnDelFAMType = "XXX",
                     LearnDelFAMDateFromNullable = new DateTime(2018, 8, 1),
                     LearnDelFAMDateToNullable = new DateTime(2018, 8, 31)
                 }
@@ -121,7 +115,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMsForType(learningDeliveryFAMs);
+            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMs(learningDeliveryFAMs);
 
             result.Count().Should().Be(0);
         }
@@ -145,7 +139,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMsForType(learningDeliveryFAMs);
+            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMs(learningDeliveryFAMs);
 
             result.Count().Should().Be(1);
         }
@@ -175,7 +169,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 },
             };
 
-            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMsForType(learningDeliveryFAMs);
+            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMs(learningDeliveryFAMs);
 
             result.Count().Should().Be(1);
         }
@@ -199,7 +193,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMsForType(learningDeliveryFAMs);
+            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMs(learningDeliveryFAMs);
 
             result.Count().Should().Be(1);
         }
@@ -223,7 +217,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMsForType(learningDeliveryFAMs);
+            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMs(learningDeliveryFAMs);
 
             result.Count().Should().Be(1);
         }
