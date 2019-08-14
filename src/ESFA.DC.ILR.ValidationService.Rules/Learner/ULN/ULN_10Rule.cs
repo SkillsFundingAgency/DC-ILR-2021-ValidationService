@@ -1,119 +1,255 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using ESFA.DC.ILR.Model.Interface;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using ESFA.DC.ILR.ValidationService.Utility;
+using System;
+using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
 {
-    public class ULN_10Rule : AbstractRule, IRule<ILearner>
+    /// <summary>
+    /// the unique learner number rule 10
+    /// </summary>
+    /// <seealso cref="AbstractRule" />
+    /// <seealso cref="Interface.IRule{ILearner}" />
+    public class ULN_10Rule :
+        AbstractRule,
+        IRule<ILearner>
     {
-        private readonly IAcademicYearDataService _academicDataQueryService;
-        private readonly IDateTimeQueryService _dateTimeQueryService;
-        private readonly IFileDataService _fileDataService;
-        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
+        /// <summary>
+        /// The date time query (service)
+        /// </summary>
+        private readonly IDateTimeQueryService _dateTimeQuery;
 
-        private readonly IEnumerable<int> _fundModels = new HashSet<int> { 99 };
+        /// <summary>
+        /// The check(er, common rule operations provider)
+        /// </summary>
+        private readonly IProvideRuleCommonOperations _check;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ULN_10Rule"/> class.
+        /// </summary>
+        /// <param name="validationErrorHandler">The validation error handler.</param>
+        /// <param name="academicDataQueryService">The academic data query service.</param>
+        /// <param name="dateTimeQueryService">The date time query service.</param>
+        /// <param name="fileDataService">The file data service.</param>
+        /// <param name="commonOps">The common ops.</param>
         public ULN_10Rule(
+            IValidationErrorHandler validationErrorHandler,
             IAcademicYearDataService academicDataQueryService,
             IDateTimeQueryService dateTimeQueryService,
             IFileDataService fileDataService,
-            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
-            IValidationErrorHandler validationErrorHandler)
+            IProvideRuleCommonOperations commonOps)
             : base(validationErrorHandler, RuleNameConstants.ULN_10)
         {
-            _academicDataQueryService = academicDataQueryService;
-            _dateTimeQueryService = dateTimeQueryService;
-            _fileDataService = fileDataService;
-            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
+            It.IsNull(validationErrorHandler)
+                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
+            It.IsNull(academicDataQueryService)
+                .AsGuard<ArgumentNullException>(nameof(academicDataQueryService));
+            It.IsNull(dateTimeQueryService)
+                .AsGuard<ArgumentNullException>(nameof(dateTimeQueryService));
+            It.IsNull(fileDataService)
+                .AsGuard<ArgumentNullException>(nameof(fileDataService));
+            It.IsNull(commonOps)
+                .AsGuard<ArgumentNullException>(nameof(commonOps));
+
+            FilePreparationDate = fileDataService.FilePreparationDate();
+            FirstJanuary = academicDataQueryService.JanuaryFirst();
+
+            _dateTimeQuery = dateTimeQueryService;
+            _check = commonOps;
         }
 
-        public void Validate(ILearner objectToValidate)
-        {
-            var filePrepDate = _fileDataService.FilePreparationDate();
-            var januaryFirst = _academicDataQueryService.JanuaryFirst();
+        /// <summary>
+        /// The minimum course duration
+        /// </summary>
+        public const int MinimumCourseDuration = 5; // (days)
 
-            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
+        /// <summary>
+        /// The rule leniency period
+        /// </summary>
+        public const int RuleLeniencyPeriod = 60; // (days)
+
+        /// <summary>
+        /// Gets the file preparation date.
+        /// </summary>
+        public DateTime FilePreparationDate { get; }
+
+        /// <summary>
+        /// Gets the first january (for the current educational year).
+        /// </summary>
+        public DateTime FirstJanuary { get; }
+
+        /// <summary>
+        /// Validates the specified learner.
+        /// </summary>
+        /// <param name="theLearner">The learner.</param>
+        public void Validate(ILearner theLearner)
+        {
+            It.IsNull(theLearner)
+                .AsGuard<ArgumentNullException>(nameof(theLearner));
+
+            if (IsOutsideQualifyingPeriod() || IsValidULN(theLearner))
             {
-                if (ConditionMet(
-                    objectToValidate.ULN,
-                    learningDelivery.FundModel,
-                    learningDelivery.LearningDeliveryFAMs,
-                    learningDelivery.LearnStartDate,
-                    learningDelivery.LearnPlanEndDate,
-                    learningDelivery.LearnActEndDateNullable,
-                    filePrepDate,
-                    januaryFirst))
-                {
-                    HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(objectToValidate.ULN, learningDelivery.LearnStartDate, learningDelivery.LearnPlanEndDate, learningDelivery.FundModel, LearningDeliveryFAMTypeConstants.SOF, "1"));
-                    return;
-                }
+                return;
             }
+
+            var learnRefNumber = theLearner.LearnRefNumber;
+
+            theLearner.LearningDeliveries
+                .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));
         }
 
-        public bool ConditionMet(
-            long uln,
-            int fundModel,
-            IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs,
-            DateTime learnStartDate,
-            DateTime learnPlanEndDate,
-            DateTime? learnActEndDate,
-            DateTime filePrepDate,
-            DateTime januaryFirst)
-        {
-            return UlnConditionMet(uln)
-                && FundModelConditionMet(fundModel)
-                && FilePreparationDateConditionMet(learnStartDate, filePrepDate, januaryFirst)
-                && LearningDatesConditionMet(learnStartDate, learnPlanEndDate, learnActEndDate)
-                && LearningDeliveryFAMConditionMet(learningDeliveryFAMs);
-        }
+        /// <summary>
+        /// Determines whether [is outside qualifying period].
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if [is outside qualifying period]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsOutsideQualifyingPeriod() =>
+            FirstJanuary > FilePreparationDate;
 
-        public bool UlnConditionMet(long uln)
-        {
-            return uln == ValidationConstants.TemporaryULN;
-        }
+        /// <summary>
+        /// Determines whether [is valid uln] [for the specified learner].
+        /// </summary>
+        /// <param name="theLearner">The learner.</param>
+        /// <returns>
+        ///   <c>true</c> if [is valid uln] [for the specified learner]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsValidULN(ILearner theLearner) =>
+            theLearner.ULN != ValidationConstants.TemporaryULN;
 
-        public bool FundModelConditionMet(int fundModel)
-        {
-            return _fundModels.Contains(fundModel);
-        }
+        /// <summary>
+        /// Determines whether [is not valid] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsNotValid(ILearningDelivery theDelivery) =>
+            !IsExcluded(theDelivery)
+            && HasQualifyingModel(theDelivery)
+            && HasQualifyingMonitor(theDelivery)
+            && (HasQualifyingPlannedDuration(theDelivery)
+                || (HasActualEndDate(theDelivery) && HasQualifyingActualDuration(theDelivery)))
+            && IsOutsideLeniencyPeriod(theDelivery);
 
-        public bool FilePreparationDateConditionMet(DateTime learnStartDate, DateTime filePrepDate, DateTime januaryFirst)
-        {
-            return filePrepDate >= januaryFirst
-                && _dateTimeQueryService.DaysBetween(learnStartDate, filePrepDate) <= 60;
-        }
+        /// <summary>
+        /// Determines whether the specified the delivery is excluded.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified the delivery is excluded; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsExcluded(ILearningDelivery theDelivery) =>
+            IsLearnerInCustody(theDelivery);
 
-        public bool LearningDatesConditionMet(DateTime learnStartDate, DateTime learnPlanEndDate, DateTime? learnActEndDate)
-        {
-            return _dateTimeQueryService.DaysBetween(learnStartDate, learnPlanEndDate) >= 5
-                || (learnActEndDate.HasValue && _dateTimeQueryService.DaysBetween(learnStartDate, (DateTime)learnActEndDate) >= 5);
-        }
+        /// <summary>
+        /// Determines whether [is learner in custody] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [is learner in custody] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsLearnerInCustody(ILearningDelivery theDelivery) =>
+            _check.IsLearnerInCustody(theDelivery);
 
-        public virtual bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
-        {
-            return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.LDM, "034")
-                && _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.SOF, "1");
-        }
+        /// <summary>
+        /// Determines whether [has qualifying model] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying model] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
+            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.NotFundedByESFA);
 
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(long uln, DateTime learnStartDate, DateTime learnPlanEndDate, int fundModel, string famType, string famCode)
-        {
-            return new[]
+        /// <summary>
+        /// Determines whether [is higher education funding council england] [the specified monitor].
+        /// </summary>
+        /// <param name="theMonitor">The monitor.</param>
+        /// <returns>
+        ///   <c>true</c> if [is higher education funding council england] [the specified monitor]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsHigherEducationFundingCouncilEngland(ILearningDeliveryFAM theMonitor) =>
+            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.HigherEducationFundingCouncilEngland);
+
+        /// <summary>
+        /// Determines whether [has qualifying monitor] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying monitor] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
+            _check.CheckDeliveryFAMs(theDelivery, IsHigherEducationFundingCouncilEngland);
+
+        /// <summary>
+        /// Determines whether [has qualifying planned duration] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying planned duration] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingPlannedDuration(ILearningDelivery theDelivery) =>
+            _dateTimeQuery.DaysBetween(theDelivery.LearnStartDate, theDelivery.LearnPlanEndDate) >= MinimumCourseDuration;
+
+        /// <summary>
+        /// Determines whether [has actual end date] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has actual end date] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasActualEndDate(ILearningDelivery theDelivery) =>
+            It.Has(theDelivery.LearnActEndDateNullable);
+
+        /// <summary>
+        /// Determines whether [has qualifying actual duration] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying actual duration] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingActualDuration(ILearningDelivery theDelivery) =>
+            _dateTimeQuery.DaysBetween(theDelivery.LearnStartDate, (DateTime)theDelivery.LearnActEndDateNullable) >= MinimumCourseDuration;
+
+        /// <summary>
+        /// Determines whether [is outside leniency period] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [is outside leniency period] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsOutsideLeniencyPeriod(ILearningDelivery theDelivery) =>
+            _dateTimeQuery.DaysBetween(theDelivery.LearnStartDate, FilePreparationDate) > RuleLeniencyPeriod;
+
+        /// <summary>
+        /// Raises the validation message.
+        /// </summary>
+        /// <param name="learnRefNumber">The learn reference number.</param>
+        /// <param name="theDelivery">The delivery.</param>
+        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
+            HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
+
+        /// <summary>
+        /// Builds the message parameters for.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns></returns>
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery theDelivery) =>
+            new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.ULN, uln),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learnStartDate),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnPlanEndDate, learnPlanEndDate),
-                BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, famType),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, famCode)
+                BuildErrorMessageParameter(PropertyNameConstants.ULN, ValidationConstants.TemporaryULN),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, theDelivery.LearnStartDate),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnPlanEndDate, theDelivery.LearnPlanEndDate),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, theDelivery.FundModel),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.SOF),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, "1")
             };
-        }
     }
 }

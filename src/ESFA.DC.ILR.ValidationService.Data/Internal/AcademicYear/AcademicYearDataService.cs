@@ -1,6 +1,5 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear
@@ -25,11 +24,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear
         {
             _internalDataCache = internalDataCache;
         }
-
-        /// <summary>
-        /// Gets the academic year date of today.
-        /// </summary>
-        public DateTime Today => DateTime.Today;
 
         /// <summary>
         /// Gets an academic year of learning date.
