@@ -406,6 +406,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
         /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData("SOF1", Monitoring.Delivery.HigherEducationFundingCouncilEngland)]
+        [InlineData("LDM034", Monitoring.Delivery.OLASSOffendersInCustody)]
         public void MonitoringCodeMeetsExpectation(string expectation, string candidate)
         {
             // arrange / act / assert
@@ -793,7 +794,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
 
             var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
 
-            // post contruction mock setups
+            // post construction mock setups
             commonOps
                 .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsHigherEducationFundingCouncilEngland))
                 .Returns(true);
@@ -875,7 +876,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
 
             var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
 
-            // post contruction mock setups
+            // post construction mock setups
             commonOps
                 .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsHigherEducationFundingCouncilEngland))
                 .Returns(true);
