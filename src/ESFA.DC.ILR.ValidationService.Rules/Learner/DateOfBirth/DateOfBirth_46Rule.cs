@@ -46,9 +46,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                             objectToValidate.LearnRefNumber,
                             learningDelivery.AimSeqNumber,
                             BuildErrorMessageParameters(
-                                learningDelivery.LearnPlanEndDate,
-                                learningDelivery.LearnStartDate));
-                        return;
+                                                 learningDelivery.LearnPlanEndDate,
+                                                 learningDelivery.LearnStartDate));
                     }
                 }
             }
@@ -102,7 +101,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool LearnPlanEndDateConditionMet(DateTime learnStartDate, DateTime learnPlanEndDate)
         {
-            return _dateTimeQueryService.DaysBetween(learnStartDate, learnPlanEndDate) <= _days;
+            return _dateTimeQueryService.WholeDaysBetween(learnStartDate, learnPlanEndDate) <= _days;
         }
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)

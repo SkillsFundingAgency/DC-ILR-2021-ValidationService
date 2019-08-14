@@ -117,45 +117,57 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void LearnPlanEndDateConditionMet_True_AsEqualsTo365()
         {
-            var learnStartDate = new DateTime(2017, 05, 02);
-            var learnPlanEndDate = new DateTime(2018, 05, 01);
+            var learnStartDate = new DateTime(2014, 08, 01);
+            var learnPlanEndDate = new DateTime(2015, 07, 31);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(365);
+            var days = (learnPlanEndDate - learnStartDate).TotalDays;
+            double totalWholeDays = Math.Abs(days) + 1;
+            dateTimeQueryServiceMock.Setup(x => x.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(totalWholeDays);
 
             var rule46 = NewRule(dateTimeQueryServiceMock.Object).LearnPlanEndDateConditionMet(learnStartDate, learnPlanEndDate);
+
             rule46.Should().BeTrue();
+            dateTimeQueryServiceMock.Verify(x => x.WholeDaysBetween(learnStartDate, learnPlanEndDate), Times.Exactly(1));
         }
 
         [Fact]
-        public void LearnPlanEndDateConditionMet_True_asDaysAreLessThan()
+        public void LearnPlanEndDateConditionMet_True_DaysAreLessThan365()
         {
-            var learnStartDate = new DateTime(2016, 09, 30);
-            var learnPlanEndDate = new DateTime(2017, 10, 31);
+            var learnStartDate = new DateTime(2014, 08, 01);
+            var learnPlanEndDate = new DateTime(2015, 07, 29);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(61);
+            var days = (learnPlanEndDate - learnStartDate).TotalDays;
+            double totalWholeDays = Math.Abs(days) + 1;
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(totalWholeDays);
 
             var rule46 = NewRule(dateTimeQueryServiceMock.Object).LearnPlanEndDateConditionMet(learnStartDate, learnPlanEndDate);
+
             rule46.Should().BeTrue();
+            dateTimeQueryServiceMock.Verify(x => x.WholeDaysBetween(learnStartDate, learnPlanEndDate), Times.Exactly(1));
         }
 
         [Theory]
-        [InlineData(372)]
-        [InlineData(395)]
-        public void LearnPlanEndDateConditionMet_False(int days)
+        [InlineData("2014-08-01", "2015-08-01")] // doesn't trigger due to 366 days
+        [InlineData("2014-08-01", "2015-08-05")] // doesn't trigger due to 70 days
+        public void LearnPlanEndDateConditionMet_False(string startDate, string planEndDate)
         {
-            var learnStartDate = new DateTime(2018, 08, 01);
-            var learnPlanEndDate = new DateTime(2019, 08, 31);
+            DateTime learnStartDate = DateTime.Parse(startDate);
+            DateTime learnPlanEndDate = DateTime.Parse(planEndDate);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(days);
+            var days = (learnPlanEndDate - learnStartDate).TotalDays;
+            double totalWholeDays = Math.Abs(days) + 1;
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(totalWholeDays);
 
             var rule46 = NewRule(dateTimeQueryServiceMock.Object).LearnPlanEndDateConditionMet(learnStartDate, learnPlanEndDate);
+
             rule46.Should().BeFalse();
+            dateTimeQueryServiceMock.Verify(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate), Times.Exactly(1));
         }
 
         [Fact]
@@ -225,7 +237,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
             dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(dateOfBirth, learnStartDate)).Returns(18);
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(360);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(360);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
 
             NewRule(dateTimeQueryServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object)
@@ -276,7 +288,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
             dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(dateOfBirth, learnStartDate)).Returns(age);
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(days);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(days);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(famMock);
 
             NewRule(dateTimeQueryServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object)
@@ -329,7 +341,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
             dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(dateOfBirth, learnStartDate)).Returns(18);
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(360);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnPlanEndDate)).Returns(360);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
@@ -338,12 +350,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             }
         }
 
-        [Fact]
-        public void Validate_NoError()
+        [Theory]
+        [InlineData("2016-07-31", "2017-08-01")] // doesn't trigger due to 367 days
+        [InlineData("2016-07-31", "2017-07-31")] // doesn't trigger due to 366 days
+        public void Validate_NoError(string learnStartDate, string learnPlanEndDate)
         {
-            var dateOfBirth = new DateTime(2000, 01, 01);
-            var learnStartDate = new DateTime(2018, 08, 01);
-            var learnPlanEndDate = new DateTime(2019, 08, 01);
+            var dateOfBirth = new DateTime(1996, 5, 30);
+            DateTime startDate = DateTime.Parse(learnStartDate);
+            DateTime planEndDate = DateTime.Parse(learnPlanEndDate);
+
             var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
             {
                 new TestLearningDeliveryFAM
@@ -360,8 +375,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     FundModel = 36,
                     ProgTypeNullable = 25,
                     AimType = 1,
-                    LearnStartDate = learnStartDate,
-                    LearnPlanEndDate = learnPlanEndDate,
+                    LearnStartDate = startDate,
+                    LearnPlanEndDate = planEndDate,
                     LearningDeliveryFAMs = learningDeliveryFAMs
                 }
             };
@@ -375,13 +390,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(dateOfBirth, learnStartDate)).Returns(15);
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(365);
-            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
+            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(dateOfBirth, startDate)).Returns(16);
+
+            var days = (planEndDate - startDate).TotalDays;
+            double totalWholeDays = Math.Abs(days) + 1;
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(startDate, planEndDate)).Returns(totalWholeDays);
+
+            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false); // results TRUE
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(dateTimeQueryServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(
+                    dateTimeQueryServiceMock.Object,
+                    learningDeliveryFAMQueryServiceMock.Object,
+                    validationErrorHandlerMock.Object)
+                .Validate(learner);
             }
         }
 
