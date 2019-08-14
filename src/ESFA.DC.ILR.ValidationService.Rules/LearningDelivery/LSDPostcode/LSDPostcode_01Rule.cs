@@ -39,7 +39,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                                  BuildErrorMessageParameters(learningDelivery.LearnPlanEndDate,
                                                              learningDelivery.FundModel, 
                                                              learningDelivery.LSDPostcode));
-                        return;
                     }
                 }
             }
@@ -78,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public bool ValidPostcodeConditionMet(string lsdPostcode)
         {
-            return _postcodesDataService.PostcodeExists(lsdPostcode);
+            return !_postcodesDataService.PostcodeExists(lsdPostcode);
         }      
 
         public bool LearnStartDateConditionMet(DateTime learnStartDate)
