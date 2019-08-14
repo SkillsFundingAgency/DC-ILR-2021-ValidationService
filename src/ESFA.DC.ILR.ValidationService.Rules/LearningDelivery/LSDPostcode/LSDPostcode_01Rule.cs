@@ -77,7 +77,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public bool ValidPostcodeConditionMet(string lsdPostcode)
         {
-            var xx = !_postcodesDataService?.PostcodeExists(lsdPostcode);
             return !_postcodesDataService.PostcodeExists(lsdPostcode);
         }      
 
