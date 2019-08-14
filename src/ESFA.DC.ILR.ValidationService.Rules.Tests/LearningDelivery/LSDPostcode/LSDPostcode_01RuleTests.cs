@@ -72,8 +72,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         [Theory]
-        [InlineData("postcode", true)]
-        [InlineData("ZZ99 9ZZ", true)]
+        [InlineData("CV8 8WT", false)]
+        [InlineData("postcode", false)]
+        [InlineData("ZZ99 9ZZ", false)]
         public void ValidPostcodeConditionMet(string postCode, bool asExpected)
         {
             var mockPostcodesService = new Mock<IPostcodesDataService>();
@@ -112,7 +113,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             var startDate = new DateTime(2019, 09, 01);
 
             var mockPostcodesDataService = new Mock<IPostcodesDataService>();
-            mockPostcodesDataService.Setup(x => x.PostcodeExists(lsdPostcode)).Returns(true);
+            mockPostcodesDataService.Setup(x => x.PostcodeExists(lsdPostcode)).Returns(false);
 
             var lsdRule = NewRule(postcodesDataService: mockPostcodesDataService.Object).ConditionMet(progType, fundModel, lsdPostcode, startDate);
             lsdRule.Should().BeTrue();
@@ -124,7 +125,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         [InlineData(25, TypeOfFunding.OtherAdult, "lsdPostcode", "2019-09-11", true)] // fundModel condition Fails
         [InlineData(25, TypeOfFunding.AdultSkills, null, "2019-09-11", true)] // postcode nullable condition Fails
         [InlineData(25, TypeOfFunding.AdultSkills, "ZZ99 9ZZ", "2019-09-11", true)] // temp postcode condition Fails
-        [InlineData(25, TypeOfFunding.AdultSkills, "wrongPostCode", "2019-09-11", false)] // valid postcode condition Fails
+        [InlineData(25, TypeOfFunding.AdultSkills, "CV8 8WT", "2019-09-11", true)] // valid postcode condition Fails
         [InlineData(25, TypeOfFunding.AdultSkills, "lsdPostCode", "2018-09-11", true)] // startDate condition Fails
         public void ConditionMet_False(int progType, int fundModel, string lsdPostcode, string startDate, bool mockPostcodeResult)
         {
@@ -140,7 +141,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         [Fact]
         public void Validate_Error()
         {
-            var lsdPostcode = "LSDPostcode";
+            var lsdPostcode = "CV8 8WT";
             var learnStartDate = new DateTime(2019, 09, 01);
 
             var learningDeliveries = new List<TestLearningDelivery>()
@@ -163,7 +164,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             };
 
             var mockPostcodesDataService = new Mock<IPostcodesDataService>();
-            mockPostcodesDataService.Setup(ds => ds.PostcodeExists(lsdPostcode)).Returns(true);
+            mockPostcodesDataService.Setup(ds => ds.PostcodeExists(lsdPostcode)).Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
