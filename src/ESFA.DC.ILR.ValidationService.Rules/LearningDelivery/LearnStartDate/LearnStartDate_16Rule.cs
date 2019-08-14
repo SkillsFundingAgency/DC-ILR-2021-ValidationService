@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         ///   <c>true</c> if [has qualifying start] [the specified this delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasQualifyingStart(ILearningDelivery thisDelivery, IFcsContractAllocation allocation) =>
-            It.Has(allocation)
+            It.Has(allocation?.ContractAllocationNumber)
             && It.Has(allocation.StartDate)
             && _check.HasQualifyingStart(thisDelivery, allocation.StartDate.Value);
 

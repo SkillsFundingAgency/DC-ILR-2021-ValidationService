@@ -1,18 +1,20 @@
-﻿using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
-using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Abstract;
-using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using Moq;
-using System;
-using System.Collections.Generic;
-using Xunit;
-
-namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
+﻿namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
 {
+    using System;
+    using System.Collections.Generic;
+    using ESFA.DC.ILR.Model.Interface;
+    using ESFA.DC.ILR.Tests.Model;
+    using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
+    using ESFA.DC.ILR.ValidationService.Interface;
+    using ESFA.DC.ILR.ValidationService.Rules.Abstract;
+    using ESFA.DC.ILR.ValidationService.Rules.Constants;
+    using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
+    using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+    using ESFA.DC.ILR.ValidationService.Utility;
+    using FluentAssertions;
+    using Moq;
+    using Xunit;
+
     public class LearnStartDate_16RuleTests
     {
         /// <summary>
@@ -174,6 +176,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
 
+            allocation.SetupGet(x => x.ContractAllocationNumber).Returns(contractRef);
+
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
@@ -192,6 +196,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             handler.VerifyAll();
             fcsData.VerifyAll();
             commonOps.VerifyAll();
+
+            allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
+            allocation.VerifyGet(x => x.ContractAllocationNumber, Times.AtLeastOnce);
         }
 
         /// <summary>
@@ -218,6 +225,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             handler.VerifyAll();
             fcsData.VerifyAll();
             commonOps.VerifyAll();
+        }
+
+        [Fact]
+        public void HasQualifyingStart_Fails_WithNullContractAllocationNumber()
+        {
+            var learningDelivery = new Mock<ILearningDelivery>().Object;
+            var fcsContAllocation = new Mock<IFcsContractAllocation>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            var rule = new LearnStartDate_16Rule(handler.Object, fcsData.Object, commonOps.Object);
+            var res = rule.HasQualifyingStart(learningDelivery, fcsContAllocation.Object);
+
+            res.Should().BeFalse();
         }
 
         /// <summary>
@@ -260,6 +283,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             allocation
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
+
+            allocation.SetupGet(x => x.ContractAllocationNumber).Returns(contractRef);
 
             var allocations = Collection.Empty<IFcsContractAllocation>();
             allocations.Add(allocation.Object);
@@ -306,6 +331,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             handler.VerifyAll();
             fcsData.VerifyAll();
             commonOps.VerifyAll();
+
+            allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
+            allocation.VerifyGet(x => x.ContractAllocationNumber, Times.AtLeastOnce);
         }
 
         /// <summary>
@@ -342,6 +370,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             allocation
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
+
+            allocation.SetupGet(x => x.ContractAllocationNumber).Returns(contractRef);
 
             var deliveries = Collection.Empty<ILearningDelivery>();
             deliveries.Add(delivery.Object);
@@ -382,6 +412,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             handler.VerifyAll();
             fcsData.VerifyAll();
             commonOps.VerifyAll();
+
+            allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
+            allocation.VerifyGet(x => x.ContractAllocationNumber, Times.AtLeastOnce);
         }
 
         /// <summary>
