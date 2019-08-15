@@ -62,14 +62,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             DateTime? dateOfBirth,
             IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return
-                FundModelConditionMet(fundModel)
-            && LearnStartDateConditionMet(learnStartDate)
-            && AimTypeConditionMet(aimType)
-            && ProgTypeConditionMet(progType)
-            && DateOfBirthConditionMet(dateOfBirth, learnStartDate)
-            && LearnPlanEndDateConditionMet(learnStartDate, learnPlanEndDate)
-            && LearningDeliveryFAMConditionMet(learningDeliveryFAMs);
+            return FundModelConditionMet(fundModel)
+                && LearnStartDateConditionMet(learnStartDate)
+                && AimTypeConditionMet(aimType)
+                && ProgTypeConditionMet(progType)
+                && DateOfBirthConditionMet(dateOfBirth, learnStartDate)
+                && LearnPlanEndDateConditionMet(learnStartDate, learnPlanEndDate)
+                && LearningDeliveryFAMConditionMet(learningDeliveryFAMs);
         }
 
         public bool FundModelConditionMet(int fundModel)
@@ -94,19 +93,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         }
 
         public bool DateOfBirthConditionMet(DateTime? dateOfBirth, DateTime learnStartDate)
-        {
+        {  
             return dateOfBirth.HasValue
                 && _dateTimeQueryService.YearsBetween((DateTime)dateOfBirth, learnStartDate) >= _age;
         }
 
         public bool LearnPlanEndDateConditionMet(DateTime learnStartDate, DateTime learnPlanEndDate)
         {
-            return _dateTimeQueryService.WholeDaysBetween(learnStartDate, learnPlanEndDate) <= _days;
+            return _dateTimeQueryService.WholeDaysBetween(learnStartDate, learnPlanEndDate) < _days;
         }
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, Monitoring.Delivery.Types.Restart);
+            return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnPlanEndDate, DateTime learnStartDate)
