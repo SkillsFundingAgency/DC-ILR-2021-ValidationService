@@ -316,7 +316,6 @@
     <Compile Include="Learner\DateOfBirth\DateOfBirth_36RuleTests.cs" />
     <Compile Include="Learner\DateOfBirth\DateOfBirth_37RuleTests.cs" />
     <Compile Include="Learner\DateOfBirth\DateOfBirth_38RuleTests.cs" />
-    <Compile Include="Learner\DateOfBirth\DateOfBirth_39RuleTests.cs" />
     <Compile Include="Learner\DateOfBirth\DateOfBirth_47RuleTests.cs" />
     <Compile Include="Learner\DateOfBirth\DateOfBirth_46RuleTests.cs" />
     <Compile Include="Learner\DateOfBirth\DateOfBirth_35RuleTests.cs" />
