@@ -2226,15 +2226,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                 new LARSStandard()
                 {
                     StandardCode = standardCode,
-                    StandardsFunding = new ILARSStandardFunding[]
-                    {
-                        new LARSStandardFunding()
-                        {
-                            CoreGovContributionCap = 1,
-                            EffectiveFrom = new DateTime(2019, 01, 01),
-                            EffectiveTo = new DateTime(2019, 12, 01)
-                        }
-                    }
+                    EffectiveTo = new DateTime(2019, 12, 01)
                 },
             };
 
@@ -2242,10 +2234,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 
             externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
 
-            var result = NewService(externalDataCacheMock.Object).GetStandardFundingForCode(standardCode);
+            var result = NewService(externalDataCacheMock.Object).GetStandardForCode(standardCode);
 
-            result.CoreGovContributionCap.Should().Be(1);
-            result.EffectiveFrom.Should().Be(new DateTime(2019, 01, 01));
+            result.StandardCode.Should().Be(1);
             result.EffectiveTo.Should().Be(new DateTime(2019, 12, 01));
         }
 
@@ -2259,15 +2250,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                 new LARSStandard()
                 {
                     StandardCode = 2,
-                    StandardsFunding = new ILARSStandardFunding[]
-                    {
-                        new LARSStandardFunding()
-                        {
-                            CoreGovContributionCap = 1,
-                            EffectiveFrom = new DateTime(2019, 01, 01),
-                            EffectiveTo = new DateTime(2019, 12, 01)
-                        }
-                    }
+                    EffectiveTo = new DateTime(2019, 12, 01)
                 },
             };
 
@@ -2275,7 +2258,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 
             externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
 
-            var result = NewService(externalDataCacheMock.Object).GetStandardFundingForCode(standardCode);
+            var result = NewService(externalDataCacheMock.Object).GetStandardForCode(standardCode);
 
             result.Should().BeNull();
         }

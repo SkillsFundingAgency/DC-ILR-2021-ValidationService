@@ -70,11 +70,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         public bool LARSConditionMet(int stdCode, DateTime learnStartDate)
         {
-            var larsStandardFunding = _larsDataService.GetStandardFundingForCode(stdCode);
+            var larsStandard = _larsDataService.GetStandardForCode(stdCode);
 
-            if (larsStandardFunding != null)
+            if (larsStandard != null)
             {
-                return larsStandardFunding.EffectiveTo.HasValue && learnStartDate > larsStandardFunding.EffectiveTo;
+                return larsStandard.EffectiveTo.HasValue && learnStartDate > larsStandard.EffectiveTo;
             }
 
             return false;

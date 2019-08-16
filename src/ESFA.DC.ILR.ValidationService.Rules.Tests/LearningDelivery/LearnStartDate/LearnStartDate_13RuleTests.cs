@@ -68,13 +68,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             int stdCode = 1;
             var learnStartDate = new DateTime(2018, 10, 01);
 
-            var larsStandardFunding = new LARSStandardFunding()
+            var larsStandard = new LARSStandard()
             {
+                StandardCode = stdCode,
                 EffectiveTo = new DateTime(2018, 08, 01)
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFundingForCode(stdCode)).Returns(larsStandardFunding);
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardForCode(stdCode)).Returns(larsStandard);
 
             NewRule(larsDataServiceMock.Object).LARSConditionMet(stdCode, learnStartDate).Should().BeTrue();
         }
@@ -85,10 +86,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             int stdCode = 1;
             var learnStartDate = new DateTime(2018, 10, 01);
 
-            var larsStandardFunding = new LARSStandardFunding();
+            var larsStandard = new LARSStandard();
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFundingForCode(1)).Returns(larsStandardFunding);
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardForCode(1)).Returns(larsStandard);
 
             NewRule(larsDataServiceMock.Object).LARSConditionMet(stdCode, learnStartDate).Should().BeFalse();
         }
@@ -99,13 +100,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             int stdCode = 1;
             var learnStartDate = new DateTime(2018, 8, 01);
 
-            var larsStandardFunding = new LARSStandardFunding()
+            var larsStandard = new LARSStandard()
             {
+                StandardCode = stdCode,
                 EffectiveTo = new DateTime(2018, 09, 01)
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFundingForCode(stdCode)).Returns(larsStandardFunding);
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardForCode(stdCode)).Returns(larsStandard);
 
             NewRule(larsDataServiceMock.Object).LARSConditionMet(stdCode, learnStartDate).Should().BeFalse();
         }
@@ -147,13 +149,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var learnStartDate = new DateTime(2018, 10, 01);
             var learningDeliveryFams = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
 
-            var larsStandardFunding = new LARSStandardFunding()
+            var larsStandard = new LARSStandard()
             {
+                StandardCode = stdCode,
                 EffectiveTo = new DateTime(2018, 08, 01)
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFundingForCode(stdCode)).Returns(larsStandardFunding);
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardForCode(stdCode)).Returns(larsStandard);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -225,10 +228,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var learnStartDate = new DateTime(2018, 01, 01);
             var learningDeliveryFams = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
 
-            var larsStandardFunding = new LARSStandardFunding();
+            var larsStandard = new LARSStandard();
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFundingForCode(stdCode)).Returns(larsStandardFunding);
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardForCode(stdCode)).Returns(larsStandard);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -291,13 +294,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var learningDeliveryFams = learner.LearningDeliveries.SelectMany(ld => ld.LearningDeliveryFAMs);
 
-            var larsStandardFunding = new LARSStandardFunding()
+            var larsStandard = new LARSStandard()
             {
+                StandardCode = stdCode,
                 EffectiveTo = new DateTime(2018, 08, 01)
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFundingForCode(stdCode)).Returns(larsStandardFunding);
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardForCode(stdCode)).Returns(larsStandard);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -338,13 +342,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var learningDeliveryFams = learner.LearningDeliveries.SelectMany(ld => ld.LearningDeliveryFAMs);
 
-            var larsStandardFunding = new LARSStandardFunding()
+            var larsStandard = new LARSStandard()
             {
+                StandardCode = stdCode,
                 EffectiveTo = new DateTime(2018, 08, 01)
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFundingForCode(stdCode)).Returns(larsStandardFunding);
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardForCode(stdCode)).Returns(larsStandard);
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
