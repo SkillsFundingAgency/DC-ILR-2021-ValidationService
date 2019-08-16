@@ -14,7 +14,7 @@ using Xunit;
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 {
     /// <summary>
-    /// learning delivery funding and monitoring rule 74 tests
+    /// united kingdom provider number rule 10 tests
     /// </summary>
     public class UKPRN_10RuleTests
     {
