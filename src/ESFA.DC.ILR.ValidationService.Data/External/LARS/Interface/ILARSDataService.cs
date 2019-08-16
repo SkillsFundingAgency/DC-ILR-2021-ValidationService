@@ -137,5 +137,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
             IEnumerable<string> categoriesHashSet);
 
         ILARSStandardFunding GetStandardFundingForCodeOnDate(int standardCode, DateTime startDate);
+
+        ILARSStandardFunding GetStandardFundingForCode(int standardCode);
     }
 }

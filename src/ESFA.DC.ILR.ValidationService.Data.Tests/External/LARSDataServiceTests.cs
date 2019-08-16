@@ -2216,6 +2216,70 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                 .BeFalse();
         }
 
+        [Fact]
+        public void GetStandardFundingForCode_Match()
+        {
+            var standardCode = 1;
+
+            var standards = new List<LARSStandard>()
+            {
+                new LARSStandard()
+                {
+                    StandardCode = standardCode,
+                    StandardsFunding = new ILARSStandardFunding[]
+                    {
+                        new LARSStandardFunding()
+                        {
+                            CoreGovContributionCap = 1,
+                            EffectiveFrom = new DateTime(2019, 01, 01),
+                            EffectiveTo = new DateTime(2019, 12, 01)
+                        }
+                    }
+                },
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
+
+            var result = NewService(externalDataCacheMock.Object).GetStandardFundingForCode(standardCode);
+
+            result.CoreGovContributionCap.Should().Be(1);
+            result.EffectiveFrom.Should().Be(new DateTime(2019, 01, 01));
+            result.EffectiveTo.Should().Be(new DateTime(2019, 12, 01));
+        }
+
+        [Fact]
+        public void GetStandardFundingForCode_NoMatch()
+        {
+            var standardCode = 1;
+
+            var standards = new List<LARSStandard>()
+            {
+                new LARSStandard()
+                {
+                    StandardCode = 2,
+                    StandardsFunding = new ILARSStandardFunding[]
+                    {
+                        new LARSStandardFunding()
+                        {
+                            CoreGovContributionCap = 1,
+                            EffectiveFrom = new DateTime(2019, 01, 01),
+                            EffectiveTo = new DateTime(2019, 12, 01)
+                        }
+                    }
+                },
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
+
+            var result = NewService(externalDataCacheMock.Object).GetStandardFundingForCode(standardCode);
+
+            result.Should().BeNull();
+        }
+
         private LARSDataService NewService(IExternalDataCache externalDataCache = null)
         {
             return new LARSDataService(externalDataCache);

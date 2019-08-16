@@ -425,5 +425,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
 
             return null;
         }
+
+        public ILARSStandardFunding GetStandardFundingForCode(int standardCode)
+        {
+            var standard = _externalDataCache.Standards?.FirstOrDefault(x => x.StandardCode == standardCode);
+
+            return standard?.StandardsFunding?.FirstOrDefault();
+        }
     }
 }
