@@ -194,6 +194,11 @@
             public const string ApprenticeshipFundedThroughAContractForServicesWithEmployer = "ACT1";
 
             /// <summary>
+            /// The apprenticeship funded through a contract for services with esfa
+            /// </summary>
+            public const string ApprenticeshipFundedThroughAContractForServicesWithESFA = "ACT2";
+
+            /// <summary>
             /// funding and monitoring types
             /// </summary>
             public static class Types
