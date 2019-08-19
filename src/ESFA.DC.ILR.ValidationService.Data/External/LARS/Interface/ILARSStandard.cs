@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
 {
@@ -28,11 +29,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
         /// <summary>
         /// Gets the effective from date.
         /// </summary>
-        // DateTime? EffectiveFrom { get; }
+        DateTime? EffectiveFrom { get; }
 
         /// <summary>
         /// Gets the effective to date.
         /// </summary>
-        // DateTime? EffectiveTo { get; }
+        DateTime? EffectiveTo { get; }
     }
 }
