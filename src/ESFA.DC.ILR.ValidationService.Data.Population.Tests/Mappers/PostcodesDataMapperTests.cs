@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using ESFA.DC.ILR.ReferenceDataService.Model.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
+using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Mappers;
 using FluentAssertions;
 using Xunit;
+using DevolvedPostcodeRDS = ESFA.DC.ILR.ReferenceDataService.Model.PostcodesDevolution.DevolvedPostcode;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
 {
@@ -77,41 +79,53 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
         }
 
         [Fact]
-        public void MapONMcaglaSOFPostcodes()
+        public void MapDevolvedPostcodes()
         {
-            var postcodes = TestPostcodes();
+            var postcodes = TestDevolvedPostcodes();
 
-            var expectedMcaglaSOFPostcodes = new List<McaglaSOFPostcode>
+            var expectedDevolvedPostcodes = new Dictionary<string, List<DevolvedPostcode>>
             {
-                new McaglaSOFPostcode
                 {
-                    Postcode = "Postcode1",
-                    SofCode = "SofCode1",
-                    EffectiveFrom = new DateTime(2018, 8, 1)
+                    "Postcode1", new List<DevolvedPostcode>
+                    {
+                        new DevolvedPostcode
+                        {
+                            Postcode = "Postcode1",
+                            Area = "Area1",
+                            SourceOfFunding = "150",
+                            EffectiveFrom = new DateTime(2019, 8, 1)
+                        },
+                    }
                 },
-                new McaglaSOFPostcode
                 {
-                    Postcode = "Postcode1",
-                    SofCode = "SofCode1",
-                    EffectiveFrom = new DateTime(2018, 8, 1),
-                    EffectiveTo = new DateTime(2019, 8, 1),
-                },
-                 new McaglaSOFPostcode
-                {
-                    Postcode = "Postcode3",
-                    SofCode = "SofCode1",
-                    EffectiveFrom = new DateTime(2018, 8, 1)
-                },
-                new McaglaSOFPostcode
-                {
-                    Postcode = "Postcode3",
-                    SofCode = "SofCode1",
-                    EffectiveFrom = new DateTime(2018, 8, 1),
-                    EffectiveTo = new DateTime(2019, 8, 1),
+                    "Postcode2", new List<DevolvedPostcode>
+                    {
+                        new DevolvedPostcode
+                        {
+                            Postcode = "Postcode2",
+                            Area = "Area1",
+                            SourceOfFunding = "150",
+                            EffectiveFrom = new DateTime(2019, 8, 1),
+                            EffectiveTo = new DateTime(2020, 8, 1),
+                        },
+                        new DevolvedPostcode
+                        {
+                            Postcode = "Postcode2",
+                            Area = "Area2",
+                            SourceOfFunding = "105",
+                            EffectiveFrom = new DateTime(2018, 8, 1)
+                        }
+                    }
                 }
             };
 
-            NewMapper().MapMcaglaSOFPostcodes(postcodes).Should().BeEquivalentTo(expectedMcaglaSOFPostcodes);
+            NewMapper().MapDevolvedPostcodes(postcodes).Should().BeEquivalentTo(expectedDevolvedPostcodes);
+        }
+
+        [Fact]
+        public void MapDevolvedPostcodes_Null()
+        {
+            NewMapper().MapDevolvedPostcodes(null).Should().BeEquivalentTo(new Dictionary<string, DevolvedPostcode>());
         }
 
         private IReadOnlyCollection<Postcode> TestPostcodes()
@@ -137,27 +151,41 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                 }
             };
 
-            var mcgalaSOFData = new List<McaglaSOF>
-            {
-                new McaglaSOF
-                {
-                    SofCode = "SofCode1",
-                    EffectiveFrom = new DateTime(2018, 8, 1)
-                },
-                new McaglaSOF
-                {
-                    SofCode = "SofCode1",
-                    EffectiveFrom = new DateTime(2018, 8, 1),
-                    EffectiveTo = new DateTime(2019, 8, 1),
-                }
-            };
-
             return new List<Postcode>
             {
-                new Postcode { PostCode = "Postcode1", ONSData = onsData, McaglaSOFs = mcgalaSOFData },
+                new Postcode { PostCode = "Postcode1", ONSData = onsData },
                 new Postcode { PostCode = "Postcode2" },
-                new Postcode { PostCode = "Postcode3", ONSData = onsData, McaglaSOFs = mcgalaSOFData },
+                new Postcode { PostCode = "Postcode3", ONSData = onsData },
                 new Postcode { PostCode = "Postcode4" },
+            };
+        }
+
+        private IReadOnlyCollection<DevolvedPostcodeRDS> TestDevolvedPostcodes()
+        {
+            return new List<DevolvedPostcodeRDS>
+            {
+                new DevolvedPostcodeRDS
+                {
+                    Postcode = "Postcode1",
+                    Area = "Area1",
+                    SourceOfFunding = "150",
+                    EffectiveFrom = new DateTime(2019, 8, 1)
+                },
+                new DevolvedPostcodeRDS
+                {
+                    Postcode = "Postcode2",
+                    Area = "Area1",
+                    SourceOfFunding = "150",
+                    EffectiveFrom = new DateTime(2019, 8, 1),
+                    EffectiveTo = new DateTime(2020, 8, 1),
+                },
+                new DevolvedPostcodeRDS
+                {
+                    Postcode = "Postcode2",
+                    Area = "Area2",
+                    SourceOfFunding = "105",
+                    EffectiveFrom = new DateTime(2018, 8, 1)
+                }
             };
         }
 

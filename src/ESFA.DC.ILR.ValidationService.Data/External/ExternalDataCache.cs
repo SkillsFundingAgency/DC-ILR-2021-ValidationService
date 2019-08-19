@@ -4,6 +4,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
+using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationRules.Model;
@@ -53,9 +54,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.External
         public IReadOnlyCollection<IONSPostcode> ONSPostcodes { get; set; }
 
         /// <summary>
-        /// Gets or sets the McaglaSOF postcodes.
+        /// Gets or sets the Devolved postcodes.
         /// </summary>
-        public IReadOnlyCollection<IMcaglaSOFPostcode> McaglaSOFPostcodes { get; set; }
+        public IReadOnlyDictionary<string, List<DevolvedPostcode>> DevolvedPostcodes { get; set; }
 
         public IReadOnlyDictionary<string, ValidationError> ValidationErrors { get; set; }
 
@@ -72,6 +73,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External
         /// <summary>
         /// Gets or Sets the Validation Rules
         /// </summary>
-        public IReadOnlyCollection<ValidationRule> ValidationRules { get; set; }        
+        public IReadOnlyCollection<ValidationRule> ValidationRules { get; set; }
     }
 }

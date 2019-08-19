@@ -8,6 +8,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
 using System.Collections.Generic;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationRules.Model;
+using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Interface
 {
@@ -50,9 +51,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Interface
         IReadOnlyCollection<IONSPostcode> ONSPostcodes { get; }
 
         /// <summary>
-        /// Gets the McaglaSOF postcodes.
+        /// Gets the Devolved postcodes.
         /// </summary>
-        IReadOnlyCollection<IMcaglaSOFPostcode> McaglaSOFPostcodes { get; }
+        IReadOnlyDictionary<string, List<DevolvedPostcode>> DevolvedPostcodes { get; }
 
         IReadOnlyDictionary<string, ValidationError> ValidationErrors { get; }
 
