@@ -1,450 +1,391 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
+using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
+using FluentAssertions;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
 {
-    public class LearnStartDate_14RuleTests
+    public class LearnStartDate_14RuleTests : AbstractRuleTests<LearnStartDate_14Rule>
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var ddRule18 = new Mock<IDerivedData_18Rule>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_14Rule(null, larsData.Object, ddRule18.Object, commonOps.Object));
-        }
-
-        /// <summary>
-        /// New rule with null lars data throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullLARSDataThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var ddRule18 = new Mock<IDerivedData_18Rule>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_14Rule(handler.Object, null, ddRule18.Object, commonOps.Object));
-        }
-
-        /// <summary>
-        /// New rule with null derived data rule 18 throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullDerivedDataRule18Throws()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var ddRule18 = new Mock<IDerivedData_18Rule>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_14Rule(handler.Object, larsData.Object, null, commonOps.Object));
+            NewRule().RuleName.Should().Be("LearnStartDate_14");
         }
 
         [Fact]
-        public void NewRuleWithNullCommonOperationsThrows()
+        public void ProgTypeConditionMet_True()
         {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var ddRule18 = new Mock<IDerivedData_18Rule>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_14Rule(handler.Object, larsData.Object, ddRule18.Object, null));
+            NewRule().ProgTypeConditionMet(25).Should().BeTrue();
         }
 
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal("LearnStartDate_14", result);
-        }
-
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(LearnStartDate_14Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Gets start for meets expection.
-        /// </summary>
-        [Fact]
-        public void GetStartForMeetsExpection()
-        {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-            var deliveries = Collection.EmptyAndReadOnly<ILearningDelivery>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var ddRule18 = new Mock<IDerivedData_18Rule>(MockBehavior.Strict);
-            ddRule18
-                .Setup(x => x.GetApprenticeshipStandardProgrammeStartDateFor(delivery.Object, deliveries))
-                .Returns(DateTime.Today);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            var sut = new LearnStartDate_14Rule(handler.Object, larsData.Object, ddRule18.Object, commonOps.Object);
-
-            // act
-            var result = sut.GetStartFor(delivery.Object, deliveries);
-
-            // assert
-            Assert.Equal(DateTime.Today, result);
-
-            handler.VerifyAll();
-            larsData.VerifyAll();
-            ddRule18.VerifyAll();
-            commonOps.VerifyAll();
-        }
-
-        /// <summary>
-        /// Get periods of validity for meets expection.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData(1)]
-        [InlineData(123)]
-        [InlineData(123456)]
-        public void GetPeriodsOfValidityForMeetsExpection(int candidate)
+        [InlineData(null)]
+        [InlineData(0)]
+        public void ProgTypeConditionMet_False(int? progType)
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .SetupGet(x => x.StdCodeNullable)
-                .Returns(candidate);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            larsData
-                .Setup(x => x.GetStandardValiditiesFor(candidate))
-                .Returns(Collection.EmptyAndReadOnly<ILARSStandardValidity>());
-            var ddRule18 = new Mock<IDerivedData_18Rule>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            var sut = new LearnStartDate_14Rule(handler.Object, larsData.Object, ddRule18.Object, commonOps.Object);
-
-            // act
-            var result = sut.GetPeriodsOfValidityFor(delivery.Object);
-
-            // assert
-            Assert.Empty(result);
-
-            handler.VerifyAll();
-            larsData.VerifyAll();
-            ddRule18.VerifyAll();
-            commonOps.VerifyAll();
+            NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Has standard code meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(null, false)]
-        [InlineData(1, true)]
-        [InlineData(123, true)]
-        [InlineData(123456, true)]
-        public void HasStandardCodeMeetsExpectation(int? candidate, bool expectation)
+        [Fact]
+        public void AimTypeConditionMet_True()
         {
-            // arrange
-            var sut = NewRule();
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.StdCodeNullable)
-                .Returns(candidate);
-
-            // act
-            var result = sut.HasStandardCode(mockDelivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
+            NewRule().AimTypeConditionMet(3).Should().BeTrue();
         }
 
-        /// <summary>
-        /// Has qualifying period of validity meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start date.</param>
-        /// <param name="end">The end date.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(null, "2018-01-01", null, true)]
-        [InlineData("2017-12-31", "2018-01-01", null, false)]
-        [InlineData("2018-01-01", "2018-01-01", null, true)]
-        [InlineData("2018-12-31", "2018-01-01", null, true)]
-        [InlineData("2018-12-31", "2018-01-01", "2018-12-31", true)]
-        [InlineData("2018-12-31", "2018-01-01", "2018-12-30", false)]
-        public void HasQualifyingPeriodOfValidityMeetsExpectation(string candidate, string start, string end, bool expectation)
+        [Fact]
+        public void AimTypeConditionMet_False()
         {
-            // arrange
-            var sut = NewRule();
-
-            var testDate = string.IsNullOrWhiteSpace(candidate)
-                ? (DateTime?)null
-                : DateTime.Parse(candidate);
-            var startDate = DateTime.Parse(start);
-            var endDate = string.IsNullOrWhiteSpace(end)
-                ? (DateTime?)null
-                : DateTime.Parse(end);
-
-            var validities = Collection.Empty<ILARSStandardValidity>();
-            var validity = new Mock<ILARSStandardValidity>();
-            validity.SetupGet(x => x.StartDate).Returns(startDate);
-            validity.SetupGet(x => x.EndDate).Returns(endDate);
-            validities.Add(validity.Object);
-
-            // act
-            var result = sut.HasQualifyingPeriodOfValidity(testDate, validities.AsSafeReadOnlyList());
-
-            // assert
-            Assert.Equal(expectation, result);
+            NewRule().AimTypeConditionMet(0).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
-        [Theory]
-        [InlineData("2017-12-31", "2018-01-01", null)]
-        [InlineData("2018-12-31", "2018-01-01", "2018-12-30")]
-        public void InvalidItemRaisesValidationMessage(string candidate, string start, string end)
+        [Fact]
+        public void StandardCodeExists_True()
         {
-            // arrange
-            const string LearnRefNumber = "123456789X";
-            const int stdCodeForTest = 14; // <= any old code for the purpose of the test...
-
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .SetupGet(y => y.StdCodeNullable)
-                .Returns(stdCodeForTest);
-            delivery.SetupGet(y => y.AimType).Returns(3);
-
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            deliveries.Add(delivery.Object);
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
-
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(safeDeliveries);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            handler
-                .Setup(x => x.Handle(LearnStartDate_14Rule.Name, LearnRefNumber, 0, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("StdCode", stdCodeForTest))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-
-            var startDate = DateTime.Parse(start);
-            var endDate = string.IsNullOrWhiteSpace(end)
-                ? (DateTime?)null
-                : DateTime.Parse(end);
-
-            var validities = Collection.Empty<ILARSStandardValidity>();
-            var validity = new Mock<ILARSStandardValidity>();
-            validity.SetupGet(x => x.StartDate).Returns(startDate);
-            validity.SetupGet(x => x.EndDate).Returns(endDate);
-            validities.Add(validity.Object);
-
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            larsData
-                .Setup(x => x.GetStandardValiditiesFor(stdCodeForTest))
-                .Returns(validities.AsSafeReadOnlyList());
-
-            var testDate = string.IsNullOrWhiteSpace(candidate)
-                ? (DateTime?)null
-                : DateTime.Parse(candidate);
-
-            var ddRule18 = new Mock<IDerivedData_18Rule>(MockBehavior.Strict);
-            ddRule18
-                .Setup(x => x.GetApprenticeshipStandardProgrammeStartDateFor(delivery.Object, safeDeliveries))
-                .Returns(testDate);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps.Setup(x => x.IsRestart(delivery.Object)).Returns(false);
-            commonOps.Setup(x => x.IsStandardApprencticeship(delivery.Object)).Returns(true);
-
-            var sut = new LearnStartDate_14Rule(handler.Object, larsData.Object, ddRule18.Object, commonOps.Object);
-
-            // act
-            sut.Validate(mockLearner.Object);
-
-            // assert
-            handler.VerifyAll();
-            larsData.VerifyAll();
-            ddRule18.VerifyAll();
-            commonOps.VerifyAll();
+            NewRule().StandardCodeExists(1).Should().BeTrue();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
-        [Theory]
-        [InlineData("2018-01-01", "2018-01-01", null)]
-        [InlineData("2018-12-31", "2018-01-01", null)]
-        [InlineData("2018-12-31", "2018-01-01", "2018-12-31")]
-        public void ValidItemDoesNotRaiseValidationMessage(string candidate, string start, string end)
+        [Fact]
+        public void StandardCodeExists_False()
         {
-            // arrange
-            const string LearnRefNumber = "123456789X";
-            const int stdCodeForTest = 14; // <= any old code for the purpose of the test...
-
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .SetupGet(y => y.StdCodeNullable)
-                .Returns(stdCodeForTest);
-            delivery.SetupGet(y => y.AimType).Returns(3);
-
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            deliveries.Add(delivery.Object);
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
-
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(safeDeliveries);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            var startDate = DateTime.Parse(start);
-            var endDate = string.IsNullOrWhiteSpace(end)
-                ? (DateTime?)null
-                : DateTime.Parse(end);
-
-            var validities = Collection.Empty<ILARSStandardValidity>();
-            var validity = new Mock<ILARSStandardValidity>();
-            validity.SetupGet(x => x.StartDate).Returns(startDate);
-            validity.SetupGet(x => x.EndDate).Returns(endDate);
-            validities.Add(validity.Object);
-
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            larsData
-                .Setup(x => x.GetStandardValiditiesFor(stdCodeForTest))
-                .Returns(validities.AsSafeReadOnlyList());
-
-            var testDate = string.IsNullOrWhiteSpace(candidate)
-                ? (DateTime?)null
-                : DateTime.Parse(candidate);
-
-            var ddRule18 = new Mock<IDerivedData_18Rule>(MockBehavior.Strict);
-            ddRule18
-                .Setup(x => x.GetApprenticeshipStandardProgrammeStartDateFor(delivery.Object, safeDeliveries))
-                .Returns(testDate);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps.Setup(x => x.IsRestart(delivery.Object)).Returns(false);
-            commonOps.Setup(x => x.IsStandardApprencticeship(delivery.Object)).Returns(true);
-
-            var sut = new LearnStartDate_14Rule(handler.Object, larsData.Object, ddRule18.Object, commonOps.Object);
-
-            // act
-            sut.Validate(mockLearner.Object);
-
-            // assert
-            handler.VerifyAll();
-            larsData.VerifyAll();
-            ddRule18.VerifyAll();
-            commonOps.VerifyAll();
+            NewRule().StandardCodeExists(null).Should().BeFalse();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
-        public LearnStartDate_14Rule NewRule()
+        [Fact]
+        public void LARSConditionMet_True()
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var ddRule18 = new Mock<IDerivedData_18Rule>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            int stdCode = 1;
+            var dd18Date = new DateTime(2018, 10, 01);
 
-            return new LearnStartDate_14Rule(handler.Object, larsData.Object, ddRule18.Object, commonOps.Object);
+            var larsStandard = new LARSStandard()
+            {
+                StandardCode = stdCode,
+                EffectiveTo = new DateTime(2018, 08, 01)
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFor(stdCode)).Returns(larsStandard);
+
+            NewRule(larsDataServiceMock.Object).LARSConditionMet(stdCode, dd18Date).Should().BeTrue();
+        }
+
+        [Fact]
+        public void LARSConditionMet_False_NoMatchingStandard()
+        {
+            int stdCode = 1;
+            var dd18Date = new DateTime(2018, 10, 01);
+
+            var larsStandard = new LARSStandard();
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFor(1)).Returns(larsStandard);
+
+            NewRule(larsDataServiceMock.Object).LARSConditionMet(stdCode, dd18Date).Should().BeFalse();
+        }
+
+        [Fact]
+        public void LARSConditionMet_False_EndDateCorrect()
+        {
+            int stdCode = 1;
+            var dd18Date = new DateTime(2018, 8, 01);
+
+            var larsStandard = new LARSStandard()
+            {
+                StandardCode = stdCode,
+                EffectiveTo = new DateTime(2018, 09, 01)
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFor(stdCode)).Returns(larsStandard);
+
+            NewRule(larsDataServiceMock.Object).LARSConditionMet(stdCode, dd18Date).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Excluded_True()
+        {
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(true);
+
+            NewRule(learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object)
+                .Excluded(It.IsAny<IEnumerable<ILearningDeliveryFAM>>())
+                .Should()
+                .BeTrue();
+        }
+
+        [Fact]
+        public void Excluded_False()
+        {
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(false);
+
+            NewRule(learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object)
+                .Excluded(It.IsAny<IEnumerable<ILearningDeliveryFAM>>())
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_True()
+        {
+            var progType = 25;
+            var aimType = 3;
+            var stdCode = 1;
+            var dd18Date = new DateTime(2018, 10, 01);
+            var learningDeliveryFams = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
+
+            var larsStandard = new LARSStandard()
+            {
+                StandardCode = stdCode,
+                EffectiveTo = new DateTime(2018, 08, 01)
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFor(stdCode)).Returns(larsStandard);
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, "RES"))
+                .Returns(false);
+
+            NewRule(larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(progType, aimType, stdCode, dd18Date, learningDeliveryFams)
+                .Should()
+                .BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMet_False_ProgType()
+        {
+            var progType = 0;
+            var aimType = 1;
+            var stdCode = 1;
+            var dd18Date = new DateTime(2018, 01, 01);
+            var learningDeliveryFams = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock
+                .Setup(ldsm => ldsm.LearnStartDateGreaterThanStandardsEffectiveTo(stdCode, dd18Date))
+                .Returns(true);
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, "RES"))
+                .Returns(false);
+
+            NewRule(larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(progType, aimType, stdCode, dd18Date, learningDeliveryFams)
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_AimType()
+        {
+            var progType = 25;
+            var aimType = 0;
+            var stdCode = 1;
+            var dd18Date = new DateTime(2018, 01, 01);
+            var learningDeliveryFams = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock
+                .Setup(ldsm => ldsm.LearnStartDateGreaterThanStandardsEffectiveTo(stdCode, dd18Date))
+                .Returns(true);
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, "RES"))
+                .Returns(false);
+
+            NewRule(larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(progType, aimType, stdCode, dd18Date, learningDeliveryFams)
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_STDCode()
+        {
+            var progType = 25;
+            var aimType = 1;
+            var stdCode = 0;
+            var dd18Date = new DateTime(2018, 01, 01);
+            var learningDeliveryFams = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
+
+            var larsStandard = new LARSStandard();
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFor(stdCode)).Returns(larsStandard);
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, "RES"))
+                .Returns(false);
+
+            NewRule(larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(progType, aimType, stdCode, dd18Date, learningDeliveryFams)
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_Excluded()
+        {
+            var progType = 25;
+            var aimType = 1;
+            var stdCode = 1;
+            var dd18Date = new DateTime(2018, 01, 01);
+            var learningDeliveryFams = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock
+                .Setup(ldsm => ldsm.LearnStartDateGreaterThanStandardsEffectiveTo(stdCode, dd18Date))
+                .Returns(true);
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, "RES"))
+                .Returns(true);
+
+            NewRule(larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(progType, aimType, stdCode, dd18Date, learningDeliveryFams)
+                .Should()
+                .BeFalse();
+        }
+
+        [Fact]
+        public void Validate_Error()
+        {
+            var stdCode = 1;
+            var dd18Date = new DateTime(2018, 10, 01);
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        ProgTypeNullable = 25,
+                        AimType = 3,
+                        StdCodeNullable = stdCode,
+                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
+                        {
+                            new TestLearningDeliveryFAM()
+                        }
+                    }
+                }
+            };
+
+            var learningDeliveryFams = learner.LearningDeliveries.SelectMany(ld => ld.LearningDeliveryFAMs);
+
+            var larsStandard = new LARSStandard()
+            {
+                StandardCode = stdCode,
+                EffectiveTo = new DateTime(2018, 08, 01)
+            };
+
+            var dd18Mock = new Mock<IDerivedData_18Rule>();
+            dd18Mock.Setup(dm => dm.GetApprenticeshipStandardProgrammeStartDateFor(It.IsAny<ILearningDelivery>(), It.IsAny<IReadOnlyCollection<ILearningDelivery>>())).Returns(dd18Date);
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFor(stdCode)).Returns(larsStandard);
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, "RES"))
+                .Returns(false);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object, dd18Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError()
+        {
+            var stdCode = 1;
+            var dd18Date = new DateTime(2018, 01, 01);
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        ProgTypeNullable = 25,
+                        AimType = 3,
+                        StdCodeNullable = stdCode,
+                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = "RES"
+                            }
+                        }
+                    }
+                }
+            };
+
+            var learningDeliveryFams = learner.LearningDeliveries.SelectMany(ld => ld.LearningDeliveryFAMs);
+
+            var larsStandard = new LARSStandard()
+            {
+                StandardCode = stdCode,
+                EffectiveTo = new DateTime(2018, 08, 01)
+            };
+
+            var dd18Mock = new Mock<IDerivedData_18Rule>();
+            dd18Mock.Setup(dm => dm.GetApprenticeshipStandardProgrammeStartDateFor(It.IsAny<ILearningDelivery>(), It.IsAny<IReadOnlyCollection<ILearningDelivery>>())).Returns(dd18Date);
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock.Setup(ldsm => ldsm.GetStandardFor(stdCode)).Returns(larsStandard);
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFams, "RES"))
+                .Returns(true);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object, dd18Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void BuildErrorMessageParameters()
+        {
+            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
+
+            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.StdCode, 1)).Verifiable();
+
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(1);
+
+            validationErrorHandlerMock.Verify();
+        }
+
+        private LearnStartDate_14Rule NewRule(
+            ILARSDataService larsDataService = null,
+            ILearningDeliveryFAMQueryService learningDeliveryFamQueryService = null,
+            IDerivedData_18Rule derivedData18 = null,
+            IValidationErrorHandler validationErrorHandler = null)
+        {
+            return new LearnStartDate_14Rule(larsDataService, learningDeliveryFamQueryService, derivedData18, validationErrorHandler);
         }
     }
 }
