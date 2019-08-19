@@ -1,11 +1,10 @@
-﻿using ESFA.DC.ILR.Tests.Model;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Learner.Postcode;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode;
-using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
-using FluentAssertions;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -13,219 +12,452 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
 {
-    public class LSDPostcode_01RuleTests : AbstractRuleTests<LSDPostcode_01Rule>
+    public class LSDPostcode_01RuleTests
     {
-        private DateTime _firstAugust2019 = new DateTime(2019, 08, 01);
-
+        /// <summary>
+        /// New rule with null message handler throws.
+        /// </summary>
         [Fact]
-        public void RuleName()
+        public void NewRuleWithNullMessageHandlerThrows()
         {
-            NewRule().RuleName.Should().Be("LSDPostcode_01");
+            // arrange
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new LSDPostcode_01Rule(null, commonOps.Object, postcodeData.Object));
         }
 
+        /// <summary>
+        /// New rule with null common ops throws.
+        /// </summary>
         [Fact]
-        public void LearnStartDate_Passes_AsStartDateisEqual()
+        public void NewRuleWithNullCommonOpsThrows()
         {
-            var startDate = new DateTime(2019, 08, 01);
-            NewRule().LearnStartDateConditionMet(startDate).Should().BeTrue();
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new LSDPostcode_01Rule(handler.Object, null, postcodeData.Object));
         }
 
+        /// <summary>
+        /// New rule with null file data throws.
+        /// </summary>
         [Fact]
-        public void LearnStartDate_True_AsStartIsGreater()
+        public void NewRuleWithNullPostcodeDataThrows()
         {
-            var startDate = new DateTime(2019, 12, 01);
-            NewRule().LearnStartDateConditionMet(startDate).Should().BeTrue();
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new LSDPostcode_01Rule(handler.Object, commonOps.Object, null));
         }
 
+        /// <summary>
+        /// Rule name 1, matches a literal.
+        /// </summary>
         [Fact]
-        public void LearnStartDate_Fails_AsStartisLessThan()
+        public void RuleName1()
         {
-            var startDate = new DateTime(2019, 07, 01);
-            NewRule().LearnStartDateConditionMet(startDate).Should().BeFalse();
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.Equal("LSDPostcode_01", result);
         }
 
+        /// <summary>
+        /// Rule name 2, matches the constant.
+        /// </summary>
+        [Fact]
+        public void RuleName2()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.Equal(RuleNameConstants.LSDPostcode_01, result);
+        }
+
+        /// <summary>
+        /// Rule name 3 test, account for potential false positives.
+        /// </summary>
+        [Fact]
+        public void RuleName3()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.NotEqual("SomeOtherRuleName_07", result);
+        }
+
+        /// <summary>
+        /// First August 2019 meets expectation.
+        /// </summary>
+        [Fact]
+        public void FirstAugust2019MeetsExpectation()
+        {
+            // arrange / act / assert
+            Assert.Equal(DateTime.Parse("2019-08-01"), LSDPostcode_01Rule.FirstAugust2019);
+        }
+
+        /// <summary>
+        /// Validate with null learner throws.
+        /// </summary>
+        [Fact]
+        public void ValidateWithNullLearnerThrows()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act/assert
+            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
+        }
+
+        /// <summary>
+        /// Is traineeship meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, true)]
-        [InlineData(TypeOfFunding.OtherAdult, false)]
-        [InlineData(15, false)]
-        public void FundModelConditionMet(int fundModel, bool asExpected)
+        [InlineData(false)]
+        [InlineData(true)]
+        public void IsTraineeshipMeetsExpectation(bool expectation)
         {
-            NewRule().FundModelConditionMet(fundModel).Should().Be(asExpected);
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
+                .Returns(expectation);
+
+            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
+
+            var sut = new LSDPostcode_01Rule(handler.Object, commonOps.Object, postcodeData.Object);
+
+            // act
+            var result = sut.IsTraineeship(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            postcodeData.VerifyAll();
         }
 
-        [Fact]
-        public void PostcodeNullCondition_Passes()
-        {
-            NewRule().PostCodeNullConditionMet("postcode").Should().BeTrue();
-        }
-
-        [Fact]
-        public void TemporaryPostcodeConditionMet_False()
-        {
-            NewRule().TemporaryPostcodeConditionMet("ZZ99 9ZZ").Should().BeFalse();
-        }
-
-        [Fact]
-        public void TemporaryPostcodeConditionMet_True()
-        {
-            NewRule().TemporaryPostcodeConditionMet("Postcode").Should().BeTrue();
-        }
-
+        /// <summary>
+        /// Type of funding meets expectation.
+        /// </summary>
+        /// <param name="expectation">The expectation.</param>
+        /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData("CV8 8WT", false)]
-        [InlineData("postcode", false)]
-        [InlineData("ZZ99 9ZZ", false)]
-        public void ValidPostcodeConditionMet(string postCode, bool asExpected)
+        [InlineData(35, TypeOfFunding.AdultSkills)]
+        public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
         {
-            var mockPostcodesService = new Mock<IPostcodesDataService>();
-            mockPostcodesService.Setup(x => x.PostcodeExists(postCode)).Returns(true);
-
-            var ruleLSDPostcode = NewRule(postcodesDataService: mockPostcodesService.Object).ValidPostcodeConditionMet(postCode);
-            ruleLSDPostcode.Should().Be(asExpected);
-
-            mockPostcodesService.Verify(x => x.PostcodeExists(postCode), Times.AtLeastOnce);
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
         }
 
+        /// <summary>
+        /// Has qualifying model meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
+                .Returns(expectation);
+
+            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
+
+            var sut = new LSDPostcode_01Rule(handler.Object, commonOps.Object, postcodeData.Object);
+
+            // act
+            var result = sut.HasQualifyingModel(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            postcodeData.VerifyAll();
+        }
+
+        /// <summary>
+        /// Has qualifying start meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void HasQualifyingStartMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingStart(delivery.Object, DateTime.Parse("2019-08-01"), null))
+                .Returns(expectation);
+
+            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
+
+            var sut = new LSDPostcode_01Rule(handler.Object, commonOps.Object, postcodeData.Object);
+
+            // act
+            var result = sut.HasQualifyingStart(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            postcodeData.VerifyAll();
+        }
+
+        /// <summary>
+        /// Has learner start postcode meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(null, false)]
-        [InlineData(23, true)]
-        [InlineData(TypeOfLearningProgramme.Traineeship, false)]
-        public void ProgtypeConditionMet(int? progType, bool asExpected)
+        [InlineData("blah blah", true)]
+        public void HasLearnerStartPostcodeMeetsExpectation(string candidate, bool expectation)
         {
-            NewRule().ProgTypeConditionMet(progType).Should().Be(asExpected);
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LSDPostcode)
+                .Returns(candidate);
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.HasLearnerStartPostcode(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
         }
 
+        [Theory]
+        [InlineData("ZZ99 9ZZ")]
+        [InlineData("zz99 9zz")]
+        public void ValidationConstantsMeetsExpectation(string candidate)
+        {
+            // arrange / act / assert
+            Assert.Equal(candidate, ValidationConstants.TemporaryPostCode, true);
+        }
+
+        /// <summary>
+        /// Is temporary postcode meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(null, false)]
-        [InlineData("", false)]
-        [InlineData(" ", false)]
-        public void PostcodeNullCondition_Fails(string postcode, bool asExpected)
+        [InlineData("blah blah", false)]
+        [InlineData("CV1 3PQ", false)]
+        [InlineData("ZZ99 9ZZ", true)]
+        [InlineData("zz99 9zz", true)]
+        public void IsTemporaryPostcodeMeetsExpectation(string candidate, bool expectation)
         {
-            NewRule().PostCodeNullConditionMet(postcode).Should().Be(asExpected);
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LSDPostcode)
+                .Returns(candidate);
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.IsTemporaryPostcode(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
         }
 
+        /// <summary>
+        /// Invalid item raises validation message.
+        /// dates are deliberately out of sync to ensure the mock's are controlling the flow
+        /// </summary>
         [Fact]
-        public void ConditionMet_True()
+        public void InvalidItemRaisesValidationMessage()
         {
-            var progType = 25;
-            var fundModel = TypeOfFunding.AdultSkills;
-            var lsdPostcode = "lsdPostcode";
-            var startDate = new DateTime(2019, 09, 01);
+            // arrange
+            const string LearnRefNumber = "123456789X";
+            const string testPostcode = "blah blah";
 
-            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
-            mockPostcodesDataService.Setup(x => x.PostcodeExists(lsdPostcode)).Returns(false);
+            var testStart = DateTime.Parse("2016-05-01");
 
-            var lsdRule = NewRule(postcodesDataService: mockPostcodesDataService.Object).ConditionMet(progType, fundModel, lsdPostcode, startDate);
-            lsdRule.Should().BeTrue();
-            mockPostcodesDataService.Verify(x => x.PostcodeExists(lsdPostcode), Times.AtLeastOnce);
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(35);
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(testStart);
+            delivery
+                .SetupGet(y => y.LSDPostcode)
+                .Returns(testPostcode);
+
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.ULN)
+                .Returns(ValidationConstants.TemporaryULN);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            handler
+                .Setup(x => x.Handle(RuleNameConstants.LSDPostcode_01, LearnRefNumber, 0, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("FundModel", 35))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testStart)))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LSDPostcode", testPostcode))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
+                .Returns(false);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.HasQualifyingStart(delivery.Object, LSDPostcode_01Rule.FirstAugust2019, null))
+                .Returns(true);
+
+            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
+
+            // this is the trigger check
+            postcodeData
+                .Setup(x => x.PostcodeExists(testPostcode))
+                .Returns(false);
+
+            var sut = new LSDPostcode_01Rule(handler.Object, commonOps.Object, postcodeData.Object);
+
+            // act
+            sut.Validate(learner.Object);
+
+            // assert
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            postcodeData.VerifyAll();
         }
 
-        [Theory]
-        [InlineData(24, TypeOfFunding.AdultSkills, "lsdPostCode", "2018-09-11", true)] // progType condition Fails
-        [InlineData(25, TypeOfFunding.OtherAdult, "lsdPostcode", "2019-09-11", true)] // fundModel condition Fails
-        [InlineData(25, TypeOfFunding.AdultSkills, null, "2019-09-11", true)] // postcode nullable condition Fails
-        [InlineData(25, TypeOfFunding.AdultSkills, "ZZ99 9ZZ", "2019-09-11", true)] // temp postcode condition Fails
-        [InlineData(25, TypeOfFunding.AdultSkills, "CV8 8WT", "2019-09-11", true)] // valid postcode condition Fails
-        [InlineData(25, TypeOfFunding.AdultSkills, "lsdPostCode", "2018-09-11", true)] // startDate condition Fails
-        public void ConditionMet_False(int progType, int fundModel, string lsdPostcode, string startDate, bool mockPostcodeResult)
-        {
-            var learnStartDate = DateTime.Parse(startDate);
-
-            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
-            mockPostcodesDataService.Setup(x => x.PostcodeExists(lsdPostcode)).Returns(mockPostcodeResult);
-
-            var lsdRule = NewRule(postcodesDataService: mockPostcodesDataService.Object).ConditionMet(progType, fundModel, lsdPostcode, learnStartDate);
-            lsdRule.Should().BeFalse();
-        }
-
+        /// <summary>
+        /// Valid item does not raise validation message.
+        /// </summary>
         [Fact]
-        public void Validate_Error()
+        public void ValidItemDoesNotRaiseValidationMessage()
         {
-            var lsdPostcode = "CV8 8WT";
-            var learnStartDate = new DateTime(2019, 09, 01);
+            // arrange
+            const string LearnRefNumber = "123456789X";
+            const string testPostcode = "blah blah";
 
-            var learningDeliveries = new List<TestLearningDelivery>()
-            {
-                 new TestLearningDelivery
-                 {
-                     FundModel = 35,
-                     ProgTypeNullable = 25,
-                     AimType = 1,
-                     LearnStartDate = learnStartDate,
-                     LSDPostcode = lsdPostcode
-                 }
-            };
+            var testStart = DateTime.Parse("2016-05-01");
 
-            var learner = new TestLearner()
-            {
-                Postcode = lsdPostcode,
-                LearnRefNumber = "LearnRefNumber",
-                LearningDeliveries = learningDeliveries
-            };
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(35);
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(testStart);
+            delivery
+                .SetupGet(y => y.LSDPostcode)
+                .Returns(testPostcode);
 
-            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
-            mockPostcodesDataService.Setup(ds => ds.PostcodeExists(lsdPostcode)).Returns(false);
+            var deliveries = new ILearningDelivery[] { delivery.Object };
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-            {
-                NewRule(mockPostcodesDataService.Object, validationErrorHandlerMock.Object).Validate(learner);
-            }
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.ULN)
+                .Returns(ValidationConstants.TemporaryULN);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
+                .Returns(false);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.HasQualifyingStart(delivery.Object, LSDPostcode_01Rule.FirstAugust2019, null))
+                .Returns(true);
+
+            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
+
+            // this is the trigger check
+            postcodeData
+                .Setup(x => x.PostcodeExists(testPostcode))
+                .Returns(true);
+
+            var sut = new LSDPostcode_01Rule(handler.Object, commonOps.Object, postcodeData.Object);
+
+            // act
+            sut.Validate(learner.Object);
+
+            // assert
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            postcodeData.VerifyAll();
         }
 
-        [Fact]
-        public void Validate_NoError()
+        /// <summary>
+        /// New rule.
+        /// </summary>
+        /// <returns>a constructed and mocked up validation rule</returns>
+        public LSDPostcode_01Rule NewRule()
         {
-            var lsdPostcode = "LSDPostcode";
-            var learnStartDate = new DateTime(2019, 09, 01);
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
 
-            var learningDeliveries = new List<TestLearningDelivery>()
-            {
-                 new TestLearningDelivery
-                 {
-                     FundModel = 35,
-                     ProgTypeNullable = 24, // no error for ProgType = 24
-                     AimType = 1,
-                     LearnStartDate = learnStartDate,
-                     LSDPostcode = lsdPostcode
-                 }
-            };
-
-            var learner = new TestLearner()
-            {
-                Postcode = lsdPostcode,
-                LearnRefNumber = "LearnRefNumber",
-                LearningDeliveries = learningDeliveries
-            };
-
-            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
-            mockPostcodesDataService.Setup(ds => ds.PostcodeExists(lsdPostcode)).Returns(true);
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(mockPostcodesDataService.Object, validationErrorHandlerMock.Object).Validate(learner);
-            }
-        }
-
-        [Fact]
-        public void BuildErrorMessageParameters()
-        {
-            var learnStartDate = new DateTime(2018, 09, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
-            var lsdPostcode = "lsdPostCode";
-            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
-
-            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, "01/09/2018")).Verifiable();
-            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel)).Verifiable();
-            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.LSDPostcode, lsdPostcode)).Verifiable();
-
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(learnStartDate, fundModel, lsdPostcode);
-
-            validationErrorHandlerMock.Verify();
-        }
-
-        private LSDPostcode_01Rule NewRule(IPostcodesDataService postcodesDataService = null, IValidationErrorHandler validationErrorHandler = null)
-        {
-            return new LSDPostcode_01Rule(postcodesDataService, validationErrorHandler);
+            return new LSDPostcode_01Rule(handler.Object, commonOps.Object, postcodeData.Object);
         }
     }
 }
