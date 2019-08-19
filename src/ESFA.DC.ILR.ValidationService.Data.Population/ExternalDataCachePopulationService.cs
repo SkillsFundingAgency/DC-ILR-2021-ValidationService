@@ -1,10 +1,7 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using ESFA.DC.ILR.ReferenceDataService.Model;
+﻿using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
-using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population
 {
@@ -57,7 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
 
             externalDataCache.Postcodes = _postcodesDataMapper.MapPostcodes(referenceDataRoot.Postcodes);
             externalDataCache.ONSPostcodes = _postcodesDataMapper.MapONSPostcodes(referenceDataRoot.Postcodes);
-            externalDataCache.McaglaSOFPostcodes = _postcodesDataMapper.MapMcaglaSOFPostcodes(referenceDataRoot.Postcodes);
+            externalDataCache.DevolvedPostcodes = _postcodesDataMapper.MapDevolvedPostcodes(referenceDataRoot.DevolvedPostocdes?.Postcodes);
 
             externalDataCache.Organisations = _organisationsDataMapper.MapOrganisations(referenceDataRoot.Organisations);
             externalDataCache.CampusIdentifiers = _organisationsDataMapper.MapCampusIdentifiers(referenceDataRoot.Organisations);

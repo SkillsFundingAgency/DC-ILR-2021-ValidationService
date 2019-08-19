@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.ReferenceDataService.Model.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
+using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
+using DevolvedPostcodeRDS = ESFA.DC.ILR.ReferenceDataService.Model.PostcodesDevolution.DevolvedPostcode;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
 {
@@ -36,22 +38,21 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
             return onsPostcodes;
         }
 
-        public IReadOnlyCollection<McaglaSOFPostcode> MapMcaglaSOFPostcodes(IReadOnlyCollection<Postcode> postcodes)
+        public IReadOnlyDictionary<string, List<DevolvedPostcode>> MapDevolvedPostcodes(IReadOnlyCollection<DevolvedPostcodeRDS> postcodes)
         {
-            List<McaglaSOFPostcode> mcaglaSOFPostcodes = new List<McaglaSOFPostcode>();
-
-            foreach (var postcode in postcodes.Where(m => m.McaglaSOFs != null))
-            {
-                mcaglaSOFPostcodes.AddRange(postcode?.McaglaSOFs?.Select(m => new McaglaSOFPostcode
-                {
-                    Postcode = postcode.PostCode,
-                    SofCode = m.SofCode,
-                    EffectiveFrom = m.EffectiveFrom,
-                    EffectiveTo = m.EffectiveTo
-                }));
-            }
-
-            return mcaglaSOFPostcodes;
+            return postcodes?
+                .GroupBy(p => p.Postcode, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(
+                    k => k.Key,
+                    v => v.Select(dp => new DevolvedPostcode
+                    {
+                        Postcode = dp.Postcode,
+                        Area = dp.Area,
+                        SourceOfFunding = dp.SourceOfFunding,
+                        EffectiveFrom = dp.EffectiveFrom,
+                        EffectiveTo = dp.EffectiveTo
+                    }).ToList(),
+                    StringComparer.OrdinalIgnoreCase) ?? new Dictionary<string, List<DevolvedPostcode>>();
         }
     }
 }

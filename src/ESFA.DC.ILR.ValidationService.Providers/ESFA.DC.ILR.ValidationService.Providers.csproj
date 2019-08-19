@@ -9,7 +9,7 @@
     <PackageReference Include="ESFA.DC.ILR.1920.IO.Model.Validation" Version="0.1.5-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.1920.Model" Version="0.1.7-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.1920.Model.Interface" Version="0.1.4-beta0001" />
-    <PackageReference Include="ESFA.DC.ILR1920.ReferenceDataService.Model" Version="0.0.130" />
+    <PackageReference Include="ESFA.DC.ILR1920.ReferenceDataService.Model" Version="0.0.222" />
     <PackageReference Include="ESFA.DC.Logging.Interfaces" Version="0.1.4-beta0001" />
     <PackageReference Include="ESFA.DC.Serialization.Interfaces" Version="0.1.6-beta0001" />
   </ItemGroup>

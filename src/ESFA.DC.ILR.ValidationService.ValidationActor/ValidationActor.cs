@@ -116,7 +116,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                     Organisations = externalDataCacheGet.Organisations,
                     Postcodes = externalDataCacheGet.Postcodes.ToCaseInsensitiveHashSet(),
                     ONSPostcodes = externalDataCacheGet.ONSPostcodes,
-                    McaglaSOFPostcodes = externalDataCacheGet.McaglaSOFPostcodes,
+                    DevolvedPostcodes = externalDataCacheGet.DevolvedPostcodes,
                     Standards = externalDataCacheGet.Standards,
                     StandardValidities = externalDataCacheGet.StandardValidities,
                     ULNs = externalDataCacheGet.ULNs,

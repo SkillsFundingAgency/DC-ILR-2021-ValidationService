@@ -35,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         }
 
         public LSDPostcode_02Rule()
-       : base(null, null)
+       : base(null, RuleNameConstants.LSDPostcode_02)
         {
 
         }
@@ -46,11 +46,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             {
                 foreach (var learningDelivery in objectToValidate.LearningDeliveries)
                 {
-                    var mcaglaPostocdeList = _postcodeService.GetMcaglaSOFPostcodes(learningDelivery.LSDPostcode);
+                    var devolvedPostcodes = _postcodeService.GetDevolvedPostcodes(learningDelivery.LSDPostcode);
 
                     if (ConditionMet(learningDelivery.PartnerUKPRNNullable.Value, learningDelivery.ProgTypeNullable,
                                      learningDelivery.FundModel, learningDelivery.LearnStartDate,
-                                     mcaglaPostocdeList, learningDelivery.LearningDeliveryFAMs))
+                                     devolvedPostcodes, learningDelivery.LearningDeliveryFAMs))
                     {
                         HandleValidationError(
                                           objectToValidate.LearnRefNumber,
@@ -59,18 +59,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                                           learningDelivery.FundModel,
                                           learningDelivery.LSDPostcode,
                                           LearningDeliveryFAMTypeConstants.SOF));
-                        return;
                     }
                 }
             }
         }
 
-        public bool ConditionMet(int ukprn, int? progType, int fundModel, DateTime learnStartDate, IEnumerable<IMcaglaSOFPostcode> mcaglaSOFPostcodes, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        public bool ConditionMet(int ukprn, int? progType, int fundModel, DateTime learnStartDate, IEnumerable<IDevolvedPostcode> devolvedPostcodes, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return ProgTypeConditionMet(progType)
                  && FundModelConditionMet(fundModel)
                  && LearnStartDateConditionMet(learnStartDate)
-                 && CheckQualifyingPeriod(learnStartDate, learningDeliveryFAMs, mcaglaSOFPostcodes)
+                 && IsInvalidSofCodeOnLearnStartDate(learnStartDate, learningDeliveryFAMs, devolvedPostcodes)
                  && OrganisationConditionMet(ukprn)
                  && LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)
                  && ExclusionConditionMet(learningDeliveryFAMs);
@@ -92,13 +91,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             return learnStartDate >= _firstAugust2019;
         }
 
-        public virtual bool CheckQualifyingPeriod(DateTime learnStartDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, IEnumerable<IMcaglaSOFPostcode> mcaglaSOFPostcodes)
+        public virtual bool IsInvalidSofCodeOnLearnStartDate(DateTime learnStartDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, IEnumerable<IDevolvedPostcode> devolvedPostcodes)
         {
-            return mcaglaSOFPostcodes.Count() > 0
-                   && _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.SOF)
-                   && mcaglaSOFPostcodes
-                         .Where(sof => sof.SofCode != LearningDeliveryFAMTypeConstants.SOF)
-                         .Any(sof => learnStartDate < sof.EffectiveFrom);
+            var ldFamSofs = _learningDeliveryFAMQueryService
+                .GetLearningDeliveryFAMsForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.SOF)?
+                .Select(l => l.LearnDelFAMCode)
+                .ToList() ?? Enumerable.Empty<string>();
+
+            var devolvedPostcodesForSof = devolvedPostcodes.Where(dp => ldFamSofs.Contains(dp.SourceOfFunding)).ToList() ?? Enumerable.Empty<IDevolvedPostcode>();
+
+            var isNotValid = devolvedPostcodesForSof.Count() > 0 ? devolvedPostcodesForSof.All(dp => dp.EffectiveFrom > learnStartDate) : false;
+
+            return isNotValid;
         }
 
         public virtual bool OrganisationConditionMet(int ukprn)
@@ -114,7 +118,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         public virtual bool ExclusionConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return !_learningDeliveryFAMQueryService
-                       .HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_PostcodeExclusion_001);            
+                       .HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001);            
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, int fundModel, string lsdPostcode, string famType)

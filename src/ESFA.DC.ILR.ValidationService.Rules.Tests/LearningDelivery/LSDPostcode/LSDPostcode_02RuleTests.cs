@@ -12,6 +12,7 @@ using FluentAssertions;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
@@ -61,82 +62,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         {
             var startDate = new DateTime(2019, 07, 01);
             NewRule().LearnStartDateConditionMet(startDate).Should().BeFalse();
-        }
-
-        [Fact]
-        public void CheckQualifyingPeriod_Passes()
-        {
-            var startDate = new DateTime(2019, 08, 01);
-            var mcaglaPostcodeList = new List<McaglaSOFPostcode>()
-            {
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2019, 10, 03),
-                    SofCode = "SofCode"
-                },
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2020, 01, 01)
-                },
-            };
-
-            var learningDeliveryFams = new List<ILearningDeliveryFAM>();
-            var famType = "SOF";
-
-            var mockFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, famType)).Returns(true);
-
-            var ruleLSDPostcode02 = NewRule(learningDeliveryFAMQueryService: mockFAMQueryService.Object).CheckQualifyingPeriod(startDate, learningDeliveryFams, mcaglaPostcodeList);
-
-            ruleLSDPostcode02.Should().BeTrue();
-        }
-
-        [Fact]
-        public void CheckQualifyingPeriod_Fails_AsFamTypeIsSame()
-        {
-            var startDate = new DateTime(2019, 08, 01);
-            var mcaglaPostcodeList = new List<McaglaSOFPostcode>()
-            {
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2019, 10, 03),
-                    SofCode = "SOF"
-                }
-            };
-
-            var learningDeliveryFams = new List<ILearningDeliveryFAM>();
-            var famType = "SOF";
-
-            var mockFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, famType)).Returns(false);
-
-            var ruleLSDPostcode02 = NewRule(learningDeliveryFAMQueryService: mockFAMQueryService.Object).CheckQualifyingPeriod(startDate, learningDeliveryFams, mcaglaPostcodeList);
-
-            ruleLSDPostcode02.Should().BeFalse();
-        }
-
-        [Fact]
-        public void CheckQualifyingPeriod_Fails_AsStartDateisGreater()
-        {
-            var startDate = new DateTime(2019, 08, 01);
-            var mcaglaPostcodeList = new List<McaglaSOFPostcode>()
-            {
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2019, 07, 03),
-                    SofCode = "SOFCode"
-                }
-            };
-
-            var learningDeliveryFams = new List<ILearningDeliveryFAM>();
-            var famType = "SOF";
-
-            var mockFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, famType)).Returns(true);
-
-            var ruleLSDPostcode02 = NewRule(learningDeliveryFAMQueryService: mockFAMQueryService.Object).CheckQualifyingPeriod(startDate, learningDeliveryFams, mcaglaPostcodeList);
-
-            ruleLSDPostcode02.Should().BeFalse();
         }
 
         [Fact]
@@ -232,50 +157,200 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         [Fact]
-        public void ConditionMet_True()
+        public void IsInvalidSofCodeOnLearnStartDate_True()
         {
-            var progType = 25;
-            var fundModel = 35;
-            var startDate = new DateTime(2019, 08, 01);
+            var learnStartDate = new DateTime(2019, 08, 01);
+            var famCode = "001";
+            var famType = "SOF";
 
-            var mcaglaPostcodeList = new List<McaglaSOFPostcode>()
+            var learningDelFams = new List<ILearningDeliveryFAM>
             {
-                new McaglaSOFPostcode()
+                new TestLearningDeliveryFAM
                 {
-                    EffectiveFrom = new DateTime(2019, 10, 03),
-                    SofCode = "SofCode"
+                    LearnDelFAMCode = famCode,
+                    LearnDelFAMType = famType
                 },
-                new McaglaSOFPostcode()
+                new TestLearningDeliveryFAM
                 {
-                    EffectiveFrom = new DateTime(2020, 01, 01)
+                    LearnDelFAMCode = "111",
+                    LearnDelFAMType = "LDM"
+                }
+            };
+
+            var learningDelFamsMockResult = new List<ILearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMCode = famCode,
+                    LearnDelFAMType = famType
                 },
             };
 
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    SourceOfFunding = "001",
+                    EffectiveFrom = new DateTime(2019, 08, 02)
+                },
+                new DevolvedPostcode
+                {
+                    SourceOfFunding = "111",
+                    EffectiveFrom = new DateTime(2019, 08, 01)
+                }
+            };
+
+            var mockLearningDelFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+            mockLearningDelFAMQueryService.Setup(x => x.GetLearningDeliveryFAMsForType(learningDelFams, LearningDeliveryFAMTypeConstants.SOF)).Returns(learningDelFamsMockResult);
+
+            NewRule(mockLearningDelFAMQueryService.Object).IsInvalidSofCodeOnLearnStartDate(learnStartDate, learningDelFams, devolvedPostcodes).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(2020, "001", "SOF", "001", true)]
+        [InlineData(2019, "002", "SOF", "001", false)]
+        [InlineData(2019, "001", "LDM", "001", false)]
+        [InlineData(2019, "001", "SOF", "002", true)]
+        public void IsInvalidSofCodeOnLearnStartDate_False(int yearStart, string sofCode, string learnDelFamType, string postcodeSofCode, bool ldFamMock)
+        {
+            var learnStartDate = new DateTime(yearStart, 08, 01);
+            var famCode = sofCode;
+            var famType = learnDelFamType;
+
+            var learningDelFams = new List<ILearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMCode = famCode,
+                    LearnDelFAMType = famType
+                },
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMCode = "111",
+                    LearnDelFAMType = "LDM"
+                }
+            };
+
+            var learningDelFamsMockResult = new List<ILearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMCode = famCode,
+                    LearnDelFAMType = famType
+                },
+            };
+
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    SourceOfFunding = postcodeSofCode,
+                    EffectiveFrom = new DateTime(2019, 08, 02)
+                },
+                new DevolvedPostcode
+                {
+                    SourceOfFunding = "111",
+                    EffectiveFrom = new DateTime(2019, 08, 01)
+                }
+            };
+
+            var ldFamMockOutput = ldFamMock == true ? learningDelFamsMockResult : new List<ILearningDeliveryFAM>();
+
+            var mockLearningDelFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+            mockLearningDelFAMQueryService.Setup(x => x.GetLearningDeliveryFAMsForType(learningDelFams, LearningDeliveryFAMTypeConstants.SOF)).Returns(ldFamMockOutput);
+
+            NewRule(mockLearningDelFAMQueryService.Object).IsInvalidSofCodeOnLearnStartDate(learnStartDate, learningDelFams, devolvedPostcodes).Should().BeFalse();
+        }
+
+        //[Fact]
+        //public void ConditionMet_True()
+        //{
+        //    var famCode = "001";
+        //    var famType = "SOF";
+
+        //    var learningDeliveryFams = new List<ILearningDeliveryFAM>
+        //    {
+        //        new TestLearningDeliveryFAM
+        //        {
+        //            LearnDelFAMCode = famCode,
+        //            LearnDelFAMType = famType
+        //        },
+        //        new TestLearningDeliveryFAM
+        //        {
+        //            LearnDelFAMCode = "111",
+        //            LearnDelFAMType = "LDM"
+        //        }
+        //    };
+
+        //    var learningDelFamsMockResult = new List<ILearningDeliveryFAM>
+        //    {
+        //        new TestLearningDeliveryFAM
+        //        {
+        //            LearnDelFAMCode = famCode,
+        //            LearnDelFAMType = famType
+        //        },
+        //    };
+
+        //    var progType = 25;
+        //    var fundModel = 35;
+        //    var startDate = new DateTime(2019, 08, 01);
+
+        //    var devolvedPostcodes = new List<IDevolvedPostcode>
+        //    {
+        //        new DevolvedPostcode
+        //        {
+        //            SourceOfFunding = "001",
+        //            EffectiveFrom = new DateTime(2019, 08, 02)
+        //        },
+        //        new DevolvedPostcode
+        //        {
+        //            SourceOfFunding = "111",
+        //            EffectiveFrom = new DateTime(2019, 08, 01)
+        //        }
+        //    };
+
+        //    var ukprn = 123;
+        //    var legalOrgType = "USDC";
+        //    var mockOrganisationDataService = new Mock<IOrganisationDataService>();
+        //    mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(false);
+
+        //    var famTypeSOF = "SOF";
+
+        //    var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+        //    mockLearningDeliveryFAMQueryService.Setup(x => x.GetLearningDeliveryFAMsForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.SOF)).Returns(learningDelFamsMockResult);
+
+        //    var famCodeDAM = "001";
+        //    var famTypeDAM = "DAM";
+        //    mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM)).Returns(false);
+
+        //    var rule = NewRule(
+        //                    learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
+        //                    organisationDataService: mockOrganisationDataService.Object);
+
+        //    rule.ConditionMet(ukprn, progType, fundModel, startDate, devolvedPostcodes, learningDeliveryFams).Should().BeTrue();
+        //}
+
+        [Fact]
+        public void ConditionMet_True()
+        {
             var ukprn = 123;
-            var legalOrgType = "USDC";
-            var mockOrganisationDataService = new Mock<IOrganisationDataService>();
-            mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(false);
-
-            var famTypeSOF = "SOF";
+            var progType = 25;
+            var fundModel = 35;
+            var learnStartDate = new DateTime(2019, 08, 01);
             var learningDeliveryFams = new List<ILearningDeliveryFAM>();
+            var devolvedPostcodes = new List<IDevolvedPostcode>();
 
-            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, famTypeSOF)).Returns(true);
+            var rule = NewRuleMock();
 
-            var famCodeDAM = "001";
-            var famTypeDAM = "DAM";
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM)).Returns(false);
+            rule.Setup(rm => rm.ProgTypeConditionMet(progType)).Returns(true);
+            rule.Setup(rm => rm.OrganisationConditionMet(ukprn)).Returns(true);
+            rule.Setup(rm => rm.FundModelConditionMet(fundModel)).Returns(true);
+            rule.Setup(rm => rm.LearnStartDateConditionMet(learnStartDate)).Returns(true);
+            rule.Setup(rm => rm.IsInvalidSofCodeOnLearnStartDate(learnStartDate, learningDeliveryFams, devolvedPostcodes)).Returns(true);
+            rule.Setup(rm => rm.LearningDeliveryFAMsConditionMet(learningDeliveryFams)).Returns(true);
+            rule.Setup(rm => rm.ExclusionConditionMet(learningDeliveryFams)).Returns(true);
 
-            var rule = NewRule(
-                            learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
-                            organisationDataService: mockOrganisationDataService.Object);
-
-            var result = rule.ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFams);
-            result.Should().BeTrue();
-
-            mockOrganisationDataService.Verify(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType), Times.AtLeastOnce);
-            mockLearningDeliveryFAMQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, famTypeSOF), Times.AtLeastOnce);
-            mockLearningDeliveryFAMQueryService.Verify(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM), Times.AtLeastOnce);
+            rule.Object.ConditionMet(ukprn, progType, fundModel, learnStartDate, devolvedPostcodes, learningDeliveryFams).Should().BeTrue();
         }
 
         [Theory]
@@ -286,78 +361,93 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         [InlineData(false, false, false, false, true, false, false)]
         [InlineData(false, false, false, false, false, true, false)]
         [InlineData(false, false, false, false, false, false, true)]
-        public void ConditionMet_Fails(bool progCondition, bool fundCondition, bool startDateCondition, bool qualifyingCondition, bool organisationCondition, bool delFAMSCondition, bool excludingCondition)
+        [InlineData(false, false, false, false, false, false, false)]
+        public void ConditionMet_False(bool condition1, bool condition2, bool condition3, bool condition4, bool condition5, bool condition6, bool condition7)
         {
             var ukprn = 123;
-            int progType = 24;
-            int fundModel = 25;
-            DateTime startDate = new DateTime(2019, 6, 18);
+            var progType = 25;
+            var fundModel = 35;
+            var learnStartDate = new DateTime(2019, 08, 01);
+            var learningDeliveryFams = new List<ILearningDeliveryFAM>();
+            var devolvedPostcodes = new List<IDevolvedPostcode>();
 
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-            {
-                new TestLearningDeliveryFAM
-                {
-                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF
-                }
-            };
+            var rule = NewRuleMock();
 
-            var mcaglaPostcodeList = new List<McaglaSOFPostcode>()
-            {
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2019, 10, 03),
-                    SofCode = "SofCode"
-                },
-                new McaglaSOFPostcode()
-                {
-                    EffectiveFrom = new DateTime(2020, 01, 01)
-                },
-            };
+            rule.Setup(rm => rm.ProgTypeConditionMet(progType)).Returns(condition1);
+            rule.Setup(rm => rm.OrganisationConditionMet(ukprn)).Returns(condition2);
+            rule.Setup(rm => rm.FundModelConditionMet(fundModel)).Returns(condition3);
+            rule.Setup(rm => rm.LearnStartDateConditionMet(learnStartDate)).Returns(condition4);
+            rule.Setup(rm => rm.IsInvalidSofCodeOnLearnStartDate(learnStartDate, learningDeliveryFams, devolvedPostcodes)).Returns(condition5);
+            rule.Setup(rm => rm.LearningDeliveryFAMsConditionMet(learningDeliveryFams)).Returns(condition6);
+            rule.Setup(rm => rm.ExclusionConditionMet(learningDeliveryFams)).Returns(condition7);
 
-            var lsdPostcode02Rule = NewRuleMock();
-            lsdPostcode02Rule.Setup(x => x.ProgTypeConditionMet(progType)).Returns(progCondition);
-            lsdPostcode02Rule.Setup(x => x.FundModelConditionMet(fundModel)).Returns(fundCondition);
-            lsdPostcode02Rule.Setup(x => x.LearnStartDateConditionMet(startDate)).Returns(startDateCondition);
-            lsdPostcode02Rule.Setup(x => x.CheckQualifyingPeriod(startDate, learningDeliveryFAMs, mcaglaPostcodeList)).Returns(qualifyingCondition);
-            lsdPostcode02Rule.Setup(x => x.OrganisationConditionMet(ukprn)).Returns(organisationCondition);
-            lsdPostcode02Rule.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(delFAMSCondition);
-            lsdPostcode02Rule.Setup(x => x.ExclusionConditionMet(learningDeliveryFAMs)).Returns(excludingCondition);
-
-            lsdPostcode02Rule.Object
-                .ConditionMet(ukprn, progType, fundModel, startDate, mcaglaPostcodeList, learningDeliveryFAMs)
-                .Should()
-                .BeFalse();
+            rule.Object.ConditionMet(ukprn, progType, fundModel, learnStartDate, devolvedPostcodes, learningDeliveryFams).Should().BeFalse();
         }
 
         [Fact]
         public void Validate_Error()
         {
-            var ukprn = 123;
-            var lsdPostcode = "LSDPostcode";
-            var learnStartDate = new DateTime(2019, 09, 01);
+            var famCode = "001";
+            var famType = "SOF";
 
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>
-            {
-                new TestLearningDeliveryFAM
+            var learningDeliveryFams = new List<ILearningDeliveryFAM>
                 {
-                    LearnDelFAMDateFromNullable = new DateTime(2019, 09, 1),
-                    LearnDelFAMType = "RES"
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMCode = famCode,
+                        LearnDelFAMType = famType
+                    },
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMCode = "111",
+                        LearnDelFAMType = "LDM"
+                    }
+                };
+
+            var learningDelFamsMockResult = new List<ILearningDeliveryFAM>
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMCode = famCode,
+                        LearnDelFAMType = famType
+                    },
+                };
+
+            var ukprn = 123;
+            var progType = 25;
+            var fundModel = 35;
+            var learnStartDate = new DateTime(2019, 08, 01);
+            var lsdPostcode = "LSDPostcode";
+
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = "LSDPostcode",
+                    SourceOfFunding = "001",
+                    EffectiveFrom = new DateTime(2019, 08, 02)
+                },
+                new DevolvedPostcode
+                {
+                    Postcode = "LSDPostcode",
+                    SourceOfFunding = "111",
+                    EffectiveFrom = new DateTime(2019, 08, 01)
                 }
-            };
+             };
 
             var learningDeliveries = new List<TestLearningDelivery>()
-            {
-                 new TestLearningDelivery
-                 {
-                     PartnerUKPRNNullable = ukprn,
-                     FundModel = 35,
-                     ProgTypeNullable = 25,
-                     AimType = 1,
-                     LearnStartDate = learnStartDate,
-                     LSDPostcode = lsdPostcode,
-                     LearningDeliveryFAMs = learningDeliveryFams
-                 }
-            };
+                {
+                     new TestLearningDelivery
+                     {
+                         PartnerUKPRNNullable = ukprn,
+                         FundModel = fundModel,
+                         ProgTypeNullable = progType,
+                         AimType = 1,
+                         LearnStartDate = learnStartDate,
+                         LSDPostcode = lsdPostcode,
+                         LearningDeliveryFAMs = learningDeliveryFams
+                     }
+                };
 
             var learner = new TestLearner()
             {
@@ -366,35 +456,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 LearningDeliveries = learningDeliveries
             };
 
-            var mcaglaSOFPostcodeList = new List<IMcaglaSOFPostcode>()
-            {
-                 new McaglaSOFPostcode()
-                    {
-                        SofCode = "SofCode",
-                        EffectiveFrom = learnStartDate.AddYears(1),
-                        EffectiveTo = learnStartDate.AddMonths(2)
-                    }
-            };
-
-            var mockPostcodeService = new Mock<IPostcodesDataService>();
-            mockPostcodeService.Setup(x => x.GetMcaglaSOFPostcodes(lsdPostcode))
-                                .Returns(mcaglaSOFPostcodeList);
-
-            var famCodeDAM = "001";
-            var famTypeDAM = "DAM";
-            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, "SOF")).Returns(true);
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM)).Returns(false);
-
             var legalOrgType = "USDC";
             var mockOrganisationDataService = new Mock<IOrganisationDataService>();
             mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(false);
+
+            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+            mockLearningDeliveryFAMQueryService.Setup(x => x.GetLearningDeliveryFAMsForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.SOF)).Returns(learningDelFamsMockResult);
+
+            var famCodeDAM = "001";
+            var famTypeDAM = "DAM";
+            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM)).Returns(false);
+
+            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
+            mockPostcodesDataService.Setup(ds => ds.GetDevolvedPostcodes(lsdPostcode)).Returns(devolvedPostcodes);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
                 NewRule(
                     learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
-                    postcodesDataService: mockPostcodeService.Object,
+                    postcodesDataService: mockPostcodesDataService.Object,
                     organisationDataService: mockOrganisationDataService.Object,
                     validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
                 VerifyErrorHandlerMock(validationErrorHandlerMock, 1);
@@ -402,34 +482,89 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         [Fact]
-        public void Validate_NoError()
+        public void Validate_Error_MultipleTriggers()
         {
-            var ukprn = 123;
-            var lsdPostcode = "LSDPostcode";
-            var learnStartDate = new DateTime(2019, 09, 01);
+            var famCode = "001";
+            var famType = "SOF";
 
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>
-            {
-                new TestLearningDeliveryFAM
+            var learningDeliveryFams = new List<ILearningDeliveryFAM>
                 {
-                    LearnDelFAMDateFromNullable = new DateTime(2019, 09, 1),
-                    LearnDelFAMType = "RES"
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMCode = famCode,
+                        LearnDelFAMType = famType
+                    },
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMCode = "111",
+                        LearnDelFAMType = "LDM"
+                    }
+                };
+
+            var learningDelFamsMockResult = new List<ILearningDeliveryFAM>
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMCode = famCode,
+                        LearnDelFAMType = famType
+                    },
+                };
+
+            var ukprn = 123;
+            var progType = 25;
+            var fundModel = 35;
+            var learnStartDate = new DateTime(2019, 08, 01);
+            var lsdPostcode = "LSDPostcode";
+
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = "LSDPostcode",
+                    SourceOfFunding = "001",
+                    EffectiveFrom = new DateTime(2019, 08, 02)
+                },
+                new DevolvedPostcode
+                {
+                    Postcode = "LSDPostcode",
+                    SourceOfFunding = "111",
+                    EffectiveFrom = new DateTime(2019, 08, 01)
                 }
-            };
+             };
 
             var learningDeliveries = new List<TestLearningDelivery>()
-            {
-                 new TestLearningDelivery
-                 {
-                     PartnerUKPRNNullable = ukprn,
-                     FundModel = 35,
-                     ProgTypeNullable = 24,
-                     AimType = 1,
-                     LearnStartDate = learnStartDate,
-                     LSDPostcode = lsdPostcode,
-                     LearningDeliveryFAMs = learningDeliveryFams
-                 }
-            };
+                {
+                     new TestLearningDelivery
+                     {
+                         PartnerUKPRNNullable = ukprn,
+                         FundModel = fundModel,
+                         ProgTypeNullable = progType,
+                         AimType = 1,
+                         LearnStartDate = learnStartDate,
+                         LSDPostcode = lsdPostcode,
+                         LearningDeliveryFAMs = learningDeliveryFams
+                     },
+                     new TestLearningDelivery
+                     {
+                         PartnerUKPRNNullable = ukprn,
+                         FundModel = fundModel,
+                         ProgTypeNullable = progType,
+                         AimType = 1,
+                         LearnStartDate = learnStartDate,
+                         LSDPostcode = lsdPostcode,
+                         LearningDeliveryFAMs = learningDeliveryFams
+                     },
+                     new TestLearningDelivery
+                     {
+                         PartnerUKPRNNullable = ukprn,
+                         FundModel = fundModel,
+                         ProgTypeNullable = progType,
+                         AimType = 1,
+                         LearnStartDate = learnStartDate,
+                         LSDPostcode = lsdPostcode,
+                         LearningDeliveryFAMs = learningDeliveryFams
+                     }
+                };
 
             var learner = new TestLearner()
             {
@@ -438,37 +573,125 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 LearningDeliveries = learningDeliveries
             };
 
-            var mcaglaSOFPostcodeList = new List<IMcaglaSOFPostcode>()
-            {
-                 new McaglaSOFPostcode()
-                    {
-                        SofCode = "SofCode",
-                        EffectiveFrom = learnStartDate.AddYears(1),
-                        EffectiveTo = learnStartDate.AddMonths(2)
-                    }
-            };
+            var legalOrgType = "USDC";
+            var mockOrganisationDataService = new Mock<IOrganisationDataService>();
+            mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(false);
 
-            var mockPostcodeService = new Mock<IPostcodesDataService>();
-            mockPostcodeService.Setup(x => x.GetMcaglaSOFPostcodes(lsdPostcode))
-                                .Returns(mcaglaSOFPostcodeList);
+            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+            mockLearningDeliveryFAMQueryService.Setup(x => x.GetLearningDeliveryFAMsForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.SOF)).Returns(learningDelFamsMockResult);
 
             var famCodeDAM = "001";
             var famTypeDAM = "DAM";
-            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFams, "SOF")).Returns(true);
-            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM)).Returns(true);
+            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM)).Returns(false);
+
+            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
+            mockPostcodesDataService.Setup(ds => ds.GetDevolvedPostcodes(lsdPostcode)).Returns(devolvedPostcodes);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(
+                    learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
+                    postcodesDataService: mockPostcodesDataService.Object,
+                    organisationDataService: mockOrganisationDataService.Object,
+                    validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
+                VerifyErrorHandlerMock(validationErrorHandlerMock, 3);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError()
+        {
+            var famCode = "001";
+            var famType = "SOF";
+
+            var learningDeliveryFams = new List<ILearningDeliveryFAM>
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMCode = famCode,
+                        LearnDelFAMType = famType
+                    },
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMCode = "111",
+                        LearnDelFAMType = "LDM"
+                    }
+                };
+
+            var learningDelFamsMockResult = new List<ILearningDeliveryFAM>
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMCode = famCode,
+                        LearnDelFAMType = famType
+                    },
+                };
+
+            var ukprn = 123;
+            var progType = 25;
+            var fundModel = 35;
+            var learnStartDate = new DateTime(2019, 08, 01);
+            var lsdPostcode = "LSDPostcode";
+
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = "LSDPostcode",
+                    SourceOfFunding = "001",
+                    EffectiveFrom = new DateTime(2019, 08, 02)
+                },
+                new DevolvedPostcode
+                {
+                    Postcode = "LSDPostcode",
+                    SourceOfFunding = "111",
+                    EffectiveFrom = new DateTime(2019, 08, 01)
+                }
+             };
+
+            var learningDeliveries = new List<TestLearningDelivery>()
+                {
+                     new TestLearningDelivery
+                     {
+                         PartnerUKPRNNullable = ukprn,
+                         FundModel = fundModel,
+                         ProgTypeNullable = progType,
+                         AimType = 1,
+                         LearnStartDate = learnStartDate,
+                         LSDPostcode = lsdPostcode,
+                         LearningDeliveryFAMs = learningDeliveryFams
+                     }
+                };
+
+            var learner = new TestLearner()
+            {
+                Postcode = lsdPostcode,
+                LearnRefNumber = "LearnRefNumber",
+                LearningDeliveries = learningDeliveries
+            };
 
             var legalOrgType = "USDC";
             var mockOrganisationDataService = new Mock<IOrganisationDataService>();
-            mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(true);
+            mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(false);
+
+            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+            mockLearningDeliveryFAMQueryService.Setup(x => x.GetLearningDeliveryFAMsForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.SOF)).Returns(learningDelFamsMockResult);
+
+            var famCodeDAM = "001";
+            var famTypeDAM = "DAM";
+            mockLearningDeliveryFAMQueryService.Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, famTypeDAM, famCodeDAM)).Returns(true);
+
+            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
+            mockPostcodesDataService.Setup(ds => ds.GetDevolvedPostcodes(lsdPostcode)).Returns(devolvedPostcodes);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
                 NewRule(
                     learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
-                    postcodesDataService: mockPostcodeService.Object,
+                    postcodesDataService: mockPostcodesDataService.Object,
                     organisationDataService: mockOrganisationDataService.Object,
                     validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
+                VerifyErrorHandlerMock(validationErrorHandlerMock, 0);
             }
         }
 
