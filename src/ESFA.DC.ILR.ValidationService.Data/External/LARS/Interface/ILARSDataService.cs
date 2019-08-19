@@ -138,6 +138,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
 
         ILARSStandardFunding GetStandardFundingForCodeOnDate(int standardCode, DateTime startDate);
 
-        ILARSStandard GetStandardForCode(int standardCode);
+        ILARSStandard GetStandardFor(int standardCode);
     }
 }

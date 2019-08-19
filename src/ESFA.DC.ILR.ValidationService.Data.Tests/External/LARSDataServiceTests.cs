@@ -2234,7 +2234,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 
             externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
 
-            var result = NewService(externalDataCacheMock.Object).GetStandardForCode(standardCode);
+            var result = NewService(externalDataCacheMock.Object).GetStandardFor(standardCode);
 
             result.StandardCode.Should().Be(1);
             result.EffectiveTo.Should().Be(new DateTime(2019, 12, 01));
@@ -2258,7 +2258,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 
             externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
 
-            var result = NewService(externalDataCacheMock.Object).GetStandardForCode(standardCode);
+            var result = NewService(externalDataCacheMock.Object).GetStandardFor(standardCode);
 
             result.Should().BeNull();
         }

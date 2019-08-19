@@ -18,6 +18,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         private readonly IReadOnlyDictionary<string, Model.LearningDelivery> _larsDeliveries;
 
         /// <summary>
+        /// The lars standards
+        /// </summary>
+        private readonly IReadOnlyDictionary<int, ILARSStandard> _larsStandards;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="LARSDataService"/> class.
         /// </summary>
         /// <param name="externalDataCache">The external data cache.</param>
@@ -30,6 +35,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
 
             // de-sensitise the lars deliveries
             _larsDeliveries = externalDataCache.LearningDeliveries.ToCaseInsensitiveDictionary();
+
+            if (externalDataCache.Standards != null)
+            {
+                _larsStandards = externalDataCache.Standards.ToDictionary(k => k.StandardCode, v => v);
+            }           
         }
 
         /// <summary>
@@ -60,6 +70,13 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             _larsDeliveries.TryGetValue(thisAimRef, out var learningDelivery);
 
             return learningDelivery;
+        }
+
+        public ILARSStandard GetStandardFor(int standardCode)
+        {
+            _larsStandards.TryGetValue(standardCode, out var standard);
+
+            return standard;
         }
 
         /// <summary>
@@ -424,11 +441,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             }
 
             return null;
-        }
-
-        public ILARSStandard GetStandardForCode(int standardCode)
-        {
-            return _externalDataCache.Standards?.FirstOrDefault(x => x.StandardCode == standardCode);
         }
     }
 }
