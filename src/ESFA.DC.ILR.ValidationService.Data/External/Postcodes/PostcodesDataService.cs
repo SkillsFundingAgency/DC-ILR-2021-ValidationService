@@ -59,9 +59,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
         /// </summary>
         /// <param name="fromPostcode">From postcode.</param>
         /// <returns>Devolved postcodes (if found)</returns>
-        public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodes(string fromPostcode) =>
-            _devolvedPostcodes.TryGetValue(fromPostcode, out var devolvedPostcodes)
-            ? devolvedPostcodes
-            : new List<DevolvedPostcode>();
+        public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodes(string fromPostcode)
+        {
+            return fromPostcode != null && _devolvedPostcodes.TryGetValue(fromPostcode, out var devolvedPostcodes)
+                ? devolvedPostcodes
+                : new List<DevolvedPostcode>();
+        }
     }
 }
