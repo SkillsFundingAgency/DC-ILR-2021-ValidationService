@@ -84,8 +84,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             !IsExcluded(theDelivery)
             && HasQualifyingModel(theDelivery)
             && HasQualifyingStart(theDelivery)
-            && HasLearnerStartPostcode(theDelivery)
-            && !(IsTemporaryPostcode(theDelivery) || IsRegisteredPostcode(theDelivery));
+            && (IsEmptyPostcode(theDelivery)
+                || (!IsTemporaryPostcode(theDelivery) && !IsRegisteredPostcode(theDelivery)));
 
         /// <summary>
         /// Determines whether the specified the delivery is excluded.
@@ -128,21 +128,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             _check.HasQualifyingStart(theDelivery, FirstAugust2019);
 
         /// <summary>
-        /// Determines whether [has learner start postcode] [the specified delivery].
+        /// Determines whether [is empty postcode] [the specified delivery].
         /// </summary>
         /// <param name="theDelivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [has learner start postcode] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is empty postcode] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasLearnerStartPostcode(ILearningDelivery theDelivery) =>
-            It.Has(theDelivery.LSDPostcode);
+        public bool IsEmptyPostcode(ILearningDelivery theDelivery) =>
+            It.IsEmpty(theDelivery.LSDPostcode);
 
         /// <summary>
         /// Determines whether [is temporary postcode] [the specified delivery].
         /// </summary>
         /// <param name="theDelivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [is temporary postcode] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is not temporary postcode] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsTemporaryPostcode(ILearningDelivery theDelivery) =>
             ValidationConstants.TemporaryPostCode.ComparesWith(theDelivery.LSDPostcode);
@@ -162,10 +162,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         /// </summary>
         /// <param name="learnRefNumber">The learn reference number.</param>
         /// <param name="theDelivery">The delivery.</param>
-        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery)
-        {
+        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
             HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
-        }
 
         /// <summary>
         /// Builds the message parameters for.
