@@ -114,6 +114,11 @@
             public const string SteelIndustriesRedundancyTraining = "LDM347";
 
             /// <summary>
+            /// adult education budgets
+            /// </summary>
+            public const string AdultEducationBudgets = "LDM357";
+
+            /// <summary>
             /// in receipt of low wages
             /// </summary>
             public const string InReceiptOfLowWages = "LDM363";
