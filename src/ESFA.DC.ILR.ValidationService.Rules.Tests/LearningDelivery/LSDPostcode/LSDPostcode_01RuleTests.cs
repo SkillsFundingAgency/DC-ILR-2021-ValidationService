@@ -240,14 +240,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         /// <summary>
-        /// Has learner start postcode meets expectation
+        /// Is empty postcode meets expectation
         /// </summary>
         /// <param name="candidate">The candidate.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(null, false)]
-        [InlineData("blah blah", true)]
-        public void HasLearnerStartPostcodeMeetsExpectation(string candidate, bool expectation)
+        [InlineData(null, true)]
+        [InlineData("blah blah", false)]
+        public void IsEmptyPostcodeMeetsExpectation(string candidate, bool expectation)
         {
             // arrange
             var delivery = new Mock<ILearningDelivery>();
@@ -258,7 +258,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             var sut = NewRule();
 
             // act
-            var result = sut.HasLearnerStartPostcode(delivery.Object);
+            var result = sut.IsEmptyPostcode(delivery.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -305,12 +305,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         /// Invalid item raises validation message.
         /// dates are deliberately out of sync to ensure the mock's are controlling the flow
         /// </summary>
-        [Fact]
-        public void InvalidItemRaisesValidationMessage()
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData(null)]
+        [InlineData("blah blah")]
+        public void InvalidItemRaisesValidationMessage(string candidate)
         {
             // arrange
             const string LearnRefNumber = "123456789X";
-            const string testPostcode = "blah blah";
 
             var testStart = DateTime.Parse("2016-05-01");
 
@@ -323,7 +325,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 .Returns(testStart);
             delivery
                 .SetupGet(y => y.LSDPostcode)
-                .Returns(testPostcode);
+                .Returns(candidate);
 
             var deliveries = new ILearningDelivery[] { delivery.Object };
 
@@ -348,7 +350,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testStart)))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
-                .Setup(x => x.BuildErrorMessageParameter("LSDPostcode", testPostcode))
+                .Setup(x => x.BuildErrorMessageParameter("LSDPostcode", candidate))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
@@ -364,10 +366,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
 
             var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
 
-            // this is the trigger check
-            postcodeData
-                .Setup(x => x.PostcodeExists(testPostcode))
-                .Returns(false);
+            // this is the trigger check, assuming it's not null and not 'temporary'
+            if (!string.IsNullOrWhiteSpace(candidate))
+            {
+                postcodeData
+                    .Setup(x => x.PostcodeExists(candidate))
+                    .Returns(false);
+            }
 
             var sut = new LSDPostcode_01Rule(handler.Object, commonOps.Object, postcodeData.Object);
 
