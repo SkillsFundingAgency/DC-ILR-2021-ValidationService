@@ -35,9 +35,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         }
 
         public LSDPostcode_02Rule()
-       : base(null, RuleNameConstants.LSDPostcode_02)
+            : base(null, RuleNameConstants.LSDPostcode_02)
         {
-
         }
 
         public void Validate(ILearner objectToValidate)
