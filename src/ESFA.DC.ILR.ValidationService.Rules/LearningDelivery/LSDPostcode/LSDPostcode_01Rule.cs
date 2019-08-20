@@ -84,8 +84,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             !IsExcluded(theDelivery)
             && HasQualifyingModel(theDelivery)
             && HasQualifyingStart(theDelivery)
-            && HasLearnerStartPostcode(theDelivery)
-            && !(IsTemporaryPostcode(theDelivery) || IsRegisteredPostcode(theDelivery));
+            && !(HasLearnerStartPostcode(theDelivery)
+                || IsTemporaryPostcode(theDelivery) 
+                || IsRegisteredPostcode(theDelivery));
 
         /// <summary>
         /// Determines whether the specified the delivery is excluded.
