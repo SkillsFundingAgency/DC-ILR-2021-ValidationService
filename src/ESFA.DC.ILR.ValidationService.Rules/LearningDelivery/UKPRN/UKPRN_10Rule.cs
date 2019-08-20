@@ -210,7 +210,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 BuildErrorMessageParameter(PropertyNameConstants.UKPRN, ProviderUKPRN),
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, theDelivery.FundModel),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.ACT),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, "1")
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, LearningDeliveryFAMCodeConstants.ACT_ContractEmployer)
             };
     }
 }

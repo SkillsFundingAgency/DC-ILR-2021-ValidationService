@@ -1,122 +1,196 @@
-﻿using System;
-using System.Collections.Generic;
-using ESFA.DC.ILR.Model.Interface;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using ESFA.DC.ILR.ValidationService.Utility;
+using System;
+using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
-    public class UKPRN_19Rule : AbstractRule, IRule<ILearner>
+    /// <summary>
+    /// united kingdom provider number rule 19
+    /// </summary>
+    /// <seealso cref="AbstractRule" />
+    /// <seealso cref="Interface.IRule{ILearner}" />
+    public class UKPRN_19Rule :
+        AbstractRule,
+        IRule<ILearner>
     {
-        private readonly int _fundModel = TypeOfFunding.AdultSkills;
-        private readonly string _learnDelFamType = LearningDeliveryFAMTypeConstants.LDM;
-        private readonly string _learnDelFAMCode = LearningDeliveryFAMCodeConstants.LDM_ProcuredAdultEducationBudget;
+        /// <summary>
+        /// The check(er, common rule operations provider)
+        /// </summary>
+        private readonly IProvideRuleCommonOperations _check;
 
-        private readonly HashSet<string> _fundingStreamPeriodCodes = new HashSet<string>
-        {
-            FundingStreamPeriodCodeConstants.AEB_19TRN1920,
-            FundingStreamPeriodCodeConstants.AEB_AS1920
-        };
-        
-        private readonly IFileDataService _fileDataService;
-        private readonly IAcademicYearDataService _academicYearDataService;
-        private readonly IAcademicYearQueryService _academicYearQueryService;
-        private readonly IFCSDataService _fcsDataService;
-        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
+        /// <summary>
+        /// The FCS data (service)
+        /// </summary>
+        private readonly IFCSDataService _fcsData;
 
         public UKPRN_19Rule(
+            IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
-            IAcademicYearDataService academicYearDataService,
-            IAcademicYearQueryService academicYearQueryService,
-            IFCSDataService fcsDataService,
-            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
-            IValidationErrorHandler validationErrorHandler)
+            IProvideRuleCommonOperations commonOps,
+            IFCSDataService fcsDataService)
             : base(validationErrorHandler, RuleNameConstants.UKPRN_19)
         {
-            _fileDataService = fileDataService;
-            _academicYearDataService = academicYearDataService;
-            _academicYearQueryService = academicYearQueryService;
-            _fcsDataService = fcsDataService;
-            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
-        }
+            It.IsNull(validationErrorHandler)
+                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
+            It.IsNull(fileDataService)
+                .AsGuard<ArgumentNullException>(nameof(fileDataService));
+            It.IsNull(commonOps)
+                .AsGuard<ArgumentNullException>(nameof(commonOps));
+            It.IsNull(fcsDataService)
+                .AsGuard<ArgumentNullException>(nameof(fcsDataService));
 
-        public UKPRN_19Rule()
-         : base(null, null)
-        {
-
-        }
-
-        public void Validate(ILearner objectToValidate)
-        {
-            if (objectToValidate?.LearningDeliveries == null)
+            ProviderUKPRN = fileDataService.UKPRN();
+            FundingStreams = new CaseInsensitiveDistinctKeySet
             {
-                return;
-            }
-
-            var ukprn = _fileDataService.UKPRN();
-
-            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
-            {
-                if (ConditionMet(learningDelivery.FundModel, learningDelivery.LearningDeliveryFAMs, learningDelivery.ConRefNumber, learningDelivery.LearnStartDate))
-                {
-                    HandleValidationError(objectToValidate.LearnRefNumber,
-                                          learningDelivery.AimSeqNumber,
-                                          BuildErrorMessageParameters(ukprn,
-                                                                      learningDelivery.FundModel,
-                                                                      _learnDelFamType,
-                                                                      _learnDelFAMCode,
-                                                                      learningDelivery.LearnStartDate));
-                }
-            }
-        }
-
-        public bool ConditionMet(int fundModel, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, string conRefNumber, DateTime learnStartDate)
-        {
-            return FundModelConditionMet(fundModel)
-                && LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)
-                && FCTFundingConditionMet()
-                && StopNewStartsFromDateConditionMet(conRefNumber, learnStartDate);
-        }
-
-        public virtual bool FundModelConditionMet(int fundModel)
-        {
-            return fundModel == _fundModel;
-        }
-
-        public virtual bool LearningDeliveryFAMsConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
-        {
-            return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, _learnDelFamType, _learnDelFAMCode);
-        }
-
-        public virtual bool FCTFundingConditionMet()
-        {
-            return _fcsDataService.FundingRelationshipFCTExists(_fundingStreamPeriodCodes);
-        }
-
-        public virtual bool StopNewStartsFromDateConditionMet(string conRefNumber, DateTime learnStartDate)
-        {
-            var contractAllocation = _fcsDataService.GetContractAllocationFor(conRefNumber);
-            if (contractAllocation == null)
-                return false;
-
-            return contractAllocation.StopNewStartsFromDate != null && learnStartDate >= contractAllocation.StopNewStartsFromDate;
-        }
-
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int uKPRN, int fundModel, string learnDelFAMType, string learnDelFAMCode, DateTime learnStartDate)
-        {
-            return new[]
-            {
-                BuildErrorMessageParameter(PropertyNameConstants.UKPRN, uKPRN),
-                BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, _learnDelFamType),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, _learnDelFAMCode),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learnStartDate)
+                FundingStreamPeriodCodeConstants.AEB_19TRN1920,
+                FundingStreamPeriodCodeConstants.AEB_AS1920
             };
+
+            _check = commonOps;
+            _fcsData = fcsDataService;
         }
+
+
+        /// <summary>
+        /// Gets the funding streams.
+        /// </summary>
+        public CaseInsensitiveDistinctKeySet FundingStreams { get; }
+
+        /// <summary>
+        /// Gets the provider ukprn.
+        /// </summary>
+        public int ProviderUKPRN { get; }
+
+        /// <summary>
+        /// Validates the specified the learner.
+        /// </summary>
+        /// <param name="theLearner">The learner.</param>
+        public void Validate(ILearner theLearner)
+        {
+            It.IsNull(theLearner)
+                .AsGuard<ArgumentNullException>(nameof(theLearner));
+
+            var learnRefNumber = theLearner.LearnRefNumber;
+
+            theLearner.LearningDeliveries
+                .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));
+        }
+
+        /// <summary>
+        /// Determines whether [is not valid] [the specified the delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [is not valid] [the specified the delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsNotValid(ILearningDelivery theDelivery) =>
+            HasQualifyingModel(theDelivery)
+                && HasQualifyingMonitor(theDelivery, IsESFAAdultFunding)
+                && HasQualifyingMonitor(theDelivery, IsAdultEducationBudgets)
+                && HasFundingRelationship()
+                && HasStartedAfterStopDate(theDelivery);
+
+        /// <summary>
+        /// Determines whether [is adult education budgets] [the specified monitor].
+        /// </summary>
+        /// <param name="theMonitor">The monitor.</param>
+        /// <returns>
+        ///   <c>true</c> if [is adult education budgets] [the specified monitor]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsAdultEducationBudgets(ILearningDeliveryFAM theMonitor) =>
+            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.AdultEducationBudgets);
+
+        /// <summary>
+        /// Determines whether [has qualifying model] [the specified the delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying model] [the specified the delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
+            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.AdultSkills);
+
+        /// <summary>
+        /// Determines whether [is esfa adult funding] [the specified monitor].
+        /// </summary>
+        /// <param name="theMonitor">The monitor.</param>
+        /// <returns>
+        ///   <c>true</c> if [is esfa adult funding] [the specified monitor]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsESFAAdultFunding(ILearningDeliveryFAM theMonitor) =>
+            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
+
+        /// <summary>
+        /// Determines whether [has qualifying monitor] [the specified the delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying monitor] [the specified the delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingMonitor(ILearningDelivery theDelivery, Func<ILearningDeliveryFAM, bool> docheck) =>
+            _check.CheckDeliveryFAMs(theDelivery, docheck);
+
+        /// <summary>
+        /// Determines whether [has funding relationship].
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if [has funding relationship]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasFundingRelationship() =>
+            _fcsData
+                .GetContractAllocationsFor(ProviderUKPRN)
+                .SafeAny(x => FundingStreams.Contains(x.FundingStreamPeriodCode));
+
+        /// <summary>
+        /// Determines whether [has started after stop date] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has started after stop date] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasStartedAfterStopDate(ILearningDelivery theDelivery) =>
+            _fcsData
+                .GetContractAllocationsFor(ProviderUKPRN)
+                .SafeAny(x => HasStartedAfterStopDate(x, theDelivery));
+
+        /// <summary>
+        /// Determines whether [has started after stop date] [the specified allocation].
+        /// </summary>
+        /// <param name="theAllocation">The allocation.</param>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has started after stop date] [the specified allocation]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasStartedAfterStopDate(IFcsContractAllocation theAllocation, ILearningDelivery theDelivery) =>
+            theDelivery.LearnStartDate >= theAllocation.StopNewStartsFromDate;
+
+        /// <summary>
+        /// Raises the validation message.
+        /// </summary>
+        /// <param name="learnRefNumber">The learn reference number.</param>
+        /// <param name="theDelivery">The delivery.</param>
+        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
+            HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
+
+        /// <summary>
+        /// Builds the message parameters for.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns></returns>
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery theDelivery) => new[]
+        {
+            BuildErrorMessageParameter(PropertyNameConstants.UKPRN, ProviderUKPRN),
+            BuildErrorMessageParameter(PropertyNameConstants.FundModel, theDelivery.FundModel),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, theDelivery.LearnStartDate),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, Monitoring.Delivery.Types.Learning),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, LearningDeliveryFAMCodeConstants.LDM_ProcuredAdultEducationBudget),
+        };
     }
 }
