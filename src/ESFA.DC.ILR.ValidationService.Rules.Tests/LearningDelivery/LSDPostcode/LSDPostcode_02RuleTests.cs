@@ -3,6 +3,7 @@ using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
+using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode;
@@ -388,6 +389,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 LearningDeliveries = learningDeliveries
             };
 
+            var mockFileDataService = new Mock<IFileDataService>();
+            mockFileDataService.Setup(u => u.UKPRN()).Returns(ukprn);
+
             var legalOrgType = "USDC";
             var mockOrganisationDataService = new Mock<IOrganisationDataService>();
             mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(false);
@@ -408,6 +412,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                     learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
                     postcodesDataService: mockPostcodesDataService.Object,
                     organisationDataService: mockOrganisationDataService.Object,
+                    fileDataService: mockFileDataService.Object,
                     validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
                 VerifyErrorHandlerMock(validationErrorHandlerMock, 1);
             }
@@ -505,6 +510,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 LearningDeliveries = learningDeliveries
             };
 
+            var mockFileDataService = new Mock<IFileDataService>();
+            mockFileDataService.Setup(u => u.UKPRN()).Returns(ukprn);
+
             var legalOrgType = "USDC";
             var mockOrganisationDataService = new Mock<IOrganisationDataService>();
             mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(false);
@@ -525,6 +533,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                     learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
                     postcodesDataService: mockPostcodesDataService.Object,
                     organisationDataService: mockOrganisationDataService.Object,
+                    fileDataService: mockFileDataService.Object,
                     validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
                 VerifyErrorHandlerMock(validationErrorHandlerMock, 3);
             }
@@ -602,6 +611,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 LearningDeliveries = learningDeliveries
             };
 
+            var mockFileDataService = new Mock<IFileDataService>();
+            mockFileDataService.Setup(u => u.UKPRN()).Returns(ukprn);
+
             var legalOrgType = "USDC";
             var mockOrganisationDataService = new Mock<IOrganisationDataService>();
             mockOrganisationDataService.Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, legalOrgType)).Returns(false);
@@ -622,6 +634,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                     learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object,
                     postcodesDataService: mockPostcodesDataService.Object,
                     organisationDataService: mockOrganisationDataService.Object,
+                    fileDataService: mockFileDataService.Object,
                     validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
                 VerifyErrorHandlerMock(validationErrorHandlerMock, 0);
             }
@@ -650,9 +663,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
             IOrganisationDataService organisationDataService = null,
             IPostcodesDataService postcodesDataService = null,
+            IFileDataService fileDataService = null,
             IValidationErrorHandler validationErrorHandler = null)
         {
-            return new LSDPostcode_02Rule(learningDeliveryFAMQueryService, organisationDataService, postcodesDataService, validationErrorHandler);
+            return new LSDPostcode_02Rule(learningDeliveryFAMQueryService, organisationDataService, postcodesDataService, fileDataService, validationErrorHandler);
         }
     }
 }

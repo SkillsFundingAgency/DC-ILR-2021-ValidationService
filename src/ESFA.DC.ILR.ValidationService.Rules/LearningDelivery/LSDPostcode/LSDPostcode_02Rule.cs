@@ -4,6 +4,7 @@ using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
+using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -16,6 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IOrganisationDataService _organisationDataService;
         private readonly IPostcodesDataService _postcodeService;
+        private readonly IFileDataService _fileDataService;
 
         private readonly DateTime _firstAugust2019 = new DateTime(2019, 08, 01);
         private readonly IEnumerable<int> _fundModels = new HashSet<int>()
@@ -26,28 +28,33 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         public LSDPostcode_02Rule(ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IOrganisationDataService organisationDataService,
             IPostcodesDataService postcodeService,
+            IFileDataService fileDataService,
             IValidationErrorHandler validationErrorHandler)
            : base(validationErrorHandler, RuleNameConstants.LSDPostcode_02)
         {
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _organisationDataService = organisationDataService;
             _postcodeService = postcodeService;
+            _fileDataService = fileDataService;
         }
 
         public LSDPostcode_02Rule()
-            : base(null, RuleNameConstants.LSDPostcode_02)
+       : base(null, RuleNameConstants.LSDPostcode_02)
         {
+
         }
 
         public void Validate(ILearner objectToValidate)
         {
+            var ukprn = _fileDataService.UKPRN();
+
             if (objectToValidate.LearningDeliveries != null)
             {
                 foreach (var learningDelivery in objectToValidate.LearningDeliveries)
                 {
                     var devolvedPostcodes = _postcodeService.GetDevolvedPostcodes(learningDelivery.LSDPostcode);
 
-                    if (ConditionMet(learningDelivery.PartnerUKPRNNullable.Value, learningDelivery.ProgTypeNullable,
+                    if (ConditionMet(ukprn, learningDelivery.ProgTypeNullable,
                                      learningDelivery.FundModel, learningDelivery.LearnStartDate,
                                      devolvedPostcodes, learningDelivery.LearningDeliveryFAMs))
                     {
