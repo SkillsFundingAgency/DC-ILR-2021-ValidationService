@@ -77,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 var learnDelFAMSource = learnDelFAMsArray[i];
                 var learnDelFAMToCompare = learnDelFAMsArray[i + 1];
 
-                if (learnDelFAMSource.LearnDelFAMDateToNullable != learnDelFAMToCompare.LearnDelFAMDateFromNullable.Value.AddDays(-1))
+                if (learnDelFAMToCompare.LearnDelFAMDateFromNullable != null && learnDelFAMSource.LearnDelFAMDateToNullable != learnDelFAMToCompare.LearnDelFAMDateFromNullable.Value.AddDays(-1))
                 {
                     nonConsecutiveLearningDeliveryFAMs.Add(learnDelFAMToCompare);
                 }
