@@ -91,6 +91,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
+        public void GetNonConsecutiveLearningDeliveryFAMsForType_NullDateFrom()
+        {
+            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMDateFromNullable = new DateTime(2018, 8, 1),
+                    LearnDelFAMDateToNullable = new DateTime(2018, 8, 31)
+                },
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMDateFromNullable = null,
+                    LearnDelFAMDateToNullable = new DateTime(2018, 9, 30)
+                },
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMDateFromNullable = new DateTime(2018, 10, 1),
+                    LearnDelFAMDateToNullable = new DateTime(2018, 10, 31)
+                }
+            };
+
+            var result = NewRule().GetNonConsecutiveLearningDeliveryFAMs(learningDeliveryFAMs);
+
+            result.Count().Should().Be(0);
+        }
+
+        [Fact]
         public void GetNonConsecutiveLearningDeliveryFAMsForType_None()
         {
             var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
