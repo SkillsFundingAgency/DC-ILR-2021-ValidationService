@@ -141,6 +141,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         /// <summary>
+        /// Rule name 3 test, account for potential false positives.
+        /// </summary>
+        [Fact]
+        public void RuleName3()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.NotEqual("SomeOtherRuleName_07", result);
+        }
+
+        /// <summary>
         /// Funding stream period code meets expectation.
         /// </summary>
         /// <param name="candidate">The candidate.</param>
@@ -207,22 +223,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 
             // act / assert
             Assert.Equal(TestProviderID, sut.ProviderUKPRN);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
         }
 
         /// <summary>
@@ -405,6 +405,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData("ACT1", Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer)]
+        [InlineData("ACT", LearningDeliveryFAMTypeConstants.ACT)]
+        [InlineData("1", LearningDeliveryFAMCodeConstants.ACT_ContractEmployer)]
         public void MonitoringCodeMeetsExpectation(string expectation, string candidate)
         {
             // arrange / act / assert
