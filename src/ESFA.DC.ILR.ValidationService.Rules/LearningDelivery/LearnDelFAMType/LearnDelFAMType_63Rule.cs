@@ -2,30 +2,30 @@
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
+    /// <summary>
+    /// learning delivery funding and monitoring type rule 63
+    /// this rule is the inverse of learning delivery funding and monitoring type rule 64
+    /// </summary>
+    /// <seealso cref="AbstractRule" />
+    /// <seealso cref="Interface.IRule{ILearner}" />
     public class LearnDelFAMType_63Rule :
+        AbstractRule,
         IRule<ILearner>
     {
         /// <summary>
-        /// Gets the name of the message property.
+        /// The check(er, rule common operations provider)
         /// </summary>
-        public const string MessagePropertyName = "LearnDelFAMType";
-
-        /// <summary>
-        /// Gets the name of the rule.
-        /// </summary>
-        public const string Name = "LearnDelFAMType_63";
-
-        /// <summary>
-        /// The message handler
-        /// </summary>
-        private readonly IValidationErrorHandler _messageHandler;
+        private readonly IProvideRuleCommonOperations _check;
 
         /// <summary>
         /// The lars data (service)
@@ -39,103 +39,46 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <param name="larsData">The lars data.</param>
         public LearnDelFAMType_63Rule(
             IValidationErrorHandler validationErrorHandler,
-            ILARSDataService larsData)
+             IProvideRuleCommonOperations commonOps,
+            ILARSDataService larsDataService)
+            : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_63)
         {
             It.IsNull(validationErrorHandler)
                 .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(larsData)
-                .AsGuard<ArgumentNullException>(nameof(larsData));
+            It.IsNull(commonOps)
+                .AsGuard<ArgumentNullException>(nameof(commonOps));
+            It.IsNull(larsDataService)
+                .AsGuard<ArgumentNullException>(nameof(larsDataService));
 
-            _messageHandler = validationErrorHandler;
-            _larsData = larsData;
+            _check = commonOps;
+            _larsData = larsDataService;
         }
 
         /// <summary>
-        /// Gets the name of the rule.
+        /// Validates the specified learner.
         /// </summary>
-        public string RuleName => Name;
-
-        /// <summary>
-        /// Determines whether [is basic skills learner] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is basic skills learner OR exists within CommonComponents for FunctionalSkillsEnglish] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsBasicSkillsLearner(ILearningDelivery delivery)
+        /// <param name="theLearner">The learner.</param>
+        public void Validate(ILearner theLearner)
         {
-            var validities = _larsData.GetValiditiesFor(delivery.LearnAimRef);
-            var annualValues = _larsData.GetAnnualValuesFor(delivery.LearnAimRef);
-            var larsFrameworks = _larsData.GetDeliveryFor(delivery.LearnAimRef)?.Frameworks;
+            It.IsNull(theLearner)
+                .AsGuard<ArgumentNullException>(nameof(theLearner));
 
-            return validities.SafeAny(x => x.IsCurrent(delivery.LearnStartDate))
-                && (annualValues.SafeAny(IsBasicSkillsLearner) || larsFrameworks.SafeAny(IsCommonComponent));
+            var learnRefNumber = theLearner.LearnRefNumber;
+
+            theLearner.LearningDeliveries
+                .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));
         }
 
         /// <summary>
-        /// Determines whether [it is a common component] [the specified larsFramework].
+        /// Determines whether [is not valid] [the specified delivery].
         /// </summary>
-        /// <param name="larsFramework">The larsFramework.</param>
+        /// <param name="theDelivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [is british sign language] [the specified larsFramework]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsCommonComponent(ILARSFramework larsFramework)
-        {
-            return larsFramework
-                        .FrameworkCommonComponents
-                        .SafeAny(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
-        }
-
-        /// <summary>
-        /// Determines whether [is basic skills learner] [the specified monitor].
-        /// </summary>
-        /// <param name="monitor">The monitor.</param>
-        /// <returns>
-        ///   <c>true</c> if [is basic skills learner] [the specified monitor]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsBasicSkillsLearner(ILARSAnnualValue monitor) =>
-            It.IsInRange(monitor.BasicSkillsType, TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
-
-        /// <summary>
-        /// Determines whether the specified delivery is apprenticeship.
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified delivery is apprenticeship; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsApprenticeship(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.FundModel, TypeOfFunding.ApprenticeshipsFrom1May2017);
-
-        /// <summary>
-        /// Determines whether [is programme aim] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is programme aim] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsProgrammeAim(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.AimType, TypeOfAim.ProgrammeAim);
-
-        /// <summary>
-        /// Determines whether [is component aim] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is component aim] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsComponentAim(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.AimType, TypeOfAim.ComponentAimInAProgramme);
-
-        /// <summary>
-        /// Determines whether [is core part of a programme] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is core part of a programme] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsCorePartOfAProgramme(ILearningDelivery delivery) =>
-            IsComponentAim(delivery)
-                && IsBasicSkillsLearner(delivery);
+        public bool IsNotValid(ILearningDelivery theDelivery) =>
+            !IsExcluded(theDelivery)
+                && HasQualifyingMonitor(theDelivery);
 
         /// <summary>
         /// Determines whether the specified delivery is excluded.
@@ -144,72 +87,148 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <returns>
         ///   <c>true</c> if the specified delivery is excluded; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsExcluded(ILearningDelivery delivery) =>
-            IsApprenticeship(delivery)
-                && (IsProgrammeAim(delivery) || IsCorePartOfAProgramme(delivery));
+        public bool IsExcluded(ILearningDelivery theDelivery) =>
+            HasQualifyingModel(theDelivery)
+            && (IsProgrameAim(theDelivery)
+                || (IsComponentAim(theDelivery)
+                && (HasQualifyingBasicSkillsType(theDelivery)
+                    || HasQualifyingCommonComponent(theDelivery))));
 
         /// <summary>
-        /// Checks the delivery fams.
+        /// Determines whether [has qualifying model] [the specified the delivery].
         /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="matchCondition">The match condition.</param>
-        /// <returns>true if any of the delivery fams match the condition</returns>
-        public bool CheckDeliveryFAMs(ILearningDelivery delivery, Func<ILearningDeliveryFAM, bool> matchCondition) =>
-            delivery.LearningDeliveryFAMs.SafeAny(matchCondition);
-
-        /// <summary>
-        /// Determines whether [is apprenticeship contract] [the specified monitor].
-        /// </summary>
-        /// <param name="monitor">The monitor.</param>
+        /// <param name="theDelivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [is apprenticeship contract] [the specified monitor]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [has qualifying model] [the specified the delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsApprenticeshipContract(ILearningDeliveryFAM monitor) =>
-            It.IsInRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.ApprenticeshipContract);
+        public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
+            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.ApprenticeshipsFrom1May2017);
 
         /// <summary>
-        /// Determines whether [is apprenticeship contract] [the specified delivery].
+        /// Determines whether [is programe aim] [the specified delivery].
         /// </summary>
-        /// <param name="delivery">The delivery.</param>
+        /// <param name="theDelivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [is apprenticeship contract] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is programe aim] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsApprenticeshipContract(ILearningDelivery delivery) =>
-            CheckDeliveryFAMs(delivery, IsApprenticeshipContract);
-
-        public bool IsNotValid(ILearningDelivery delivery) =>
-            !IsExcluded(delivery)
-                && IsApprenticeshipContract(delivery);
+        public bool IsProgrameAim(ILearningDelivery theDelivery) =>
+            _check.InAProgramme(theDelivery);
 
         /// <summary>
-        /// Validates the specified object.
+        /// Determines whether [is component aim] [the specified delivery].
         /// </summary>
-        /// <param name="objectToValidate">The object to validate.</param>
-        public void Validate(ILearner objectToValidate)
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [is component aim] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsComponentAim(ILearningDelivery theDelivery) =>
+            _check.IsComponentOfAProgram(theDelivery);
+
+        /// <summary>
+        /// Determines whether [has qualifying basic skills type] [the specified the delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying basic skills type] [the specified the delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingBasicSkillsType(ILearningDelivery theDelivery) =>
+            _larsData
+                .GetAnnualValuesFor(theDelivery.LearnAimRef)
+                .Where(HasABasicSkillType)
+                .Any(x => IsEnglishOrMathBasicSkill(x) && IsValueCurrent(theDelivery, x));
+
+        /// <summary>
+        /// Determines whether [has a basic skill type] [the specified value].
+        /// </summary>
+        /// <param name="theValue">The value.</param>
+        /// <returns>
+        ///   <c>true</c> if [has a basic skill type] [the specified value]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasABasicSkillType(ILARSAnnualValue theValue) =>
+            It.Has(theValue.BasicSkillsType);
+
+        /// <summary>
+        /// Determines whether [is english or math basic skill] [the specified delivery].
+        /// </summary>
+        /// <param name="theValue">The value.</param>
+        /// <returns>
+        ///   <c>true</c> if [is english or math basic skill] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsEnglishOrMathBasicSkill(ILARSAnnualValue theValue) =>
+            It.IsInRange(theValue.BasicSkillsType, TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
+
+        /// <summary>
+        /// Determines whether the specified the delivery is current.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <param name="theValue">The value.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified the delivery is current; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsValueCurrent(ILearningDelivery theDelivery, ILARSAnnualValue theValue) =>
+            theValue.IsCurrent(theDelivery.LearnStartDate);
+
+        /// <summary>
+        /// Determines whether [has qualifying common component] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying common component] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingCommonComponent(ILearningDelivery theDelivery)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
-            var learnRefNumber = objectToValidate.LearnRefNumber;
-
-            objectToValidate.LearningDeliveries
-                .SafeWhere(IsNotValid)
-                .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
+            var larsDelivery = _larsData.GetDeliveryFor(theDelivery.LearnAimRef);
+            return It.Has(larsDelivery) && IsBritishSignLanguage(larsDelivery);
         }
+
+        /// <summary>
+        /// Determines whether [is british sign language] [the specified lars framework].
+        /// </summary>
+        /// <param name="larsFramework">The lars framework.</param>
+        /// <returns>
+        ///   <c>true</c> if [is british sign language] [the specified lars framework]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsBritishSignLanguage(ILARSLearningDelivery theDelivery) =>
+            theDelivery.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
+
+        /// <summary>
+        /// Determines whether [has qualifying source of funding] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying source of funding] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
+            _check.CheckDeliveryFAMs(theDelivery, IsApprenticeshipContract);
+
+        /// <summary>
+        /// Determines whether [is apprenticeship funded] [the specified monitor].
+        /// </summary>
+        /// <param name="theMonitor">The monitor.</param>
+        /// <returns>
+        ///   <c>true</c> if [is apprenticeship funded] [the specified monitor]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsApprenticeshipContract(ILearningDeliveryFAM theMonitor) =>
+            It.IsInRange(theMonitor.LearnDelFAMType, Monitoring.Delivery.Types.ApprenticeshipContract);
 
         /// <summary>
         /// Raises the validation message.
         /// </summary>
         /// <param name="learnRefNumber">The learn reference number.</param>
-        /// <param name="thisDelivery">this delivery.</param>
-        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)
-        {
-            var parameters = Collection.Empty<IErrorMessageParameter>();
-            parameters.Add(_messageHandler.BuildErrorMessageParameter(PropertyNameConstants.AimType, thisDelivery.AimType));
-            parameters.Add(_messageHandler.BuildErrorMessageParameter(PropertyNameConstants.FundModel, thisDelivery.FundModel));
-            parameters.Add(_messageHandler.BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, Monitoring.Delivery.Types.ApprenticeshipContract));
+        /// <param name="theDelivery">The delivery.</param>
+        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
+            HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
 
-            _messageHandler.Handle(RuleName, learnRefNumber, thisDelivery.AimSeqNumber, parameters);
-        }
+        /// <summary>
+        /// Builds the message parameters for.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns></returns>
+        public IReadOnlyCollection<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery theDelivery) => new[]
+        {
+            BuildErrorMessageParameter(PropertyNameConstants.AimType, theDelivery.AimType),
+            BuildErrorMessageParameter(PropertyNameConstants.FundModel, theDelivery.FundModel),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, Monitoring.Delivery.Types.ApprenticeshipContract)
+        };
     }
 }

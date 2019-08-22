@@ -12,7 +12,7 @@ using System.Linq;
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     /// <summary>
-    /// learning delivery funding and monitoring rule 64
+    /// learning delivery funding and monitoring type rule 64
     /// </summary>
     /// <seealso cref="AbstractRule" />
     /// <seealso cref="Interface.IRule{ILearner}" />
