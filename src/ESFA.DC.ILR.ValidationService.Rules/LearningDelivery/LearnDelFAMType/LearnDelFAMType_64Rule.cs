@@ -12,7 +12,7 @@ using System.Linq;
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     /// <summary>
-    /// learning delivery funding and monitoring rule 64
+    /// learning delivery funding and monitoring type rule 64
     /// </summary>
     /// <seealso cref="AbstractRule" />
     /// <seealso cref="Interface.IRule{ILearner}" />
@@ -167,8 +167,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool HasQualifyingCommonComponent(ILearningDelivery theDelivery)
         {
             var larsDelivery = _larsData.GetDeliveryFor(theDelivery.LearnAimRef);
-            return It.Has(larsDelivery)
-                && larsDelivery.Frameworks.SafeAny(IsBritishSignLanguage);
+            return It.Has(larsDelivery) && IsBritishSignLanguage(larsDelivery);
         }
 
         /// <summary>
@@ -178,10 +177,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <returns>
         ///   <c>true</c> if [is british sign language] [the specified lars framework]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsBritishSignLanguage(ILARSFramework larsFramework) =>
-            larsFramework
-                .FrameworkCommonComponents
-                .SafeAny(x => x.CommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage);
+        public bool IsBritishSignLanguage(ILARSLearningDelivery theDelivery) =>
+            theDelivery.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
 
         /// <summary>
         /// Determines whether [has qualifying source of funding] [the specified delivery].
