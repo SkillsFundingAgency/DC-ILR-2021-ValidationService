@@ -39,7 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             if (externalDataCache.Standards != null)
             {
                 _larsStandards = externalDataCache.Standards.ToDictionary(k => k.StandardCode, v => v);
-            }           
+            }
         }
 
         /// <summary>
@@ -138,9 +138,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var delivery = GetDeliveryFor(thisAimRef);
 
-            return delivery?.Frameworks?.Where(f => f.FrameworkAim != null)
-                .Select(f => f.FrameworkAim).ToList()
-                ?? Collection.EmptyAndReadOnly<ILARSFrameworkAim>();
+            return delivery?.Frameworks
+                .SafeWhere(f => It.Has(f.FrameworkAim))
+                .Select(f => f.FrameworkAim)
+                .AsSafeReadOnlyList()
+                    ?? Collection.EmptyAndReadOnly<ILARSFrameworkAim>();
         }
 
         /// <summary>
