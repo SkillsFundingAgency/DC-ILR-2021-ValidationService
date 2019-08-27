@@ -36,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             var programDeliveries = learner.LearningDeliveries
                 .Where(IsApprenticeshipProgrammeAim)
                 .GroupBy(ld => new { ld.ProgTypeNullable, ld.StdCodeNullable, ld.FworkCodeNullable })
-                .SelectMany(x => x.ToList());
+                .SelectMany(x => x).ToList();
 
             if (!programDeliveries.Any() || !programDeliveries.GroupBy(ld => ld.StdCodeNullable).Any(c => c.Count() > 1))
             {
@@ -47,8 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 .Where(ld => ld.AppFinRecords != null)
                 .SelectMany(ld => ld.AppFinRecords)
                 .GroupBy(afr => new { AFinType = afr.AFinType?.ToUpper(), afr.AFinCode, afr.AFinDate })
-                .Where(apf => apf.Count() > 1)
-                .ToList())
+                .Where(apf => apf.Count() > 1))
             {
                 HandleValidationError(
                     learnRefNumber: learner.LearnRefNumber,
