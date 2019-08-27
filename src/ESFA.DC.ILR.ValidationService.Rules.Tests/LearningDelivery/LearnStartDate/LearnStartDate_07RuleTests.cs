@@ -231,7 +231,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
 
             // act
-            var result = sut.IsExcluded(delivery.Object);
+            var result = sut.IsExcluded(delivery.Object, null);
 
             // assert
             handler.VerifyAll();
