@@ -33,6 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimType = TypeOfAim.ProgrammeAim,
                         FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
                             new TestAppFinRecord() { AFinType = "Type", AFinCode = 1, AFinDate = new DateTime(2018, 1, 1) },
@@ -43,6 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimType = TypeOfAim.ProgrammeAim,
                         FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
                             new TestAppFinRecord() { AFinType = "Type", AFinCode = 1, AFinDate = new DateTime(2018, 1, 1) },
@@ -82,6 +84,44 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AppFinRecords = new List<IAppFinRecord>()
                         {
                             new TestAppFinRecord() { AFinType = "Type2", AFinCode = 2, AFinDate = new DateTime(2018, 1, 1) },
+                        }
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_StdCodes()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = TypeOfAim.ProgrammeAim,
+                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        StdCodeNullable = 1,
+                        AppFinRecords = new List<IAppFinRecord>()
+                        {
+                            new TestAppFinRecord() { AFinType = "Type", AFinCode = 1, AFinDate = new DateTime(2018, 1, 1) },
+                        }
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = TypeOfAim.ProgrammeAim,
+                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        StdCodeNullable = 2,
+                        AppFinRecords = new List<IAppFinRecord>()
+                        {
+                            new TestAppFinRecord() { AFinType = "Type", AFinCode = 1, AFinDate = new DateTime(2018, 1, 1) },
                         }
                     }
                 }
