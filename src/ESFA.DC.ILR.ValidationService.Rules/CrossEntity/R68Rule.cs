@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 .GroupBy(ld => new { ld.ProgTypeNullable, ld.StdCodeNullable, ld.FworkCodeNullable })
                 .SelectMany(x => x.ToList());
 
-            if ((programDeliveries?.Count() ?? 0) == 0)
+            if (!programDeliveries.Any() || !programDeliveries.GroupBy(ld => ld.StdCodeNullable).Any(c => c.Count() > 1))
             {
                 return;
             }
