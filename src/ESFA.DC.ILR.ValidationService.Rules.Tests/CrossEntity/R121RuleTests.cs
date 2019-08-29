@@ -130,6 +130,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
+        public void FamDateCondition_False_AsLearnDeliveryIsNull()
+        {
+            var fAMDateTo = new DateTime(2019, 08, 15);
+            var actEndDate = fAMDateTo.AddDays(5);
+
+            List<ILearningDeliveryFAM> learningDeliveryFAMs = null;
+
+            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs, actEndDate);
+            result.Should().BeFalse();
+        }
+
+        [Fact]
         public void ConditionMet_True_AsActEndDateNotEqual()
         {
             var fAMDateTo = new DateTime(2019, 08, 15);
