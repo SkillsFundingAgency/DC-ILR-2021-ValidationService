@@ -11,8 +11,6 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-// using ESFA.DC.ILR.ReferenceDataService.Model.LARS;
-
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_67RuleTests : AbstractRuleTests<LearnDelFAMType_67Rule>
