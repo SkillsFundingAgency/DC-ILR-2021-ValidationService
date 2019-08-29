@@ -243,90 +243,63 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void IsCommonComponent_True()
         {
-            var frameworkComponents = new List<ILARSFrameworkCommonComponent>()
+            ILARSLearningDelivery lARSDelivery = new Data.External.LARS.Model.LearningDelivery
             {
-                new FrameworkCommonComponent { CommonComponent = TypeOfLARSCommonComponent.BritishSignLanguage },
-                new FrameworkCommonComponent { CommonComponent = TypeOfLARSCommonComponent.FunctionalSkillsEnglish }
+                LearnAimRef = "LearnAimRef1",
+                EffectiveFrom = new DateTime(2018, 8, 1),
+                FrameworkCommonComponent = 20
             };
 
-            var mockLarsFramework = new Mock<ILARSFramework>();
-            mockLarsFramework.SetupGet(y => y.FrameworkCommonComponents)
-                             .Returns(frameworkComponents);
-
-            var result = NewRule().IsCommonComponent(mockLarsFramework.Object);
-
+            var result = NewRule().IsCommonComponent(lARSDelivery);
             result.Should().BeTrue();
-            mockLarsFramework.VerifyGet(x => x.FrameworkCommonComponents, Times.AtLeastOnce);
         }
 
         [Fact]
         public void IsCommonComponent_False_AsWrongComponent()
         {
-            var frameworkComponents = new List<ILARSFrameworkCommonComponent>()
+            ILARSLearningDelivery lARSDelivery = new Data.External.LARS.Model.LearningDelivery
             {
-                new FrameworkCommonComponent { CommonComponent = TypeOfLARSCommonComponent.FunctionalSkillsEnglish }
+                LearnAimRef = "LearnAimRef1",
+                EffectiveFrom = new DateTime(2018, 8, 1),
+                FrameworkCommonComponent = 21
             };
 
-            var mockLarsFramework = new Mock<ILARSFramework>();
-            mockLarsFramework.SetupGet(y => y.FrameworkCommonComponents)
-                             .Returns(frameworkComponents);
-
-            var result = NewRule().IsCommonComponent(mockLarsFramework.Object);
-
+            var result = NewRule().IsCommonComponent(lARSDelivery);
             result.Should().BeFalse();
-            mockLarsFramework.VerifyGet(x => x.FrameworkCommonComponents, Times.AtLeastOnce);
         }
 
         [Fact]
         public void IsCommonComponent_False_DueToEmptyList()
         {
-            var frameworkComponents = new List<ILARSFrameworkCommonComponent>();
+            ILARSLearningDelivery lARSDelivery = new Data.External.LARS.Model.LearningDelivery();
 
-            var mockLarsFramework = new Mock<ILARSFramework>();
-            mockLarsFramework.SetupGet(y => y.FrameworkCommonComponents)
-                             .Returns(frameworkComponents);
-
-            var result = NewRule().IsCommonComponent(mockLarsFramework.Object);
-
+            var result = NewRule().IsCommonComponent(lARSDelivery);
             result.Should().BeFalse();
-            mockLarsFramework.VerifyGet(x => x.FrameworkCommonComponents, Times.AtLeastOnce);
         }
 
         [Fact]
-        public void Validation_NoError_CommonComponent()
+        public void IsCommonComponent_False_DueToNull()
+        {
+            ILARSLearningDelivery lARSDelivery = null;
+
+            var result = NewRule().IsCommonComponent(lARSDelivery);
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Validation_NoError_CommonComponentNotMatched()
         {
             var learnAimRef = "00100309";
 
-            var frameworks = new List<Framework>
+            ILARSLearningDelivery lARSDelivery = new Data.External.LARS.Model.LearningDelivery
             {
-                new Framework
-                {
-                    FrameworkAim = new FrameworkAim()
-                    {
-                        FworkCode = 1,
-                        ProgType = 2,
-                        PwayCode = 3,
-                    },
-                    FrameworkCommonComponents = new List<FrameworkCommonComponent>
-                    {
-                        new FrameworkCommonComponent
-                        {
-                            FworkCode = 1,
-                            ProgType = 2,
-                            PwayCode = 3,
-                            CommonComponent = 1,
-                            EffectiveFrom = new DateTime(2018, 8, 1),
-                        }
-                    }
-                }
+                LearnAimRef = "LearnAimRef1",
+                EffectiveFrom = new DateTime(2018, 8, 1),
+                FrameworkCommonComponent = 21
             };
 
-            var mockDelivery = new Mock<ILARSLearningDelivery>();
-            mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
-
             var larsDataServiceMock = new Mock<ILARSDataService>();
-
-            larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
+            larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(lARSDelivery);
 
             larsDataServiceMock
                 .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(It.IsAny<IEnumerable<int>>(), It.IsAny<string>(), It.IsAny<DateTime>()))
@@ -363,35 +336,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var learnAimRef = "00100309";
 
-            var frameworks = new List<Framework>
+            ILARSLearningDelivery lARSDelivery = new Data.External.LARS.Model.LearningDelivery
             {
-                new Framework
-                {
-                    FrameworkAim = new FrameworkAim()
-                    {
-                        FworkCode = 1,
-                        ProgType = 2,
-                        PwayCode = 3,
-                    },
-                    FrameworkCommonComponents = new List<FrameworkCommonComponent>
-                    {
-                        new FrameworkCommonComponent
-                        {
-                            FworkCode = 1,
-                            ProgType = 2,
-                            PwayCode = 3,
-                            CommonComponent = 1,
-                            EffectiveFrom = new DateTime(2018, 8, 1),
-                        }
-                    }
-                }
+                LearnAimRef = "LearnAimRef1",
+                EffectiveFrom = new DateTime(2018, 8, 1),
+                FrameworkCommonComponent = 20
             };
 
-            var mockDelivery = new Mock<ILARSLearningDelivery>();
-            mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
-
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
+            larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(lARSDelivery);
 
             larsDataServiceMock
                    .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(It.IsAny<IEnumerable<int>>(), It.IsAny<string>(), It.IsAny<DateTime>()))
@@ -429,35 +382,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var learnAimRef = "00100309";
 
-            var frameworks = new List<Framework>
+            ILARSLearningDelivery lARSDelivery = new Data.External.LARS.Model.LearningDelivery
             {
-                new Framework
-                {
-                    FrameworkAim = new FrameworkAim()
-                    {
-                        FworkCode = 1,
-                        ProgType = 2,
-                        PwayCode = 3,
-                    },
-                    FrameworkCommonComponents = new List<FrameworkCommonComponent>
-                    {
-                        new FrameworkCommonComponent
-                        {
-                            FworkCode = 1,
-                            ProgType = 2,
-                            PwayCode = 3,
-                            CommonComponent = 20, // component value triggering FAIL
-                            EffectiveFrom = new DateTime(2018, 8, 1),
-                        }
-                    }
-                }
+                LearnAimRef = "LearnAimRef1",
+                EffectiveFrom = new DateTime(2018, 8, 1),
+                FrameworkCommonComponent = 20
             };
 
-            var mockDelivery = new Mock<ILARSLearningDelivery>();
-            mockDelivery.SetupGet(x => x.Frameworks).Returns(frameworks);
-
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(mockDelivery.Object);
+            larsDataServiceMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns(lARSDelivery);
 
             larsDataServiceMock
                    .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(It.IsAny<IEnumerable<int>>(), It.IsAny<string>(), It.IsAny<DateTime>()))
