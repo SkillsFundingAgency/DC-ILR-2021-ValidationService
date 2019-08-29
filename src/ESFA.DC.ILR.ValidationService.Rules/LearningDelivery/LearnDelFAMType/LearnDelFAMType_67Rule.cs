@@ -65,13 +65,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 }
 
                 var basicSkill = _larsDataService
-                    .BasicSkillsMatchForLearnAimRefAndStartDate(_basicSkills, learningDelivery.LearnAimRef, learningDelivery.LearnStartDate);
+                                    .BasicSkillsMatchForLearnAimRefAndStartDate(
+                                                   _basicSkills, 
+                                                   learningDelivery.LearnAimRef, 
+                                                   learningDelivery.LearnStartDate);
 
-                var larsFramework = _larsDataService.GetDeliveryFor(learningDelivery.LearnAimRef)?.Frameworks;
+                var larsDelivery = _larsDataService.GetDeliveryFor(learningDelivery.LearnAimRef);
 
                 foreach (var deliveryFam in learningDelivery.LearningDeliveryFAMs)
                 {
-                    if ((!basicSkill || larsFramework.SafeAny(IsCommonComponent)) && deliveryFam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.LSF)
+                    if ((!basicSkill || IsCommonComponent(larsDelivery)) && deliveryFam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.LSF)
                     {
                         RaiseValidationMessage(learner.LearnRefNumber, learningDelivery, deliveryFam);
                     }
@@ -79,11 +82,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             }
         }
 
-        public bool IsCommonComponent(ILARSFramework larsFramework)
+        public bool IsCommonComponent(ILARSLearningDelivery lARSLearningDelivery)
         {
-            return larsFramework
-                        .FrameworkCommonComponents
-                        .SafeAny(x => x.CommonComponent.Equals(TypeOfLARSCommonComponent.BritishSignLanguage));
+            return lARSLearningDelivery.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
         }
 
         private void RaiseValidationMessage(string learnRefNum, ILearningDelivery learningDelivery, ILearningDeliveryFAM thisMonitor)
