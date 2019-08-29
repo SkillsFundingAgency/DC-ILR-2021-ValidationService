@@ -278,6 +278,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
+        public void IsCommonComponent_False_DueToNull()
+        {
+            ILARSLearningDelivery lARSDelivery = null;
+
+            var result = NewRule().IsCommonComponent(lARSDelivery);
+            result.Should().BeFalse();
+        }
+
+        [Fact]
         public void Validation_NoError_CommonComponentNotMatched()
         {
             var learnAimRef = "00100309";

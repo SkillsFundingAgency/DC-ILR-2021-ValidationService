@@ -82,7 +82,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool IsCommonComponent(ILARSLearningDelivery lARSLearningDelivery)
         {
-            return lARSLearningDelivery.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
+            return lARSLearningDelivery?.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
         }
 
         private void RaiseValidationMessage(string learnRefNum, ILearningDelivery learningDelivery, ILearningDeliveryFAM thisMonitor)
