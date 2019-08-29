@@ -12,6 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
     public class R121Rule : AbstractRule, IRule<ILearner>
     {
+        private DateTime? _learnDelFAMDateTo = null;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public R121Rule(
@@ -31,28 +32,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var delivery in learner.LearningDeliveries)
             {
-                if (ConditionMet(delivery, out DateTime? learnDelFAMDateTo))
+                if (ConditionMet(delivery))
                 {
                     HandleValidationError(
                                            learner.LearnRefNumber,
                                            delivery.AimSeqNumber,
                                            BuildErrorMessageParameters(
                                                                 LearningDeliveryFAMTypeConstants.ACT,
-                                                                learnDelFAMDateTo,
+                                                                _learnDelFAMDateTo,
                                                                 delivery.AchDateNullable));
                 }
             }
         }
 
-        public bool ConditionMet(ILearningDelivery learningDelivery, out DateTime? outLearnDelFAMDateTo)
+        public bool ConditionMet(ILearningDelivery learningDelivery)
         {
-            outLearnDelFAMDateTo = null;
-
             return FundModelConditionMet(learningDelivery.FundModel)
                 && ProgTypeConditionMet(learningDelivery.ProgTypeNullable)
                 && AchDateConditionMet(learningDelivery.AchDateNullable)
                 && FAMTypeConditionMet(learningDelivery.LearningDeliveryFAMs)
-                && FAMDateConditionMet(learningDelivery.LearningDeliveryFAMs, learningDelivery.LearnActEndDateNullable, out outLearnDelFAMDateTo);           
+                && FAMDateConditionMet(learningDelivery.LearningDeliveryFAMs, learningDelivery.LearnActEndDateNullable);           
         }
 
         public bool FundModelConditionMet(int fundModel)
@@ -75,7 +74,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             return achDate.HasValue;
         }
               
-        public bool FAMDateConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, DateTime? actEndDate, out DateTime? outLearnDelFAMDateTo)
+        public bool FAMDateConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, DateTime? actEndDate)
         {
             var latestLearnDelFAMDate = learningDeliveryFAMs?
                                           .Where(f => f.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.ACT)
@@ -85,12 +84,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             if (latestLearnDelFAMDate != null && latestLearnDelFAMDate.LearnDelFAMDateToNullable.HasValue)
             {
-                outLearnDelFAMDateTo = latestLearnDelFAMDate.LearnDelFAMDateToNullable;
+                _learnDelFAMDateTo = latestLearnDelFAMDate.LearnDelFAMDateToNullable;
                return actEndDate != latestLearnDelFAMDate.LearnDelFAMDateToNullable;
             }
             else
             {
-                outLearnDelFAMDateTo = null;
                 return false;
             }
         }

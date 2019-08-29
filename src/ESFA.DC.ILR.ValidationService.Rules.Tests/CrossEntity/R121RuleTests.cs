@@ -91,7 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDeliveryFAM() { LearnDelFAMType = "act", LearnDelFAMCode = "03", LearnDelFAMDateToNullable = fAMDateTo.AddDays(10), LearnDelFAMDateFromNullable = fAMDateFrom }
             };
 
-            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs, actEndDate, out DateTime? outFAMDate);
+            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs, actEndDate);
             result.Should().BeTrue();
         }
 
@@ -109,7 +109,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDeliveryFAM() { LearnDelFAMType = "act", LearnDelFAMCode = "03", LearnDelFAMDateToNullable = fAMDateTo.AddDays(10), LearnDelFAMDateFromNullable = fAMDateFrom }
             };
 
-            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs, actEndDate, out DateTime? outFAMDate);
+            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs, actEndDate);
             result.Should().BeFalse();
         }
 
@@ -125,7 +125,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDeliveryFAM() { LearnDelFAMType = "RES", LearnDelFAMCode = "02", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom }
             };
 
-            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs, actEndDate, out DateTime? outFAMDate);
+            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs, actEndDate);
             result.Should().BeFalse();
         }
 
@@ -156,7 +156,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             mockFamQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "ACT"))
                                .Returns(true);
 
-            var result = NewRule(mockFamQueryService.Object, null).ConditionMet(learningDelivery, out DateTime? outFAMDate);
+            var result = NewRule(mockFamQueryService.Object, null).ConditionMet(learningDelivery);
             result.Should().BeTrue();
 
             mockFamQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "ACT"), Times.Exactly(1));
@@ -189,7 +189,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             mockFamQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "ACT"))
                                .Returns(true);
 
-            var result = NewRule(mockFamQueryService.Object, null).ConditionMet(learningDelivery, out DateTime? outFAMDate);
+            var result = NewRule(mockFamQueryService.Object, null).ConditionMet(learningDelivery);
             result.Should().BeFalse();
 
             mockFamQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "ACT"), Times.Exactly(1));
