@@ -78,7 +78,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void FamDateCondition_True_AsActEndDateNotEqual()
+        public void FamDateCondition_True_AsFamDateTo_Exists()
         {
             var fAMDateTo = new DateTime(2019, 08, 15);
             var fAMDateFrom = new DateTime(2019, 07, 15);
@@ -95,16 +95,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void FamDateCondition_False_AsActEndDateIsEqual()
+        public void FamDateCondition_False_AsFamDateTo_NotExisting()
         {
             var fAMDateTo = new DateTime(2019, 08, 15);
             var fAMDateFrom = new DateTime(2019, 07, 15);
 
             var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
             {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "ACT", LearnDelFAMCode = "01", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom },
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "RES", LearnDelFAMCode = "02", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom },
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "act", LearnDelFAMCode = "03", LearnDelFAMDateToNullable = fAMDateTo.AddDays(10), LearnDelFAMDateFromNullable = fAMDateFrom }
+                new TestLearningDeliveryFAM() { LearnDelFAMType = "ACT", LearnDelFAMCode = "01", LearnDelFAMDateToNullable = null, LearnDelFAMDateFromNullable = fAMDateFrom },
+                new TestLearningDeliveryFAM() { LearnDelFAMType = "RES", LearnDelFAMCode = "02", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom }
             };
 
             var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs);
@@ -137,11 +136,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void ConditionMet_True_AsActEndDateNotEqual()
+        public void ConditionMet_True_AsAchDateIsNull()
         {
             var fAMDateTo = new DateTime(2019, 08, 15);
             var fAMDateFrom = new DateTime(2019, 07, 15);
-            var actEndDate = fAMDateTo.AddDays(5); // actEndDate is not equal to famDateTo
+            DateTime? achDate = null; // ach date is null
 
             var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
             {
@@ -152,8 +151,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             {
                 LearnAimRef = "00100325",
                 AimSeqNumber = 1,
-                AchDateNullable = actEndDate.AddDays(2),
-                LearnActEndDateNullable = actEndDate,
+                AchDateNullable = achDate,
                 FundModel = 36,
                 ProgTypeNullable = 25,
                 LearningDeliveryFAMs = learningDeliveryFAMs
@@ -170,11 +168,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void ConditionMet_False_AsActEndDateIsEqual()
+        public void ConditionMet_False_AsAchDate_NotNull()
         {
             var fAMDateTo = new DateTime(2019, 08, 15);
             var fAMDateFrom = new DateTime(2019, 07, 15);
-            var actEndDate = fAMDateTo; // actEndDate is equal to famDateTo
+            DateTime? achDate = fAMDateTo.AddDays(2); // Fails as ach date is known
 
             var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
             {
@@ -185,8 +183,40 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             {
                 LearnAimRef = "00100325",
                 AimSeqNumber = 1,
-                AchDateNullable = actEndDate.AddDays(2),
-                LearnActEndDateNullable = actEndDate,
+                AchDateNullable = achDate,
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearningDeliveryFAMs = learningDeliveryFAMs
+            };
+
+            var mockFamQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+
+            var result = NewRule(mockFamQueryService.Object, null).ConditionMet(learningDelivery);
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_AsFamDateTo_IsNull()
+        {
+            var fAMDateFrom = new DateTime(2019, 07, 15);
+            DateTime? achDate = null;
+
+            var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMCode = "01",
+                    LearnDelFAMDateToNullable = null,
+                    LearnDelFAMDateFromNullable = fAMDateFrom
+                },
+            };
+
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnAimRef = "00100325",
+                AimSeqNumber = 1,
+                AchDateNullable = achDate,
                 FundModel = 36,
                 ProgTypeNullable = 25,
                 LearningDeliveryFAMs = learningDeliveryFAMs
@@ -203,11 +233,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void Validate_NoError()
+        public void Validate_NoError_AsAchDateIsKnown()
         {
             var fAMDateTo = new DateTime(2019, 08, 15);
             var fAMDateFrom = new DateTime(2019, 07, 15);
-            var actEndDate = fAMDateTo;
+            var achDate = fAMDateTo.AddDays(2);
 
             var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
             {
@@ -224,8 +254,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         LearnAimRef = "00100325",
                         AimSeqNumber = 1,
-                        AchDateNullable = fAMDateTo,
-                        LearnActEndDateNullable = actEndDate,
+                        AchDateNullable = achDate,
                         FundModel = 36,
                         ProgTypeNullable = 25,
                         LearningDeliveryFAMs = learningDeliveryFAMs
@@ -234,8 +263,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             };
 
             var mockFamQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockFamQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "ACT"))
-                               .Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
@@ -245,11 +272,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void ValidateError_AsActEndDate_NotEqualsFAMDateTo()
+        public void Validate_NoError_NullCheck()
+        {
+            TestLearner testLearner = null;
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandler: validationErrorHandlerMock.Object).Validate(testLearner);
+            }
+        }
+
+        [Fact]
+        public void ValidateError_AsAchDate_IsNull()
         {
             var fAMDateTo = new DateTime(2019, 08, 15);
             var fAMDateFrom = new DateTime(2019, 07, 15);
-            var actEndDate = fAMDateTo.AddDays(5); // Error as actEndDate not equal to famDateTo
+            DateTime? achDate = null; // Error as achDate is null
 
             var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
             {
@@ -265,8 +302,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         LearnAimRef = "00100325",
                         AimSeqNumber = 1,
-                        AchDateNullable = fAMDateTo,
-                        LearnActEndDateNullable = actEndDate,
+                        AchDateNullable = achDate,
                         FundModel = 36,
                         ProgTypeNullable = 25,
                         LearningDeliveryFAMs = learningDeliveryFAMs

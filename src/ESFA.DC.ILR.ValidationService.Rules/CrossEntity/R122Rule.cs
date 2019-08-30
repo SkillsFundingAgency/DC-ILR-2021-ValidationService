@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public void Validate(ILearner learner)
         {
-            if (learner.LearningDeliveries == null)
+            if (learner?.LearningDeliveries == null)
             {
                 return;
             }
