@@ -304,6 +304,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
+        public void Validate_NoError_NullCheck()
+        {
+            TestLearner testLearner = null;
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandler: validationErrorHandlerMock.Object).Validate(testLearner);
+            }
+        }
+
+        [Fact]
         public void Validate_Error()
         {
             var learningDeliveryFams = new List<TestLearningDeliveryFAM>()
