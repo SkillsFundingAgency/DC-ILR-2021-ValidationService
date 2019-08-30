@@ -82,17 +82,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void ProgtypeConditionMet_True()
+        public void ExclusionConditionMet_True()
         {
-            NewRule().ProgTypeConditionMet(25).Should().BeTrue();
+            var fundModel = 36;
+            var progType = 25;
+            NewRule().ExclusionConditonMet(fundModel, progType).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData(20)]
-        public void ProgtypeConditionMet_False(int? progType)
+        [InlineData(36, null)]
+        [InlineData(81, 20)]
+        [InlineData(81, 25)]
+        public void ExclusionConditionMet_False(int fundModel, int? progType)
         {
-            NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
+            NewRule().ExclusionConditonMet(fundModel, progType).Should().BeFalse();
         }
 
         [Fact]

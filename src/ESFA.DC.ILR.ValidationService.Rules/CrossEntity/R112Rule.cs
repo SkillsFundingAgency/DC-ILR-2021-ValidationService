@@ -30,8 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                // Excluding condition
-                if (FundModelConditionMet(learningDelivery.FundModel) && ProgTypeConditionMet(learningDelivery.ProgTypeNullable))
+                if(ExclusionConditonMet(learningDelivery.FundModel, learningDelivery.ProgTypeNullable))
                 {
                     continue;
                 }
@@ -60,16 +59,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 || learningDeliveryFam.LearnDelFAMDateToNullable.Value != learnActEndDate);
         }
 
+        public bool ExclusionConditonMet(int fundModel, int? progType)
+        {
+            return FundModelConditionMet(fundModel) && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        }
+
         public bool FundModelConditionMet(int fundModel)
         {
             return fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
         }
-
-        public bool ProgTypeConditionMet(int? progType)
-        {
-            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
-        }
-
+        
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? learnActEndDateNullable, string learnDelFAMType, DateTime? learnDelFAMDateTo)
         {
             return new[]
