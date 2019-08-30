@@ -99,7 +99,5 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 BuildErrorMessageParameter(PropertyNameConstants.AchDate, achDate)
             };
         }
-
-
     }
 }
