@@ -72,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         public void AchDateConditionMet(string strAchDate, bool expectedResult)
         {
             DateTime? achDate = string.IsNullOrEmpty(strAchDate) ? (DateTime?)null : DateTime.Parse(strAchDate);
-            var result = NewRule().AchDateConditionMet(achDate);
+            var result = NewRule().ActEndDateIsKnown(achDate);
 
             result.Should().Be(expectedResult);
         }

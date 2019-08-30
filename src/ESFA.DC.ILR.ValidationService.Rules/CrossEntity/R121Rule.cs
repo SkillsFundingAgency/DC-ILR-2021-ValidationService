@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         {
             return FundModelConditionMet(learningDelivery.FundModel)
                 && ProgTypeConditionMet(learningDelivery.ProgTypeNullable)
-                && AchDateConditionMet(learningDelivery.AchDateNullable)
+                && ActEndDateIsKnown(learningDelivery.AchDateNullable)
                 && FAMTypeConditionMet(learningDelivery.LearningDeliveryFAMs)
                 && FAMDateConditionMet(learningDelivery.LearningDeliveryFAMs, learningDelivery.LearnActEndDateNullable);
         }
@@ -70,9 +70,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT);
         }
 
-        public bool AchDateConditionMet(DateTime? achDate)
+        public bool ActEndDateIsKnown(DateTime? actEndDate)
         {
-            return achDate.HasValue;
+            return actEndDate.HasValue;
         }
 
         public bool FAMDateConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, DateTime? actEndDate)
