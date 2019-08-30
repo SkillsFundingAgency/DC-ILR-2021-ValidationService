@@ -250,6 +250,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
+        public void Validate_NoError_NullCheck()
+        {
+            TestLearner testLearner = null;
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandler: validationErrorHandlerMock.Object).Validate(testLearner);
+            }
+        }
+
+        [Fact]
         public void ValidateError_AsActEndDate_NotEqualsFAMDateTo()
         {
             var fAMDateTo = new DateTime(2019, 08, 15);
