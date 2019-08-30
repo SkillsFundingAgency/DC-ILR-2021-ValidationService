@@ -30,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if(ExclusionConditonMet(learningDelivery.FundModel, learningDelivery.ProgTypeNullable))
+                if(ExclusionConditionMet(learningDelivery.FundModel, learningDelivery.ProgTypeNullable))
                 {
                     continue;
                 }
@@ -59,7 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 || learningDeliveryFam.LearnDelFAMDateToNullable.Value != learnActEndDate);
         }
 
-        public bool ExclusionConditonMet(int fundModel, int? progType)
+        public bool ExclusionConditionMet(int fundModel, int? progType)
         {
             return FundModelConditionMet(fundModel) && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
         }
