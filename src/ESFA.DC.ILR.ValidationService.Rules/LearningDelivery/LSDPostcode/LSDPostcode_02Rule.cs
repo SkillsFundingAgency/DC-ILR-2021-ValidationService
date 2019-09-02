@@ -13,6 +13,11 @@ using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 {
+    /// <summary>
+    /// learning start date postcode rule 02
+    /// </summary>
+    /// <seealso cref="AbstractRule" />
+    /// <seealso cref="Interface.IRule{ILearner}" />
     public class LSDPostcode_02Rule :
         AbstractRule,
         IRule<ILearner>
@@ -174,8 +179,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         ///   <c>true</c> if [has qualifying model] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.AdultSkills);
-        // _check.HasQualifyingFunding(theDelivery, TypeOfFunding.AdultSkills, TypeOfFunding.CommunityLearning);
+            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.AdultSkills, TypeOfFunding.CommunityLearning);
 
         /// <summary>
         /// Determines whether [has qualifying start] [the specified delivery].
