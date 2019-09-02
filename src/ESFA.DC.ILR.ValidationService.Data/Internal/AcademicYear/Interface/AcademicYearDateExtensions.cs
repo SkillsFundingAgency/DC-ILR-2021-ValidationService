@@ -13,12 +13,18 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface
         /// </summary>
         private static readonly Dictionary<AcademicYearDates, AcademicYearDateDefinition> _academicYearDateDefinitions = new Dictionary<AcademicYearDates, AcademicYearDateDefinition>()
         {
-            [AcademicYearDates.Commencement] = new AcademicYearDateDefinition(8, 1, x => x.Month > 8 ? x.Year : x.Year - 1),
-            [AcademicYearDates.PreviousYearEnd] = new AcademicYearDateDefinition(7, 31, x => x.Month > 8 ? x.Year : x.Year - 1),
-            [AcademicYearDates.August31] = new AcademicYearDateDefinition(8, 31, x => x.Month > 7 ? x.Year : x.Year - 1),
+            [AcademicYearDates.Commencement] = new AcademicYearDateDefinition(8, 1, GetYear(8)),
+            [AcademicYearDates.PreviousYearEnd] = new AcademicYearDateDefinition(7, 31, GetYear(8)),
+            [AcademicYearDates.August31] = new AcademicYearDateDefinition(8, 31, GetYear(7)),
             [AcademicYearDates.CurrentYearEnd] = new AcademicYearDateDefinition(7, 31, x => x.Month < 8 ? x.Year : x.Year + 1),
             [AcademicYearDates.NextYearCommencement] = new AcademicYearDateDefinition(8, 1, x => x.Month < 8 ? x.Year : x.Year + 1),
         };
+
+        private static Func<DateTime, int> GetYear(int monthToCompare)
+        {
+            int result(DateTime x) => x.Month > monthToCompare ? x.Year : (x.Year > 1 ? x.Year - 1 : x.Year);
+            return result;
+        }
 
         /// <summary>
         /// Gets the Academic Year Date For the date in academic year with a selective shift on the Year Property.

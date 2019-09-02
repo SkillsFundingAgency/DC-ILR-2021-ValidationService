@@ -117,6 +117,21 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
             result.Should().Be(DateTime.Parse(expectation));
         }
 
+        [Theory]
+        [InlineData("0001-01-02", AcademicYearDates.Commencement, "0001-08-1")]
+        [InlineData("0001-01-02", AcademicYearDates.PreviousYearEnd, "0001-07-31")]
+        [InlineData("0001-01-02", AcademicYearDates.August31, "0001-08-31")]
+        public void GetAcademicYearFor_WrongYear(string candidate, AcademicYearDates forThisDate, string expectation)
+        {
+            var testDate = DateTime.Parse(candidate);
+            var expectedResult = DateTime.Parse(expectation);
+
+            var sut = NewService();
+            var result = sut.GetAcademicYearOfLearningDate(testDate, forThisDate);
+
+            result.Should().Be(expectedResult);
+        }
+
         private AcademicYearDataService NewService(IInternalDataCache internalDataCache = null)
         {
             return new AcademicYearDataService(internalDataCache);
