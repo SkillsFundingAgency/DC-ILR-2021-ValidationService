@@ -426,7 +426,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var sut = new UKPRN_17Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
 
             // act
-            var result = sut.HasFundingRelationship();
+            var result = sut.HasDisQualifyingFundingRelationship(x => true);
 
             // assert
             Assert.Equal(expectation, result);
