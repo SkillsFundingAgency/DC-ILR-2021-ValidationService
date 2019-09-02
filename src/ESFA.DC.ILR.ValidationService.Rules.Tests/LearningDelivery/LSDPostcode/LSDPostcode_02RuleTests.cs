@@ -343,7 +343,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(35, TypeOfFunding.AdultSkills)]
-        // [InlineData(10, TypeOfFunding.CommunityLearning)]
+        [InlineData(10, TypeOfFunding.CommunityLearning)]
         public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
         {
             // arrange / act / assert
@@ -365,9 +365,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            // .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 10))
             commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 10))
                 .Returns(expectation);
 
             var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
@@ -782,7 +781,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
             commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 10))
                 .Returns(true);
             commonOps
                 .Setup(x => x.HasQualifyingStart(delivery.Object, DateTime.Parse("2019-08-01"), null))
@@ -889,7 +888,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
             commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 10))
                 .Returns(true);
             commonOps
                 .Setup(x => x.HasQualifyingStart(delivery.Object, DateTime.Parse("2019-08-01"), null))
