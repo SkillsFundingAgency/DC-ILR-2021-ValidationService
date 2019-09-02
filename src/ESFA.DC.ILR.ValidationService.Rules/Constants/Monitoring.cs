@@ -144,7 +144,7 @@
             public const string ESFAAdultFunding = "SOF105";
 
             /// <summary>
-            /// The esfa 16 to 19 funding
+            /// esfa 16 to 19 funding
             /// </summary>
             public const string ESFA16To19Funding = "SOF107";
 
@@ -154,37 +154,37 @@
             public const string LocalAuthorityCommunityLearningFunds = "SOF108";
 
             /// <summary>
-            /// The greater manchester combined authority
+            /// greater manchester combined authority
             /// </summary>
             public const string GreaterManchesterCombinedAuthority = "SOF110";
 
             /// <summary>
-            /// The liverpool city region combined authority
+            /// liverpool city region combined authority
             /// </summary>
             public const string LiverpoolCityRegionCombinedAuthority = "SOF111";
 
             /// <summary>
-            /// The west midlands combined authority
+            /// west midlands combined authority
             /// </summary>
             public const string WestMidlandsCombinedAuthority = "SOF112";
 
             /// <summary>
-            /// The west of england combined authority
+            /// west of england combined authority
             /// </summary>
             public const string WestOfEnglandCombinedAuthority = "SOF113";
 
             /// <summary>
-            /// The tees valley combined authority
+            /// tees valley combined authority
             /// </summary>
             public const string TeesValleyCombinedAuthority = "SOF114";
 
             /// <summary>
-            /// The cambridgeshire and peterborough combined authority
+            /// cambridgeshire and peterborough combined authority
             /// </summary>
             public const string CambridgeshireAndPeterboroughCombinedAuthority = "SOF115";
 
             /// <summary>
-            /// The greater london authority
+            /// greater london authority
             /// </summary>
             public const string GreaterLondonAuthority = "SOF116";
 
@@ -194,14 +194,19 @@
             public const string FinancedByAdvancedLearnerLoans = "ADL1";
 
             /// <summary>
-            /// The apprenticeship funded through a contract for services with employer
+            /// apprenticeship funded through a contract for services with employer
             /// </summary>
             public const string ApprenticeshipFundedThroughAContractForServicesWithEmployer = "ACT1";
 
             /// <summary>
-            /// The apprenticeship funded through a contract for services with esfa
+            /// apprenticeship funded through a contract for services with esfa
             /// </summary>
             public const string ApprenticeshipFundedThroughAContractForServicesWithESFA = "ACT2";
+
+            /// <summary>
+            /// postcode validation exclusion
+            /// </summary>
+            public const string PostcodeValidationExclusion = "DAM001";
 
             /// <summary>
             /// funding and monitoring types
@@ -287,6 +292,11 @@
                 /// apprenticeship contract type
                 /// </summary>
                 public const string ApprenticeshipContract = "ACT";
+
+                /// <summary>
+                /// devolved area monitoring
+                /// </summary>
+                public const string DevolvedAreaMonitoring = "DAM";
             }
         }
 

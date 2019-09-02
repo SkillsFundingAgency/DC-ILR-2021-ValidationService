@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ESFA.DC.ILR.ReferenceDataService.Model.Postcodes;
+﻿using ESFA.DC.ILR.ReferenceDataService.Model.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
+using ESFA.DC.ILR.ValidationService.Utility;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using DevolvedPostcodeRDS = ESFA.DC.ILR.ReferenceDataService.Model.PostcodesDevolution.DevolvedPostcode;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
@@ -38,7 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
             return onsPostcodes;
         }
 
-        public IReadOnlyDictionary<string, List<DevolvedPostcode>> MapDevolvedPostcodes(IReadOnlyCollection<DevolvedPostcodeRDS> postcodes)
+        public IReadOnlyDictionary<string, IReadOnlyCollection<IDevolvedPostcode>> MapDevolvedPostcodes(IReadOnlyCollection<DevolvedPostcodeRDS> postcodes)
         {
             return postcodes?
                 .GroupBy(p => p.Postcode, StringComparer.OrdinalIgnoreCase)
@@ -51,8 +52,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                         SourceOfFunding = dp.SourceOfFunding,
                         EffectiveFrom = dp.EffectiveFrom,
                         EffectiveTo = dp.EffectiveTo
-                    }).ToList(),
-                    StringComparer.OrdinalIgnoreCase) ?? new Dictionary<string, List<DevolvedPostcode>>();
+                    }).AsSafeReadOnlyList<IDevolvedPostcode>(),
+                    StringComparer.OrdinalIgnoreCase)
+                        ?? new Dictionary<string, IReadOnlyCollection<IDevolvedPostcode>>(StringComparer.OrdinalIgnoreCase);
         }
     }
 }
