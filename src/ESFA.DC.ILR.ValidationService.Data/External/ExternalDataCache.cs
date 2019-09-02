@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External
         /// <summary>
         /// Gets or sets the Devolved postcodes.
         /// </summary>
-        public IReadOnlyDictionary<string, List<DevolvedPostcode>> DevolvedPostcodes { get; set; }
+        public IReadOnlyDictionary<string, IReadOnlyCollection<IDevolvedPostcode>> DevolvedPostcodes { get; set; }
 
         public IReadOnlyDictionary<string, ValidationError> ValidationErrors { get; set; }
 

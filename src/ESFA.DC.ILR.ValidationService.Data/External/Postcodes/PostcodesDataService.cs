@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
         /// <summary>
         /// The Devolved postcodes
         /// </summary>
-        private readonly IReadOnlyDictionary<string, List<DevolvedPostcode>> _devolvedPostcodes;
+        private readonly IReadOnlyDictionary<string, IReadOnlyCollection<IDevolvedPostcode>> _devolvedPostcodes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PostcodesDataService"/> class.
@@ -59,11 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
         /// </summary>
         /// <param name="fromPostcode">From postcode.</param>
         /// <returns>Devolved postcodes (if found)</returns>
-        public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodes(string fromPostcode)
-        {
-            return fromPostcode != null && _devolvedPostcodes.TryGetValue(fromPostcode, out var devolvedPostcodes)
-                ? devolvedPostcodes
-                : new List<DevolvedPostcode>();
-        }
+        public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodes(string fromPostcode) =>
+            _devolvedPostcodes.GetValueOrDefault(fromPostcode, Collection.EmptyAndReadOnly<IDevolvedPostcode>());
     }
 }
