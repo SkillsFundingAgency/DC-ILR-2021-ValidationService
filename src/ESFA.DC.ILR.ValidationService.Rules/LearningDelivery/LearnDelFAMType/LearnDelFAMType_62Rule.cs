@@ -316,12 +316,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <summary>
         /// Determines whether [is v2 notional level2] [the specified delivery].
         /// </summary>
-        /// <param name="delivery">The delivery.</param>
+        /// <param name="lARSDelivery">The LARS Learning delivery.</param>
         /// <returns>
         ///   <c>true</c> if [is v2 notional level2] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsV2NotionalLevel2(ILARSLearningDelivery delivery) =>
-            It.IsInRange(delivery.NotionalNVQLevelv2, LARSNotionalNVQLevelV2.Level2);
+        public bool IsV2NotionalLevel2(ILARSLearningDelivery lARSDelivery) =>
+            It.Has(lARSDelivery) && It.IsInRange(lARSDelivery.NotionalNVQLevelv2, LARSNotionalNVQLevelV2.Level2);
 
         /// <summary>
         /// Determines whether [is legally entitled] [the specified category].
@@ -331,7 +331,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         ///   <c>true</c> if [is legally entitled] [the specified category]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsLegallyEntitled(ILARSLearningCategory category) =>
-            It.IsInRange(category.CategoryRef, TypeOfLARSCategory.LegalEntitlementLevel2);
+            It.Has(category) && It.IsInRange(category.CategoryRef, TypeOfLARSCategory.LegalEntitlementLevel2);
 
         /// <summary>
         /// Determines whether [is higher achiever] [the specified candidate].
