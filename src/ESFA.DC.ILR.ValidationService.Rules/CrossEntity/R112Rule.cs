@@ -23,13 +23,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public void Validate(ILearner learner)
         {
-            if (learner.LearningDeliveries == null)
+            if (learner?.LearningDeliveries == null)
             {
                 return;
             }
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
+                if(ExclusionConditionMet(learningDelivery.FundModel, learningDelivery.ProgTypeNullable))
+                {
+                    continue;
+                }
+
                 if (learningDelivery.LearnActEndDateNullable == null || learningDelivery.LearningDeliveryFAMs == null)
                 {
                     continue;
@@ -37,7 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
                 var learningDeliveryFamToCheck = GetEligibleLearningDeliveryFam(learningDelivery.LearningDeliveryFAMs);
 
-                if (learningDeliveryFamToCheck != null && ConditionMet(learningDeliveryFamToCheck, learningDelivery.LearnActEndDateNullable.Value))
+                if (learningDeliveryFamToCheck != null && ConditionMet(learningDelivery.FundModel, learningDeliveryFamToCheck, learningDelivery.LearnActEndDateNullable.Value))
                 {
                     HandleValidationError(
                         learner.LearnRefNumber,
@@ -47,12 +52,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             }
         }
 
-        public bool ConditionMet(ILearningDeliveryFAM learningDeliveryFam, DateTime learnActEndDate)
+        public bool ConditionMet(int fundModel, ILearningDeliveryFAM learningDeliveryFam, DateTime learnActEndDate)
         {
-            return !learningDeliveryFam.LearnDelFAMDateToNullable.HasValue
-                   || learningDeliveryFam.LearnDelFAMDateToNullable.Value != learnActEndDate;
+            return FundModelConditionMet(fundModel) &&
+             (!learningDeliveryFam.LearnDelFAMDateToNullable.HasValue 
+                || learningDeliveryFam.LearnDelFAMDateToNullable.Value != learnActEndDate);
         }
 
+        public bool ExclusionConditionMet(int fundModel, int? progType)
+        {
+            return FundModelConditionMet(fundModel) && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        }
+
+        public bool FundModelConditionMet(int fundModel)
+        {
+            return fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+        }
+        
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? learnActEndDateNullable, string learnDelFAMType, DateTime? learnDelFAMDateTo)
         {
             return new[]
