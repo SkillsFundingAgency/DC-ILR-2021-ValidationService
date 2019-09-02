@@ -791,11 +791,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void IsLegallyEntitled_False_DuetoNullCheck()
         {
-            // arrange
-            var sut = NewRule();
             ILARSLearningCategory mockItem = null;
-
-            var result = sut.IsLegallyEntitled(mockItem);
+            var result = NewRule().IsLegallyEntitled(mockItem);
+            result.Should().BeFalse();
         }
 
         /// <summary>
