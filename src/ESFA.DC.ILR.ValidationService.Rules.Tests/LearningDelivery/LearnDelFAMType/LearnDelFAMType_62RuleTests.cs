@@ -7,6 +7,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
+using FluentAssertions;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -743,6 +744,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             Assert.Equal(expectation, result);
         }
 
+        [Fact]
+        public void IsV2NotionalLevel2_Returns_False_DueToNullList()
+        {
+            ILARSLearningDelivery mockLARSDelivery = null;
+
+            var rule = NewRule().IsV2NotionalLevel2(mockLARSDelivery);
+            rule.Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsV2NotionalLevel2_Returns_False_AsNoNVQLevel()
+        {
+            var mockLARSDelivery = new Mock<ILARSLearningDelivery>();
+
+            var rule = NewRule().IsV2NotionalLevel2(mockLARSDelivery.Object);
+            rule.Should().BeFalse();
+        }
+
         /// <summary>
         /// Is legally entitled meets expectation
         /// </summary>
@@ -767,6 +786,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             // assert
             Assert.Equal(expectation, result);
+        }
+
+        [Fact]
+        public void IsLegallyEntitled_False_DuetoNullCheck()
+        {
+            // arrange
+            var sut = NewRule();
+            ILARSLearningCategory mockItem = null;
+
+            var result = sut.IsLegallyEntitled(mockItem);
         }
 
         /// <summary>
