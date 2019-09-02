@@ -508,6 +508,8 @@
         public const string R119 = "R119";
         public const string R121 = "R121";
 
+        public const string R122 = "R122";
+
         public const string Schema = "Schema";
 
         public const string Sex_01 = "Sex_01";
