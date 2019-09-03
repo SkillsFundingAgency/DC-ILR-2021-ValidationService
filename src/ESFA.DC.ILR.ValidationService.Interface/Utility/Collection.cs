@@ -285,6 +285,19 @@ namespace ESFA.DC.ILR.ValidationService.Utility
 
         /// <summary>
         /// Gets the value or default.
+        /// for string keys
+        /// with the introduction of net standard 2.1, this can be removed
+        /// </summary>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        public static TValue GetValueOrDefault<TValue>(this IReadOnlyDictionary<string, TValue> source, string key, TValue defaultValue) =>
+            It.Has(key) && source.TryGetValue(key, out var ret) ? ret : defaultValue;
+
+        /// <summary>
+        /// Gets the value or default.
         /// as above using a generalised dictionary contact
         /// </summary>
         /// <typeparam name="TKey">The type of the key.</typeparam>
@@ -295,5 +308,17 @@ namespace ESFA.DC.ILR.ValidationService.Utility
         /// <returns></returns>
         public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key, TValue defaultValue) =>
             source.TryGetValue(key, out var ret) ? ret : defaultValue;
+
+        /// <summary>
+        /// Gets the value or default.
+        /// as above using a generalised dictionary contact and for string keys
+        /// </summary>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        public static TValue GetValueOrDefault<TValue>(this IDictionary<string, TValue> source, string key, TValue defaultValue) =>
+            It.Has(key) && source.TryGetValue(key, out var ret) ? ret : defaultValue;
     }
 }
