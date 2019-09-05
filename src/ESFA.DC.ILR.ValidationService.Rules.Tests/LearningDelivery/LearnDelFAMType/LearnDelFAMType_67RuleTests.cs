@@ -241,7 +241,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
-        public void IsCommonComponent_True()
+        public void IsCommonComponent_False()
         {
             ILARSLearningDelivery lARSDelivery = new Data.External.LARS.Model.LearningDelivery
             {
@@ -251,11 +251,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             };
 
             var result = NewRule().IsCommonComponent(lARSDelivery);
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
 
         [Fact]
-        public void IsCommonComponent_False_AsWrongComponent()
+        public void IsCommonComponent_True_AsNotComponent20()
         {
             ILARSLearningDelivery lARSDelivery = new Data.External.LARS.Model.LearningDelivery
             {
@@ -265,29 +265,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             };
 
             var result = NewRule().IsCommonComponent(lARSDelivery);
-            result.Should().BeFalse();
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public void IsCommonComponent_False_DueToEmptyList()
+        public void IsCommonComponent_True_DueToEmptyList()
         {
             ILARSLearningDelivery lARSDelivery = new Data.External.LARS.Model.LearningDelivery();
 
             var result = NewRule().IsCommonComponent(lARSDelivery);
-            result.Should().BeFalse();
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public void IsCommonComponent_False_DueToNull()
+        public void IsCommonComponent_True_DueToNull()
         {
             ILARSLearningDelivery lARSDelivery = null;
 
             var result = NewRule().IsCommonComponent(lARSDelivery);
-            result.Should().BeFalse();
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public void Validation_NoError_CommonComponentNotMatched()
+        public void Validation_NoError_AsCommonComponentMatched()
         {
             var learnAimRef = "00100309";
 
@@ -295,7 +295,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             {
                 LearnAimRef = "LearnAimRef1",
                 EffectiveFrom = new DateTime(2018, 8, 1),
-                FrameworkCommonComponent = 21
+                FrameworkCommonComponent = 20
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
@@ -303,7 +303,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             larsDataServiceMock
                 .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(It.IsAny<IEnumerable<int>>(), It.IsAny<string>(), It.IsAny<DateTime>()))
-                .Returns(true);
+                .Returns(false);
 
             var testLearner = new TestLearner
             {
@@ -340,7 +340,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             {
                 LearnAimRef = "LearnAimRef1",
                 EffectiveFrom = new DateTime(2018, 8, 1),
-                FrameworkCommonComponent = 20
+                FrameworkCommonComponent = 21
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
@@ -386,7 +386,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             {
                 LearnAimRef = "LearnAimRef1",
                 EffectiveFrom = new DateTime(2018, 8, 1),
-                FrameworkCommonComponent = 20
+                FrameworkCommonComponent = 21
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
@@ -394,7 +394,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             larsDataServiceMock
                    .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(It.IsAny<IEnumerable<int>>(), It.IsAny<string>(), It.IsAny<DateTime>()))
-                   .Returns(true);
+                   .Returns(false);
 
             var testLearner = new TestLearner
             {

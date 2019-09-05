@@ -72,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
                 foreach (var deliveryFam in learningDelivery.LearningDeliveryFAMs)
                 {
-                    if ((!basicSkill || IsCommonComponent(larsDelivery)) && deliveryFam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.LSF)
+                    if ((!basicSkill && IsCommonComponent(larsDelivery)) && deliveryFam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.LSF)
                     {
                         RaiseValidationMessage(learner.LearnRefNumber, learningDelivery, deliveryFam);
                     }
@@ -82,7 +82,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool IsCommonComponent(ILARSLearningDelivery lARSLearningDelivery)
         {
-            return lARSLearningDelivery?.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
+            return lARSLearningDelivery?.FrameworkCommonComponent != TypeOfLARSCommonComponent.BritishSignLanguage;
         }
 
         private void RaiseValidationMessage(string learnRefNum, ILearningDelivery learningDelivery, ILearningDeliveryFAM thisMonitor)
