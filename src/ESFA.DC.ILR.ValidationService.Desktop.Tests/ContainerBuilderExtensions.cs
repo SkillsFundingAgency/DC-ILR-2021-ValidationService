@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.FileService.Interface;
+using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
@@ -24,6 +25,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
             containerBuilder.RegisterMock<ISerializationService>();
 
             containerBuilder.RegisterMock<IAcademicYearDataService>();
+            containerBuilder.RegisterMock<IOrganisationDataService>();
         }
 
         private static void RegisterMock<T>(this ContainerBuilder containerBuilder)

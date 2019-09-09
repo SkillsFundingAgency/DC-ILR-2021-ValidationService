@@ -72,11 +72,32 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             return learningDelivery;
         }
 
-        public ILARSStandard GetStandardFor(int standardCode)
-        {
-            _larsStandards.TryGetValue(standardCode, out var standard);
+        /// <summary>
+        /// Gets the standard for.
+        /// </summary>
+        /// <param name="standardCode">The standard code.</param>
+        /// <returns>
+        /// the lars standard or null
+        /// </returns>
+        public ILARSStandard GetStandardFor(int standardCode) =>
+            _larsStandards.GetValueOrDefault(standardCode, null);
 
-            return standard;
+        /// <summary>
+        /// Gets the standard funding for.
+        /// </summary>
+        /// <param name="standardCode">The standard code.</param>
+        /// <param name="startDate">The start date.</param>
+        /// <returns>
+        /// a lars standard funding or null
+        /// </returns>
+        public ILARSStandardFunding GetStandardFundingFor(int standardCode, DateTime startDate)
+        {
+            var standard = GetStandardFor(standardCode);
+
+            return standard?.StandardsFunding
+                .SafeWhere(sf => It.IsBetween(startDate, sf.EffectiveFrom, sf.EffectiveTo ?? DateTime.MaxValue))
+                .OrderBy(x => x.EffectiveTo) // get the earliest closure first
+                .FirstOrDefault();
         }
 
         /// <summary>
@@ -139,7 +160,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             var delivery = GetDeliveryFor(thisAimRef);
 
             return delivery?.Frameworks
-                .SafeWhere(f => It.Has(f.FrameworkAim))
+                .SafeWhere(f => f.FrameworkAim != null)
                 .Select(f => f.FrameworkAim)
                 .AsSafeReadOnlyList()
                     ?? Collection.EmptyAndReadOnly<ILARSFrameworkAim>();

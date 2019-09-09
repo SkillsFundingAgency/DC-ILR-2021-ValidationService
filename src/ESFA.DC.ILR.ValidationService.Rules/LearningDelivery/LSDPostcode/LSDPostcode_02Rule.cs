@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ESFA.DC.ILR.Model.Interface;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
@@ -9,133 +6,311 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using ESFA.DC.ILR.ValidationService.Utility;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 {
-    public class LSDPostcode_02Rule : AbstractRule, IRule<ILearner>
+    /// <summary>
+    /// learning start date postcode rule 02
+    /// </summary>
+    /// <seealso cref="AbstractRule" />
+    /// <seealso cref="Interface.IRule{ILearner}" />
+    public class LSDPostcode_02Rule :
+        AbstractRule,
+        IRule<ILearner>
     {
-        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
-        private readonly IOrganisationDataService _organisationDataService;
-        private readonly IPostcodesDataService _postcodeService;
-        private readonly IFileDataService _fileDataService;
+        /// <summary>
+        /// The check(er, rule common operations provider)
+        /// </summary>
+        private readonly IProvideRuleCommonOperations _check;
 
-        private readonly DateTime _firstAugust2019 = new DateTime(2019, 08, 01);
-        private readonly IEnumerable<int> _fundModels = new HashSet<int>()
-        {
-            TypeOfFunding.AdultSkills
-        };
+        /// <summary>
+        /// The postcode data (service)
+        /// </summary>
+        private readonly IPostcodesDataService _postcodeData;
 
-        public LSDPostcode_02Rule(ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LSDPostcode_02Rule"/> class.
+        /// </summary>
+        /// <param name="validationErrorHandler">The validation error handler.</param>
+        /// <param name="commonOps">The common rule operations provider.</param>
+        /// <param name="organisationDataService">The organisation data service.</param>
+        /// <param name="fileDataService">The file data service.</param>
+        /// <param name="postcodesDataService">The postcodes data service.</param>
+        public LSDPostcode_02Rule(
+            IValidationErrorHandler validationErrorHandler,
+            IProvideRuleCommonOperations commonOps,
             IOrganisationDataService organisationDataService,
-            IPostcodesDataService postcodeService,
             IFileDataService fileDataService,
-            IValidationErrorHandler validationErrorHandler)
-           : base(validationErrorHandler, RuleNameConstants.LSDPostcode_02)
+            IPostcodesDataService postcodesDataService)
+            : base(validationErrorHandler, RuleNameConstants.LSDPostcode_02)
         {
-            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
-            _organisationDataService = organisationDataService;
-            _postcodeService = postcodeService;
-            _fileDataService = fileDataService;
+            It.IsNull(validationErrorHandler)
+                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
+            It.IsNull(commonOps)
+                .AsGuard<ArgumentNullException>(nameof(commonOps));
+            It.IsNull(organisationDataService)
+                .AsGuard<ArgumentNullException>(nameof(organisationDataService));
+            It.IsNull(fileDataService)
+                .AsGuard<ArgumentNullException>(nameof(fileDataService));
+            It.IsNull(postcodesDataService)
+                .AsGuard<ArgumentNullException>(nameof(postcodesDataService));
+
+            var providerUKPRN = fileDataService.UKPRN();
+
+            OrganisationType = organisationDataService.GetLegalOrgTypeForUkprn(providerUKPRN);
+            FirstViableStart = new DateTime(2019, 08, 01);
+
+            _check = commonOps;
+            _postcodeData = postcodesDataService;
         }
 
-        public LSDPostcode_02Rule()
-       : base(null, RuleNameConstants.LSDPostcode_02)
+        /// <summary>
+        /// Gets the first viable start, which is 1st August 2019
+        /// </summary>
+        public DateTime FirstViableStart { get; }
+
+        /// <summary>
+        /// Gets the type of organisation.
+        /// </summary>
+        public string OrganisationType { get; }
+
+        /// <summary>
+        /// Validates the specified the learner.
+        /// </summary>
+        /// <param name="theLearner">The learner.</param>
+        public void Validate(ILearner theLearner)
         {
+            It.IsNull(theLearner)
+                .AsGuard<ArgumentNullException>(nameof(theLearner));
 
-        }
-
-        public void Validate(ILearner objectToValidate)
-        {
-            var ukprn = _fileDataService.UKPRN();
-
-            if (objectToValidate.LearningDeliveries != null)
+            if (!IsSpecialistDesignatedCollege())
             {
-                foreach (var learningDelivery in objectToValidate.LearningDeliveries)
-                {
-                    var devolvedPostcodes = _postcodeService.GetDevolvedPostcodes(learningDelivery.LSDPostcode);
+                var learnRefNumber = theLearner.LearnRefNumber;
 
-                    if (ConditionMet(ukprn, learningDelivery.ProgTypeNullable,
-                                     learningDelivery.FundModel, learningDelivery.LearnStartDate,
-                                     devolvedPostcodes, learningDelivery.LearningDeliveryFAMs))
-                    {
-                        HandleValidationError(
-                                          objectToValidate.LearnRefNumber,
-                                          learningDelivery.AimSeqNumber,
-                                          BuildErrorMessageParameters(learningDelivery.LearnPlanEndDate,
-                                          learningDelivery.FundModel,
-                                          learningDelivery.LSDPostcode,
-                                          LearningDeliveryFAMTypeConstants.SOF));
-                    }
-                }
+                theLearner.LearningDeliveries
+                    .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));
             }
         }
 
-        public bool ConditionMet(int ukprn, int? progType, int fundModel, DateTime learnStartDate, IEnumerable<IDevolvedPostcode> devolvedPostcodes, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        /// <summary>
+        /// Determines whether [is specialist designated college].
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if [is specialist designated college]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsSpecialistDesignatedCollege() =>
+            It.IsInRange(OrganisationType, LegalOrgTypeConstants.USDC);
+
+        /// <summary>
+        /// Determines whether [is not valid] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <param name="devolvedPostcodes">The devolved postcodes.</param>
+        /// <returns>
+        ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsNotValid(ILearningDelivery theDelivery) =>
+            !IsExcluded(theDelivery)
+            && HasQualifyingModel(theDelivery)
+            && HasQualifyingStart(theDelivery)
+            && !HasValidSourceOfFunding(theDelivery);
+
+        /// <summary>
+        /// Determines whether the specified the delivery is excluded.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified the delivery is excluded; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsExcluded(ILearningDelivery theDelivery) =>
+            IsTraineeship(theDelivery)
+            || IsRestart(theDelivery)
+            || IsPostcodeValidationExclusion(theDelivery);
+
+        /// <summary>
+        /// Determines whether the specified the delivery is traineeship.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified the delivery is traineeship; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsTraineeship(ILearningDelivery theDelivery) =>
+            _check.IsTraineeship(theDelivery);
+
+        /// <summary>
+        /// Determines whether the specified the delivery is restart.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified the delivery is restart; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsRestart(ILearningDelivery theDelivery) =>
+            _check.IsRestart(theDelivery);
+
+        /// <summary>
+        /// Determines whether [is postcode validation exclusion] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [is postcode validation exclusion] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsPostcodeValidationExclusion(ILearningDelivery theDelivery) =>
+            _check.CheckDeliveryFAMs(theDelivery, IsPostcodeValidationExclusion);
+
+        /// <summary>
+        /// Determines whether [is postcode validation exclusion] [the specified monitor].
+        /// </summary>
+        /// <param name="theMonitor">The monitor.</param>
+        /// <returns>
+        ///   <c>true</c> if [is postcode validation exclusion] [the specified monitor]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsPostcodeValidationExclusion(ILearningDeliveryFAM theMonitor) =>
+            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.PostcodeValidationExclusion);
+
+        /// <summary>
+        /// Determines whether [has qualifying model] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying model] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
+            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.AdultSkills, TypeOfFunding.CommunityLearning);
+
+        /// <summary>
+        /// Determines whether [has qualifying start] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying start] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingStart(ILearningDelivery theDelivery) =>
+            _check.HasQualifyingStart(theDelivery, FirstViableStart);
+
+        /// <summary>
+        /// Determines whether [has valid source of funding] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has valid source of funding] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasValidSourceOfFunding(ILearningDelivery theDelivery)
         {
-            return ProgTypeConditionMet(progType)
-                 && FundModelConditionMet(fundModel)
-                 && LearnStartDateConditionMet(learnStartDate)
-                 && IsInvalidSofCodeOnLearnStartDate(learnStartDate, learningDeliveryFAMs, devolvedPostcodes)
-                 && OrganisationConditionMet(ukprn)
-                 && LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)
-                 && ExclusionConditionMet(learningDeliveryFAMs);
+            var devolvedPCs = GetDevolvedPostcodes(theDelivery);
+            var ldFamSofs = GetDeliveryFundingCodes(theDelivery);
+            var devolvedPCsForSof = GetDevolvedPostcodesForSoF(devolvedPCs, x => HasQualifyingFundingCode(x, ldFamSofs));
+
+            return HasValidSourceOfFunding(devolvedPCsForSof, x => HasQualifyingEffectiveStart(x, theDelivery));
         }
 
-        public virtual bool ProgTypeConditionMet(int? progType)
+        /// <summary>
+        /// Gets the devolved postcodes.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>a collection of devolved postcodes</returns>
+        public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodes(ILearningDelivery theDelivery) =>
+            _postcodeData.GetDevolvedPostcodes(theDelivery.LSDPostcode);
+
+        /// <summary>
+        /// Gets the delivery funding codes.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>a collection of delivery monitor (source of) funding codes</returns>
+        public IContainThis<string> GetDeliveryFundingCodes(ILearningDelivery theDelivery) =>
+            theDelivery.LearningDeliveryFAMs
+                .SafeWhere(HasQualifyingFundingType)
+                .Select(GetFundingCode)
+                .AsSafeDistinctKeySet();
+
+        /// <summary>
+        /// Determines whether [has qualifying funding type] [the specified monitor].
+        /// </summary>
+        /// <param name="theMonitor">The monitor.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying funding type] [the specified monitor]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingFundingType(ILearningDeliveryFAM theMonitor) =>
+            theMonitor.LearnDelFAMType == Monitoring.Delivery.Types.SourceOfFunding;
+
+        /// <summary>
+        /// Gets the funding code.
+        /// </summary>
+        /// <param name="theMonitor">The monitor.</param>
+        /// <returns>the montior funding code</returns>
+        public string GetFundingCode(ILearningDeliveryFAM theMonitor) =>
+            theMonitor.LearnDelFAMCode;
+
+        /// <summary>
+        /// Gets the devolved postcodes for sof.
+        /// </summary>
+        /// <param name="devolvedPCs">The devolved p cs.</param>
+        /// <param name="hasQualifyingCode">The has qualifying code.</param>
+        /// <returns></returns>
+        public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodesForSoF(
+            IReadOnlyCollection<IDevolvedPostcode> devolvedPCs, 
+            Func<IDevolvedPostcode, bool> hasQualifyingCode) =>
+                devolvedPCs
+                    .SafeWhere(hasQualifyingCode)
+                    .AsSafeReadOnlyList();
+
+        /// <summary>
+        /// Determines whether [has qualifying funding code] [the specified devolved pc].
+        /// </summary>
+        /// <param name="devolvedPC">The devolved pc.</param>
+        /// <param name="deliveryFundingCodes">The delivery funding codes.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying funding code] [the specified devolved pc]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingFundingCode(IDevolvedPostcode devolvedPC, IContainThis<string> deliveryFundingCodes) =>
+            deliveryFundingCodes.Contains(devolvedPC.SourceOfFunding);
+
+        /// <summary>
+        /// Determines whether [has valid source of funding] [the specified devolved postcodes].
+        /// </summary>
+        /// <param name="devolvedPCs">The devolved p cs.</param>
+        /// <param name="hasQualifyingEffectiveStart">The has qualifying effective start.</param>
+        /// <returns>
+        ///   <c>true</c> if [has valid source of funding] [the specified devolved postcodes]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasValidSourceOfFunding(
+            IReadOnlyCollection<IDevolvedPostcode> devolvedPCs, 
+            Func<IDevolvedPostcode, bool> hasQualifyingEffectiveStart) =>
+                devolvedPCs.SafeAny(hasQualifyingEffectiveStart);
+
+        /// <summary>
+        /// Determines whether [has qualifying effective start] [the specified devolved postcode].
+        /// </summary>
+        /// <param name="devolvedPC">The devolved pc.</param>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying effective start] [the specified devolved postcode]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingEffectiveStart(IDevolvedPostcode devolvedPC, ILearningDelivery theDelivery) =>
+            theDelivery.LearnStartDate >= devolvedPC.EffectiveFrom;
+
+        /// <summary>
+        /// Raises the validation message.
+        /// </summary>
+        /// <param name="learnRefNumber">The learn reference number.</param>
+        /// <param name="theDelivery">The delivery.</param>
+        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
+            HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
+
+        /// <summary>
+        /// Builds the message parameters for.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>a collection of message parameters</returns>
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery theDelivery) => new[]
         {
-            return progType.HasValue
-                      && progType != TypeOfLearningProgramme.Traineeship;
-        }
-
-        public virtual bool FundModelConditionMet(int fundModel)
-        {
-            return _fundModels.Contains(fundModel);
-        }
-
-        public virtual bool LearnStartDateConditionMet(DateTime learnStartDate)
-        {
-            return learnStartDate >= _firstAugust2019;
-        }
-
-        public virtual bool IsInvalidSofCodeOnLearnStartDate(DateTime learnStartDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, IEnumerable<IDevolvedPostcode> devolvedPostcodes)
-        {
-            var ldFamSofs = _learningDeliveryFAMQueryService
-                .GetLearningDeliveryFAMsForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.SOF)?
-                .Select(l => l.LearnDelFAMCode)
-                .ToList() ?? Enumerable.Empty<string>();
-
-            var devolvedPostcodesForSof = devolvedPostcodes.Where(dp => ldFamSofs.Contains(dp.SourceOfFunding)).ToList() ?? Enumerable.Empty<IDevolvedPostcode>();
-
-            var isNotValid = devolvedPostcodesForSof.Count() > 0 ? devolvedPostcodesForSof.All(dp => dp.EffectiveFrom > learnStartDate) : false;
-
-            return isNotValid;
-        }
-
-        public virtual bool OrganisationConditionMet(int ukprn)
-        {
-            return !_organisationDataService.LegalOrgTypeMatchForUkprn(ukprn, LegalOrgTypeConstants.USDC);
-        }
-
-        public virtual bool LearningDeliveryFAMsConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
-        {
-            return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);
-        }
-
-        public virtual bool ExclusionConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
-        {
-            return !_learningDeliveryFAMQueryService
-                       .HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001);            
-        }
-
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, int fundModel, string lsdPostcode, string famType)
-        {
-            return new[]
-            {
-                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learnStartDate),
-                BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
-                BuildErrorMessageParameter(PropertyNameConstants.LSDPostcode, lsdPostcode),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, famType)
-            };
-        }
+            BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, theDelivery.LearnStartDate),
+            BuildErrorMessageParameter(PropertyNameConstants.FundModel, theDelivery.FundModel),
+            BuildErrorMessageParameter(PropertyNameConstants.LSDPostcode, theDelivery.LSDPostcode),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding)
+        };
     }
 }

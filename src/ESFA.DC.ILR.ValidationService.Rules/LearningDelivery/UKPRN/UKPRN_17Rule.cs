@@ -16,8 +16,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
     /// </summary>
     /// <seealso cref="AbstractRule" />
     /// <seealso cref="Interface.IRule{ILearner}" />
-    public class UKPRN_17Rule : 
-        AbstractRule, 
+    public class UKPRN_17Rule :
+        AbstractRule,
         IRule<ILearner>
     {
         /// <summary>
@@ -99,8 +99,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             HasQualifyingModel(theDelivery)
                 && IsTraineeship(theDelivery)
                 && HasQualifyingMonitor(theDelivery)
-                && HasFundingRelationship()
-                && HasStartedAfterStopDate(theDelivery);
+                && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
 
         /// <summary>
         /// Determines whether [has qualifying model] [the specified the delivery].
@@ -143,27 +142,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             _check.CheckDeliveryFAMs(theDelivery, HasQualifyingMonitor);
 
         /// <summary>
-        /// Determines whether [has funding relationship].
+        /// Determines whether [has disqualifying funding relationship] [has started after stop date].
         /// </summary>
+        /// <param name="hasStartedAfterStopDate">The has started after stop date.</param>
         /// <returns>
-        ///   <c>true</c> if [has funding relationship]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [has disqualifying funding relationship] [has started after stop date]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasFundingRelationship() =>
+        public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate) =>
             _fcsData
                 .GetContractAllocationsFor(ProviderUKPRN)
-                .SafeAny(x => FundingStreams.Contains(x.FundingStreamPeriodCode));
+                .SafeAny(x => HasFundingRelationship(x) && hasStartedAfterStopDate(x));
 
         /// <summary>
-        /// Determines whether [has started after stop date] [the specified delivery].
+        /// Determines whether [has funding relationship] [the specified allocation].
         /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
+        /// <param name="theAllocation">The allocation.</param>
         /// <returns>
-        ///   <c>true</c> if [has started after stop date] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [has funding relationship] [the specified allocation]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasStartedAfterStopDate(ILearningDelivery theDelivery) =>
-            _fcsData
-                .GetContractAllocationsFor(ProviderUKPRN)
-                .SafeAny(x => HasStartedAfterStopDate(x, theDelivery));
+        public bool HasFundingRelationship(IFcsContractAllocation theAllocation) =>
+            FundingStreams.Contains(theAllocation.FundingStreamPeriodCode);
 
         /// <summary>
         /// Determines whether [has started after stop date] [the specified allocation].
@@ -189,15 +187,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         /// </summary>
         /// <param name="theDelivery">The delivery.</param>
         /// <returns></returns>
-        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery theDelivery) =>
-            new[]
-            {
-                BuildErrorMessageParameter(PropertyNameConstants.UKPRN, ProviderUKPRN),
-                BuildErrorMessageParameter(PropertyNameConstants.FundModel, theDelivery.FundModel),
-                BuildErrorMessageParameter(PropertyNameConstants.ProgType, theDelivery.ProgTypeNullable),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, theDelivery.LearnStartDate),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.SOF),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult)
-            };
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery theDelivery) => new[]
+        {
+            BuildErrorMessageParameter(PropertyNameConstants.UKPRN, ProviderUKPRN),
+            BuildErrorMessageParameter(PropertyNameConstants.FundModel, theDelivery.FundModel),
+            BuildErrorMessageParameter(PropertyNameConstants.ProgType, theDelivery.ProgTypeNullable),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, theDelivery.LearnStartDate),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.SOF),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult)
+        };
     }
 }

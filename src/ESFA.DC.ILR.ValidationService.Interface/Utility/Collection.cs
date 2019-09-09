@@ -59,6 +59,19 @@ namespace ESFA.DC.ILR.ValidationService.Utility
         }
 
         /// <summary>
+        /// As safe read only list.
+        /// </summary>
+        /// <typeparam name="TConcrete">The concrete type</typeparam>
+        /// <typeparam name="TContract">The contract type</typeparam>
+        /// <param name="list">The list.</param>
+        /// <returns>a concrete list as it's contract type</returns>
+        public static IReadOnlyCollection<TContract> AsSafeReadOnlyList<TConcrete, TContract>(this IEnumerable<TConcrete> list)
+            where TConcrete : class, TContract
+        {
+            return list.SafeReadOnlyList();
+        }
+
+        /// <summary>
         /// As safe distinct key set.
         /// </summary>
         /// <typeparam name="T">of type</typeparam>
@@ -256,5 +269,56 @@ namespace ESFA.DC.ILR.ValidationService.Utility
         {
             return list.SafeList();
         }
+
+        /// <summary>
+        /// Gets the value or default.
+        /// with the introduction of net standard 2.1, this can be removed
+        /// </summary>
+        /// <typeparam name="TKey">The type of key.</typeparam>
+        /// <typeparam name="TValue">The type of value.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value, should the key be missing.</param>
+        /// <returns>the value found or the default</returns>
+        public static TValue GetValueOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> source, TKey key, TValue defaultValue) =>
+            source.TryGetValue(key, out var ret) ? ret : defaultValue;
+
+        /// <summary>
+        /// Gets the value or default.
+        /// for string keys
+        /// with the introduction of net standard 2.1, this can be removed
+        /// </summary>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        public static TValue GetValueOrDefault<TValue>(this IReadOnlyDictionary<string, TValue> source, string key, TValue defaultValue) =>
+            It.Has(key) && source.TryGetValue(key, out var ret) ? ret : defaultValue;
+
+        /// <summary>
+        /// Gets the value or default.
+        /// as above using a generalised dictionary contact
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key, TValue defaultValue) =>
+            source.TryGetValue(key, out var ret) ? ret : defaultValue;
+
+        /// <summary>
+        /// Gets the value or default.
+        /// as above using a generalised dictionary contact and for string keys
+        /// </summary>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        public static TValue GetValueOrDefault<TValue>(this IDictionary<string, TValue> source, string key, TValue defaultValue) =>
+            It.Has(key) && source.TryGetValue(key, out var ret) ? ret : defaultValue;
     }
 }

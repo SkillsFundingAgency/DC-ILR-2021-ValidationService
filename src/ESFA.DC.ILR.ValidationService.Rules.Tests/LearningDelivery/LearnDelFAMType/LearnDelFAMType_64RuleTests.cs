@@ -514,23 +514,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         /// <summary>
-        /// Is british sign language with null framework common components returns false
-        /// </summary>
-        [Fact]
-        public void IsBritishSignLanguageWithNullFrameworkCommonComponentsReturnsFalse()
-        {
-            // arrange
-            var framework = new Mock<ILARSFramework>();
-            var sut = NewRule();
-
-            // act
-            var result = sut.IsBritishSignLanguage(framework.Object);
-
-            // assert
-            Assert.False(result);
-        }
-
-        /// <summary>
         /// Types of lars common component meet expectation.
         /// </summary>
         /// <param name="candidate">The candidate.</param>
@@ -549,26 +532,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         /// <param name="component">The component.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
+        [InlineData(null, false)]
         [InlineData(19, false)]
         [InlineData(20, true)]
         [InlineData(21, false)]
-        public void IsBritishSignLanguageMeetsExpectation(int component, bool expectation)
+        public void IsBritishSignLanguageMeetsExpectation(int? component, bool expectation)
         {
             // arrange
-            var commonComponent = new Mock<ILARSFrameworkCommonComponent>();
-            commonComponent
-                .SetupGet(x => x.CommonComponent)
+            var larsDelivery = new Mock<ILARSLearningDelivery>();
+            larsDelivery
+                .SetupGet(x => x.FrameworkCommonComponent)
                 .Returns(component);
-
-            var framework = new Mock<ILARSFramework>();
-            framework
-                .SetupGet(x => x.FrameworkCommonComponents)
-                .Returns(new ILARSFrameworkCommonComponent[] { commonComponent.Object });
 
             var sut = NewRule();
 
             // act
-            var result = sut.IsBritishSignLanguage(framework.Object);
+            var result = sut.IsBritishSignLanguage(larsDelivery.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -728,19 +707,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.GetAnnualValuesFor(LearnAimRef))
                 .Returns(new ILARSAnnualValue[] { });
 
-            var commonComponent = new Mock<ILARSFrameworkCommonComponent>();
-            commonComponent
-                .SetupGet(x => x.CommonComponent)
-                .Returns(20);
-
-            var framework = new Mock<ILARSFramework>();
-            framework
-                .SetupGet(x => x.FrameworkCommonComponents)
-                .Returns(new ILARSFrameworkCommonComponent[] { commonComponent.Object });
             var larsDelivery = new Mock<ILARSLearningDelivery>();
             larsDelivery
-                .SetupGet(x => x.Frameworks)
-                .Returns(new ILARSFramework[] { framework.Object });
+                .SetupGet(x => x.FrameworkCommonComponent)
+                .Returns(20);
 
             larsData
                 .Setup(x => x.GetDeliveryFor(LearnAimRef))
@@ -816,19 +786,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.GetAnnualValuesFor(LearnAimRef))
                 .Returns(new ILARSAnnualValue[] { });
 
-            var commonComponent = new Mock<ILARSFrameworkCommonComponent>();
-            commonComponent
-                .SetupGet(x => x.CommonComponent)
-                .Returns(20);
-
-            var framework = new Mock<ILARSFramework>();
-            framework
-                .SetupGet(x => x.FrameworkCommonComponents)
-                .Returns(new ILARSFrameworkCommonComponent[] { commonComponent.Object });
             var larsDelivery = new Mock<ILARSLearningDelivery>();
             larsDelivery
-                .SetupGet(x => x.Frameworks)
-                .Returns(new ILARSFramework[] { framework.Object });
+                .SetupGet(x => x.FrameworkCommonComponent)
+                .Returns(20);
 
             larsData
                 .Setup(x => x.GetDeliveryFor(LearnAimRef))

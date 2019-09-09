@@ -27,6 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [InlineData("2018-02-01")]
         public void ConditionMet_True(string dateTo)
         {
+            int fundModel = 36;
             DateTime learnActEndDate = new DateTime(2018, 01, 01);
             DateTime? learnDelFamDateTo = string.IsNullOrEmpty(dateTo) ? (DateTime?)null : DateTime.Parse(dateTo);
 
@@ -35,12 +36,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 LearnDelFAMDateToNullable = learnDelFamDateTo
             };
 
-            NewRule().ConditionMet(learningDeliveryFam, learnActEndDate).Should().BeTrue();
+            NewRule().ConditionMet(fundModel, learningDeliveryFam, learnActEndDate).Should().BeTrue();
         }
 
         [Fact]
         public void ConditionMet_False()
         {
+            int fundModel = 36;
             DateTime learnActEndDate = new DateTime(2018, 01, 01);
             DateTime? learnDelFamDateTo = new DateTime(2018, 01, 01);
 
@@ -49,7 +51,51 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 LearnDelFAMDateToNullable = learnDelFamDateTo
             };
 
-            NewRule().ConditionMet(learningDeliveryFam, learnActEndDate).Should().BeFalse();
+            NewRule().ConditionMet(fundModel, learningDeliveryFam, learnActEndDate).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_DueToFundModel()
+        {
+            int fundModel = 81;
+            DateTime learnActEndDate = new DateTime(2018, 01, 01);
+            DateTime? learnDelFamDateTo = new DateTime(2018, 01, 01);
+
+            TestLearningDeliveryFAM learningDeliveryFam = new TestLearningDeliveryFAM
+            {
+                LearnDelFAMDateToNullable = learnDelFamDateTo
+            };
+
+            NewRule().ConditionMet(fundModel, learningDeliveryFam, learnActEndDate).Should().BeFalse();
+        }
+
+        [Fact]
+        public void FundModelConditionMet_True()
+        {
+            NewRule().FundModelConditionMet(36).Should().BeTrue();
+        }
+
+        [Fact]
+        public void FundModelConditionMet_False()
+        {
+            NewRule().FundModelConditionMet(81).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ExclusionConditionMet_True()
+        {
+            var fundModel = 36;
+            var progType = 25;
+            NewRule().ExclusionConditionMet(fundModel, progType).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(36, null)]
+        [InlineData(81, 20)]
+        [InlineData(81, 25)]
+        public void ExclusionConditionMet_False(int fundModel, int? progType)
+        {
+            NewRule().ExclusionConditionMet(fundModel, progType).Should().BeFalse();
         }
 
         [Fact]
@@ -61,6 +107,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery()
                     {
+                        FundModel = 36,
                         LearnActEndDateNullable = null
                     }
                 }
@@ -196,16 +243,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery()
                     {
+                        FundModel = 36,
                         LearnActEndDateNullable = new DateTime(2018, 08, 02),
                         LearningDeliveryFAMs = learningDeliveryFams
                     },
                     new TestLearningDelivery()
                     {
+                        FundModel = 36,
                         LearnActEndDateNullable = null,
                         LearningDeliveryFAMs = learningDeliveryFams
                     },
                     new TestLearningDelivery()
                     {
+                        FundModel = 36,
                         LearnActEndDateNullable = new DateTime(2018, 08, 02),
                         LearningDeliveryFAMs = null
                     },
@@ -220,6 +270,46 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
                 NewRule(validationErrorHandlerMock.Object, learningDeliveryFAMsQueryServiceMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_DueToExcludingCondition()
+        {
+            var learningDeliveryFams = new List<TestLearningDeliveryFAM>();
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 36,
+                        ProgTypeNullable = 25,
+                        LearnActEndDateNullable = new DateTime(2018, 08, 02),
+                        LearningDeliveryFAMs = learningDeliveryFams
+                    }
+                }
+            };
+
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+
+            learningDeliveryFAMsQueryServiceMock.Setup(qs => qs.GetLearningDeliveryFAMsForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.ACT))
+                .Returns(learningDeliveryFams);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object, learningDeliveryFAMsQueryServiceMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_NullCheck()
+        {
+            TestLearner testLearner = null;
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandler: validationErrorHandlerMock.Object).Validate(testLearner);
             }
         }
 
@@ -248,6 +338,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery()
                     {
+                        FundModel = 36,
                         LearnActEndDateNullable = new DateTime(2018, 08, 10),
                         LearningDeliveryFAMs = learningDeliveryFams
                     }
