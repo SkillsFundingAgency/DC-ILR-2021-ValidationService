@@ -1,515 +1,698 @@
-﻿using System.Collections.Generic;
-using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.Tests.Model;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
-using FluentAssertions;
+using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 {
-    public class R72RuleTests : AbstractRuleTests<R72Rule>
+    /// <summary>
+    /// cross record rule 72 tests
+    /// </summary>
+    public class R72RuleTests
     {
+        /// <summary>
+        /// New rule with null message handler throws.
+        /// </summary>
         [Fact]
-        public void RuleName()
+        public void NewRuleWithNullMessageHandlerThrows()
         {
-            NewRule().RuleName.Should().Be("R72");
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new R72Rule(null, commonOps.Object, derivedData.Object));
         }
 
+        /// <summary>
+        /// New rule with null common operations throws.
+        /// </summary>
         [Fact]
-        public void Validate_Null_LearningDelivery_True()
+        public void NewRuleWithNullCommonOperationsThrows()
         {
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(validationErrorHandlerMock.Object).Validate(new TestLearner());
-            }
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new R72Rule(handler.Object, null, derivedData.Object));
         }
 
+        /// <summary>
+        /// New rule with null common operations throws.
+        /// </summary>
         [Fact]
-        public void ConditionMet_True()
+        public void NewRuleWithNullDerivedDataThrows()
         {
-            var standardLearningDeliveries = new List<ILearningDelivery>()
-            {
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "TNP",
-                            AFinAmount = 10,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 2,
-                            AFinType = "TNP",
-                            AFinAmount = 5,
-                        }
-                    }
-                }
-            };
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            var learningDeliveries = new List<ILearningDelivery>()
-            {
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 20
-                }
-            };
-
-            learningDeliveries.AddRange(standardLearningDeliveries);
-
-            var dd17Mock = new Mock<IDerivedData_17Rule>();
-            dd17Mock.Setup(x => x.IsTotalNegotiatedPriceMoreThanCapForStandard(standardLearningDeliveries, 1)).Returns(false);
-
-            var learningDeliveryAppFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
-            learningDeliveryAppFinRecordQueryServiceMock.Setup(x =>
-                x.GetTotalTNPPriceForLatestAppFinRecordsForLearning(standardLearningDeliveries)).Returns(10);
-
-            NewRule(null, learningDeliveryAppFinRecordQueryServiceMock.Object, dd17Mock.Object).ConditionMet(1, 20, learningDeliveries).Should().BeTrue();
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new R72Rule(handler.Object, commonOps.Object, null));
         }
 
+        /// <summary>
+        /// Rule name 1, matches a literal.
+        /// </summary>
         [Fact]
-        public void ConditionMet_False_NullPMR()
+        public void RuleName1()
         {
-            NewRule().ConditionMet(1, null, null).Should().BeFalse();
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.Equal("R72", result);
         }
 
+        /// <summary>
+        /// Rule name 2, matches the constant.
+        /// </summary>
         [Fact]
-        public void ConditionMet_False_DD17True()
+        public void RuleName2()
         {
-            var standardLearningDeliveries = new List<ILearningDelivery>()
-            {
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 1,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "TNP",
-                            AFinAmount = 10,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 2,
-                            AFinType = "TNP",
-                            AFinAmount = 5,
-                        }
-                    }
-                }
-            };
+            // arrange
+            var sut = NewRule();
 
-            var dd17Mock = new Mock<IDerivedData_17Rule>();
-            dd17Mock.Setup(x => x.IsTotalNegotiatedPriceMoreThanCapForStandard(standardLearningDeliveries, 1)).Returns(true);
+            // act
+            var result = sut.RuleName;
 
-            var learningDeliveryAppFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
-            learningDeliveryAppFinRecordQueryServiceMock.Setup(x =>
-                x.GetTotalTNPPriceForLatestAppFinRecordsForLearning(standardLearningDeliveries)).Returns(10);
-
-            NewRule(null, learningDeliveryAppFinRecordQueryServiceMock.Object, dd17Mock.Object).ConditionMet(1, 20, standardLearningDeliveries).Should().BeFalse();
-            learningDeliveryAppFinRecordQueryServiceMock.Verify(x => x.GetTotalTNPPriceForLatestAppFinRecordsForLearning(It.IsAny<List<ILearningDelivery>>()), Times.Never);
+            // assert
+            Assert.Equal(RuleNameConstants.R72, result);
         }
 
+        /// <summary>
+        /// Rule name 3 test, account for potential false positives.
+        /// </summary>
         [Fact]
-        public void ConditionMet_False_Amount()
+        public void RuleName3()
         {
-            var standardLearningDeliveries = new List<ILearningDelivery>()
-            {
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 1,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "TNP",
-                            AFinAmount = 10,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 2,
-                            AFinType = "TNP",
-                            AFinAmount = 5,
-                        }
-                    }
-                }
-            };
+            // arrange
+            var sut = NewRule();
 
-            var learningDeliveries = new List<ILearningDelivery>()
-            {
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 20,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "TNP",
-                            AFinAmount = 10,
-                        }
-                    }
-                }
-            };
+            // act
+            var result = sut.RuleName;
 
-            learningDeliveries.AddRange(standardLearningDeliveries);
-
-            var dd17Mock = new Mock<IDerivedData_17Rule>();
-            dd17Mock.Setup(x => x.IsTotalNegotiatedPriceMoreThanCapForStandard(standardLearningDeliveries, 1)).Returns(false);
-
-            var learningDeliveryAppFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
-            learningDeliveryAppFinRecordQueryServiceMock.Setup(x =>
-                x.GetTotalTNPPriceForLatestAppFinRecordsForLearning(standardLearningDeliveries)).Returns(15);
-
-            NewRule(null, learningDeliveryAppFinRecordQueryServiceMock.Object, dd17Mock.Object).ConditionMet(1, 4, standardLearningDeliveries).Should().BeFalse();
+            // assert
+            Assert.NotEqual("SomeOtherRuleName_07", result);
         }
 
+        /// <summary>
+        /// Validate with null learner throws.
+        /// </summary>
+        [Fact]
+        public void ValidateWithNullLearnerThrows()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
+        }
+
+        /// <summary>
+        /// Has qualifying model meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(20, 100, 81, 1)]
-        [InlineData(20, 25, 100, 1)]
-        [InlineData(20, 25, 81, 3)]
-        public void Validate_False_NoMatchingData(int standardCode, int? progType, int fundModel, int aimType)
+        [InlineData(false)]
+        [InlineData(true)]
+        public void HasQualifyingModelMeetsExpectation(bool expectation)
         {
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = new List<ILearningDelivery>()
-                {
-                    new TestLearningDelivery()
-                    {
-                        StdCodeNullable = 20,
-                        AimType = TypeOfAim.CoreAim16To19ExcludingApprenticeships,
-                        FundModel = 81,
-                        ProgTypeNullable = 25
-                    },
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
 
-                    new TestLearningDelivery()
-                    {
-                        StdCodeNullable = null,
-                        AimType = TypeOfAim.ProgrammeAim,
-                        FundModel = 81,
-                        ProgTypeNullable = 25
-                    },
-                    new TestLearningDelivery()
-                    {
-                        StdCodeNullable = standardCode,
-                        AimType = aimType,
-                        ProgTypeNullable = progType,
-                        FundModel = fundModel
-                    },
-                }
-            };
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 81))
+                .Returns(expectation);
+            var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            var sut = new R72Rule(handler.Object, commonOps.Object, derivedData.Object);
+
+            // act
+            var result = sut.HasQualifyingModel(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            derivedData.VerifyAll();
+        }
+
+        /// <summary>
+        /// Is programe aim meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void IsProgrammeAimMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.InAProgramme(delivery.Object))
+                .Returns(expectation);
+            var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
+
+            var sut = new R72Rule(handler.Object, commonOps.Object, derivedData.Object);
+
+            // act
+            var result = sut.IsProgrammeAim(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            derivedData.VerifyAll();
+        }
+
+        /// <summary>
+        /// Is standard apprencticeship meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void IsStandardApprencticeshipMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Returns(expectation);
+            var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
+
+            var sut = new R72Rule(handler.Object, commonOps.Object, derivedData.Object);
+
+            // act
+            var result = sut.IsStandardApprencticeship(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            derivedData.VerifyAll();
+        }
+
+        /// <summary>
+        /// Has standard code meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(23, true)]
+        [InlineData(null, false)]
+        public void HasStandardCodeMeetsExpectation(int? candidate, bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.StdCodeNullable)
+                .Returns(candidate);
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.HasStandardCode(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        /// <summary>
+        /// Get record totals with empty set returns zero.
+        /// </summary>
+        [Fact]
+        public void GetRecordTotalsWithEmptySetReturnsZero()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.GetRecordTotals(new IAppFinRecord[] { }, sut.IsPaymentRequest);
+
+            // assert
+            Assert.Equal(0, result);
+        }
+
+        /// <summary>
+        /// Get record totals for payment requests meets expectation.
+        /// </summary>
+        /// <param name="expectation">The expectation.</param>
+        /// <param name="recordPairs">The record pairs.</param>
+        [Theory]
+        [InlineData(25, 1, 4, 2, 6, 1, 7, 2, 8)]
+        [InlineData(20, 1, 4, 2, 6, 1, 7, 2, 3, 3, 8)]
+        public void GetRecordTotalsForPaymentRequestsMeetsExpectation(int expectation, params int[] recordPairs)
+        {
+            // arrange
+            var records = Collection.Empty<IAppFinRecord>();
+
+            for (var i = 0; i < recordPairs.Length; i += 2)
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                var temp = new Mock<IAppFinRecord>();
+                temp.SetupGet(x => x.AFinType).Returns("PMR");
+                temp.SetupGet(x => x.AFinCode).Returns(recordPairs[i]);
+                temp.SetupGet(x => x.AFinAmount).Returns(recordPairs[i + 1]);
+
+                records.Add(temp.Object);
             }
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.GetRecordTotals(records.AsSafeReadOnlyList(), sut.IsPaymentRequest);
+
+            // assert
+            Assert.Equal(expectation, result);
         }
 
-        [Fact]
-        public void Validate_True()
+        /// <summary>
+        /// Get record totals for provider reimbursements meets expectation.
+        /// </summary>
+        /// <param name="expectation">The expectation.</param>
+        /// <param name="recordPairs">The record pairs.</param>
+        [Theory]
+        [InlineData(25, 3, 4, 3, 6, 3, 7, 3, 8)]
+        [InlineData(8, 1, 4, 2, 6, 1, 7, 2, 8, 3, 8)]
+        public void GetRecordTotalsForProviderReimbursementsMeetsExpectation(int expectation, params int[] recordPairs)
         {
-            var standardLearningDeliveries = new List<ILearningDelivery>()
+            // arrange
+            var records = Collection.Empty<IAppFinRecord>();
+
+            for (var i = 0; i < recordPairs.Length; i += 2)
             {
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 1,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "TNP",
-                            AFinAmount = 11,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 2,
-                            AFinType = "TNP",
-                            AFinAmount = 5,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 3,
-                            AFinType = "PMR",
-                            AFinAmount = 10,
-                        },
-                    }
-                },
+                var temp = new Mock<IAppFinRecord>();
+                temp.SetupGet(x => x.AFinType).Returns("PMR");
+                temp.SetupGet(x => x.AFinCode).Returns(recordPairs[i]);
+                temp.SetupGet(x => x.AFinAmount).Returns(recordPairs[i + 1]);
 
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 1,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "PMR",
-                            AFinAmount = 10,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 2,
-                            AFinType = "pmr",
-                            AFinAmount = 5,
-                        }
-                    }
-                },
-
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 100,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "TNP",
-                            AFinAmount = 10,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 2,
-                            AFinType = "TNP",
-                            AFinAmount = 5,
-                        }
-                    }
-                },
-            };
-
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = standardLearningDeliveries
-            };
-
-            var dd17Mock = new Mock<IDerivedData_17Rule>();
-            dd17Mock.Setup(x => x.IsTotalNegotiatedPriceMoreThanCapForStandard(It.IsAny<List<ILearningDelivery>>(), 1)).Returns(false);
-
-            var learningDeliveryAppFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
-            learningDeliveryAppFinRecordQueryServiceMock.Setup(x =>
-                x.GetTotalTNPPriceForLatestAppFinRecordsForLearning(It.IsAny<List<ILearningDelivery>>())).Returns(16);
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(validationErrorHandlerMock.Object, learningDeliveryAppFinRecordQueryServiceMock.Object, dd17Mock.Object).Validate(learner);
+                records.Add(temp.Object);
             }
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.GetRecordTotals(records.AsSafeReadOnlyList(), sut.IsProviderReimbursement);
+
+            // assert
+            Assert.Equal(expectation, result);
         }
 
-        [Fact]
-        public void Validate_False()
+        /// <summary>
+        /// Is payment request meets expectation
+        /// </summary>
+        /// <param name="itemType">Type of the item.</param>
+        /// <param name="itemCode">The item code.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData("TNP", 25, false)]
+        [InlineData("TNP", 1, false)]
+        [InlineData("TNP", 2, false)]
+        [InlineData("TNP", 3, false)]
+        [InlineData("PMR", 1, true)]
+        [InlineData("PMR", 2, true)]
+        [InlineData("PMR", 3, false)]
+        [InlineData("PMR", 4, false)]
+        public void IsPaymentRequestMeetsExpectation(string itemType, int itemCode, bool expectation)
         {
-            var standardLearningDeliveries = new List<ILearningDelivery>()
+            // arrange
+            var record = new Mock<IAppFinRecord>();
+            record
+                .SetupGet(x => x.AFinType)
+                .Returns(itemType);
+            record
+                .SetupGet(x => x.AFinCode)
+                .Returns(itemCode);
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.IsPaymentRequest(record.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        /// <summary>
+        /// Is provider reimbursement meets expectation
+        /// </summary>
+        /// <param name="itemType">Type of the item.</param>
+        /// <param name="itemCode">The item code.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData("TNP", 25, false)]
+        [InlineData("TNP", 1, false)]
+        [InlineData("TNP", 2, false)]
+        [InlineData("TNP", 3, false)]
+        [InlineData("PMR", 1, false)]
+        [InlineData("PMR", 2, false)]
+        [InlineData("PMR", 3, true)]
+        [InlineData("PMR", 4, false)]
+        public void IsProviderReimbursementMeetsExpectation(string itemType, int itemCode, bool expectation)
+        {
+            // arrange
+            var record = new Mock<IAppFinRecord>();
+            record
+                .SetupGet(x => x.AFinType)
+                .Returns(itemType);
+            record
+                .SetupGet(x => x.AFinCode)
+                .Returns(itemCode);
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.IsProviderReimbursement(record.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        /// <summary>
+        /// Has matching standard code meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="comparator">The comparator.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(24, 25, false)]
+        [InlineData(25, 25, true)]
+        [InlineData(26, 25, false)]
+        [InlineData(67, 25, false)]
+        [InlineData(26, 56, false)]
+        public void HasMatchingStdCodeMeetsExpectation(int candidate, int comparator, bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.StdCodeNullable)
+                .Returns(candidate);
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.HasMatchingStdCode(delivery.Object, comparator);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        /// <summary>
+        /// Is TNP more than contribution cap for, meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(25, false)]
+        [InlineData(12, false)]
+        [InlineData(25, true)]
+        [InlineData(12, true)]
+        public void IsTNPMoreThanContributionCapForMeetsExpectation(int candidate, bool expectation)
+        {
+            // arrange
+            var deliveries = new ILearningDelivery[] { };
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
+            derivedData
+                .Setup(x => x.IsTNPMoreThanContributionCapFor(candidate, deliveries))
+                .Returns(expectation);
+
+            var sut = new R72Rule(handler.Object, commonOps.Object, derivedData.Object);
+
+            // act
+            var result = sut.IsTNPMoreThanContributionCapFor(candidate, deliveries);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            derivedData.VerifyAll();
+        }
+
+        /// <summary>
+        /// Get total TNP price for, meets expectation.
+        /// </summary>
+        /// <param name="expectation">The expectation.</param>
+        [Theory]
+        [InlineData(25)]
+        [InlineData(12)]
+        [InlineData(21)]
+        [InlineData(6118)]
+        public void GetTotalTNPPriceForMeetsExpectation(int expectation)
+        {
+            // arrange
+            var deliveries = new ILearningDelivery[] { };
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
+            derivedData
+                .Setup(x => x.GetTotalTNPPriceFor(deliveries))
+                .Returns(expectation);
+
+            var sut = new R72Rule(handler.Object, commonOps.Object, derivedData.Object);
+
+            // act
+            var result = sut.GetTotalTNPPriceFor(deliveries);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            derivedData.VerifyAll();
+        }
+
+        /// <summary>
+        /// Is threshold proportion exceeded for, meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="cap">The cap.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(6000, 12000, true)]
+        [InlineData(3999, 12000, false)]
+        [InlineData(4000, 12000, false)]
+        [InlineData(4001, 12000, true)]
+        [InlineData(33, 97, true)]
+        [InlineData(33, 98, true)]
+        [InlineData(33, 99, false)]
+        [InlineData(33, 100, false)]
+        public void IsThresholdProportionExceededForMeetsExpectation(int candidate, int cap, bool expectation)
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.IsThresholdProportionExceededFor(candidate, cap);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        /// <summary>
+        /// Invalid item raises validation message.
+        /// </summary>
+        /// <param name="tnpTotal">The TNP total.</param>
+        /// <param name="recordPairs">The record pairs.</param>
+        [Theory]
+        [InlineData(221, 1, 30, 2, 35, 1, 50, 2, 46, 3, 87)]
+        [InlineData(299, 1, 46, 2, 36, 1, 27, 2, 89, 3, 98)]
+        public void InvalidItemRaisesValidationMessage(int tnpTotal, params int[] recordPairs)
+        {
+            // arrange
+            const string LearnRefNumber = "123456789X";
+            const int testStdCode = 234;
+
+            var records = Collection.Empty<IAppFinRecord>();
+
+            for (var i = 0; i < recordPairs.Length; i += 2)
             {
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 1,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "TNP",
-                            AFinAmount = 11,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 2,
-                            AFinType = "TNP",
-                            AFinAmount = 5,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 3,
-                            AFinType = "PMR",
-                            AFinAmount = 10,
-                        },
-                    }
-                },
+                var temp = new Mock<IAppFinRecord>();
+                temp.SetupGet(x => x.AFinType).Returns("PMR");
+                temp.SetupGet(x => x.AFinCode).Returns(recordPairs[i]);
+                temp.SetupGet(x => x.AFinAmount).Returns(recordPairs[i + 1]);
 
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 1,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "PMR",
-                            AFinAmount = 10,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 2,
-                            AFinType = "pmr",
-                            AFinAmount = 5,
-                        }
-                    }
-                },
-
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 100,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "TNP",
-                            AFinAmount = 5,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 2,
-                            AFinType = "TNP",
-                            AFinAmount = 5,
-                        }
-                    }
-                },
-            };
-
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = standardLearningDeliveries
-            };
-
-            var dd17Mock = new Mock<IDerivedData_17Rule>();
-            dd17Mock.Setup(x => x.IsTotalNegotiatedPriceMoreThanCapForStandard(It.IsAny<List<ILearningDelivery>>(), 1)).Returns(false);
-
-            var learningDeliveryAppFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
-            learningDeliveryAppFinRecordQueryServiceMock.Setup(x =>
-                x.GetTotalTNPPriceForLatestAppFinRecordsForLearning(It.IsAny<List<ILearningDelivery>>())).Returns(10);
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-            {
-                NewRule(validationErrorHandlerMock.Object, learningDeliveryAppFinRecordQueryServiceMock.Object, dd17Mock.Object).Validate(learner);
-                dd17Mock.Verify(x => x.IsTotalNegotiatedPriceMoreThanCapForStandard(It.IsAny<IReadOnlyCollection<ILearningDelivery>>(), It.IsAny<int>()), Times.AtLeastOnce);
-                learningDeliveryAppFinRecordQueryServiceMock.Verify(x => x.GetTotalTNPPriceForLatestAppFinRecordsForLearning(It.IsAny<List<ILearningDelivery>>()), Times.AtLeastOnce);
+                records.Add(temp.Object);
             }
+
+            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
+            delivery
+                .SetupGet(x => x.StdCodeNullable)
+                .Returns(testStdCode);
+            delivery
+                .SetupGet(x => x.AppFinRecords)
+                .Returns(records.AsSafeReadOnlyList());
+
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var mockLearner = new Mock<ILearner>();
+            mockLearner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            mockLearner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            handler
+                .Setup(x => x.Handle(RuleNameConstants.R72, LearnRefNumber, null, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnRefNumber", LearnRefNumber))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("AimType", 1))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("ProgType", 25))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("StdCode", testStdCode))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 81))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.InAProgramme(delivery.Object))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Returns(true);
+
+            var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
+            derivedData
+                .Setup(x => x.IsTNPMoreThanContributionCapFor(testStdCode, Moq.It.IsAny<IReadOnlyCollection<ILearningDelivery>>()))
+                .Returns(false);
+            derivedData
+                .Setup(x => x.GetTotalTNPPriceFor(deliveries))
+                .Returns(tnpTotal);
+
+            var sut = new R72Rule(handler.Object, commonOps.Object, derivedData.Object);
+
+            // act
+            sut.Validate(mockLearner.Object);
+
+            // assert
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            derivedData.VerifyAll();
         }
 
-        [Fact]
-        public void GetPMRTotalsDictionary_Success()
+        /// <summary>
+        /// Valid item does not raise validation message.
+        /// </summary>
+        /// <param name="tnpTotal">The TNP total.</param>
+        /// <param name="recordPairs">The record pairs.</param>
+        [Theory]
+        [InlineData(222, 1, 30, 2, 35, 1, 50, 2, 46, 3, 87)]
+        [InlineData(300, 1, 46, 2, 36, 1, 27, 2, 89, 3, 98)]
+        public void ValidItemDoesNotRaiseValidationMessage(int tnpTotal, params int[] recordPairs)
         {
-            var standardLearningDeliveries = new List<ILearningDelivery>()
+            // arrange
+            const string LearnRefNumber = "123456789X";
+            const int testStdCode = 234;
+
+            var records = Collection.Empty<IAppFinRecord>();
+
+            for (var i = 0; i < recordPairs.Length; i += 2)
             {
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 1,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 3,
-                            AFinType = "PMR",
-                            AFinAmount = 10,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "PMR",
-                            AFinAmount = 20,
-                        },
-                    }
-                },
+                var temp = new Mock<IAppFinRecord>();
+                temp.SetupGet(x => x.AFinType).Returns("PMR");
+                temp.SetupGet(x => x.AFinCode).Returns(recordPairs[i]);
+                temp.SetupGet(x => x.AFinAmount).Returns(recordPairs[i + 1]);
 
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 1,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                    AppFinRecords = new List<IAppFinRecord>()
-                    {
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 1,
-                            AFinType = "PMR",
-                            AFinAmount = 10,
-                        },
-                        new TestAppFinRecord()
-                        {
-                            AFinCode = 2,
-                            AFinType = "pmr",
-                            AFinAmount = 5,
-                        }
-                    }
-                },
+                records.Add(temp.Object);
+            }
 
-                new TestLearningDelivery()
-                {
-                    StdCodeNullable = 100,
-                    ProgTypeNullable = 25,
-                    FundModel = 81,
-                    AimType = 1,
-                },
-            };
+            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
+            delivery
+                .SetupGet(x => x.StdCodeNullable)
+                .Returns(testStdCode);
+            delivery
+                .SetupGet(x => x.AppFinRecords)
+                .Returns(records.AsSafeReadOnlyList());
 
-            var result = NewRule().GetPMRTotalsDictionary(standardLearningDeliveries);
-            result.Should().NotBeEmpty();
-            result[1].Should().Be(25);
-            result[100].Should().Be(0);
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var mockLearner = new Mock<ILearner>();
+            mockLearner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            mockLearner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 81))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.InAProgramme(delivery.Object))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Returns(true);
+
+            var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
+            derivedData
+                .Setup(x => x.IsTNPMoreThanContributionCapFor(testStdCode, Moq.It.IsAny<IReadOnlyCollection<ILearningDelivery>>()))
+                .Returns(false);
+            derivedData
+                .Setup(x => x.GetTotalTNPPriceFor(deliveries))
+                .Returns(tnpTotal);
+
+            var sut = new R72Rule(handler.Object, commonOps.Object, derivedData.Object);
+
+            // act
+            sut.Validate(mockLearner.Object);
+
+            // assert
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            derivedData.VerifyAll();
         }
 
-        [Fact]
-        public void BuildErrorMessageParameters()
+        /// <summary>
+        /// New rule.
+        /// </summary>
+        /// <returns>a new rule</returns>
+        public R72Rule NewRule()
         {
-            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
 
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnRefNumber, "Test1")).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, 1)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.ProgType, 25)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.StdCode, 3)).Verifiable();
-
-            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters("Test1", 3);
-            validationErrorHandlerMock.Verify();
-        }
-
-        private R72Rule NewRule(
-            IValidationErrorHandler validationErrorHandler = null,
-            ILearningDeliveryAppFinRecordQueryService learningDeliveryAppFinRecordQueryService = null,
-            IDerivedData_17Rule dd17 = null)
-        {
-            return new R72Rule(validationErrorHandler, learningDeliveryAppFinRecordQueryService, dd17);
+            return new R72Rule(handler.Object, commonOps.Object, derivedData.Object);
         }
     }
 }
