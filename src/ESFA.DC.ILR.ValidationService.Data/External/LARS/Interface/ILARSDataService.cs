@@ -68,6 +68,22 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
         /// <returns>a collection of lars standard periods of validity for this standard code</returns>
         IReadOnlyCollection<ILARSStandardValidity> GetStandardValiditiesFor(int thisStandardCode);
 
+
+        /// <summary>
+        /// Gets the standard for.
+        /// </summary>
+        /// <param name="standardCode">The standard code.</param>
+        /// <returns>the lars standard or null</returns>
+        ILARSStandard GetStandardFor(int standardCode);
+
+        /// <summary>
+        /// Gets the standard funding for.
+        /// </summary>
+        /// <param name="standardCode">The standard code.</param>
+        /// <param name="startDate">The start date.</param>
+        /// <returns>a lars standard funding or null</returns>
+        ILARSStandardFunding GetStandardFundingFor(int standardCode, DateTime startDate);
+
         /// <summary>
         /// Contains the (lars) standard for (this standard code).
         /// </summary>
@@ -137,7 +153,5 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
             IEnumerable<string> categoriesHashSet);
 
         ILARSStandardFunding GetStandardFundingForCodeOnDate(int standardCode, DateTime startDate);
-
-        ILARSStandard GetStandardFor(int standardCode);
     }
 }
