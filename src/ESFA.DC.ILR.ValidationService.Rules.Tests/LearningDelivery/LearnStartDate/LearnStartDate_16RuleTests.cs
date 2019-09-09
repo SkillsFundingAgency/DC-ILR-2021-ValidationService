@@ -1,20 +1,21 @@
-﻿namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
-{
-    using System;
-    using System.Collections.Generic;
-    using ESFA.DC.ILR.Model.Interface;
-    using ESFA.DC.ILR.Tests.Model;
-    using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
-    using ESFA.DC.ILR.ValidationService.Interface;
-    using ESFA.DC.ILR.ValidationService.Rules.Abstract;
-    using ESFA.DC.ILR.ValidationService.Rules.Constants;
-    using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
-    using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-    using ESFA.DC.ILR.ValidationService.Utility;
-    using FluentAssertions;
-    using Moq;
-    using Xunit;
+﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
+using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using ESFA.DC.ILR.ValidationService.Utility;
+using Moq;
+using System;
+using System.Collections.Generic;
+using Xunit;
 
+namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
+{
+    /// <summary>
+    /// learn start date rule 16 tests
+    /// </summary>
     public class LearnStartDate_16RuleTests
     {
         /// <summary>
@@ -121,31 +122,66 @@
         }
 
         /// <summary>
-        /// Get start for, meets expectation.
+        /// Has qualifying model meets expectation
         /// </summary>
-        [Fact]
-        public void GetAllocationsForMeetsExpectation()
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void HasQualifyingModelMeetsExpectation(bool expectation)
         {
             // arrange
+            var mockItem = new Mock<ILearningDelivery>();
+
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            fcsData
-                .Setup(x => x.GetContractAllocationFor(null))
-                .Returns((IFcsContractAllocation)null);
-
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(mockItem.Object, 70))
+                .Returns(expectation);
 
             var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, commonOps.Object);
 
             // act
-            var result = sut.GetAllocationFor(null);
+            var result = sut.HasQualifyingModel(mockItem.Object);
 
             // assert
-            Assert.Null(result);
+            Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            fcsData.VerifyAll();
             commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Has qualifying aim meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("ZESF0001", true)] // TypeOfAim.References.ESFLearnerStartandAssessment
+        [InlineData("Z0002347", false)] // TypeOfAim.References.SupportedInternship16To19
+        [InlineData("Z0007834", false)] // TypeOfAim.References.WorkPlacement0To49Hours
+        [InlineData("Z0007835", false)] // TypeOfAim.References.WorkPlacement50To99Hours
+        [InlineData("Z0007836", false)] // TypeOfAim.References.WorkPlacement100To199Hours
+        [InlineData("Z0007837", false)] // TypeOfAim.References.WorkPlacement200To499Hours
+        [InlineData("Z0007838", false)] // TypeOfAim.References.WorkPlacement500PlusHours
+        [InlineData("ZWRKX001", false)] // TypeOfAim.References.WorkExperience
+        [InlineData("ZWRKX002", false)] // TypeOfAim.References.IndustryPlacement
+        public void HasQualifyingAimMeetsExpectation(string candidate, bool expectation)
+        {
+            // arrange
+            var sut = NewRule();
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(y => y.LearnAimRef)
+                .Returns(candidate);
+
+            // act
+            var result = sut.HasQualifyingAim(mockDelivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
         }
 
         /// <summary>
@@ -176,8 +212,6 @@
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
 
-            allocation.SetupGet(x => x.ContractAllocationNumber).Returns(contractRef);
-
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
@@ -198,7 +232,6 @@
             commonOps.VerifyAll();
 
             allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
-            allocation.VerifyGet(x => x.ContractAllocationNumber, Times.AtLeastOnce);
         }
 
         /// <summary>
@@ -225,22 +258,6 @@
             handler.VerifyAll();
             fcsData.VerifyAll();
             commonOps.VerifyAll();
-        }
-
-        [Fact]
-        public void HasQualifyingStart_Fails_WithNullContractAllocationNumber()
-        {
-            var learningDelivery = new Mock<ILearningDelivery>().Object;
-            var fcsContAllocation = new Mock<IFcsContractAllocation>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            var rule = new LearnStartDate_16Rule(handler.Object, fcsData.Object, commonOps.Object);
-            var res = rule.HasQualifyingStart(learningDelivery, fcsContAllocation.Object);
-
-            res.Should().BeFalse();
         }
 
         /// <summary>
@@ -283,8 +300,6 @@
             allocation
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
-
-            allocation.SetupGet(x => x.ContractAllocationNumber).Returns(contractRef);
 
             var allocations = Collection.Empty<IFcsContractAllocation>();
             allocations.Add(allocation.Object);
@@ -333,7 +348,6 @@
             commonOps.VerifyAll();
 
             allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
-            allocation.VerifyGet(x => x.ContractAllocationNumber, Times.AtLeastOnce);
         }
 
         /// <summary>
@@ -370,8 +384,6 @@
             allocation
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
-
-            allocation.SetupGet(x => x.ContractAllocationNumber).Returns(contractRef);
 
             var deliveries = Collection.Empty<ILearningDelivery>();
             deliveries.Add(delivery.Object);
@@ -414,7 +426,6 @@
             commonOps.VerifyAll();
 
             allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
-            allocation.VerifyGet(x => x.ContractAllocationNumber, Times.AtLeastOnce);
         }
 
         /// <summary>
