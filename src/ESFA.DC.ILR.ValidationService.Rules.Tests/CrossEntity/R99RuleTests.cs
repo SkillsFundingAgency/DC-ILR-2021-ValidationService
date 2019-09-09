@@ -149,7 +149,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public void IsProgrameAimMeetsExpectation(bool expectation)
+        public void IsProgrammeAimMeetsExpectation(bool expectation)
         {
             // arrange
             var delivery = new Mock<ILearningDelivery>();
@@ -163,7 +163,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var sut = new R99Rule(handler.Object, commonOps.Object);
 
             // act
-            var result = sut.IsProgrameAim(delivery.Object);
+            var result = sut.IsProgrammeAim(delivery.Object);
 
             // assert
             Assert.Equal(expectation, result);

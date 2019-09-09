@@ -69,17 +69,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         /// <returns>returns those matching the restriction criteria</returns>
         public IReadOnlyCollection<ILearningDelivery> GetCandidateDeliveries(IReadOnlyCollection<ILearningDelivery> candidates) =>
             candidates
-                .SafeWhere(IsProgrameAim)
+                .SafeWhere(IsProgrammeAim)
                 .AsSafeReadOnlyList();
 
         /// <summary>
-        /// Determines whether [is programe aim] [the specified delivery].
+        /// Determines whether [is programme aim] [the specified delivery].
         /// </summary>
         /// <param name="theDelivery">The delivery.</param>
         /// <returns>
         ///   <c>true</c> if [is programe aim] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsProgrameAim(ILearningDelivery theDelivery) =>
+        public bool IsProgrammeAim(ILearningDelivery theDelivery) =>
             _check.InAProgramme(theDelivery);
 
         /// <summary>
