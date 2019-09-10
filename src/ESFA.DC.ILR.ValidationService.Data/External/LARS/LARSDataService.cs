@@ -65,12 +65,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         /// <returns>
         /// a lars learning delivery for this learning aim reference
         /// </returns>
-        public ILARSLearningDelivery GetDeliveryFor(string thisAimRef)
-        {
-            _larsDeliveries.TryGetValue(thisAimRef, out var learningDelivery);
-
-            return learningDelivery;
-        }
+        public ILARSLearningDelivery GetDeliveryFor(string thisAimRef) =>
+            _larsDeliveries.GetValueOrDefault(thisAimRef, null);
 
         /// <summary>
         /// Gets the standard for.

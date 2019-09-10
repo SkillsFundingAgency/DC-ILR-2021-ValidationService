@@ -12,6 +12,11 @@ using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
+    /// <summary>
+    /// learn start date rule 07
+    /// </summary>
+    /// <seealso cref="AbstractRule" />
+    /// <seealso cref="Interface.IRule{ILearner}" />
     public class LearnStartDate_07Rule :
         AbstractRule,
         IRule<ILearner>
@@ -61,16 +66,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         }
 
         /// <summary>
-        /// Validates this learner.
+        /// Validates the specified learner.
         /// </summary>
-        /// <param name="thisLearner">this learner.</param>
-        public void Validate(ILearner thisLearner)
+        /// <param name="theLearner">The learner.</param>
+        public void Validate(ILearner theLearner)
         {
-            It.IsNull(thisLearner)
-                .AsGuard<ArgumentNullException>(nameof(thisLearner));
+            It.IsNull(theLearner)
+                .AsGuard<ArgumentNullException>(nameof(theLearner));
 
-            var learnrefNumber = thisLearner.LearnRefNumber;
-            var deliveries = thisLearner.LearningDeliveries.AsSafeReadOnlyList();
+            var learnrefNumber = theLearner.LearnRefNumber;
+            var deliveries = theLearner.LearningDeliveries.AsSafeReadOnlyList();
 
             deliveries.ForAny(
                 x => IsNotValid(x, GetEarliestStartDateFor(x, deliveries)),
@@ -80,52 +85,66 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// <summary>
         /// Gets the earliest start date for.
         /// </summary>
-        /// <param name="thisDelivery">The this delivery.</param>
-        /// <param name="usingSources">The using sources.</param>
+        /// <param name="theDelivery">The  delivery.</param>
+        /// <param name="usingSources">Using sources.</param>
         /// <returns>return the earliest stat date for this aim</returns>
-        public DateTime? GetEarliestStartDateFor(ILearningDelivery thisDelivery, IReadOnlyCollection<ILearningDelivery> usingSources) =>
-            _derivedData04.GetEarliesStartDateFor(thisDelivery, usingSources);
+        public DateTime? GetEarliestStartDateFor(ILearningDelivery theDelivery, IReadOnlyCollection<ILearningDelivery> usingSources) =>
+            _derivedData04.GetEarliesStartDateFor(theDelivery, usingSources);
 
         /// <summary>
-        /// Determines whether [is not valid] [this delivery].
+        /// Determines whether [is not valid] [the delivery].
         /// </summary>
-        /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="theDelivery">The delivery.</param>
         /// <param name="earliestStart">The earliest start.</param>
         /// <returns>
-        ///   <c>true</c> if [is not valid] [this delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is not valid] [the delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsNotValid(ILearningDelivery thisDelivery, DateTime? earliestStart) =>
-            !IsExcluded(thisDelivery, GetLARSLearningDeliveryFor(thisDelivery))
-                && IsComponentAim(thisDelivery)
-                && IsApprenticeship(thisDelivery)
+        public bool IsNotValid(ILearningDelivery theDelivery, DateTime? earliestStart) =>
+            !IsExcluded(theDelivery)
+                && IsComponentAim(theDelivery)
+                && IsApprenticeship(theDelivery)
                 && HasEarliestStart(earliestStart)
-                && !HasQualifyingFrameworkAim(FilteredFrameworkAimsFor(thisDelivery, GetQualifyingFrameworksFor(thisDelivery)), earliestStart.Value);
-
-        /// <summary>
-        /// Gets the LARS delivery for.
-        /// </summary>
-        /// <param name="thisDelivery">this delivery.</param>
-        /// <returns>the LARS delivery</returns>
-        public ILARSLearningDelivery GetLARSLearningDeliveryFor(ILearningDelivery thisDelivery) =>
-            _larsData.GetDeliveryFor(thisDelivery.LearnAimRef);
+                && !HasQualifyingFrameworkAim(FilteredFrameworkAimsFor(theDelivery, GetQualifyingFrameworksFor(theDelivery)), x=> IsCurrent(x, earliestStart.Value));
 
         /// <summary>
         /// Determines whether this delivery is excluded.
         /// </summary>
-        /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="theDelivery">The delivery.</param>
         /// <returns>
         ///   <c>true</c> if this delivery is excluded; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsExcluded(ILearningDelivery thisDelivery, ILARSLearningDelivery theLarsAim) =>
-            IsStandardApprencticeship(thisDelivery)
-                || IsRestart(thisDelivery)
-                || IsCommonComponent(theLarsAim);
+        public bool IsExcluded(ILearningDelivery theDelivery) =>
+            IsStandardApprencticeship(theDelivery)
+                || IsRestart(theDelivery)
+                || IsCommonComponent(GetLARSLearningDeliveryFor(theDelivery));
 
-        public bool IsStandardApprencticeship(ILearningDelivery thisDelivery) =>
-            _check.IsStandardApprencticeship(thisDelivery);
+        /// <summary>
+        /// Determines whether [is standard apprencticeship] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [is standard apprencticeship] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsStandardApprencticeship(ILearningDelivery theDelivery) =>
+            _check.IsStandardApprencticeship(theDelivery);
 
-        public bool IsRestart(ILearningDelivery thisDelivery) =>
-            _check.IsRestart(thisDelivery);
+        /// <summary>
+        /// Determines whether the specified delivery is restart.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified delivery is restart; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsRestart(ILearningDelivery theDelivery) =>
+            _check.IsRestart(theDelivery);
+
+        /// <summary>
+        /// Gets the LARS delivery for.
+        /// </summary>
+        /// <param name="theDelivery">the delivery.</param>
+        /// <returns>the LARS delivery</returns>
+        public ILARSLearningDelivery GetLARSLearningDeliveryFor(ILearningDelivery theDelivery) =>
+            _larsData.GetDeliveryFor(theDelivery.LearnAimRef);
 
         /// <summary>
         /// Checks if the lars delivery is a common component.
@@ -135,36 +154,57 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         public bool IsCommonComponent(ILARSLearningDelivery larsDelivery) =>
             It.IsInRange(larsDelivery?.FrameworkCommonComponent, TypeOfLARSCommonComponent.CommonComponents);
 
-        public bool IsComponentAim(ILearningDelivery thisDelivery) =>
-            _check.IsComponentOfAProgram(thisDelivery);
+        /// <summary>
+        /// Determines whether [is component aim] [the specified delivery].
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [is component aim] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsComponentAim(ILearningDelivery theDelivery) =>
+            _check.IsComponentOfAProgram(theDelivery);
 
-        public bool IsApprenticeship(ILearningDelivery thisDelivery) =>
-            _check.InApprenticeship(thisDelivery);
+        /// <summary>
+        /// Determines whether the specified delivery is apprenticeship.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified delivery is apprenticeship; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsApprenticeship(ILearningDelivery theDelivery) =>
+            _check.InApprenticeship(theDelivery);
 
+        /// <summary>
+        /// Determines whether [has earliest start] [the specified earliest start].
+        /// </summary>
+        /// <param name="earliestStart">The earliest start.</param>
+        /// <returns>
+        ///   <c>true</c> if [has earliest start] [the specified earliest start]; otherwise, <c>false</c>.
+        /// </returns>
         public bool HasEarliestStart(DateTime? earliestStart) =>
             It.Has(earliestStart);
 
         /// <summary>
         /// Gets the qualifying frameworks for.
         /// </summary>
-        /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="theDelivery">The delivery.</param>
         /// <returns>the filtered list of framework aims</returns>
-        public IReadOnlyCollection<ILARSFrameworkAim> GetQualifyingFrameworksFor(ILearningDelivery thisDelivery) =>
-            _larsData.GetFrameworkAimsFor(thisDelivery.LearnAimRef);
+        public IReadOnlyCollection<ILARSFrameworkAim> GetQualifyingFrameworksFor(ILearningDelivery theDelivery) =>
+            _larsData.GetFrameworkAimsFor(theDelivery.LearnAimRef);
 
         /// <summary>
-        /// Filtereds the framework aims for.
+        /// Filtered framework aims for.
         /// </summary>
-        /// <param name="thisDelivery">this delivery.</param>
+        /// <param name="theDelivery">The delivery.</param>
         /// <param name="usingTheseAims">using these aims.</param>
         /// <returns>
         /// the list filtered on programme type, framework code and pathway code
         /// </returns>
-        public IReadOnlyCollection<ILARSFrameworkAim> FilteredFrameworkAimsFor(ILearningDelivery thisDelivery, IReadOnlyCollection<ILARSFrameworkAim> usingTheseAims) =>
+        public IReadOnlyCollection<ILARSFrameworkAim> FilteredFrameworkAimsFor(ILearningDelivery theDelivery, IReadOnlyCollection<ILARSFrameworkAim> usingTheseAims) =>
             usingTheseAims
-                .SafeWhere(fa => fa.ProgType == thisDelivery.ProgTypeNullable
-                    && fa.FworkCode == thisDelivery.FworkCodeNullable
-                    && fa.PwayCode == thisDelivery.PwayCodeNullable)
+                .SafeWhere(fa => fa.ProgType == theDelivery.ProgTypeNullable
+                    && fa.FworkCode == theDelivery.FworkCodeNullable
+                    && fa.PwayCode == theDelivery.PwayCodeNullable)
                 .AsSafeReadOnlyList();
 
         /// <summary>
@@ -177,9 +217,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// <returns>
         ///   <c>true</c> if [has qualifying framework aim] [this delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasQualifyingFrameworkAim(IReadOnlyCollection<ILARSFrameworkAim> frameworkAims, DateTime earliestStart) =>
-            IsOutOfScope(frameworkAims)
-            || frameworkAims.Any(fa => It.IsBetween(earliestStart, DateTime.MinValue, fa.EndDate ?? DateTime.MaxValue));
+        public bool HasQualifyingFrameworkAim(IReadOnlyCollection<ILARSFrameworkAim> frameworkAims, Func<IReadOnlyCollection<ILARSFrameworkAim>, bool> isCurrent) =>
+            IsOutOfScope(frameworkAims) 
+            || isCurrent(frameworkAims);
 
         /// <summary>
         /// Determines whether [is out of scope] [the specified framework aims].
@@ -192,6 +232,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// </returns>
         public bool IsOutOfScope(IReadOnlyCollection<ILARSFrameworkAim> frameworkAims) =>
             It.IsEmpty(frameworkAims);
+
+        public bool IsCurrent(IReadOnlyCollection<ILARSFrameworkAim> frameworkAims, DateTime earliestStart) =>
+            frameworkAims.Any(fa => IsCurrent(fa, earliestStart));
+
+        public bool IsCurrent(ILARSFrameworkAim frameworkAim, DateTime candidateStart) =>
+            It.IsBetween(candidateStart, DateTime.MinValue, frameworkAim.EndDate ?? DateTime.MaxValue);
 
         /// <summary>
         /// Raises the validation message.
