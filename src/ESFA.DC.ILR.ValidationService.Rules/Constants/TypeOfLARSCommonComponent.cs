@@ -110,7 +110,7 @@
         /// </summary>
         public const int AddUnitsForMicroBusiness = 40;
 
-        public static readonly int?[] CommonComponents =
+        public static readonly int[] CommonComponents =
         {
             KeySkillsInCommunication,
             KeySkillsInApplicationNumber,
