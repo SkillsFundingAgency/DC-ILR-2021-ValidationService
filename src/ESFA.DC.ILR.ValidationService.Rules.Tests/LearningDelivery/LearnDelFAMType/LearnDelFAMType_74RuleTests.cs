@@ -105,30 +105,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         /// <summary>
-        /// Has qualifying monitor meets expectation
+        /// Has disqualifying monitor meets expectation
         /// </summary>
         /// <param name="famType">The Learning Delivery FAM Type.</param>
         /// <param name="famCode">The Learning Delivery FAM Code.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData("LDM", "034", true)] // Monitoring.Delivery.OLASSOffendersInCustody
-        [InlineData("FFI", "1", true)] // Monitoring.Delivery.FullyFundedLearningAim
-        [InlineData("FFI", "2", true)] // Monitoring.Delivery.CoFundedLearningAim
-        [InlineData("LDM", "363", true)] // Monitoring.Delivery.InReceiptOfLowWages
-        [InlineData("LDM", "318", true)] // Monitoring.Delivery.MandationToSkillsTraining
-        [InlineData("LDM", "328", true)] // Monitoring.Delivery.ReleasedOnTemporaryLicence
-        [InlineData("LDM", "347", true)] // Monitoring.Delivery.SteelIndustriesRedundancyTraining
-        [InlineData("SOF", "1", false)] // Monitoring.Delivery.HigherEducationFundingCouncilEngland
-        [InlineData("SOF", "107", false)] // Monitoring.Delivery.ESFA16To19Funding
-        [InlineData("SOF", "105", true)] // Monitoring.Delivery.ESFAAdultFunding
-        [InlineData("SOF", "110", false)] // Monitoring.Delivery.GreaterManchesterCombinedAuthority
-        [InlineData("SOF", "111", false)] // Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority
-        [InlineData("SOF", "112", false)] // Monitoring.Delivery.WestMidlandsCombinedAuthority
-        [InlineData("SOF", "113", false)] // Monitoring.Delivery.WestOfEnglandCombinedAuthority
-        [InlineData("SOF", "114", false)] // Monitoring.Delivery.TeesValleyCombinedAuthority
-        [InlineData("SOF", "115", false)] // Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority
-        [InlineData("SOF", "116", false)] // Monitoring.Delivery.GreaterLondonAuthority
-        public void HasQualifyingMonitorMeetsExpectation(string famType, string famCode, bool expectation)
+        [InlineData("LDM", "034", false)] // Monitoring.Delivery.OLASSOffendersInCustody
+        [InlineData("FFI", "1", false)] // Monitoring.Delivery.FullyFundedLearningAim
+        [InlineData("FFI", "2", false)] // Monitoring.Delivery.CoFundedLearningAim
+        [InlineData("LDM", "363", false)] // Monitoring.Delivery.InReceiptOfLowWages
+        [InlineData("LDM", "318", false)] // Monitoring.Delivery.MandationToSkillsTraining
+        [InlineData("LDM", "328", false)] // Monitoring.Delivery.ReleasedOnTemporaryLicence
+        [InlineData("LDM", "347", false)] // Monitoring.Delivery.SteelIndustriesRedundancyTraining
+        [InlineData("SOF", "1", true)] // Monitoring.Delivery.HigherEducationFundingCouncilEngland
+        [InlineData("SOF", "107", true)] // Monitoring.Delivery.ESFA16To19Funding
+        [InlineData("SOF", "105", false)] // Monitoring.Delivery.ESFAAdultFunding
+        [InlineData("SOF", "110", true)] // Monitoring.Delivery.GreaterManchesterCombinedAuthority
+        [InlineData("SOF", "111", true)] // Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority
+        [InlineData("SOF", "112", true)] // Monitoring.Delivery.WestMidlandsCombinedAuthority
+        [InlineData("SOF", "113", true)] // Monitoring.Delivery.WestOfEnglandCombinedAuthority
+        [InlineData("SOF", "114", true)] // Monitoring.Delivery.TeesValleyCombinedAuthority
+        [InlineData("SOF", "115", true)] // Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority
+        [InlineData("SOF", "116", true)] // Monitoring.Delivery.GreaterLondonAuthority
+        public void HasDisqualifyingMonitorMeetsExpectation(string famType, string famCode, bool expectation)
         {
             // arrange
             var sut = NewRule();
@@ -141,7 +141,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(famCode);
 
             // act
-            var result = sut.HasQualifyingMonitor(fam.Object);
+            var result = sut.HasDisqualifyingMonitor(fam.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -151,7 +151,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         /// Has qualifying monitor with null fams returns false
         /// </summary>
         [Fact]
-        public void HasQualifyingMonitorWithNullFAMsReturnsFalse()
+        public void HasDisqualifyingMonitorWithNullFAMsReturnsFalse()
         {
             // arrange
             var mockItem = new Mock<ILearningDelivery>();
@@ -165,7 +165,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
 
             // act
-            var result = sut.HasQualifyingMonitor(mockItem.Object);
+            var result = sut.HasDisqualifyingMonitor(mockItem.Object);
 
             // assert
             Assert.False(result);
@@ -187,6 +187,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         /// <param name="expectation">The expectation.</param>
         /// <param name="candidate">The candidate.</param>
         [Theory]
+        [InlineData("SOF1", Monitoring.Delivery.HigherEducationFundingCouncilEngland)]
+        [InlineData("SOF107", Monitoring.Delivery.ESFA16To19Funding)]
         [InlineData("SOF105", Monitoring.Delivery.ESFAAdultFunding)]
         [InlineData("SOF115", Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority)]
         [InlineData("SOF116", Monitoring.Delivery.GreaterLondonAuthority)]
@@ -273,6 +275,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             commonOps.VerifyAll();
         }
 
+        /// <summary>
+        /// Has traineeship funding meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
@@ -294,6 +300,66 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             // act
             var result = sut.HasTraineeshipFunding(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Has qualifying traineeship model meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void HasQualifyingTraineeshipModelMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35)) // TypeOfFunding.AdultSkills
+                .Returns(expectation);
+
+            var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
+
+            // act
+            var result = sut.HasQualifyingTraineeshipModel(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Is traineeship meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void IsTraineeshipMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
+                .Returns(expectation);
+
+            var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
+
+            // act
+            var result = sut.IsTraineeship(delivery.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -379,7 +445,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(true);
             commonOps
                 .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
-                .Returns(false);
+                .Returns(true);
 
             var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
 
@@ -457,7 +523,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(true);
             commonOps
                 .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
-                .Returns(true);
+                .Returns(false);
 
             var sut = new LearnDelFAMType_74Rule(handler.Object, commonOps.Object);
 
