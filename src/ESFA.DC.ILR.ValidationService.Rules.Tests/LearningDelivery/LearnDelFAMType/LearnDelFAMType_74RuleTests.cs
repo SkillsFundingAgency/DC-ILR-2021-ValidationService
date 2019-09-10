@@ -257,7 +257,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             commonOps
                 .Setup(x => x.HasQualifyingFunding(
                     mockItem.Object,
-                    10, // TypeOfFunding.CommunityLearning,
                     36, // TypeOfFunding.ApprenticeshipsFrom1May2017,
                     70, // TypeOfFunding.EuropeanSocialFund,
                     81)) // TypeOfFunding.OtherAdult
@@ -432,7 +431,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             commonOps
                 .Setup(x => x.HasQualifyingFunding(
                     delivery.Object,
-                    10, // TypeOfFunding.CommunityLearning,
                     36, // TypeOfFunding.ApprenticeshipsFrom1May2017,
                     70, // TypeOfFunding.EuropeanSocialFund,
                     81)) // TypeOfFunding.OtherAdult
@@ -510,7 +508,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             commonOps
                 .Setup(x => x.HasQualifyingFunding(
                     delivery.Object,
-                    10, // TypeOfFunding.CommunityLearning,
                     36, // TypeOfFunding.ApprenticeshipsFrom1May2017,
                     70, // TypeOfFunding.EuropeanSocialFund,
                     81)) // TypeOfFunding.OtherAdult

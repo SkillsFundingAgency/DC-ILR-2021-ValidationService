@@ -88,7 +88,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool HasQualifyingFunding(ILearningDelivery delivery) =>
             _check.HasQualifyingFunding(
                 delivery,
-                TypeOfFunding.CommunityLearning,
                 TypeOfFunding.ApprenticeshipsFrom1May2017,
                 TypeOfFunding.EuropeanSocialFund,
                 TypeOfFunding.OtherAdult);
