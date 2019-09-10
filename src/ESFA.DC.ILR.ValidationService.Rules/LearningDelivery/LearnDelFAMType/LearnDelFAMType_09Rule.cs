@@ -60,34 +60,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// Determines whether [has disqualifying monitor] [the specified monitor].
         /// there can only be one SOF code on a delivery
         /// </summary>
-        /// <param name="monitor">The monitor.</param>
+        /// <param name="theMonitor">The monitor.</param>
         /// <returns>
         ///   <c>true</c> if [has disqualifying monitor] [the specified monitor]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasDisqualifyingMonitor(ILearningDeliveryFAM monitor) =>
-            It.IsInRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding)
-            && It.IsOutOfRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
+        public bool HasDisqualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
+            It.IsInRange(theMonitor.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding)
+            && It.IsOutOfRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
 
         /// <summary>
         /// Determines whether [has disqualifying monitor] [the specified delivery].
         /// </summary>
-        /// <param name="delivery">The delivery.</param>
+        /// <param name="theDelivery">The delivery.</param>
         /// <returns>
         ///   <c>true</c> if [has disqualifying monitor] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasDisqualifyingMonitor(ILearningDelivery delivery) =>
-            _check.CheckDeliveryFAMs(delivery, HasDisqualifyingMonitor);
+        public bool HasDisqualifyingMonitor(ILearningDelivery theDelivery) =>
+            _check.CheckDeliveryFAMs(theDelivery, HasDisqualifyingMonitor);
 
         /// <summary>
         /// Determines whether [has qualifying funding] [the specified delivery].
         /// </summary>
-        /// <param name="delivery">The delivery.</param>
+        /// <param name="theDelivery">The delivery.</param>
         /// <returns>
         ///   <c>true</c> if [has qualifying funding] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasQualifyingFunding(ILearningDelivery delivery) =>
+        public bool HasQualifyingFunding(ILearningDelivery theDelivery) =>
             _check.HasQualifyingFunding(
-                delivery,
+                theDelivery,
                 TypeOfFunding.CommunityLearning,
                 TypeOfFunding.AdultSkills,
                 TypeOfFunding.ApprenticeshipsFrom1May2017,
@@ -97,14 +97,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <summary>
         /// Determines whether [is not valid] [the specified delivery].
         /// </summary>
-        /// <param name="delivery">The delivery.</param>
+        /// <param name="theDelivery">The delivery.</param>
         /// <returns>
         ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsNotValid(ILearningDelivery delivery) =>
-            HasQualifyingStart(delivery)
-            && HasQualifyingFunding(delivery)
-            && HasDisqualifyingMonitor(delivery);
+        public bool IsNotValid(ILearningDelivery theDelivery) =>
+            HasQualifyingStart(theDelivery)
+            && HasQualifyingFunding(theDelivery)
+            && HasDisqualifyingMonitor(theDelivery);
 
         /// <summary>
         /// Validates the specified learner.
