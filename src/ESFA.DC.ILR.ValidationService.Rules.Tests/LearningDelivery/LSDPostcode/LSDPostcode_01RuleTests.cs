@@ -128,36 +128,33 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         /// <summary>
-        /// Is traineeship meets expectation
+        /// Has programme defined meets expectation
         /// </summary>
+        /// <param name="candidate">The candidate.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsTraineeshipMeetsExpectation(bool expectation)
+        [InlineData(null, false)]
+        [InlineData(21, true)]
+        [InlineData(24, true)]
+        [InlineData(25, true)]
+        [InlineData(22, true)]
+        [InlineData(1, true)]
+        [InlineData(0, true)]
+        public void HasProgrammeDefinedMeetsExpectation(int? candidate, bool expectation)
         {
             // arrange
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.ProgTypeNullable)
+                .Returns(candidate);
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsTraineeship(delivery.Object))
-                .Returns(expectation);
-
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            var sut = new LSDPostcode_01Rule(handler.Object, commonOps.Object, postcodeData.Object);
+            var sut = NewRule();
 
             // act
-            var result = sut.IsTraineeship(delivery.Object);
+            var result = sut.HasProgrammeDefined(delivery.Object);
 
             // assert
             Assert.Equal(expectation, result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            postcodeData.VerifyAll();
         }
 
         /// <summary>
@@ -188,7 +185,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 10))
                 .Returns(expectation);
 
             var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
@@ -355,10 +352,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsTraineeship(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 10))
                 .Returns(true);
             commonOps
                 .Setup(x => x.HasQualifyingStart(delivery.Object, LSDPostcode_01Rule.FirstAugust2019, null))
@@ -425,10 +419,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsTraineeship(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 10))
                 .Returns(true);
             commonOps
                 .Setup(x => x.HasQualifyingStart(delivery.Object, LSDPostcode_01Rule.FirstAugust2019, null))
