@@ -95,17 +95,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         ///   <c>true</c> if the specified the delivery is excluded; otherwise, <c>false</c>.
         /// </returns>
         public bool IsExcluded(ILearningDelivery theDelivery) =>
-            IsTraineeship(theDelivery);
+            HasProgrammeDefined(theDelivery);
 
         /// <summary>
-        /// Determines whether the specified the delivery is traineeship.
+        /// Determines whether [has programme defined] [the specified delivery].
         /// </summary>
         /// <param name="theDelivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if the specified the delivery is traineeship; otherwise, <c>false</c>.
+        ///   <c>true</c> if [has programme defined] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsTraineeship(ILearningDelivery theDelivery) =>
-            _check.IsTraineeship(theDelivery);
+        public bool HasProgrammeDefined(ILearningDelivery theDelivery) =>
+            It.Has(theDelivery.ProgTypeNullable);
 
         /// <summary>
         /// Determines whether [has qualifying model] [the specified delivery].
@@ -115,7 +115,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         ///   <c>true</c> if [has qualifying model] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.AdultSkills);
+            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.AdultSkills, TypeOfFunding.CommunityLearning);
 
         /// <summary>
         /// Determines whether [has qualifying start] [the specified delivery].
