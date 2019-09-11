@@ -110,12 +110,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 
         /// <summary>
         /// Months differnential.
-        /// expect hte offsete to be a negative number...
+        /// expect the offsete to be a negative number...
         /// </summary>
         /// <param name="usingDate">The using date.</param>
         /// <param name="offset">The offset.</param>
         /// <returns>the calculated timespan</returns>
         public static TimeSpan MonthsDiffernential(DateTime usingDate, int offset) =>
-            usingDate - usingDate.AddMonths(offset);
+            ((usingDate.Year - 1) * 12 + usingDate.Month) >= Math.Abs(offset) ? usingDate - usingDate.AddMonths(offset) : TimeSpan.MinValue;
     }
 }

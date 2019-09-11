@@ -121,6 +121,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
         [InlineData("0001-01-02", AcademicYearDates.Commencement, "0001-08-1")]
         [InlineData("0001-01-02", AcademicYearDates.PreviousYearEnd, "0001-07-31")]
         [InlineData("0001-01-02", AcademicYearDates.August31, "0001-08-31")]
+        [InlineData("0001-01-02", AcademicYearDates.CurrentYearEnd, "0001-07-31")]
+        [InlineData("0001-01-02", AcademicYearDates.NextYearCommencement, "0001-08-1")]
         public void GetAcademicYearFor_WrongYear(string candidate, AcademicYearDates forThisDate, string expectation)
         {
             var testDate = DateTime.Parse(candidate);
