@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using Autofac;
+﻿using Autofac;
 using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Modules;
 using ESFA.DC.ILR.ValidationService.Desktop.Modules;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
@@ -109,8 +107,8 @@ using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDate;
 using ESFA.DC.ILR.ValidationService.Rules.Message.FileLevel.Entity;
 using ESFA.DC.ILR.ValidationService.Rules.Message.FileLevel.Header;
 using ESFA.DC.ILR.ValidationService.Rules.Message.UKPRN;
-using ESFA.DC.ILR.ValidationService.Rules.Modules;
 using FluentAssertions;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
@@ -376,7 +374,6 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnAimRef_55Rule),
                 typeof(LearnAimRef_56Rule),
                 typeof(LearnAimRef_57Rule),
-                typeof(LearnAimRef_59Rule),
                 typeof(LearnAimRef_71Rule),
                 typeof(LearnAimRef_72Rule),
                 typeof(LearnAimRef_73Rule),
