@@ -561,7 +561,6 @@
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_55RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_56RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_57RuleTests.cs" />
-    <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_59RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_80RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_89RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMDateFrom\LearnDelFAMDateFrom_04RuleTests.cs" />

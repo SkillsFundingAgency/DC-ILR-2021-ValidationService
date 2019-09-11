@@ -223,7 +223,6 @@
         public const string LearnAimRef_55 = "LearnAimRef_55";
         public const string LearnAimRef_56 = "LearnAimRef_56";
         public const string LearnAimRef_57 = "LearnAimRef_57";
-        public const string LearnAimRef_59 = "LearnAimRef_59";
         public const string LearnAimRef_71 = "LearnAimRef_71";
         public const string LearnAimRef_72 = "LearnAimRef_72";
         public const string LearnAimRef_73 = "LearnAimRef_73";
