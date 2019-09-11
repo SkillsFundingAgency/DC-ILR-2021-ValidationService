@@ -15,6 +15,9 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
 {
+    /// <summary>
+    /// learn start date postcode rule 02 tests
+    /// </summary>
     public class LSDPostcode_02RuleTests
     {
         private const int TestProviderID = 10001973;
@@ -219,47 +222,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Is traineeship meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsTraineeshipMeetsExpectation(bool expectation)
+        [InlineData(null, false)]
+        [InlineData(21, true)]
+        [InlineData(24, true)]
+        [InlineData(25, true)]
+        [InlineData(22, true)]
+        [InlineData(1, true)]
+        [InlineData(0, true)]
+        public void HasProgrammeDefinedMeetsExpectation(int? candidate, bool expectation)
         {
             // arrange
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.ProgTypeNullable)
+                .Returns(candidate);
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsTraineeship(delivery.Object))
-                .Returns(expectation);
-
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            organisationData
-                .Setup(x => x.GetLegalOrgTypeForUkprn(TestProviderID))
-                .Returns(TestLegalOrgType);
-
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(TestProviderID);
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            var sut = new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object);
+            var sut = NewRule();
 
             // act
-            var result = sut.IsTraineeship(delivery.Object);
+            var result = sut.HasProgrammeDefined(delivery.Object);
 
             // assert
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            organisationData.VerifyAll();
-            fileData.VerifyAll();
-            postcodeData.VerifyAll();
-
             Assert.Equal(expectation, result);
         }
 
@@ -775,9 +759,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsTraineeship(delivery.Object))
-                .Returns(false);
-            commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
             commonOps
@@ -881,9 +862,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsTraineeship(delivery.Object))
-                .Returns(false);
             commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);

@@ -127,19 +127,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         ///   <c>true</c> if the specified the delivery is excluded; otherwise, <c>false</c>.
         /// </returns>
         public bool IsExcluded(ILearningDelivery theDelivery) =>
-            IsTraineeship(theDelivery)
+            HasProgrammeDefined(theDelivery)
             || IsRestart(theDelivery)
             || IsPostcodeValidationExclusion(theDelivery);
 
         /// <summary>
-        /// Determines whether the specified the delivery is traineeship.
+        /// Determines whether [has programme defined] [the specified delivery].
         /// </summary>
         /// <param name="theDelivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if the specified the delivery is traineeship; otherwise, <c>false</c>.
+        ///   <c>true</c> if [has programme defined] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsTraineeship(ILearningDelivery theDelivery) =>
-            _check.IsTraineeship(theDelivery);
+        public bool HasProgrammeDefined(ILearningDelivery theDelivery) =>
+            It.Has(theDelivery.ProgTypeNullable);
 
         /// <summary>
         /// Determines whether the specified the delivery is restart.
@@ -251,7 +251,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         /// <param name="hasQualifyingCode">The has qualifying code.</param>
         /// <returns></returns>
         public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodesForSoF(
-            IReadOnlyCollection<IDevolvedPostcode> devolvedPCs, 
+            IReadOnlyCollection<IDevolvedPostcode> devolvedPCs,
             Func<IDevolvedPostcode, bool> hasQualifyingCode) =>
                 devolvedPCs
                     .SafeWhere(hasQualifyingCode)
@@ -277,7 +277,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         ///   <c>true</c> if [has valid source of funding] [the specified devolved postcodes]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasValidSourceOfFunding(
-            IReadOnlyCollection<IDevolvedPostcode> devolvedPCs, 
+            IReadOnlyCollection<IDevolvedPostcode> devolvedPCs,
             Func<IDevolvedPostcode, bool> hasQualifyingEffectiveStart) =>
                 devolvedPCs.SafeAny(hasQualifyingEffectiveStart);
 
