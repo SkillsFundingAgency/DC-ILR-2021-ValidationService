@@ -415,7 +415,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 LearnStartDate = new DateTime(2017, 10, 10)
             };
 
-            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters(learningDelivery);
+            NewRule(validationErrorHandlerMock.Object).BuildMessageParametersFor(learningDelivery);
 
             validationErrorHandlerMock.Verify();
         }
