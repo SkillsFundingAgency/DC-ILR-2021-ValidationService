@@ -31,16 +31,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool IsCombinedAuthorities(ILearningDelivery learningDelivery)
         {
-            return LearningDeliveryFAMConditionMet(learningDelivery.LearningDeliveryFAMs);
+            return LearningDeliveryFAMConditionMet(learningDelivery?.LearningDeliveryFAMs);
         }
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return _learnDelFAMQueryService.
-                            HasAnyLearningDeliveryFAMCodesForType(
-                                                                  learningDeliveryFAMs, 
-                                                                  LearningDeliveryFAMTypeConstants.SOF, 
-                                                                  _famCodesSOF);
+            return learningDeliveryFAMs != null && 
+                   _learnDelFAMQueryService.
+                       HasAnyLearningDeliveryFAMCodesForType(
+                           learningDeliveryFAMs, 
+                           LearningDeliveryFAMTypeConstants.SOF, 
+                           _famCodesSOF);
         }
     }
 }

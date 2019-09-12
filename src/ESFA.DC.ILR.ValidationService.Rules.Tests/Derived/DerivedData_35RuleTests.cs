@@ -98,6 +98,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             fAMQrySrvc.Verify(x => x.HasAnyLearningDeliveryFAMCodesForType(deliveryFAMs, "SOF", _famCodesSOF), Times.Once);
         }
 
+        [Fact]
+        public void NullLearningDelivery_False()
+        {
+            ILearningDelivery learningDelivery = null;
+
+            NewRule().IsCombinedAuthorities(learningDelivery).Should().BeFalse();
+        }
+
+        [Fact]
+        public void NullLearningDeliveryFams_False()
+        {
+            ILearningDelivery learningDelivery = new TestLearningDelivery();
+
+            NewRule().IsCombinedAuthorities(learningDelivery).Should().BeFalse();
+        }
+
         public DerivedData_35Rule NewRule(ILearningDeliveryFAMQueryService learnDelFAMQueryService = null)
         {
             return new DerivedData_35Rule(learnDelFAMQueryService);
