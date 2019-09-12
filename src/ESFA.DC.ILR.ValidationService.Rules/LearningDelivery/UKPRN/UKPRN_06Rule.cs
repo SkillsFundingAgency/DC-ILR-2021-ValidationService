@@ -17,7 +17,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
     {
         private const string _ldm034 = "034";
         private const string _ldm357 = "357";
-        private const int _fundModel = TypeOfFunding.AdultSkills;
 
         private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
@@ -82,14 +81,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             return FundModelConditionMet(fundModel)
                 && (learningDelivery.LearningDeliveryFAMs != null && LearningDeliveryFAMsConditionMet(learningDelivery.LearningDeliveryFAMs))
                 && (!progType.HasValue || DD07ConditionMet(progType.Value))
+                && (learningDelivery.LearningDeliveryFAMs != null && DD35ConditionMet(learningDelivery))
                 && (!learnActEndDate.HasValue || LearnActEndDateConditionMet(learnActEndDate.Value, academicYearStart))                      
-                && FCTFundingConditionMet() 
-                || (learningDelivery.LearningDeliveryFAMs != null && DD35ConditionMet(learningDelivery));
+                && FCTFundingConditionMet();
         }
 
         public virtual bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == _fundModel;
+            return fundModel == TypeOfFunding.AdultSkills;
         }
 
         public virtual bool LearningDeliveryFAMsConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
@@ -98,7 +97,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 !(_learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, _ldm034)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, _ldm357));
         }
-
+        
         public virtual bool DD07ConditionMet(int progType)
         {
             return !_dd07.IsApprenticeship(progType);
@@ -106,7 +105,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         public virtual bool DD35ConditionMet(ILearningDelivery learningDelivery)
         {
-            return _dd35.IsCombinedAuthorities(learningDelivery);
+            return !_dd35.IsCombinedAuthorities(learningDelivery);
         }
 
         public virtual bool LearnActEndDateConditionMet(DateTime learnActEndDate, DateTime academicYearStart)

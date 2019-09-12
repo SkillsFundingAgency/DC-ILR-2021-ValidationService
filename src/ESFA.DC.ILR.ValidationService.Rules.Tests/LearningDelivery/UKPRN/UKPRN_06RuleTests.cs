@@ -130,29 +130,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [Fact]
         public void DD35ConditionMet_True()
         {
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-            {
-                new TestLearningDeliveryFAM
-                {
-                    LearnDelFAMType = "SOF",
-                    LearnDelFAMCode = "110"
-                }
-            };
-
-            var learnDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = "00100325",
-                AimSeqNumber = 1,
-                LearnStartDate = new DateTime(2015, 08, 01),
-                LearnPlanEndDate = new DateTime(2016, 09, 10),
-                FundModel = 35,
-                CompStatus = 1,
-                LearningDeliveryFAMs = learningDeliveryFAMs
-            };
+            var learnDelivery = new TestLearningDelivery();
 
             var dd35Mock = new Mock<IDerivedData_35Rule>();
 
-            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learnDelivery)).Returns(true);
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learnDelivery)).Returns(false);
 
             NewRule(dd35: dd35Mock.Object).DD35ConditionMet(learnDelivery).Should().BeTrue();
         }
@@ -160,29 +142,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [Fact]
         public void DD35ConditionMet_False()
         {
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-            {
-                new TestLearningDeliveryFAM
-                {
-                    LearnDelFAMType = "SOF",
-                    LearnDelFAMCode = "125"
-                }
-            };
-
-            var learnDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = "00100325",
-                AimSeqNumber = 1,
-                LearnStartDate = new DateTime(2015, 08, 01),
-                LearnPlanEndDate = new DateTime(2016, 09, 10),
-                FundModel = 35,
-                CompStatus = 1,
-                LearningDeliveryFAMs = learningDeliveryFAMs
-            };
+            var learnDelivery = new TestLearningDelivery();
 
             var dd35Mock = new Mock<IDerivedData_35Rule>();
 
-            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learnDelivery)).Returns(false);
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learnDelivery)).Returns(true);
 
             NewRule(dd35: dd35Mock.Object).DD35ConditionMet(learnDelivery).Should().BeFalse();
         }
