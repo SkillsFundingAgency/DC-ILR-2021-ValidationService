@@ -76,16 +76,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             }
         }
 
-        //"If the learning aim is Adult skills funded or is funded by the SFA (LearningDelivery.FundModel = 35) there must be a funding relationship in FCT for this UKPRN (LearningProvider.UKPRN = ContractAllocation.DeliveryUKPRN)
-
-        //(error where there is no funding relationship in FCT ContractAllocation.FundingStreamPeriodCode = AEBC-19TRN1920, AEBC-ASCL1920, AEB-19TRLS1920, AEB-ASLS1920, AEB-19TRN1920, AEB-AS1920)
-
-        //(this rule is not triggered by apprenticeships (DD07 = Y) and
-        //    (LearningDelivery.LearnDelFAMType = LDM and LearningDelivery.LearnDelFAMCode = 357,  or 'OLASS - Offender in Custody (LearningDeliveryFAM.LearnDelFAMType = LDM and LearningDeliveryFAM.LearnDelFAMCode = 034'), or(where the
-        //LearningDelivery.LearnActEndDate is known and in the previous teaching year) or for combined authorities(DD35 = Y)
-        //    "
-
-
         public bool ConditionMet(int fundModel, int? progType, DateTime academicYearStart, DateTime? learnActEndDate, ILearningDelivery learningDelivery)
         {
             return FundModelConditionMet(fundModel)
