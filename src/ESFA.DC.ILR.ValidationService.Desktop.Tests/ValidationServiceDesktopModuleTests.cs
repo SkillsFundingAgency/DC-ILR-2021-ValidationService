@@ -548,6 +548,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(PriorAttain_01Rule),
                 typeof(PriorAttain_03Rule),
                 typeof(PriorAttain_04Rule),
+                typeof(PriorAttain_06Rule),
                 typeof(PriorAttain_07Rule),
                 typeof(PriorLearnFundAdj_01Rule),
                 typeof(ProgType_01Rule),
