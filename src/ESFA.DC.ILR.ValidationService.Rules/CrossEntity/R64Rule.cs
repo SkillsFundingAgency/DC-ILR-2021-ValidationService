@@ -42,6 +42,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.R64)
         {
+            It.IsNull(validationErrorHandler)
+                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
+            It.IsNull(commonOps)
+                .AsGuard<ArgumentNullException>(nameof(commonOps));
+            It.IsNull(larsDataService)
+                .AsGuard<ArgumentNullException>(nameof(larsDataService));
+
             _check = commonOps;
             _larsData = larsDataService;
         }
