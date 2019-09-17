@@ -79,8 +79,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             HasQualifyingModel(theDelivery)
             && (IsProgrameAim(theDelivery)
                 || (IsComponentAim(theDelivery)
-                && (HasQualifyingBasicSkillsType(theDelivery)
-                    || HasQualifyingCommonComponent(theDelivery))))
+                    && HasQualifyingBasicSkillsType(theDelivery)
+                    && !HasQualifyingCommonComponent(theDelivery)))
             && !HasQualifyingMonitor(theDelivery);
 
         /// <summary>
