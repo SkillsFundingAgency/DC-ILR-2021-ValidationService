@@ -1,6 +1,8 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.DateEmpStatApp;
 using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
@@ -12,6 +14,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
 {
     public class DateEmpStatApp_01RuleTests
     {
+        private static readonly DateTime TestThreshold = DateTime.Parse("2020-07-31");
+
         /// <summary>
         /// New rule with null message handler throws.
         /// </summary>
@@ -67,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
             var result = sut.RuleName;
 
             // assert
-            Assert.Equal(DateEmpStatApp_01Rule.Name, result);
+            Assert.Equal(RuleNameConstants.DateEmpStatApp_01, result);
         }
 
         /// <summary>
@@ -100,60 +104,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
         }
 
         /// <summary>
-        /// Get year of learning commencement date meets expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        [Theory]
-        [InlineData("2017-08-26")]
-        [InlineData("2017-08-31")]
-        [InlineData("2017-09-01")]
-        public void GetYearOfLearningCommencementDateMeetsExpectation(string candidate)
-        {
-            // arrange
-            var testDate = DateTime.Parse(candidate);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
-            yearData
-                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.NextYearCommencement))
-                .Returns(testDate);
-
-            var sut = new DateEmpStatApp_01Rule(handler.Object, yearData.Object);
-
-            // act
-            var result = sut.GetNextAcademicYearDate(testDate);
-
-            // assert
-            Assert.Equal(testDate, result);
-
-            handler.VerifyAll();
-            yearData.VerifyAll();
-        }
-
-        /// <summary>
         /// Has qualifying employment status meets expectation
         /// </summary>
-        /// <param name="startDate">The start date.</param>
         /// <param name="candidate">The candidate.</param>
+        /// <param name="yearEnd">The year end.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData("2018-08-14", "2017-08-01", false)]
-        [InlineData("2018-11-18", "2018-08-01", true)]
-        [InlineData("2019-04-02", "2019-08-01", true)]
-        [InlineData("2019-12-11", "2020-08-01", true)]
-        public void HasQualifyingEmploymentStatusMeetsExpectation(string startDate, string candidate, bool expectation)
+        [InlineData("2018-08-14", "2017-07-31", true)]
+        [InlineData("2018-07-31", "2018-07-31", false)]
+        [InlineData("2018-11-18", "2018-07-31", true)]
+        [InlineData("2019-04-02", "2019-07-31", false)]
+        [InlineData("2019-12-11", "2020-07-31", false)]
+        public void HasDisqualifyingEmploymentStatusDateMeetsExpectation(string candidate, string yearEnd, bool expectation)
         {
             // arrange
-            var sut = NewRule();
-
-            var thresholdDate = DateTime.Parse(candidate);
-            var mockStatus = new Mock<ILearnerEmploymentStatus>();
-            mockStatus
+            var status = new Mock<ILearnerEmploymentStatus>();
+            status
                 .SetupGet(y => y.DateEmpStatApp)
-                .Returns(DateTime.Parse(startDate));
+                .Returns(DateTime.Parse(candidate));
+
+            var thresholdDate = DateTime.Parse(yearEnd);
+            var sut = NewRule(thresholdDate);
 
             // act
-            var result = sut.HasQualifyingEmploymentStatus(mockStatus.Object, thresholdDate);
+            var result = sut.HasDisqualifyingEmploymentStatusDate(status.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -163,17 +137,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
         /// Invalid item raises validation message.
         /// </summary>
         /// <param name="empStart">The learn start.</param>
-        /// <param name="nextYearStart">The previous year end.</param>
+        /// <param name="yearEnd">The current year end.</param>
         [Theory]
-        [InlineData("2018-08-14", "2017-08-01")]
-        public void InvalidItemRaisesValidationMessage(string empStart, string nextYearStart)
+        [InlineData("2018-08-01", "2018-07-31")]
+        public void InvalidItemRaisesValidationMessage(string empStart, string yearEnd)
         {
             // arrange
             const string LearnRefNumber = "123456789X";
 
-            var todayDate = DateTime.Parse("2018-09-28");
             var empStartDate = DateTime.Parse(empStart);
-            var nextYearStartDate = DateTime.Parse(nextYearStart);
+            var yearEndDate = DateTime.Parse(yearEnd);
 
             var mockStatus = new Mock<ILearnerEmploymentStatus>();
             mockStatus
@@ -183,39 +156,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
             var statii = Collection.Empty<ILearnerEmploymentStatus>();
             statii.Add(mockStatus.Object);
 
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
+            var learner = new Mock<ILearner>();
+            learner
                 .SetupGet(x => x.LearnRefNumber)
                 .Returns(LearnRefNumber);
-            mockLearner
+            learner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
                 .Returns(statii.AsSafeReadOnlyList());
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
-                .Setup(x => x.Handle(
-                    Moq.It.Is<string>(y => y == DateEmpStatApp_01Rule.Name),
-                    Moq.It.Is<string>(y => y == LearnRefNumber),
-                    null,
-                    Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+                .Setup(x => x.Handle("DateEmpStatApp_01", LearnRefNumber, null, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
             handler
-                .Setup(x => x.BuildErrorMessageParameter(
-                    Moq.It.Is<string>(y => y == "DateEmpStatApp"),
-                    empStartDate))
+                .Setup(x => x.BuildErrorMessageParameter("DateEmpStatApp", AbstractRule.AsRequiredCultureDate(empStartDate)))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
                 .Setup(x => x.End())
-                .Returns(todayDate);
-            yearData
-                .Setup(x => x.GetAcademicYearOfLearningDate(todayDate, AcademicYearDates.NextYearCommencement))
-                .Returns(nextYearStartDate);
+                .Returns(yearEndDate);
 
             var sut = new DateEmpStatApp_01Rule(handler.Object, yearData.Object);
 
             // act
-            sut.Validate(mockLearner.Object);
+            sut.Validate(learner.Object);
 
             // assert
             handler.VerifyAll();
@@ -226,19 +190,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
         /// Valid item does not raise validation message.
         /// </summary>
         /// <param name="empStart">The emp start.</param>
-        /// <param name="nextYearStart">The next year start.</param>
+        /// <param name="yearEnd">The current year end.</param>
         [Theory]
-        [InlineData("2018-11-18", "2018-08-01")]
-        [InlineData("2019-04-02", "2019-08-01")]
-        [InlineData("2019-12-11", "2020-08-01")]
-        public void ValidItemDoesNotRaiseValidationMessage(string empStart, string nextYearStart)
+        [InlineData("2018-11-18", "2019-07-31")]
+        [InlineData("2019-04-02", "2019-07-31")]
+        [InlineData("2019-12-11", "2020-07-31")]
+        public void ValidItemDoesNotRaiseValidationMessage(string empStart, string yearEnd)
         {
             // arrange
             const string LearnRefNumber = "123456789X";
 
-            var todayDate = DateTime.Parse("2018-09-28");
             var empStartDate = DateTime.Parse(empStart);
-            var nextYearStartDate = DateTime.Parse(nextYearStart);
+            var yearEndDate = DateTime.Parse(yearEnd);
 
             var mockStatus = new Mock<ILearnerEmploymentStatus>();
             mockStatus
@@ -248,11 +211,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
             var statii = Collection.Empty<ILearnerEmploymentStatus>();
             statii.Add(mockStatus.Object);
 
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
+            var learner = new Mock<ILearner>();
+            learner
                 .SetupGet(x => x.LearnRefNumber)
                 .Returns(LearnRefNumber);
-            mockLearner
+            learner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
                 .Returns(statii.AsSafeReadOnlyList());
 
@@ -260,15 +223,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
                 .Setup(x => x.End())
-                .Returns(todayDate);
-            yearData
-                .Setup(x => x.GetAcademicYearOfLearningDate(todayDate, AcademicYearDates.NextYearCommencement))
-                .Returns(nextYearStartDate);
+                .Returns(yearEndDate);
 
             var sut = new DateEmpStatApp_01Rule(handler.Object, yearData.Object);
 
             // act
-            sut.Validate(mockLearner.Object);
+            sut.Validate(learner.Object);
 
             // assert
             handler.VerifyAll();
@@ -278,11 +238,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
         /// <summary>
         /// New rule.
         /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
-        public DateEmpStatApp_01Rule NewRule()
+        /// <param name="yearEnd">The year end.</param>
+        /// <returns>
+        /// a constructed and mocked up validation rule
+        /// </returns>
+        public DateEmpStatApp_01Rule NewRule(DateTime? yearEnd = null)
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var yeardata = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            yeardata
+                .Setup(x => x.End())
+                .Returns(yearEnd ?? TestThreshold);
 
             return new DateEmpStatApp_01Rule(handler.Object, yeardata.Object);
         }
