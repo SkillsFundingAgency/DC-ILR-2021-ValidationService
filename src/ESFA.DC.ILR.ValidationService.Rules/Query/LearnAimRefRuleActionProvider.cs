@@ -37,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             _branchActions = new Dictionary<int, IReadOnlyCollection<Func<ILearningDelivery, ILearner, BranchResult>>>
             {
                 [TypeOfFunding.AdultSkills] = PackageRoutines(IsQualifyingCategoryOLASS, IsQualifyingCategoryUnemployed, IsQualifyingCategoryApprenticeship, IsQualifyingCategoryAdultSkills),
-                [TypeOfFunding.ApprenticeshipsFrom1May2017] = PackageRoutines(IsQualifyingCategoryApprenticeship, IsQualifyingCategoryApprencticeshipAny),
+                [TypeOfFunding.ApprenticeshipsFrom1May2017] = PackageRoutines(IsQualifyingCategoryApprenticeship, IsQualifyingCategoryApprenticeshipAny),
                 [TypeOfFunding.OtherAdult] = PackageRoutines(IsQualifyingCategoryOtherFundingAny),
                 [TypeOfFunding.NotFundedByESFA] = PackageRoutines(IsQualifyingCategoryAdvancedLearnerLoan, IsQualifyingCategoryOtherFundingAny),
                 [TypeOfFunding.Age16To19ExcludingApprenticeships] = PackageRoutines(IsQualifyingCategory16To19EFA),
@@ -157,17 +157,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         public BranchResult IsQualifyingCategoryApprenticeship(ILearningDelivery delivery, ILearner learner) =>
             BranchResult.Create(
                     !Check.IsRestart(delivery)
-                    && !Check.IsStandardApprencticeship(delivery)
+                    && !Check.IsStandardApprenticeship(delivery)
                     && Check.InApprenticeship(delivery)
                     && Check.IsComponentOfAProgram(delivery)
                     && Check.HasQualifyingStart(delivery, ApprenticeshipMinimumStart, DateTime.MaxValue),
                 TypeOfLARSValidity.Apprenticeships);
 
-        public BranchResult IsQualifyingCategoryApprencticeshipAny(ILearningDelivery delivery, ILearner learner) =>
+        public BranchResult IsQualifyingCategoryApprenticeshipAny(ILearningDelivery delivery, ILearner learner) =>
             BranchResult.Create(
                 !Check.IsRestart(delivery)
                     && !Check.IsAdvancedLearnerLoan(delivery)
-                    && Check.IsStandardApprencticeship(delivery),
+                    && Check.IsStandardApprenticeship(delivery),
                 TypeOfLARSValidity.Any);
 
         public BranchResult IsQualifyingCategoryOtherFundingAny(ILearningDelivery delivery, ILearner learner) =>

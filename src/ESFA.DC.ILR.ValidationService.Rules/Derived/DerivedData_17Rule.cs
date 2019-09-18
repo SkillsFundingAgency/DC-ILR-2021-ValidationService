@@ -123,7 +123,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         ///   <c>true</c> if [is standard apprenticeship] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
-            _check.IsStandardApprencticeship(theDelivery);
+            _check.IsStandardApprenticeship(theDelivery);
 
         /// <summary>
         /// Determines whether [has qualifying model] [the specified delivery].

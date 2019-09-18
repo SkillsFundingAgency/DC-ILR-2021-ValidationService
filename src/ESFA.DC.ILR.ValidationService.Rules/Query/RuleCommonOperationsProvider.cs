@@ -204,13 +204,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship);
 
         /// <summary>
-        /// Determines whether [is standard apprencticeship] [the specified delivery].
+        /// Determines whether [is standard Apprenticeship] [the specified delivery].
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [is standard apprencticeship] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is standard Apprenticeship] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsStandardApprencticeship(ILearningDelivery delivery) =>
+        public bool IsStandardApprenticeship(ILearningDelivery delivery) =>
             It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.ApprenticeshipStandard);
 
         /// <summary>

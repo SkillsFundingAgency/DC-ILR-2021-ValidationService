@@ -180,7 +180,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public void IsStandardApprencticeshipMeetsExpectation(bool expectation)
+        public void IsStandardApprenticeshipMeetsExpectation(bool expectation)
         {
             // arrange
             var delivery = new Mock<ILearningDelivery>();
@@ -190,13 +190,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(expectation);
 
             var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
 
             // act
-            var result = sut.IsStandardApprencticeship(delivery.Object);
+            var result = sut.IsStandardApprenticeship(delivery.Object);
 
             // assert
             handler.VerifyAll();
@@ -548,7 +548,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
             var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
@@ -659,7 +659,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
             var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
@@ -780,7 +780,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
             var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
@@ -887,7 +887,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
             var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);

@@ -264,7 +264,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
                 .Setup(x => x.IsRestart(mockDelivery.Object))
                 .Returns(isRestart);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(mockDelivery.Object))
                 .Returns(inStdApp);
             commonOps
                 .Setup(x => x.InApprenticeship(mockDelivery.Object))
@@ -297,14 +297,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         [InlineData(true, false, false, false)]
         [InlineData(true, false, true, false)]
         [InlineData(true, true, true, false)]
-        public void IsQualifyingCategoryApprencticeshipAnyMeetsExpectation(bool isRestart, bool isAdvLoan, bool isStdApp, bool expectation)
+        public void IsQualifyingCategoryApprenticeshipAnyMeetsExpectation(bool isRestart, bool isAdvLoan, bool isStdApp, bool expectation)
         {
             // arrange
             var mockDelivery = new Mock<ILearningDelivery>();
 
             var commonOps = new Mock<IProvideRuleCommonOperations>();
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(mockDelivery.Object))
                 .Returns(isStdApp);
             commonOps
                 .Setup(x => x.IsRestart(mockDelivery.Object))
@@ -318,7 +318,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             var sut = new LearnAimRefRuleActionProvider(commonOps.Object, derivedData11.Object);
 
             // act
-            var result = sut.IsQualifyingCategoryApprencticeshipAny(mockDelivery.Object, null);
+            var result = sut.IsQualifyingCategoryApprenticeshipAny(mockDelivery.Object, null);
 
             // assert
             Assert.Equal("ANY", result.Category);
@@ -534,7 +534,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, It.IsAny<DateTime>(), It.IsAny<DateTime?>()))
                 .Returns(hasQS);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(mockDelivery.Object))
                 .Returns(isStdAppr);
             commonOps
                 .Setup(x => x.IsComponentOfAProgram(mockDelivery.Object))

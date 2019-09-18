@@ -54,13 +54,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
             TypeOfFunding.AsAFundedSet.Contains(delivery.FundModel);
 
         /// <summary>
-        /// Determines whether the specified delivery is apprencticeship.
+        /// Determines whether the specified delivery is Apprenticeship.
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if the specified delivery is apprencticeship; otherwise, <c>false</c>.
+        ///   <c>true</c> if the specified delivery is Apprenticeship; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsTargetApprencticeship(ILearningDelivery delivery) =>
+        public bool IsTargetApprenticeship(ILearningDelivery delivery) =>
             It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.ApprenticeshipStandard);
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(x => IsFunded(x) && IsTargetApprencticeship(x) && IsInAProgramme(x))
+                .SafeWhere(x => IsFunded(x) && IsTargetApprenticeship(x) && IsInAProgramme(x))
                 .ForEach(x =>
                 {
                     var failedValidation = !x.AppFinRecords.SafeAny(y => ConditionMet(y));

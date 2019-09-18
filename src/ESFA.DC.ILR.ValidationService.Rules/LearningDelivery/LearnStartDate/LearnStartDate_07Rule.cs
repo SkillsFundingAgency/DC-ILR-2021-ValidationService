@@ -114,19 +114,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         ///   <c>true</c> if this delivery is excluded; otherwise, <c>false</c>.
         /// </returns>
         public bool IsExcluded(ILearningDelivery theDelivery) =>
-            IsStandardApprencticeship(theDelivery)
+            IsStandardApprenticeship(theDelivery)
                 || IsRestart(theDelivery)
                 || IsCommonComponent(GetLARSLearningDeliveryFor(theDelivery));
 
         /// <summary>
-        /// Determines whether [is standard apprencticeship] [the specified delivery].
+        /// Determines whether [is standard Apprenticeship] [the specified delivery].
         /// </summary>
         /// <param name="theDelivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [is standard apprencticeship] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is standard Apprenticeship] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsStandardApprencticeship(ILearningDelivery theDelivery) =>
-            _check.IsStandardApprencticeship(theDelivery);
+        public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
+            _check.IsStandardApprenticeship(theDelivery);
 
         /// <summary>
         /// Determines whether the specified delivery is restart.
