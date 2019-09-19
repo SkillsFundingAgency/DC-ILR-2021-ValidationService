@@ -235,10 +235,5 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         {
             return new EmpStat_04Rule(dd22, validationErrorHandler);
         }
-
-        private DerivedData_22Rule NewDD22()
-        {
-            return new DerivedData_22Rule();
-        }
     }
 }

@@ -73,8 +73,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, latestLearningStart),
-                BuildErrorMessageParameter(PropertyNameConstants.EmpStat, TypeOfEmploymentStatus.NotKnownProvided)
+                BuildErrorMessageParameter(PropertyNameConstants.EmpStat, TypeOfEmploymentStatus.NotKnownProvided),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModel),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, latestLearningStart)
+
             };
         }
     }
