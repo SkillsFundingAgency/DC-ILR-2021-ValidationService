@@ -1,5 +1,7 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.ILR.Model;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Cache;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
@@ -14,20 +16,23 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
         [Fact]
         public void Populate()
         {
-            var message = new Mock<IMessage>().Object;
+            IMessage message = new Message();
+            var castMessage = (Message)message;
 
             var messageCacheMock = new Mock<Cache<IMessage>>();
+            messageCacheMock.SetupSet(mc => mc.Item = castMessage).Verifiable();
 
-            messageCacheMock.SetupSet(mc => mc.Item = message).Verifiable();
+            var service = NewMockService(messageCacheMock.Object);
+            service.Setup(x => x.BuildMessage(message)).Returns(castMessage).Verifiable();
 
-            NewService(messageCacheMock.Object).Populate(message);
+            service.Object.Populate(message);
 
-            messageCacheMock.Verify();
+            messageCacheMock.VerifyAll();
         }
 
-        private MessageCachePopulationService NewService(ICache<IMessage> messageCache = null)
+        private Mock<MessageCachePopulationService> NewMockService(ICache<IMessage> messageCache = null)
         {
-            return new MessageCachePopulationService(messageCache);
+            return new Mock<MessageCachePopulationService>(messageCache);
         }
     }
 }
