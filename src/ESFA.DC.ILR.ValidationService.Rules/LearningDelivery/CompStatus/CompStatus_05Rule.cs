@@ -27,11 +27,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
 
         public bool ConditionMet(int? outcome, int compStatus)
         {
-            return outcome.HasValue && compStatus == 1;
+            return outcome.HasValue && compStatus == CompletionState.IsOngoing;
         }
 
         public bool Excluded(int? ProgType, int? FundModel) =>
-            ProgType == 25 && FundModel == 36;        
+            ProgType == TypeOfLearningProgramme.ApprenticeshipStandard && FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;        
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int compStatus, int? outcome)
         {
