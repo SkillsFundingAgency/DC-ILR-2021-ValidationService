@@ -151,7 +151,5 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
             DateTime origLearnStartDate,
             string learnAimRef,
             IEnumerable<string> categoriesHashSet);
-
-        ILARSStandardFunding GetStandardFundingForCodeOnDate(int standardCode, DateTime startDate);
     }
 }
