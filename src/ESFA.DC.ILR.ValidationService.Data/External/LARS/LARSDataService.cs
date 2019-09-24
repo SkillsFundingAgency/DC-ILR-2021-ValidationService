@@ -447,19 +447,5 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             return It.Has(learningDelivery)
                 && learnAimRefTypes.ToCaseInsensitiveHashSet().Contains(learningDelivery.LearnAimRefType);
         }
-
-        public ILARSStandardFunding GetStandardFundingForCodeOnDate(int standardCode, DateTime startDate)
-        {
-            var standard = _externalDataCache.Standards?.FirstOrDefault(x => x.StandardCode == standardCode);
-
-            if (standard?.StandardsFunding != null)
-            {
-                return standard.StandardsFunding.FirstOrDefault(sf => startDate >= sf.EffectiveFrom &&
-                                                               (!sf.EffectiveTo.HasValue ||
-                                                                startDate <= sf.EffectiveTo));
-            }
-
-            return null;
-        }
     }
 }
