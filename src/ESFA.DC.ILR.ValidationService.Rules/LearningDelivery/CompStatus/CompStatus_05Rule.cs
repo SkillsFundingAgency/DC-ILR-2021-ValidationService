@@ -17,7 +17,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
         {
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (ConditionMet(learningDelivery.OutcomeNullable, learningDelivery.CompStatus))
+                if (!Excluded(learningDelivery.ProgTypeNullable, learningDelivery.FundModel) 
+                    && ConditionMet(learningDelivery.OutcomeNullable, learningDelivery.CompStatus))
                 {
                     HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.CompStatus, learningDelivery.OutcomeNullable));
                 }
@@ -26,8 +27,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
 
         public bool ConditionMet(int? outcome, int compStatus)
         {
-            return outcome.HasValue && compStatus == 1;
+            return outcome.HasValue && compStatus == CompletionState.IsOngoing;
         }
+
+        public bool Excluded(int? ProgType, int? FundModel) =>
+            ProgType == TypeOfLearningProgramme.ApprenticeshipStandard && FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;        
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int compStatus, int? outcome)
         {

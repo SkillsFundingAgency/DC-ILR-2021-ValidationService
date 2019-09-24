@@ -19,6 +19,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.CompStatus
         }
 
         [Fact]
+        public void Excluded_True()
+        {
+            NewRule().Excluded(25, 36).Should().BeTrue();
+        }
+
+        [Fact]
+        public void Excluded_False_Incorrect_FundModel()
+        {
+            NewRule().Excluded(25, 81).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Excluded_False_Incorrect_ProgType()
+        {
+            NewRule().Excluded(2, 36).Should().BeFalse();
+        }
+
+        [Fact]
         public void ConditionMet_True()
         {
             NewRule().ConditionMet(1, 1).Should().BeTrue();
@@ -67,6 +85,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.CompStatus
                     new TestLearningDelivery()
                     {
                         OutcomeNullable = null,
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoErrors_Exclusion()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 36,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 25
                     }
                 }
             };
