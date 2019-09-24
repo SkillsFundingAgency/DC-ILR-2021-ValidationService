@@ -702,20 +702,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.IsComponentOfAProgram(delivery.Object))
                 .Returns(true);
 
-            var larsValue = new Mock<ILARSAnnualValue>();
-            larsValue
-                .SetupGet(x => x.BasicSkillsType)
-                .Returns(11);
-
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
                 .Setup(x => x.GetAnnualValuesFor(LearnAimRef))
-                .Returns(new ILARSAnnualValue[] { larsValue.Object });
+                .Returns(new ILARSAnnualValue[] { });
 
             var larsDelivery = new Mock<ILARSLearningDelivery>();
             larsDelivery
                 .SetupGet(x => x.FrameworkCommonComponent)
-                .Returns(-2);
+                .Returns(20);
 
             larsData
                 .Setup(x => x.GetDeliveryFor(LearnAimRef))
@@ -786,20 +781,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.IsComponentOfAProgram(delivery.Object))
                 .Returns(true);
 
-            var larsValue = new Mock<ILARSAnnualValue>();
-            larsValue
-                .SetupGet(x => x.BasicSkillsType)
-                .Returns(11);
-
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
                 .Setup(x => x.GetAnnualValuesFor(LearnAimRef))
-                .Returns(new ILARSAnnualValue[] { larsValue.Object });
+                .Returns(new ILARSAnnualValue[] { });
 
             var larsDelivery = new Mock<ILARSLearningDelivery>();
             larsDelivery
                 .SetupGet(x => x.FrameworkCommonComponent)
-                .Returns(-2);
+                .Returns(20);
 
             larsData
                 .Setup(x => x.GetDeliveryFor(LearnAimRef))
