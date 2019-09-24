@@ -78,6 +78,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         }
 
         [Fact]
+        public void AimTypeConditionMet_Pass_AsOne()
+        {
+            var aimType = 1;
+            NewRule().AimTypeConditionMet(aimType).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(0)]
+        [InlineData(2)]
+        public void AimTypeConditionMet_Fail_NonOne(int aimType)
+        {
+            NewRule().AimTypeConditionMet(aimType).Should().BeFalse();
+        }
+
+        [Fact]
         public void FundModelConditionMet_Fails()
         {
             var fundModel = 81;
@@ -90,19 +106,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
             var startDate = new DateTime(2019, 12, 1);
             int? pHours = null;
             int fundModel = 36;
+            int aimType = 1;
 
-            var rule = NewRule().ConditionMet(startDate, pHours, fundModel);
+            var rule = NewRule().ConditionMet(startDate, pHours, fundModel, aimType);
             rule.Should().BeTrue();
         }
 
         [Theory]
-        [InlineData("01/06/2019", 200, 36)]
-        [InlineData("01/08/2019", 250, 36)]
-        [InlineData("01/12/2019", 300, 81)]
-        public void ConditionMet_Fails(string startingDate, int? pHours, int fundModel)
+        [InlineData("01/06/2019", 200, 36, 1)]
+        [InlineData("01/08/2019", 250, 36, 1)]
+        [InlineData("01/12/2019", 300, 81, 1)]
+        [InlineData("01/12/2019", null, 36, 2)]
+        public void ConditionMet_Fails(string startingDate, int? pHours, int fundModel, int aimType)
         {
             var startDate = DateTime.Parse(startingDate);
-            var rule = NewRule().ConditionMet(startDate, pHours, fundModel);
+            var rule = NewRule().ConditionMet(startDate, pHours, fundModel, aimType);
             rule.Should().BeFalse();
         }
 
@@ -166,12 +184,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
         {
             var fundModel = 36;
             var pHours = 200;
+            var aimType = 1;
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
             validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel)).Verifiable();
             validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.PHours, pHours)).Verifiable();
+            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.AimType, aimType)).Verifiable();
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(fundModel, pHours);
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(fundModel, pHours, aimType);
 
             validationErrorHandlerMock.Verify();
         }

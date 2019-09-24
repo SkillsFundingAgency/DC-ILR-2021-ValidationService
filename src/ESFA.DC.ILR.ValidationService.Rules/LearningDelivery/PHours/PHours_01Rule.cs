@@ -29,23 +29,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours
             {
                 foreach (var learningDelivery in objectToValidate.LearningDeliveries)
                 {
-                    if (ConditionMet(learningDelivery.LearnStartDate, learningDelivery.PHoursNullable, learningDelivery.FundModel))
+                    if (ConditionMet(learningDelivery.LearnStartDate, learningDelivery.PHoursNullable, learningDelivery.FundModel, learningDelivery.AimType))
                     {
                         HandleValidationError(
                                  objectToValidate.LearnRefNumber,
                                  learningDelivery.AimSeqNumber,
-                                 BuildErrorMessageParameters(learningDelivery.FundModel, learningDelivery.PHoursNullable));
+                                 BuildErrorMessageParameters(learningDelivery.FundModel, learningDelivery.PHoursNullable, learningDelivery.AimType));
                         return;
                     }
                 }
             }
         }
 
-        public bool ConditionMet(DateTime startDate, int? plannedHours, int fundModel)
+        public bool ConditionMet(DateTime startDate, int? plannedHours, int fundModel, int aimType)
         {
             return StartDateConditionMet(startDate)
                 && PlannedHoursConditionMet(plannedHours)
-                && FundModelConditionMet(fundModel);
+                && FundModelConditionMet(fundModel)
+                && AimTypeConditionMet(aimType);
         }
 
         public bool StartDateConditionMet(DateTime startDate)
@@ -63,12 +64,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours
             return _fundModels.Contains(fundModel);
         }
 
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel, int? plannedHours)
+        public bool AimTypeConditionMet(int aimType)
+        {
+            return aimType == 1;
+        }
+
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel, int? plannedHours, int aimType)
         {
             return new[]
             {
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
-                BuildErrorMessageParameter(PropertyNameConstants.PHours, plannedHours)
+                BuildErrorMessageParameter(PropertyNameConstants.PHours, plannedHours),
+                BuildErrorMessageParameter(PropertyNameConstants.AimType, aimType)
             };
         }
     }
