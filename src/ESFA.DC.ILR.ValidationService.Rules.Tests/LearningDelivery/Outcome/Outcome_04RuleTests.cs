@@ -145,7 +145,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             common
-                .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(mockDelivery.Object))
                 .Returns(true);
             common
                 .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.ApprenticeshipsFrom1May2017))
@@ -211,7 +211,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
 
             var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             common
-                .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(mockDelivery.Object))
                 .Returns(false);
 
             var sut = new Outcome_04Rule(handler.Object, common.Object);
@@ -259,7 +259,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             common
-                .Setup(x => x.IsStandardApprencticeship(mockDelivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(mockDelivery.Object))
                 .Returns(false);
 
             var sut = new Outcome_04Rule(handler.Object, common.Object);

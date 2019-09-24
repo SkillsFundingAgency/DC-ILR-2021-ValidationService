@@ -126,7 +126,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             (IsOpenAim(theDelivery)
                 && HasOpenAim(candidates))
             || HasOverlappingAimEndDates(theDelivery, candidates)
-            || HasOverlappingAimAchievementDates(theDelivery, AgainstStandardApprencticeshipDeliveries(candidates));
+            || HasOverlappingAimAchievementDates(theDelivery, AgainstStandardApprenticeshipDeliveries(candidates));
 
         /// <summary>
         /// Determines whether [is open aim] [the specified delivery].
@@ -182,23 +182,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             _check.HasQualifyingFunding(theDelivery, TypeOfFunding.ApprenticeshipsFrom1May2017);
 
         /// <summary>
-        /// Determines whether [is standard apprencticeship] [the specified delivery].
+        /// Determines whether [is standard apprenticeship] [the specified delivery].
         /// </summary>
         /// <param name="theDelivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [is standard apprencticeship] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is standard apprenticeship] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsStandardApprencticeship(ILearningDelivery theDelivery) =>
-            _check.IsStandardApprencticeship(theDelivery);
+        public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
+            _check.IsStandardApprenticeship(theDelivery);
 
         /// <summary>
-        /// Against standard apprencticeship deliveries.
+        /// Against standard apprenticeship deliveries.
         /// </summary>
         /// <param name="candidates">The candidates.</param>
         /// <returns>takes the input and returns those matching the restriction criteria</returns>
-        public IReadOnlyCollection<ILearningDelivery> AgainstStandardApprencticeshipDeliveries(IReadOnlyCollection<ILearningDelivery> candidates) =>
+        public IReadOnlyCollection<ILearningDelivery> AgainstStandardApprenticeshipDeliveries(IReadOnlyCollection<ILearningDelivery> candidates) =>
             candidates
-                .SafeWhere(x => HasQualifyingModel(x) && IsStandardApprencticeship(x))
+                .SafeWhere(x => HasQualifyingModel(x) && IsStandardApprenticeship(x))
                 .AsSafeReadOnlyList();
 
         /// <summary>

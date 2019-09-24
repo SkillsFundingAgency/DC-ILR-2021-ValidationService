@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
         ///   <c>true</c> if the specified delivery is excluded; otherwise, <c>false</c>.
         /// </returns>
         public bool IsExcluded(ILearningDelivery delivery) =>
-            _common.IsStandardApprencticeship(delivery)
+            _common.IsStandardApprenticeship(delivery)
             && _common.HasQualifyingFunding(delivery, TypeOfFunding.ApprenticeshipsFrom1May2017);
 
         /// <summary>

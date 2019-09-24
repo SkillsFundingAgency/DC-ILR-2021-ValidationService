@@ -77,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// </returns>
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
             !_check.IsRestart(thisDelivery)
-            && _check.IsStandardApprencticeship(thisDelivery)
+            && _check.IsStandardApprenticeship(thisDelivery)
             && _check.InAProgramme(thisDelivery)
             && It.Has(thisDelivery.StdCodeNullable)
             && !HasQualifyingStart(thisDelivery, GetStandardPeriodsOfValidityFor(thisDelivery));

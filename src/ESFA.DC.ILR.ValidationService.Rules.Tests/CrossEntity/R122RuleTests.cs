@@ -1,349 +1,443 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.Tests.Model;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
-using FluentAssertions;
 using Moq;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 {
-    public class R122RuleTests : AbstractRuleTests<R122Rule>
+    public class R122RuleTests
     {
+        /// <summary>
+        /// New rule with null message handler throws.
+        /// </summary>
         [Fact]
-        public void RuleName()
+        public void NewRuleWithNullMessageHandlerThrows()
         {
-            NewRule().RuleName.Should().Be("R122");
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new R122Rule(null, commonOps.Object));
         }
 
+        /// <summary>
+        /// New rule with null common operations throws.
+        /// </summary>
         [Fact]
-        public void FundModelCondition_True()
+        public void NewRuleWithNullCommonOperationsThrows()
         {
-            NewRule().FundModelConditionMet(36).Should().BeTrue();
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new R122Rule(handler.Object, null));
         }
 
-        [Theory]
-        [InlineData(25)]
-        [InlineData(70)]
-        public void FundModelCondition_False(int fundModel)
-        {
-            NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
-        }
-
+        /// <summary>
+        /// Rule name 1, matches a literal.
+        /// </summary>
         [Fact]
-        public void ProgTypeCondition_True()
+        public void RuleName1()
         {
-            NewRule().ProgTypeConditionMet(25).Should().BeTrue();
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.Equal("R122", result);
         }
 
-        [Theory]
-        [InlineData(20)]
-        [InlineData(-8)]
-        public void ProgTypeCondition_False(int progType)
+        /// <summary>
+        /// Rule name 2, matches the constant.
+        /// </summary>
+        [Fact]
+        public void RuleName2()
         {
-            NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.Equal(RuleNameConstants.R122, result);
         }
 
+        /// <summary>
+        /// Rule name 3 test, account for potential false positives.
+        /// </summary>
+        [Fact]
+        public void RuleName3()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.NotEqual("SomeOtherRuleName_07", result);
+        }
+
+        /// <summary>
+        /// Validate with null learner throws.
+        /// </summary>
+        [Fact]
+        public void ValidateWithNullLearnerThrows()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act/assert
+            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
+        }
+
+        /// <summary>
+        /// Gets the nullable date.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <returns>a nullable date</returns>
+        public DateTime? GetNullableDate(string candidate) =>
+            string.IsNullOrWhiteSpace(candidate) ? (DateTime?)null : DateTime.Parse(candidate);
+
+        /// <summary>
+        /// Has qualifying model meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(true)]
         [InlineData(false)]
-        public void FamTypeConditionMet_True(bool expectedResult)
+        [InlineData(true)]
+        public void HasQualifyingModelMeetsExpectation(bool expectation)
         {
-            var deliveryFAMs = new List<ILearningDeliveryFAM>();
-            var mockFamQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockFamQueryService.Setup(x => x.HasLearningDeliveryFAMType(deliveryFAMs, "ACT"))
-                               .Returns(expectedResult);
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
 
-            var rule = NewRule(mockFamQueryService.Object, null).FAMTypeConditionMet(deliveryFAMs);
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 36)) // TypeOfFunding.ApprenticeshipsFrom1May2017
+                .Returns(expectation);
 
-            rule.Should().Be(expectedResult);
-            mockFamQueryService.Verify(x => x.HasLearningDeliveryFAMType(deliveryFAMs, "ACT"), Times.Exactly(1));
+            var sut = new R122Rule(handler.Object, commonOps.Object);
+
+            // act
+            var result = sut.HasQualifyingModel(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Is standard apprenticeship meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void IsStandardApprenticeshipMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
+                .Returns(expectation);
+
+            var sut = new R122Rule(handler.Object, commonOps.Object);
+
+            // act
+            var result = sut.IsStandardApprenticeship(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Has apprenticeship contract meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void HasApprenticeshipContractMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            var sut = new R122Rule(handler.Object, commonOps.Object);
+
+            // post construction set up
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsApprenticeshipContract))
+                .Returns(expectation);
+
+            // act
+            var result = sut.HasApprenticeshipContract(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
         }
 
         [Theory]
-        [InlineData(null, true)] // returns True due to null
-        [InlineData("2018-08-28", false)] // returns False as date exists
-        public void AchDateConditionMet(string strAchDate, bool expectedResult)
+        [InlineData("SOF", false)]
+        [InlineData("ACT", true)]
+        [InlineData("WPP", false)]
+        [InlineData("EEF", false)]
+        [InlineData("POD", false)]
+        public void IsApprenticeshipContractMeetsExpectation(string candidate, bool expectation)
         {
-            DateTime? achDate = string.IsNullOrEmpty(strAchDate) ? (DateTime?)null : DateTime.Parse(strAchDate);
-            var result = NewRule().AchDateIsUnknown(achDate);
+            // arrange
+            var monitor = new Mock<ILearningDeliveryFAM>();
+            monitor
+                .SetupGet(x => x.LearnDelFAMType)
+                .Returns(candidate);
 
-            result.Should().Be(expectedResult);
+            var sut = NewRule();
+
+            // act
+            var result = sut.IsApprenticeshipContract(monitor.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
         }
 
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("1996-06-19", true)]
+        [InlineData("2018-02-14", true)]
+        [InlineData("2021-11-24", true)]
+        public void HasAchievementDateMeetsExpectation(string candidate, bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.AchDateNullable)
+                .Returns(GetNullableDate(candidate));
+
+            var sut = NewRule();
+
+            // act
+            var result = sut.HasAchievementDate(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        /// <summary>
+        /// Invalid item raises validation message.
+        /// </summary>
         [Fact]
-        public void FamDateCondition_True_AsFamDateTo_Exists()
+        public void InvalidItemRaisesValidationMessage()
         {
-            var fAMDateTo = new DateTime(2019, 08, 15);
-            var fAMDateFrom = new DateTime(2019, 07, 15);
+            // arrange
+            const string LearnRefNumber = "123456789X";
 
-            var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
-            {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "ACT", LearnDelFAMCode = "01", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom },
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "RES", LearnDelFAMCode = "02", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom },
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "act", LearnDelFAMCode = "03", LearnDelFAMDateToNullable = fAMDateTo.AddDays(10), LearnDelFAMDateFromNullable = fAMDateFrom }
-            };
+            var monitor = new Mock<ILearningDeliveryFAM>();
+            monitor
+                .SetupGet(x => x.LearnDelFAMType)
+                .Returns("ACT");
+            monitor
+                .SetupGet(x => x.LearnDelFAMDateFromNullable)
+                .Returns(DateTime.Today);
+            monitor
+                .SetupGet(x => x.LearnDelFAMDateToNullable)
+                .Returns(DateTime.Today);
 
-            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs);
-            result.Should().BeTrue();
+            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
+            delivery
+                .SetupGet(x => x.AimSeqNumber)
+                .Returns(1);
+            delivery
+                .Setup(x => x.AchDateNullable)
+                .Returns((DateTime?)null);
+            delivery
+                .SetupGet(x => x.LearningDeliveryFAMs)
+                .Returns(new ILearningDeliveryFAM[] { monitor.Object });
+
+            var temp = new Mock<ILearningDelivery>(MockBehavior.Strict);
+            temp
+                .SetupGet(x => x.AimSeqNumber)
+                .Returns(2);
+            temp
+                .Setup(x => x.AchDateNullable)
+                .Returns(DateTime.Today);
+            temp
+                .SetupGet(x => x.LearningDeliveryFAMs)
+                .Returns(new ILearningDeliveryFAM[] { });
+
+            var deliveries = new ILearningDelivery[] { delivery.Object, temp.Object };
+
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            handler
+                .Setup(x => x.Handle(RuleNameConstants.R122, LearnRefNumber, 1, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMType", "ACT"))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMDateTo", AbstractRule.AsRequiredCultureDate(DateTime.Today)))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("AchDate", null))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 36))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(temp.Object, 36))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsStandardApprenticeship(temp.Object))
+                .Returns(true);
+
+            var sut = new R122Rule(handler.Object, commonOps.Object);
+
+            // post construction set up
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsApprenticeshipContract))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(temp.Object, sut.IsApprenticeshipContract))
+                .Returns(true);
+
+            // act
+            sut.Validate(learner.Object);
+
+            // assert
+            handler.VerifyAll();
+            commonOps.VerifyAll();
         }
 
+        /// <summary>
+        /// Valid item does not raise validation message.
+        /// </summary>
         [Fact]
-        public void FamDateCondition_False_AsFamDateTo_NotExisting()
+        public void ValidItemDoesNotRaiseValidationMessage()
         {
-            var fAMDateTo = new DateTime(2019, 08, 15);
-            var fAMDateFrom = new DateTime(2019, 07, 15);
+            // arrange
+            const string LearnRefNumber = "123456789X";
 
-            var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
-            {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "ACT", LearnDelFAMCode = "01", LearnDelFAMDateToNullable = null, LearnDelFAMDateFromNullable = fAMDateFrom },
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "RES", LearnDelFAMCode = "02", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom }
-            };
+            var monitor = new Mock<ILearningDeliveryFAM>();
+            monitor
+                .SetupGet(x => x.LearnDelFAMType)
+                .Returns("ACT");
+            monitor
+                .SetupGet(x => x.LearnDelFAMDateFromNullable)
+                .Returns(DateTime.Today);
+            monitor
+                .SetupGet(x => x.LearnDelFAMDateToNullable)
+                .Returns(DateTime.Today);
 
-            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs);
-            result.Should().BeFalse();
+            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
+            delivery
+                .SetupGet(x => x.AimSeqNumber)
+                .Returns(1);
+            delivery
+                .Setup(x => x.AchDateNullable)
+                .Returns(DateTime.Today);
+            delivery
+                .SetupGet(x => x.LearningDeliveryFAMs)
+                .Returns(new ILearningDeliveryFAM[] { monitor.Object });
+
+            var temp = new Mock<ILearningDelivery>(MockBehavior.Strict);
+            temp
+                .SetupGet(x => x.AimSeqNumber)
+                .Returns(2);
+            temp
+                .Setup(x => x.AchDateNullable)
+                .Returns(DateTime.Today);
+            temp
+                .SetupGet(x => x.LearningDeliveryFAMs)
+                .Returns(new ILearningDeliveryFAM[] { });
+
+            var deliveries = new ILearningDelivery[] { delivery.Object, temp.Object };
+
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 36))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(temp.Object, 36))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsStandardApprenticeship(temp.Object))
+                .Returns(true);
+
+            var sut = new R122Rule(handler.Object, commonOps.Object);
+
+            // post construction set up
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsApprenticeshipContract))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(temp.Object, sut.IsApprenticeshipContract))
+                .Returns(true);
+
+            // act
+            sut.Validate(learner.Object);
+
+            // assert
+            handler.VerifyAll();
+            commonOps.VerifyAll();
         }
 
-        [Fact]
-        public void FamDateCondition_False_AsFoundNull()
+        /// <summary>
+        /// New rule.
+        /// </summary>
+        /// <returns>a constructed and mocked up validation rule</returns>
+        public R122Rule NewRule()
         {
-            var fAMDateTo = new DateTime(2019, 08, 15);
-            var fAMDateFrom = new DateTime(2019, 07, 15);
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
-            {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "RES", LearnDelFAMCode = "02", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom }
-            };
-
-            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs);
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void FamDateCondition_False_AsLearnDeliveryIsNull()
-        {
-            var fAMDateTo = new DateTime(2019, 08, 15);
-            List<ILearningDeliveryFAM> learningDeliveryFAMs = null;
-
-            var result = NewRule().FAMDateConditionMet(learningDeliveryFAMs);
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void ConditionMet_True_AsAchDateIsNull()
-        {
-            var fAMDateTo = new DateTime(2019, 08, 15);
-            var fAMDateFrom = new DateTime(2019, 07, 15);
-            DateTime? achDate = null; // ach date is null
-
-            var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
-            {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "ACT", LearnDelFAMCode = "01", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom },
-            };
-
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = "00100325",
-                AimSeqNumber = 1,
-                AchDateNullable = achDate,
-                FundModel = 36,
-                ProgTypeNullable = 25,
-                LearningDeliveryFAMs = learningDeliveryFAMs
-            };
-
-            var mockFamQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockFamQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "ACT"))
-                               .Returns(true);
-
-            var result = NewRule(mockFamQueryService.Object, null).ConditionMet(learningDelivery);
-            result.Should().BeTrue();
-
-            mockFamQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "ACT"), Times.Exactly(1));
-        }
-
-        [Fact]
-        public void ConditionMet_False_AsAchDate_NotNull()
-        {
-            var fAMDateTo = new DateTime(2019, 08, 15);
-            var fAMDateFrom = new DateTime(2019, 07, 15);
-            DateTime? achDate = fAMDateTo.AddDays(2); // Fails as ach date is known
-
-            var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
-            {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "ACT", LearnDelFAMCode = "01", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom },
-            };
-
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = "00100325",
-                AimSeqNumber = 1,
-                AchDateNullable = achDate,
-                FundModel = 36,
-                ProgTypeNullable = 25,
-                LearningDeliveryFAMs = learningDeliveryFAMs
-            };
-
-            var mockFamQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-
-            var result = NewRule(mockFamQueryService.Object, null).ConditionMet(learningDelivery);
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void ConditionMet_False_AsFamDateTo_IsNull()
-        {
-            var fAMDateFrom = new DateTime(2019, 07, 15);
-            DateTime? achDate = null;
-
-            var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
-            {
-                new TestLearningDeliveryFAM()
-                {
-                    LearnDelFAMType = "ACT",
-                    LearnDelFAMCode = "01",
-                    LearnDelFAMDateToNullable = null,
-                    LearnDelFAMDateFromNullable = fAMDateFrom
-                },
-            };
-
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = "00100325",
-                AimSeqNumber = 1,
-                AchDateNullable = achDate,
-                FundModel = 36,
-                ProgTypeNullable = 25,
-                LearningDeliveryFAMs = learningDeliveryFAMs
-            };
-
-            var mockFamQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockFamQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "ACT"))
-                               .Returns(true);
-
-            var result = NewRule(mockFamQueryService.Object, null).ConditionMet(learningDelivery);
-            result.Should().BeFalse();
-
-            mockFamQueryService.Verify(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "ACT"), Times.Exactly(1));
-        }
-
-        [Fact]
-        public void Validate_NoError_AsAchDateIsKnown()
-        {
-            var fAMDateTo = new DateTime(2019, 08, 15);
-            var fAMDateFrom = new DateTime(2019, 07, 15);
-            var achDate = fAMDateTo.AddDays(2);
-
-            var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
-            {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "ACT", LearnDelFAMCode = "01", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom },
-            };
-
-            ILearner learner = new TestLearner
-            {
-                LearnRefNumber = "DOB32Trig",
-                DateOfBirthNullable = new DateTime(1991, 08, 01),
-                LearningDeliveries = new List<ILearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        LearnAimRef = "00100325",
-                        AimSeqNumber = 1,
-                        AchDateNullable = achDate,
-                        FundModel = 36,
-                        ProgTypeNullable = 25,
-                        LearningDeliveryFAMs = learningDeliveryFAMs
-                    }
-                },
-            };
-
-            var mockFamQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(mockFamQueryService.Object, validationErrorHandlerMock.Object)
-                    .Validate(learner);
-            }
-        }
-
-        [Fact]
-        public void Validate_NoError_NullCheck()
-        {
-            TestLearner testLearner = null;
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(validationErrorHandler: validationErrorHandlerMock.Object).Validate(testLearner);
-            }
-        }
-
-        [Fact]
-        public void ValidateError_AsAchDate_IsNull()
-        {
-            var fAMDateTo = new DateTime(2019, 08, 15);
-            var fAMDateFrom = new DateTime(2019, 07, 15);
-            DateTime? achDate = null; // Error as achDate is null
-
-            var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
-            {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "ACT", LearnDelFAMCode = "01", LearnDelFAMDateToNullable = fAMDateTo, LearnDelFAMDateFromNullable = fAMDateFrom },
-            };
-
-            ILearner learner = new TestLearner
-            {
-                LearnRefNumber = "DOB32Trig",
-                LearningDeliveries = new List<ILearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        LearnAimRef = "00100325",
-                        AimSeqNumber = 1,
-                        AchDateNullable = achDate,
-                        FundModel = 36,
-                        ProgTypeNullable = 25,
-                        LearningDeliveryFAMs = learningDeliveryFAMs
-                    }
-                },
-            };
-
-            var mockFamQueryService = new Mock<ILearningDeliveryFAMQueryService>();
-            mockFamQueryService.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "ACT"))
-                               .Returns(true);
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-            {
-                NewRule(mockFamQueryService.Object, validationErrorHandlerMock.Object)
-                    .Validate(learner);
-            }
-        }
-
-        [Fact]
-        public void BuildErrorMessageParameters()
-        {
-            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
-
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.ACT)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMDateTo, "28/08/2019")).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AchDate, "05/07/2019")).Verifiable();
-
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object)
-                .BuildErrorMessageParameters(
-                                              LearningDeliveryFAMTypeConstants.ACT,
-                                              new DateTime(2019, 08, 28),
-                                              new DateTime(2019, 07, 05));
-
-            validationErrorHandlerMock.Verify();
-        }
-
-        public R122Rule NewRule(
-                        ILearningDeliveryFAMQueryService fAMQueryService = null,
-                        IValidationErrorHandler validationErrorHandler = null)
-        {
-            return new R122Rule(fAMQueryService, validationErrorHandler);
+            return new R122Rule(handler.Object, commonOps.Object);
         }
     }
 }

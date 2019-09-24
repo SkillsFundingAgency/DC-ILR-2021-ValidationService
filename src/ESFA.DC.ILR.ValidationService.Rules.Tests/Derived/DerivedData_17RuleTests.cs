@@ -133,7 +133,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var lars = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(expectation);
 
             var appFinData = new Mock<ILearningDeliveryAppFinRecordQueryService>(MockBehavior.Strict);

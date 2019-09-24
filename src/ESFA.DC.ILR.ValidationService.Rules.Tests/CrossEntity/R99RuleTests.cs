@@ -426,13 +426,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         /// <summary>
-        /// Is standard apprencticeship meets expectation
+        /// Is standard Apprenticeship meets expectation
         /// </summary>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public void IsStandardApprencticeshipMeetsExpectation(bool expectation)
+        public void IsStandardApprenticeshipMeetsExpectation(bool expectation)
         {
             // arrange
             var delivery = new Mock<ILearningDelivery>();
@@ -440,13 +440,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(expectation);
 
             var sut = new R99Rule(handler.Object, commonOps.Object);
 
             // act
-            var result = sut.IsStandardApprencticeship(delivery.Object);
+            var result = sut.IsStandardApprenticeship(delivery.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -615,7 +615,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Setup(x => x.HasQualifyingFunding(Moq.It.IsAny<ILearningDelivery>(), 36))
                 .Returns(true);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(Moq.It.IsAny<ILearningDelivery>()))
+                .Setup(x => x.IsStandardApprenticeship(Moq.It.IsAny<ILearningDelivery>()))
                 .Returns(true);
 
             var sut = new R99Rule(handler.Object, commonOps.Object);
@@ -844,7 +844,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Setup(x => x.HasQualifyingFunding(Moq.It.IsAny<ILearningDelivery>(), 36))
                 .Returns(true);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(Moq.It.IsAny<ILearningDelivery>()))
+                .Setup(x => x.IsStandardApprenticeship(Moq.It.IsAny<ILearningDelivery>()))
                 .Returns(true);
 
             var sut = new R99Rule(handler.Object, commonOps.Object);

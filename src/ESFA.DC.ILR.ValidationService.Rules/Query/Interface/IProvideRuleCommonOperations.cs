@@ -109,13 +109,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
         bool IsTraineeship(ILearningDelivery delivery);
 
         /// <summary>
-        /// Determines whether [is standard apprencticeship] [the specified delivery].
+        /// Determines whether [is standard apprenticeship] [the specified delivery].
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if [is standard apprencticeship] [the specified delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is standard apprenticeship] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        bool IsStandardApprencticeship(ILearningDelivery delivery);
+        bool IsStandardApprenticeship(ILearningDelivery delivery);
 
         /// <summary>
         /// Determines whether the specified learning delivery has qualifying funding
