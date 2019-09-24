@@ -53,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             return (learningDelivery.ProgTypeNullable.HasValue && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship)
                    && learningDelivery.AimType == TypeOfAim.ProgrammeAim
                    && learningDelivery.LearnStartDate > _julyThirtyFirst2016
-                   && learningDelivery.LearnStartDate >= firstAugustForAcademicYearOfLearnersSixteenthBirthDate;
+                   && learningDelivery.LearnStartDate <= firstAugustForAcademicYearOfLearnersSixteenthBirthDate;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? dateOfBirth, DateTime learnStartDate)
