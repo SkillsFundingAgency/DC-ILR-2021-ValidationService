@@ -22,7 +22,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         }
 
         [Theory]
-        [InlineData("2018-01-01")]
+        [InlineData("2018-09-01")]
         [InlineData("2018-08-01")]
         public void ConditionMet_True(string learnStartDateString)
         {
@@ -63,7 +63,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             {
                 ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
                 AimType = TypeOfAim.ComponentAimInAProgramme,
-                LearnStartDate = new DateTime(2018, 01, 01)
+                LearnStartDate = new DateTime(2018, 07, 01)
             };
 
             NewRule().ConditionMet(learningDelivery, firstAugustForAcademicYearOfLearnersSixteenthBirthDate).Should().BeFalse();
@@ -78,7 +78,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             {
                 ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
                 AimType = TypeOfAim.ProgrammeAim,
-                LearnStartDate = new DateTime(2018, 08, 02)
+                LearnStartDate = new DateTime(2018, 07, 31)
             };
 
             NewRule().ConditionMet(learningDelivery, firstAugustForAcademicYearOfLearnersSixteenthBirthDate).Should().BeFalse();
@@ -98,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     {
                         ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
                         AimType = TypeOfAim.ProgrammeAim,
-                        LearnStartDate = new DateTime(2018, 01, 01)
+                        LearnStartDate = new DateTime(2018, 08, 01)
                     }
                 }
             };
@@ -151,7 +151,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     {
                         ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
                         AimType = TypeOfAim.ProgrammeAim,
-                        LearnStartDate = new DateTime(2017, 08, 01)
+                        LearnStartDate = new DateTime(2018, 08, 01)
                     }
                 }
             };
