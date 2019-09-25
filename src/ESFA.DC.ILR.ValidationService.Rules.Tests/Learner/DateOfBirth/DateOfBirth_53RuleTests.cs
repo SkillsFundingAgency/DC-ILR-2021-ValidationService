@@ -105,7 +105,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
         [Theory]
         [InlineData("2017-05-01", null, double.MaxValue)]
-        [InlineData("2017-05-01", "2019-05-01", 730)]
+        [InlineData("2017-05-01", "2019-05-01", 731)]
         [InlineData("2017-09-04", "2018-09-03", 365)]
         public void LearnActEndDateConditionMet_False(string learnStartDate, string learnActEndDate, double totalDays)
         {
@@ -114,7 +114,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDateParam, learnActEndDateParam ?? DateTime.MaxValue)).Returns(totalDays);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDateParam, learnActEndDateParam ?? DateTime.MaxValue)).Returns(totalDays);
 
             var rule53 = NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).LearnActEndDateConditionMet(learnStartDateParam, learnActEndDateParam);
             rule53.Should().BeFalse();
@@ -127,7 +127,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learnActEndDate = new DateTime(2019, 08, 01);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnActEndDate)).Returns(365);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnActEndDate)).Returns(366);
 
             var rule53 = NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).LearnActEndDateConditionMet(learnStartDate, learnActEndDate);
             rule53.Should().BeFalse();
@@ -143,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDateParam, learnActEndDateParam)).Returns(totalDays);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDateParam, learnActEndDateParam)).Returns(totalDays);
 
             var rule53 = NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).LearnActEndDateConditionMet(learnStartDateParam, learnActEndDateParam);
             rule53.Should().BeTrue();
@@ -217,7 +217,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
             dd07Mock.Setup(dd => dd.IsApprenticeship(2)).Returns(true);
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnActEndDate)).Returns(270);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnActEndDate)).Returns(270);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
 
             NewRule(
