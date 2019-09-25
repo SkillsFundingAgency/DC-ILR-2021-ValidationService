@@ -143,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.Start())
+                .Setup(x => x.GetAcademicYearOfLearningDate(learnStart, AcademicYearDates.PreviousYearEnd))
                 .Returns(testDate);
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
@@ -162,7 +162,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             service.VerifyAll();
             yearData.VerifyAll();
 
-            Assert.Equal(testDate.AddDays(-1), result);
+            Assert.Equal(testDate, result);
         }
 
         /// <summary>

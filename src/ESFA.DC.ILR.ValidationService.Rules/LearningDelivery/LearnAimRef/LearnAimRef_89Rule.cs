@@ -51,8 +51,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// <param name="delivery">The delivery.</param>
         /// <returns>the closing date of the last academic year</returns>
         public DateTime GetClosingDateOfLastAcademicYear(ILearningDelivery delivery) =>
-            YearData.Start().AddDays(-1);
-          
+            YearData.GetAcademicYearOfLearningDate(delivery.LearnStartDate, AcademicYearDates.PreviousYearEnd);
+
         /// <summary>
         /// Determines whether [has valid learning aim] [the specified delivery].
         /// </summary>
