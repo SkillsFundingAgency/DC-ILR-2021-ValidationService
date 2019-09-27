@@ -43,6 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
                 JanuaryFirst = new DateTime(2020, 1, 1),
                 JulyThirtyFirst = new DateTime(2020, 7, 31),
                 Start = new DateTime(2019, 8, 1),
+                PreviousYearEnd = new DateTime(2019, 7, 31)
             };
         }
     }

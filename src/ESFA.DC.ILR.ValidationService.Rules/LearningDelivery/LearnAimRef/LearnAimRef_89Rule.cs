@@ -50,8 +50,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <returns>the closing date of the last academic year</returns>
-        public DateTime GetClosingDateOfLastAcademicYear(ILearningDelivery delivery) =>
-            YearData.GetAcademicYearOfLearningDate(delivery.LearnStartDate, AcademicYearDates.PreviousYearEnd);
+        public DateTime GetClosingDateOfLastAcademicYear() =>
+            YearData.PreviousYearEnd();
 
         /// <summary>
         /// Determines whether [has valid learning aim] [the specified delivery].
@@ -63,7 +63,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// </returns>
         public bool HasValidLearningAim(ILearningDelivery delivery, string branchCategory)
         {
-            var lastYearEnd = GetClosingDateOfLastAcademicYear(delivery);
+            var lastYearEnd = GetClosingDateOfLastAcademicYear();
             var validity = LarsData.GetValiditiesFor(delivery.LearnAimRef)
                 .Where(x => x.ValidityCategory.ComparesWith(branchCategory))
                 .OrderByDescending(x => x.StartDate)

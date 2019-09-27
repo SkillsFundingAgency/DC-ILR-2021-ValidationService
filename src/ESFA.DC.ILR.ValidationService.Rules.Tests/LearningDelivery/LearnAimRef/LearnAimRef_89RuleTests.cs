@@ -143,9 +143,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.GetAcademicYearOfLearningDate(learnStart, AcademicYearDates.PreviousYearEnd))
-                .Returns(testDate);
-
+                 .Setup(x => x.PreviousYearEnd())
+                 .Returns(testDate);
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -154,7 +153,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(learnStart);
 
             // act, not interested in the result just that we hit a strict signature
-            var result = sut.GetClosingDateOfLastAcademicYear(mockDelivery.Object);
+            var result = sut.GetClosingDateOfLastAcademicYear();
 
             // assert
             handler.VerifyAll();
@@ -200,8 +199,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
-                .Returns(DateTime.Parse(previousYearEnd));
+                 .Setup(x => x.PreviousYearEnd())
+                 .Returns(DateTime.Parse(previousYearEnd));
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
 
@@ -272,7 +271,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
+                .Setup(x => x.PreviousYearEnd())
                 .Returns(DateTime.Parse(previousYearEnd));
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
@@ -334,8 +333,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
-                .Returns(DateTime.Parse(previousYearEnd));
+                 .Setup(x => x.PreviousYearEnd())
+                 .Returns(DateTime.Parse(previousYearEnd));
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
 
@@ -441,7 +440,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
+                .Setup(x => x.PreviousYearEnd())
                 .Returns(DateTime.Parse(previousYearEnd));
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
@@ -536,7 +535,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
+                .Setup(x => x.PreviousYearEnd())
                 .Returns(DateTime.Parse(previousYearEnd));
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
