@@ -143,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.Start())
+                .Setup(x => x.GetAcademicYearOfLearningDate(learnStart, AcademicYearDates.PreviousYearEnd))
                 .Returns(testDate);
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
@@ -162,7 +162,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             service.VerifyAll();
             yearData.VerifyAll();
 
-            Assert.Equal(testDate.AddDays(-1), result);
+            Assert.Equal(testDate, result);
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.Start())
+                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
@@ -225,10 +225,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         /// <param name="startDates">The start dates.</param>
         [Theory]
-        [InlineData("2018-04-01", "2017-08-01", true, "2014-04-01", "2012-05-09", "2016-07-15", "2017-11-14")]
-        [InlineData("2018-04-01", "2017-08-01", true, "2014-04-01", "2012-05-09", "2016-07-15", "2017-08-01")]
-        [InlineData("2018-04-01", "2017-08-01", false, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
-        [InlineData("2018-04-01", "2017-08-01", false, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
+        [InlineData("2018-04-01", "2017-07-31", true, "2014-04-01", "2012-05-09", "2016-07-15", "2017-11-14")]
+        [InlineData("2018-04-01", "2017-07-31", true, "2014-04-01", "2012-05-09", "2016-07-15", "2017-08-01")]
+        [InlineData("2018-04-01", "2017-07-31", false, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
+        [InlineData("2018-04-01", "2017-07-31", false, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
         public void HasValidLearningAimMeetsExpectation(string candidate, string previousYearEnd, bool expectation, params string[] startDates)
         {
             // arrange
@@ -272,7 +272,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.Start())
+                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
@@ -334,7 +334,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.Start())
+                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
@@ -359,17 +359,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         /// <param name="category">The category.</param>
         /// <param name="startDates">The start dates.</param>
         [Theory]
-        [InlineData("2018-04-01", "2017-08-01", TypeOfLARSValidity.AdultSkills, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
-        [InlineData("2018-04-01", "2017-08-01", TypeOfLARSValidity.AdvancedLearnerLoan, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
-        [InlineData("2018-04-01", "2017-08-01", TypeOfLARSValidity.Any, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
-        [InlineData("2018-04-01", "2017-08-01", TypeOfLARSValidity.Apprenticeships, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
-        [InlineData("2018-04-01", "2017-08-01", TypeOfLARSValidity.CommunityLearning, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
-        [InlineData("2018-04-01", "2017-08-01", TypeOfLARSValidity.EFA16To19, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
-        [InlineData("2018-04-01", "2017-08-01", TypeOfLARSValidity.EFAConFundEnglish, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
-        [InlineData("2018-04-01", "2017-08-01", TypeOfLARSValidity.EFAConFundMaths, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
-        [InlineData("2018-04-01", "2017-08-01", TypeOfLARSValidity.EuropeanSocialFund, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
-        [InlineData("2018-04-01", "2017-08-01", TypeOfLARSValidity.OLASSAdult, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
-        [InlineData("2016-04-18", "2017-08-01", TypeOfLARSValidity.Unemployed, "2014-04-01", "2012-05-09", "2016-07-15", "2016-04-16")]
+        [InlineData("2018-04-01", "2017-07-31", TypeOfLARSValidity.AdultSkills, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
+        [InlineData("2018-04-01", "2017-07-31", TypeOfLARSValidity.AdvancedLearnerLoan, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
+        [InlineData("2018-04-01", "2017-07-31", TypeOfLARSValidity.Any, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
+        [InlineData("2018-04-01", "2017-07-31", TypeOfLARSValidity.Apprenticeships, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
+        [InlineData("2018-04-01", "2017-07-31", TypeOfLARSValidity.CommunityLearning, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
+        [InlineData("2018-04-01", "2017-07-31", TypeOfLARSValidity.EFA16To19, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
+        [InlineData("2018-04-01", "2017-07-31", TypeOfLARSValidity.EFAConFundEnglish, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
+        [InlineData("2018-04-01", "2017-07-31", TypeOfLARSValidity.EFAConFundMaths, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
+        [InlineData("2018-04-01", "2017-07-31", TypeOfLARSValidity.EuropeanSocialFund, "2014-04-01", "2012-05-09", "2016-07-15", "2017-07-31")]
+        [InlineData("2018-04-01", "2017-07-31", TypeOfLARSValidity.OLASSAdult, "2014-04-01", "2012-05-09", "2016-07-15", "2017-04-16")]
+        [InlineData("2016-04-18", "2017-07-31", TypeOfLARSValidity.Unemployed, "2014-04-01", "2012-05-09", "2016-07-15", "2016-04-16")]
         public void InvalidItemRaisesValidationMessage(string candidate, string previousYearEnd, string category, params string[] startDates)
         {
             // arrange
@@ -441,7 +441,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.Start())
+                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
@@ -536,7 +536,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
             yearData
-                .Setup(x => x.Start())
+                .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
