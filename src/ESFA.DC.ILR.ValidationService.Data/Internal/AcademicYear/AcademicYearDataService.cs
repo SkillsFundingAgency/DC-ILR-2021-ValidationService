@@ -73,5 +73,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear
         {
             return _internalDataCache.AcademicYear.Start;
         }
+
+        public DateTime PreviousYearEnd()
+        {
+            return _internalDataCache.AcademicYear.PreviousYearEnd;
+        }
     }
 }
