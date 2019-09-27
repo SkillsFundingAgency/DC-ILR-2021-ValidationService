@@ -145,6 +145,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(learnStart, AcademicYearDates.PreviousYearEnd))
                 .Returns(testDate);
+            yearData
+                .Setup(x => x.Start())
+                .Returns(learnStart);
 
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
 
@@ -202,7 +205,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
-
+            yearData
+                .Setup(x => x.Start())
+                .Returns(testDate);
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
 
             // act
@@ -274,7 +279,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
-
+            yearData
+                .Setup(x => x.Start())
+                .Returns(testDate);
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
 
             // act
@@ -336,7 +343,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
-
+            yearData
+               .Setup(x => x.Start())
+               .Returns(testDate);
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
 
             // act
@@ -443,7 +452,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
-
+            yearData
+               .Setup(x => x.Start())
+               .Returns(testDate);
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
 
             // act
@@ -538,7 +549,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
-
+            yearData
+               .Setup(x => x.Start())
+               .Returns(testDate);
             var sut = new LearnAimRef_89Rule(handler.Object, provider.Object, service.Object, yearData.Object);
 
             // act
