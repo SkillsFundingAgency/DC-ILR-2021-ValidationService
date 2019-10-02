@@ -25,13 +25,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         [Fact]
         public void LearnSartDateConditionMet_True()
         {
-            NewRule().LearnSartDateConditionMet(new DateTime(2019, 8, 1)).Should().BeTrue();
+            NewRule().LearnStartDateConditionMet(new DateTime(2019, 8, 1)).Should().BeTrue();
         }
 
         [Fact]
         public void LearnSartDateConditionMet_False()
         {
-            NewRule().LearnSartDateConditionMet(new DateTime(2018, 8, 1)).Should().BeFalse();
+            NewRule().LearnStartDateConditionMet(new DateTime(2018, 8, 1)).Should().BeFalse();
         }
 
         [Theory]
@@ -130,40 +130,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             var fundModel = 35;
             var lsdPostcode = "Postcode";
 
-            var ruleMock = NewRuleMock();
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            ruleMock.Setup(rm => rm.LearnSartDateConditionMet(learnStartDate)).Returns(true);
-            ruleMock.Setup(rm => rm.FundModelConditionMet(fundModel)).Returns(true);
-            ruleMock.Setup(rm => rm.PostcodeConditionMet(lsdPostcode)).Returns(true);
-            ruleMock.Setup(rm => rm.IsExcluded(null, lsdPostcode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>())).Returns(false);
+            postcodeDataServiceMock.Setup(p => p.PostcodeExists(lsdPostcode)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
 
-            ruleMock.Object.ConditionMet(learnStartDate, fundModel, null, lsdPostcode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeTrue();
+            NewRule(postcodesDataService: postcodeDataServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(false, true, true, false)]
-        [InlineData(true, false, true, false)]
-        [InlineData(true, true, false, false)]
-        [InlineData(true, true, true, true)]
-        [InlineData(false, true, true, true)]
-        [InlineData(false, false, true, true)]
-        [InlineData(false, true, false, true)]
-        [InlineData(true, false, false, false)]
-        [InlineData(false, false, false, false)]
-        public void ConditionMet_False(bool mock1, bool mock2, bool mock3, bool mock4)
+        [InlineData(2018, 35, true, false)]
+        [InlineData(2019, 70, true, false)]
+        [InlineData(2019, 35, true, false)]
+        [InlineData(2019, 35, true, true)]
+        public void ConditionMet_False(int year, int fundModel, bool lsdPostcodeMock, bool ldFamMock)
         {
-            var learnStartDate = new DateTime(2019, 8, 1);
-            var fundModel = 35;
+            var learnStartDate = new DateTime(year, 8, 1);
             var lsdPostcode = "Postcode";
 
-            var ruleMock = NewRuleMock();
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            ruleMock.Setup(rm => rm.LearnSartDateConditionMet(learnStartDate)).Returns(mock1);
-            ruleMock.Setup(rm => rm.FundModelConditionMet(fundModel)).Returns(mock2);
-            ruleMock.Setup(rm => rm.PostcodeConditionMet(lsdPostcode)).Returns(mock3);
-            ruleMock.Setup(rm => rm.IsExcluded(null, lsdPostcode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>())).Returns(mock4);
+            postcodeDataServiceMock.Setup(p => p.PostcodeExists(lsdPostcode)).Returns(lsdPostcodeMock);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(ldFamMock);
 
-            ruleMock.Object.ConditionMet(learnStartDate, fundModel, null, lsdPostcode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeFalse();
+            NewRule(postcodesDataService: postcodeDataServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeFalse();
         }
 
        [Fact]

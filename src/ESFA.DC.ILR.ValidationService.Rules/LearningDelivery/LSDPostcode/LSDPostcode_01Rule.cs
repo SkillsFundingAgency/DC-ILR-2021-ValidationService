@@ -27,11 +27,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             _postcodesDataService = postcodesDataService;
         }
 
-        public LSDPostcode_01Rule()
-           : base(null, RuleNameConstants.LSDPostcode_01)
-        {
-        }
-
         public void Validate(ILearner objectToValidate)
         {
             if (objectToValidate.LearningDeliveries == null)
@@ -60,19 +55,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         public bool ConditionMet(DateTime learnStartDate, int fundModel, int? ProgType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return 
-                LearnSartDateConditionMet(learnStartDate)
+                LearnStartDateConditionMet(learnStartDate)
                 && FundModelConditionMet(fundModel)
                 && PostcodeConditionMet(lsdPostcode)
                 && !IsExcluded(ProgType, lsdPostcode, learningDeliveryFAMs);
         }
           
-        public virtual bool LearnSartDateConditionMet(DateTime learnStartDate) => learnStartDate >= _firstAugust2019;
+        public bool LearnStartDateConditionMet(DateTime learnStartDate) => learnStartDate >= _firstAugust2019;
 
-        public virtual bool FundModelConditionMet(int fundModel) => _fundModels.Contains(fundModel);
+        public bool FundModelConditionMet(int fundModel) => _fundModels.Contains(fundModel);
 
-        public virtual bool PostcodeConditionMet(string lsdPostcode) => !_postcodesDataService.PostcodeExists(lsdPostcode);
+        public bool PostcodeConditionMet(string lsdPostcode) => !_postcodesDataService.PostcodeExists(lsdPostcode);
 
-        public virtual bool IsExcluded(int? progType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        public bool IsExcluded(int? progType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return progType.HasValue
                 || lsdPostcode == ValidationConstants.TemporaryPostCode
