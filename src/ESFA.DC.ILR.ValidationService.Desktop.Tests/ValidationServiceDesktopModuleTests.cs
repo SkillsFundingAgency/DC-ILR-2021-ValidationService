@@ -472,6 +472,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnPlanEndDate_03Rule),
                 typeof(LSDPostcode_01Rule),
                 typeof(LSDPostcode_02Rule),
+                typeof(LSDPostcode_03Rule),
                 typeof(LLDDCat_01Rule),
                 typeof(LLDDCat_02Rule),
                 typeof(LLDDHealthProb_01Rule),
