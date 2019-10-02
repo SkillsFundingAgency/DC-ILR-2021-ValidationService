@@ -179,7 +179,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var fAMDateTo = new DateTime(2019, 08, 15);
             var fAMDateFrom = new DateTime(2019, 07, 15);
-            var actEndDate = fAMDateTo; // actEndDate is equal to famDateTo
+            var achDate = fAMDateTo; // achDate is equal to famDateTo
 
             var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
             {
@@ -190,8 +190,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             {
                 LearnAimRef = "00100325",
                 AimSeqNumber = 1,
-                AchDateNullable = actEndDate.AddDays(2),
-                LearnActEndDateNullable = actEndDate,
+                AchDateNullable = achDate,
                 FundModel = 36,
                 ProgTypeNullable = 25,
                 LearningDeliveryFAMs = learningDeliveryFAMs
@@ -260,11 +259,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void ValidateError_AsActEndDate_NotEqualsFAMDateTo()
+        public void ValidateError_AsAchDate_NotEqualsFAMDateTo()
         {
             var fAMDateTo = new DateTime(2019, 08, 15);
             var fAMDateFrom = new DateTime(2019, 07, 15);
-            var actEndDate = fAMDateTo.AddDays(5); // Error as actEndDate not equal to famDateTo
+            var achDate = fAMDateTo.AddDays(5); // Error as actEndDate not equal to famDateTo
 
             var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
             {
@@ -280,8 +279,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         LearnAimRef = "00100325",
                         AimSeqNumber = 1,
-                        AchDateNullable = fAMDateTo,
-                        LearnActEndDateNullable = actEndDate,
+                        AchDateNullable = achDate,
                         FundModel = 36,
                         ProgTypeNullable = 25,
                         LearningDeliveryFAMs = learningDeliveryFAMs

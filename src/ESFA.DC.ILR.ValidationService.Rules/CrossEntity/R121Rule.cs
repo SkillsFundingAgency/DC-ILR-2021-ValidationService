@@ -33,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             {
                 if (ConditionMet(learningDelivery))
                 {
-                    var learnDelFAMDateTo = GetLearnDelFAMDate(learningDelivery.LearningDeliveryFAMs)?.LearnDelFAMDateToNullable;
+                    var learnDelFAMDateTo = GetMaxLearnDelFAMDateTo(learningDelivery.LearningDeliveryFAMs);
 
                     HandleValidationError(
                                            learner.LearnRefNumber,
@@ -52,42 +52,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 && ProgTypeConditionMet(learningDelivery.ProgTypeNullable)
                 && AchDateIsKnown(learningDelivery.AchDateNullable)
                 && FAMTypeConditionMet(learningDelivery.LearningDeliveryFAMs)
-                && FAMDateConditionMet(learningDelivery.LearningDeliveryFAMs, learningDelivery.LearnActEndDateNullable);
+                && FAMDateConditionMet(learningDelivery.LearningDeliveryFAMs, learningDelivery.AchDateNullable);
         }
 
-        public bool FundModelConditionMet(int fundModel)
-        {
-            return fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
-        }
+        public bool FundModelConditionMet(int fundModel) => fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
 
-        public bool ProgTypeConditionMet(int? progType)
-        {
-            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
-        }
+        public bool ProgTypeConditionMet(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool FAMTypeConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT);
         }
 
-        public bool AchDateIsKnown(DateTime? achDate)
+        public bool AchDateIsKnown(DateTime? achDate) => achDate.HasValue;
+
+        public bool FAMDateConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, DateTime? achDate)
         {
-            return achDate.HasValue;
+            var learnDelFAMDateTo = GetMaxLearnDelFAMDateTo(learningDeliveryFAMs);
+            return learnDelFAMDateTo.HasValue && achDate.HasValue && achDate != learnDelFAMDateTo;
         }
 
-        public bool FAMDateConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, DateTime? actEndDate)
-        {
-            var learnDelFAMDateTo = GetLearnDelFAMDate(learningDeliveryFAMs)?.LearnDelFAMDateToNullable;
-            return learnDelFAMDateTo.HasValue && actEndDate.HasValue && actEndDate != learnDelFAMDateTo;
-        }
-
-        private ILearningDeliveryFAM GetLearnDelFAMDate(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        private DateTime? GetMaxLearnDelFAMDateTo(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return learningDeliveryFAMs?
                         .Where(f => f.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.ACT)
-                        && f.LearnDelFAMDateFromNullable.HasValue)?
+                        && f.LearnDelFAMDateFromNullable.HasValue)
                         .OrderByDescending(o => o.LearnDelFAMDateFromNullable)
-                        .FirstOrDefault();
+                        .FirstOrDefault()?
+                        .LearnDelFAMDateToNullable;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string famType, DateTime? famDateTo, DateTime? achDate)
