@@ -2,241 +2,108 @@
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
-    /// <summary>
-    /// cross record rule 99
-    /// </summary>
-    /// <seealso cref="AbstractRule" />
-    /// <seealso cref="Interface.IRule{ILearner}" />
-    public class R99Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class R99Rule : AbstractRule, IRule<ILearner>
     {
-        /// <summary>
-        /// The check(er) rule common operations provider
-        /// </summary>
-        private readonly IProvideRuleCommonOperations _check;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="R99Rule"/> class.
-        /// </summary>
-        /// <param name="validationErrorHandler">The validation error handler.</param>
-        /// <param name="commonOps">The common rule operations provider.</param>
-        public R99Rule(
-            IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOps)
+        public R99Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.R99)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(commonOps)
-                .AsGuard<ArgumentNullException>(nameof(commonOps));
-
-            _check = commonOps;
         }
 
-        /// <summary>
-        /// Validates the specified the learner.
-        /// </summary>
-        /// <param name="theLearner">The learner.</param>
         public void Validate(ILearner theLearner)
         {
-            It.IsNull(theLearner)
-                .AsGuard<ArgumentNullException>(nameof(theLearner));
+            if (theLearner.LearningDeliveries == null)
+            {
+                return;
+            }
 
-            var candidates = GetCandidateDeliveries(theLearner.LearningDeliveries);
+            var learningDeliveries = GetProgrammeAims(theLearner.LearningDeliveries).ToList();
 
-            if (HasViableCount(candidates))
+            if (HasMoreThanOneProgrammeAim(learningDeliveries))
             {
                 var learnRefNumber = theLearner.LearnRefNumber;
 
-                candidates.ForAny(
-                    x => IsNotValid(x, AgainstOtherDeliveries(x, candidates)),
-                    x => RaiseValidationMessage(learnRefNumber, x));
+                var errorLearningDeliveries = CompareAgainstOtherDeliveries(learningDeliveries, ConditionMet);
+                
+                foreach (var learningDelivery in errorLearningDeliveries)
+                {
+                    RaiseValidationMessage(learnRefNumber, learningDelivery);
+                }
             }
         }
 
-        /// <summary>
-        /// Gets the candidate deliveries.
-        /// </summary>
-        /// <param name="candidates">The candidates.</param>
-        /// <returns>returns those matching the restriction criteria</returns>
-        public IReadOnlyCollection<ILearningDelivery> GetCandidateDeliveries(IReadOnlyCollection<ILearningDelivery> candidates) =>
-            candidates
-                .SafeWhere(IsProgrammeAim)
-                .AsSafeReadOnlyList();
+        public bool ConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery)
+        {
+            return OverlappingAimEndDatesConditionMet(learningDelivery, comparisonLearningDelivery)
+                   || OpenAimConditionMet(learningDelivery, comparisonLearningDelivery)
+                   || AchievementDateConditionMet(learningDelivery, comparisonLearningDelivery)
+                   || ApprenticeshipStandardConditionMet(learningDelivery, comparisonLearningDelivery);
+        }
 
-        /// <summary>
-        /// Determines whether [is programme aim] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is programe aim] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsProgrammeAim(ILearningDelivery theDelivery) =>
-            _check.InAProgramme(theDelivery);
+        public IEnumerable<ILearningDelivery> GetProgrammeAims(IEnumerable<ILearningDelivery> learningDeliveries) =>
+            learningDeliveries.Where(ld => ld.AimType == TypeOfAim.ProgrammeAim);
 
-        /// <summary>
-        /// Determines whether [has viable count] [the specified candidates].
-        /// </summary>
-        /// <param name="candidates">The candidates.</param>
-        /// <returns>
-        ///   <c>true</c> if [has viable count] [the specified candidates]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasViableCount(IReadOnlyCollection<ILearningDelivery> candidates) =>
-            candidates.Count > 1;
+        public bool HasMoreThanOneProgrammeAim(IEnumerable<ILearningDelivery> candidates) =>
+            candidates.Count() > 1;
+        
+        public bool OpenAimConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery) => 
+            !(learningDelivery.LearnActEndDateNullable.HasValue || comparisonLearningDelivery.LearnActEndDateNullable.HasValue);
+        
+        public bool OverlappingAimEndDatesConditionMet(ILearningDelivery theDelivery, ILearningDelivery comparisonLearningDelivery) =>
+            It.IsBetween(theDelivery.LearnStartDate, comparisonLearningDelivery.LearnStartDate, comparisonLearningDelivery.LearnActEndDateNullable ?? DateTime.MaxValue);
 
-        /// <summary>
-        /// Against other deliveries.
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <param name="candidates">The other candidates.</param>
-        /// <returns>takes the input and returns those matching the restriction criteria</returns>
-        public IReadOnlyCollection<ILearningDelivery> AgainstOtherDeliveries(ILearningDelivery theDelivery, IReadOnlyCollection<ILearningDelivery> candidates) =>
-            candidates
-                .SafeWhere(x => IsNotSelf(theDelivery, x))
-                .AsSafeReadOnlyList();
+        public bool AchievementDateConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery)
+        {
+            return learningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017 
+                && learningDelivery.LearnActEndDateNullable.HasValue
+                && comparisonLearningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017 
+                && comparisonLearningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
+                && It.IsBetween(learningDelivery.LearnStartDate, comparisonLearningDelivery.LearnStartDate, comparisonLearningDelivery.AchDateNullable ?? DateTime.MaxValue);
+        }
 
-        /// <summary>
-        /// Determines whether [is not self] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>
-        ///   <c>true</c> if [is not self] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsNotSelf(ILearningDelivery theDelivery, ILearningDelivery candidate) =>
-            theDelivery.AimSeqNumber != candidate.AimSeqNumber;
+        public bool ApprenticeshipStandardConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery)
+        {
+            return learningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017 
+                && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard 
+                && learningDelivery.AchDateNullable.HasValue
+                && comparisonLearningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+                && It.IsBetween(learningDelivery.LearnStartDate, comparisonLearningDelivery.LearnStartDate, comparisonLearningDelivery.LearnActEndDateNullable ?? DateTime.MaxValue);
+        }
 
-        /// <summary>
-        /// Determines whether [is not valid] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <param name="candidates">The other candidates.</param>
-        /// <returns>
-        ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsNotValid(ILearningDelivery theDelivery, IReadOnlyCollection<ILearningDelivery> candidates) =>
-            (IsOpenAim(theDelivery)
-                && HasOpenAim(candidates))
-            || HasOverlappingAimEndDates(theDelivery, candidates)
-            || HasOverlappingAimAchievementDates(theDelivery, AgainstStandardApprenticeshipDeliveries(candidates));
+        public IEnumerable<ILearningDelivery> CompareAgainstOtherDeliveries(IEnumerable<ILearningDelivery> learningDeliveries, Func<ILearningDelivery, ILearningDelivery, bool> predicate)
+        {
+            var learningDeliveriesList = learningDeliveries.ToList();
 
-        /// <summary>
-        /// Determines whether [is open aim] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is open aim] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsOpenAim(ILearningDelivery theDelivery) =>
-            It.IsEmpty(theDelivery.LearnActEndDateNullable);
+            var collectionSize = learningDeliveriesList.Count;
 
-        /// <summary>
-        /// Determines whether [has open aim] [the specified candidates].
-        /// </summary>
-        /// <param name="candidates">The candidates.</param>
-        /// <returns>
-        ///   <c>true</c> if [has open aim] [the specified candidates]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasOpenAim(IReadOnlyCollection<ILearningDelivery> candidates) =>
-            candidates.SafeAny(IsOpenAim);
+            for (var i = 0; i < collectionSize; i++)
+            {
+                for (var j = 0; j < collectionSize; j++)
+                {
+                    if (i != j)
+                    {
+                        var learningDeliveryOne = learningDeliveriesList[i];
+                        var learningDeliveryTwo = learningDeliveriesList[j];
 
-        /// <summary>
-        /// Determines whether [has overlapping aim end dates] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <param name="candidates">The other candidates.</param>
-        /// <returns>
-        ///   <c>true</c> if [has overlapping aim end dates] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasOverlappingAimEndDates(ILearningDelivery theDelivery, IReadOnlyCollection<ILearningDelivery> candidates) =>
-            candidates
-                .SafeAny(x => HasOverlappingAimEndDates(theDelivery, x));
+                        if (predicate(learningDeliveryOne, learningDeliveryTwo))
+                        {
+                            yield return learningDeliveryOne;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
-        /// <summary>
-        /// Determines whether [has overlapping aim end dates] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>
-        ///   <c>true</c> if [has overlapping aim end dates] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasOverlappingAimEndDates(ILearningDelivery theDelivery, ILearningDelivery candidate) =>
-            It.IsBetween(theDelivery.LearnStartDate, candidate.LearnStartDate, candidate.LearnActEndDateNullable ?? DateTime.MaxValue);
-
-        /// <summary>
-        /// Determines whether [has qualifying model] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [has qualifying model] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.ApprenticeshipsFrom1May2017);
-
-        /// <summary>
-        /// Determines whether [is standard apprenticeship] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is standard apprenticeship] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
-            _check.IsStandardApprenticeship(theDelivery);
-
-        /// <summary>
-        /// Against standard apprenticeship deliveries.
-        /// </summary>
-        /// <param name="candidates">The candidates.</param>
-        /// <returns>takes the input and returns those matching the restriction criteria</returns>
-        public IReadOnlyCollection<ILearningDelivery> AgainstStandardApprenticeshipDeliveries(IReadOnlyCollection<ILearningDelivery> candidates) =>
-            candidates
-                .SafeWhere(x => HasQualifyingModel(x) && IsStandardApprenticeship(x))
-                .AsSafeReadOnlyList();
-
-        /// <summary>
-        /// Determines whether [has overlapping aim achievement dates] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <param name="candidates">The other candidates.</param>
-        /// <returns>
-        ///   <c>true</c> if [has overlapping aim achievement dates] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasOverlappingAimAchievementDates(ILearningDelivery theDelivery, IReadOnlyCollection<ILearningDelivery> candidates) =>
-            candidates
-                .SafeAny(x => HasOverlappingAimAchievementDates(theDelivery, x));
-
-        /// <summary>
-        /// Determines whether [has overlapping aim achievement dates] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>
-        ///   <c>true</c> if [has overlapping aim achievement dates] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasOverlappingAimAchievementDates(ILearningDelivery theDelivery, ILearningDelivery candidate) =>
-            It.IsBetween(theDelivery.LearnStartDate, candidate.LearnStartDate, candidate.AchDateNullable ?? DateTime.MaxValue);
-
-        /// <summary>
-        /// Raises the validation message.
-        /// </summary>
-        /// <param name="learnRefNumber">The learn reference number.</param>
-        /// <param name="theDelivery">The delivery.</param>
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
             HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
 
-        /// <summary>
-        /// Builds the message parameters for.
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns></returns>
         public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery theDelivery) => new[]
         {
             BuildErrorMessageParameter(PropertyNameConstants.AimType, theDelivery.AimType),

@@ -1,52 +1,23 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using ESFA.DC.ILR.ValidationService.Utility;
+using FluentAssertions;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 {
-    /// <summary>
-    /// cross record rule 99 unit tests
-    /// </summary>
-    public class R99RuleTests
+    public class R99RuleTests : AbstractRuleTests<R99Rule>
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new R99Rule(null, commonOps.Object));
-        }
-
-        /// <summary>
-        /// New rule with null common operations throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullCommonOperationsThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new R99Rule(handler.Object, null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
         [Fact]
         public void RuleName1()
         {
@@ -60,9 +31,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             Assert.Equal("R99", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
         [Fact]
         public void RuleName2()
         {
@@ -76,9 +44,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             Assert.Equal(RuleNameConstants.R99, result);
         }
 
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
         [Fact]
         public void RuleName3()
         {
@@ -92,277 +57,204 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             Assert.NotEqual("SomeOtherRuleName_07", result);
         }
 
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
         [Fact]
-        public void ValidateWithNullLearnerThrows()
+        public void CompareAgainstOtherDeliveries_NoMatch()
         {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Get candidate deliveries meets expectation.
-        /// </summary>
-        /// <param name="expectation">The expectation.</param>
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(3)]
-        public void GetCandidateDeliveriesMeetsExpectation(int expectation)
-        {
-            // arrange
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            for (var i = 0; i < expectation; i++)
+            var learningDeliveries = new List<ILearningDelivery>()
             {
-                var delivery = new Mock<ILearningDelivery>();
+                new TestLearningDelivery(),
+                new TestLearningDelivery(),
+            };
 
-                deliveries.Add(delivery.Object);
-            }
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InAProgramme(Moq.It.IsAny<ILearningDelivery>()))
-                .Returns(true);
-
-            var sut = new R99Rule(handler.Object, commonOps.Object);
-
-            // act
-            var result = sut.GetCandidateDeliveries(deliveries.AsSafeReadOnlyList());
-
-            // assert
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-
-            Assert.Equal(expectation, result.Count);
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => false).Should().BeEmpty();
         }
 
-        /// <summary>
-        /// Is programe aim meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsProgrammeAimMeetsExpectation(bool expectation)
+        [Fact]
+        public void CompareAgainstOtherDeliveries_AllMatch()
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
+            var learningDeliveryOne = new TestLearningDelivery();
+            var learningDeliveryTwo = new TestLearningDelivery();
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(expectation);
-
-            var sut = new R99Rule(handler.Object, commonOps.Object);
-
-            // act
-            var result = sut.IsProgrammeAim(delivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-        }
-
-        /// <summary>
-        /// Has viable count meets expectation
-        /// </summary>
-        /// <param name="count">The count.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(0, false)]
-        [InlineData(1, false)]
-        [InlineData(2, true)]
-        [InlineData(3, true)]
-        public void HasViableCountMeetsExpectation(int count, bool expectation)
-        {
-            // arrange
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            for (var i = 0; i < count; i++)
+            var learningDeliveries = new List<ILearningDelivery>()
             {
-                var delivery = new Mock<ILearningDelivery>();
-                deliveries.Add(delivery.Object);
-            }
+                learningDeliveryOne,
+                learningDeliveryTwo,
+            };
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var matches = NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => true).ToList();
 
-            var sut = new R99Rule(handler.Object, commonOps.Object);
-
-            // act
-            var result = sut.HasViableCount(deliveries.AsSafeReadOnlyList());
-
-            // assert
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-
-            Assert.Equal(expectation, result);
+            matches.Should().HaveCount(2);
+            matches[0].Should().BeSameAs(learningDeliveryOne);
+            matches[1].Should().BeSameAs(learningDeliveryTwo);
         }
 
-        /// <summary>
-        /// Against other deliveries meets expectation.
-        /// </summary>
-        /// <param name="count">The count.</param>
-        /// <param name="aimSeq">The aim seq.</param>
-        [Theory]
-        [InlineData(1, 2)]
-        [InlineData(2, 1)]
-        [InlineData(3, 2)]
-        public void AgainstOtherDeliveriesMeetsExpectation(int count, int aimSeq)
+        [Fact]
+        public void CompareAgainstOtherDeliveries_PartialMatch()
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .Setup(x => x.AimSeqNumber)
-                .Returns(aimSeq);
-
-            var candidates = Collection.Empty<ILearningDelivery>();
-            for (var i = 0; i < count; i++)
+            var learningDeliveries = new List<ILearningDelivery>()
             {
-                var candidate = new Mock<ILearningDelivery>();
-                candidate
-                    .Setup(x => x.AimSeqNumber)
-                    .Returns(i + 1);
-                candidates.Add(candidate.Object);
-            }
+                new TestLearningDelivery() { ProgTypeNullable = 1 },
+                new TestLearningDelivery() { ProgTypeNullable = 2 },
+            };
 
-            var sut = NewRule();
-
-            // act
-            var result = sut.AgainstOtherDeliveries(delivery.Object, candidates.AsSafeReadOnlyList());
-
-            // assert
-            Assert.DoesNotContain(result, x => x.AimSeqNumber == aimSeq);
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => a.ProgTypeNullable > b.ProgTypeNullable).Should().HaveCount(1);
         }
 
-        /// <summary>
-        /// Is not self meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="aimSeq">The aim seq.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(1, 2, true)]
-        [InlineData(2, 1, true)]
-        [InlineData(3, 2, true)]
-        [InlineData(3, 3, false)]
-        public void IsNotSelfMeetsExpectation(int candidate, int aimSeq, bool expectation)
+        [Fact]
+        public void CompareAgainstOtherDeliveries_SingleItem()
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .Setup(x => x.AimSeqNumber)
-                .Returns(aimSeq);
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                new TestLearningDelivery()
+            };
 
-            var deliveryToo = new Mock<ILearningDelivery>();
-            deliveryToo
-                .Setup(x => x.AimSeqNumber)
-                .Returns(candidate);
-
-            var sut = NewRule();
-
-            // act
-            var result = sut.IsNotSelf(delivery.Object, deliveryToo.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => true).Should().BeEmpty();
         }
 
-        /// <summary>
-        /// Gets the nullable date.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>a nullable date</returns>
+        [Fact]
+        public void CompareAgainstOtherDeliveries_Empty()
+        {
+            var learningDeliveries = new List<ILearningDelivery>();
+
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => false).Should().BeEmpty();
+        }
+
+        [Fact]
+        public void CompareAgainstOtherDeliveries_Break()
+        {
+            var matchOne = new TestLearningDelivery() { ProgTypeNullable = 1 };
+            var matchTwo = new TestLearningDelivery() { ProgTypeNullable = 2 };
+            var nonMatch = new TestLearningDelivery() { ProgTypeNullable = 3 };
+
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                matchOne,
+                matchTwo,
+                nonMatch
+            };
+
+            var matches = NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => a.ProgTypeNullable < b.ProgTypeNullable).ToList();
+
+            matches.Should().HaveCount(2);
+            matches[0].Should().BeSameAs(matchOne);
+            matches[1].Should().BeSameAs(matchTwo);
+        }
+
+        [Fact]
+        public void GetProgrammeAims_NoMatch()
+        {
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                new TestLearningDelivery()
+                {
+                    AimType = 2,
+                },
+                new TestLearningDelivery()
+                {
+                    AimType = 3,
+                }
+            };
+
+            NewRule().GetProgrammeAims(learningDeliveries).Should().BeEmpty();
+        }
+
+        [Fact]
+        public void GetProgrammeAims_Match()
+        {
+            var match = new TestLearningDelivery()
+            {
+                AimType = 1,
+            };
+
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                match,
+                new TestLearningDelivery()
+                {
+                    AimType = 3,
+                }
+            };
+
+            var matches = NewRule().GetProgrammeAims(learningDeliveries).ToList();
+
+            matches.Should().HaveCount(1);
+            matches.First().Should().BeSameAs(match);
+        }
+
+        [Fact]
+        public void LearningDeliveryCountConditionMet_True()
+        {
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                new TestLearningDelivery(),
+                new TestLearningDelivery(),
+            };
+
+            NewRule().HasMoreThanOneProgrammeAim(learningDeliveries).Should().BeTrue();
+        }
+
+        [Fact]
+        public void LearningDeliveryCountConditionMet_False()
+        {
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                new TestLearningDelivery()
+            };
+
+            NewRule().HasMoreThanOneProgrammeAim(learningDeliveries).Should().BeFalse();
+        }
+
         public DateTime? GetNullableDate(string candidate) =>
             string.IsNullOrWhiteSpace(candidate) ? (DateTime?)null : DateTime.Parse(candidate);
 
-        /// <summary>
-        /// Is open aim meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(null, true)]
-        [InlineData("2016-08-14", false)]
-        public void IsOpenAimMeetsExpectation(string candidate, bool expectation)
-        {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .Setup(x => x.LearnActEndDateNullable)
-                .Returns(GetNullableDate(candidate));
-
-            var sut = NewRule();
-
-            // act
-            var result = sut.IsOpenAim(delivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-        }
-
-        /// <summary>
-        /// Has open aim meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(null, true)]
-        [InlineData("2016-08-14", false)]
-        public void HasOpenAimMeetsExpectation(string candidate, bool expectation)
-        {
-            // arrange
-            var candidates = Collection.Empty<ILearningDelivery>();
-            for (var i = 0; i < 5; i++)
-            {
-                var temp = new Mock<ILearningDelivery>();
-                temp
-                    .Setup(x => x.LearnActEndDateNullable)
-                    .Returns(GetNullableDate(candidate));
-                candidates.Add(temp.Object);
-            }
-
-            var sut = NewRule();
-
-            // act
-            var result = sut.HasOpenAim(candidates.AsSafeReadOnlyList());
-
-            // assert
-            Assert.Equal(expectation, result);
-        }
-
-        /// <summary>
-        /// Has overlapping aim end dates with null candidates returns false
-        /// </summary>
         [Fact]
-        public void HasOverlappingAimEndDatesWithNullCandidatesReturnsFalse()
+        public void OpenAimConditionMet_True()
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            var sut = NewRule();
+            var learningDelivery = new TestLearningDelivery()
+            {
+                LearnActEndDateNullable = null,
+            };
 
-            // act
-            var result = sut.HasOverlappingAimEndDates(delivery.Object, (IReadOnlyCollection<ILearningDelivery>)null);
+            var comparison = new TestLearningDelivery()
+            {
+                LearnActEndDateNullable = null,
+            };
 
-            // assert
-            Assert.False(result);
+            NewRule().OpenAimConditionMet(learningDelivery, comparison).Should().BeTrue();
         }
 
-        /// <summary>
-        /// Has overlapping aim end dates meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Fact]
+        public void OpenAimConditionMet_False_LearningDelivery()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                LearnActEndDateNullable = new DateTime(2013, 1, 1),
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                LearnActEndDateNullable = null,
+            };
+
+            NewRule().OpenAimConditionMet(learningDelivery, comparison).Should().BeFalse();
+        }
+
+        [Fact]
+        public void OpenAimConditionMet_False_Comparison()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                LearnActEndDateNullable = null,
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                LearnActEndDateNullable = new DateTime(2016, 1, 1),
+            };
+
+            NewRule().OpenAimConditionMet(learningDelivery, comparison).Should().BeFalse();
+        }
+
         [Theory]
         [InlineData("2016-03-31", "2016-04-01", "2017-04-01", false)] // below lower limit
         [InlineData("2016-04-01", "2016-04-01", "2017-04-01", true)] // on lower limit
@@ -372,501 +264,320 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [InlineData("2019-06-09", "2016-04-01", null, true)] // open ended
         public void HasOverlappingAimEndDatesMeetsExpectation(string candidate, string start, string end, bool expectation)
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            delivery
-                .Setup(x => x.LearnStartDate)
-                .Returns(DateTime.Parse(candidate));
+            var delivery = new TestLearningDelivery()
+            {
+                LearnStartDate = DateTime.Parse(candidate)
+            };
 
-            var temp = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            temp
-                .Setup(x => x.LearnStartDate)
-                .Returns(DateTime.Parse(start));
-            temp
-                .Setup(x => x.LearnActEndDateNullable)
-                .Returns(GetNullableDate(end));
+            var temp = new TestLearningDelivery()
+            {
+                LearnStartDate = DateTime.Parse(start),
+                LearnActEndDateNullable = GetNullableDate(end)
+            };
 
-            var sut = NewRule();
-
-            // act
-            var result = sut.HasOverlappingAimEndDates(delivery.Object, temp.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
+            NewRule().OverlappingAimEndDatesConditionMet(delivery, temp).Should().Be(expectation);
         }
 
-        /// <summary>
-        /// Has qualifying model meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void HasQualifyingModelMeetsExpectation(bool expectation)
-        {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 36)) // TypeOfFunding.ApprenticeshipsFrom1May2017
-                .Returns(expectation);
-
-            var sut = new R99Rule(handler.Object, commonOps.Object);
-
-            // act
-            var result = sut.HasQualifyingModel(delivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-        }
-
-        /// <summary>
-        /// Is standard Apprenticeship meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsStandardApprenticeshipMeetsExpectation(bool expectation)
-        {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
-                .Returns(expectation);
-
-            var sut = new R99Rule(handler.Object, commonOps.Object);
-
-            // act
-            var result = sut.IsStandardApprenticeship(delivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-        }
-
-        /// <summary>
-        /// Has overlapping aim achievement dates with null candidates returns false
-        /// </summary>
         [Fact]
-        public void HasOverlappingAimAchievementDatesWithNullCandidatesReturnsFalse()
+        public void AchievementDateConditionMet_True()
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            var sut = NewRule();
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                LearnActEndDateNullable = new DateTime(2018, 1, 1),
+                LearnStartDate = new DateTime(2019, 1, 1)
+            };
 
-            // act
-            var result = sut.HasOverlappingAimAchievementDates(delivery.Object, (IReadOnlyCollection<ILearningDelivery>)null);
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
 
-            // assert
-            Assert.False(result);
+            NewRule().AchievementDateConditionMet(learningDelivery, comparison).Should().BeTrue();
         }
 
-        /// <summary>
-        /// Has overlapping aim achievement dates meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData("2016-03-31", "2016-04-01", "2017-04-01", false)] // below lower limit
-        [InlineData("2016-04-01", "2016-04-01", "2017-04-01", true)] // on lower limit
-        [InlineData("2016-09-16", "2016-04-01", "2017-04-01", true)] // inside
-        [InlineData("2017-04-01", "2016-04-01", "2017-04-01", true)] // on upper limit
-        [InlineData("2017-04-02", "2016-04-01", "2017-04-01", false)] // outside upper limit
-        [InlineData("2019-06-09", "2016-04-01", null, true)] // open ended
-        public void HasOverlappingAimAchievementDatesMeetsExpectation(string candidate, string start, string end, bool expectation)
+        [Fact]
+        public void AchievementDateConditionMet_False_LearningDeliveryFundModel()
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            delivery
-                .Setup(x => x.LearnStartDate)
-                .Returns(DateTime.Parse(candidate));
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 35,
+                LearnActEndDateNullable = new DateTime(2018, 1, 1),
+                LearnStartDate = new DateTime(2019, 1, 1)
+            };
 
-            var temp = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            temp
-                .Setup(x => x.LearnStartDate)
-                .Returns(DateTime.Parse(start));
-            temp
-                .Setup(x => x.AchDateNullable)
-                .Returns(GetNullableDate(end));
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
 
-            var sut = NewRule();
-
-            // act
-            var result = sut.HasOverlappingAimAchievementDates(delivery.Object, temp.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
+            NewRule().AchievementDateConditionMet(learningDelivery, comparison).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// date ranges that generate one error item
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
-        [Theory]
-        [InlineData("2016-09-16", "2016-04-01", "2017-04-01")] // inside
-        [InlineData("2017-04-01", "2016-04-01", "2017-04-01")] // on upper limit
-        public void InvalidItemRaisesValidationMessage(string candidate, string start, string end)
+        [Fact]
+        public void AchievementDateConditionMet_False_LearningDeliveryLearnActEndDate()
         {
-            // arrange
-            const string LearnRefNumber = "123456789X";
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                LearnActEndDateNullable = null,
+                LearnStartDate = new DateTime(2019, 1, 1)
+            };
 
-            var testDate = DateTime.Parse(candidate);
-            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            delivery
-                .SetupGet(x => x.AimType)
-                .Returns(1);
-            delivery
-                .SetupGet(x => x.FundModel)
-                .Returns(1);
-            delivery
-                .SetupGet(x => x.ProgTypeNullable)
-                .Returns(1);
-            delivery
-                .SetupGet(x => x.AimSeqNumber)
-                .Returns(1);
-            delivery
-                .Setup(x => x.LearnActEndDateNullable)
-                .Returns((DateTime?)null);
-            delivery
-                .Setup(x => x.AchDateNullable)
-                .Returns((DateTime?)null);
-            delivery
-                .SetupGet(x => x.LearnStartDate)
-                .Returns(testDate);
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
 
-            var testStart2 = GetNullableDate(start);
-            var testEnd = GetNullableDate(end);
-            var temp = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            temp
-                .SetupGet(x => x.AimType)
-                .Returns(2);
-            temp
-                .SetupGet(x => x.FundModel)
-                .Returns(2);
-            temp
-                .SetupGet(x => x.ProgTypeNullable)
-                .Returns(2);
-            temp
-                .SetupGet(x => x.AimSeqNumber)
-                .Returns(2);
-            temp
-                .Setup(x => x.LearnStartDate)
-                .Returns(DateTime.Parse(start));
-            temp
-                .Setup(x => x.LearnActEndDateNullable)
-                .Returns(testEnd);
-            temp
-                .Setup(x => x.AchDateNullable)
-                .Returns(testEnd);
-
-            var deliveries = new ILearningDelivery[] { delivery.Object, temp.Object };
-
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            handler
-                .Setup(x => x.Handle(RuleNameConstants.R99, LearnRefNumber, 1, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("AimType", 1))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testDate)))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnActEndDate", null))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("FundModel", 1))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("ProgType", 1))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("AchDate", null))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InAProgramme(Moq.It.IsAny<ILearningDelivery>()))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(Moq.It.IsAny<ILearningDelivery>(), 36))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(Moq.It.IsAny<ILearningDelivery>()))
-                .Returns(true);
-
-            var sut = new R99Rule(handler.Object, commonOps.Object);
-
-            // act
-            sut.Validate(mockLearner.Object);
-
-            // assert
-            handler.VerifyAll();
-            commonOps.VerifyAll();
+            NewRule().AchievementDateConditionMet(learningDelivery, comparison).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Invalid item raises validation messages.
-        /// date ranges that generate two error items
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
-        [Theory]
-        [InlineData("2016-04-01", "2016-04-01", "2017-04-01")] // on lower limit
-        [InlineData("2019-06-09", "2016-04-01", null)] // open ended
-        public void InvalidItemRaisesValidationMessages(string candidate, string start, string end)
+        [Fact]
+        public void AchievementDateConditionMet_False_ComparisonFundModel()
         {
-            // arrange
-            const string LearnRefNumber = "123456789X";
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                LearnActEndDateNullable = new DateTime(2018, 1, 1),
+                LearnStartDate = new DateTime(2019, 1, 1)
+            };
 
-            var testDate = DateTime.Parse(candidate);
-            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            delivery
-                .SetupGet(x => x.AimType)
-                .Returns(1);
-            delivery
-                .SetupGet(x => x.FundModel)
-                .Returns(1);
-            delivery
-                .SetupGet(x => x.ProgTypeNullable)
-                .Returns(1);
-            delivery
-                .SetupGet(x => x.AimSeqNumber)
-                .Returns(1);
-            delivery
-                .Setup(x => x.LearnActEndDateNullable)
-                .Returns((DateTime?)null);
-            delivery
-                .Setup(x => x.AchDateNullable)
-                .Returns((DateTime?)null);
-            delivery
-                .SetupGet(x => x.LearnStartDate)
-                .Returns(testDate);
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 35,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
 
-            var testStart2 = GetNullableDate(start);
-            var testEnd = GetNullableDate(end);
-            var temp = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            temp
-                .SetupGet(x => x.AimType)
-                .Returns(2);
-            temp
-                .SetupGet(x => x.FundModel)
-                .Returns(2);
-            temp
-                .SetupGet(x => x.ProgTypeNullable)
-                .Returns(2);
-            temp
-                .SetupGet(x => x.AimSeqNumber)
-                .Returns(2);
-            temp
-                .Setup(x => x.LearnStartDate)
-                .Returns(DateTime.Parse(start));
-            temp
-                .Setup(x => x.LearnActEndDateNullable)
-                .Returns(testEnd);
-            temp
-                .Setup(x => x.AchDateNullable)
-                .Returns(testEnd);
-
-            var deliveries = new ILearningDelivery[] { delivery.Object, temp.Object };
-
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            handler
-                .Setup(x => x.Handle(RuleNameConstants.R99, LearnRefNumber, 1, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("AimType", 1))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testDate)))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnActEndDate", null))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("FundModel", 1))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("ProgType", 1))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("AchDate", null))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-
-            handler
-                .Setup(x => x.Handle(RuleNameConstants.R99, LearnRefNumber, 2, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("AimType", 2))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testStart2)))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnActEndDate", AbstractRule.AsRequiredCultureDate(testEnd)))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("FundModel", 2))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("ProgType", 2))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("AchDate", AbstractRule.AsRequiredCultureDate(testEnd)))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InAProgramme(Moq.It.IsAny<ILearningDelivery>()))
-                .Returns(true);
-
-            var sut = new R99Rule(handler.Object, commonOps.Object);
-
-            // act
-            sut.Validate(mockLearner.Object);
-
-            // assert
-            handler.VerifyAll();
-            commonOps.VerifyAll();
+            NewRule().AchievementDateConditionMet(learningDelivery, comparison).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// we make the candidate a one day aim so there can be no over lap with the start and end dates
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
-        [Theory]
-        [InlineData("2016-03-31", "2016-04-01", "2017-04-01")] // below lower limit
-        [InlineData("2017-04-02", "2016-04-01", "2017-04-01")] // outside upper limit
-        public void ValidItemDoesNotRaiseValidationMessage(string candidate, string start, string end)
+        [Fact]
+        public void AchievementDateConditionMet_False_ComparisonProgType()
         {
-            // arrange
-            const string LearnRefNumber = "123456789X";
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                LearnActEndDateNullable = new DateTime(2018, 1, 1),
+                LearnStartDate = new DateTime(2019, 1, 1)
+            };
 
-            var testDate = DateTime.Parse(candidate);
-            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            delivery
-                .SetupGet(x => x.AimType)
-                .Returns(1);
-            delivery
-                .SetupGet(x => x.FundModel)
-                .Returns(1);
-            delivery
-                .SetupGet(x => x.ProgTypeNullable)
-                .Returns(1);
-            delivery
-                .SetupGet(x => x.AimSeqNumber)
-                .Returns(1);
-            delivery
-                .Setup(x => x.LearnActEndDateNullable)
-                .Returns(testDate);
-            delivery
-                .Setup(x => x.AchDateNullable)
-                .Returns(testDate);
-            delivery
-                .SetupGet(x => x.LearnStartDate)
-                .Returns(testDate);
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                ProgTypeNullable = 20,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
 
-            var testStart2 = GetNullableDate(start);
-            var testEnd = GetNullableDate(end);
-            var temp = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            temp
-                .SetupGet(x => x.AimType)
-                .Returns(2);
-            temp
-                .SetupGet(x => x.FundModel)
-                .Returns(2);
-            temp
-                .SetupGet(x => x.ProgTypeNullable)
-                .Returns(2);
-            temp
-                .SetupGet(x => x.AimSeqNumber)
-                .Returns(2);
-            temp
-                .Setup(x => x.LearnStartDate)
-                .Returns(DateTime.Parse(start));
-            temp
-                .Setup(x => x.LearnActEndDateNullable)
-                .Returns(testEnd);
-            temp
-                .Setup(x => x.AchDateNullable)
-                .Returns(testEnd);
-
-            var deliveries = new ILearningDelivery[] { delivery.Object, temp.Object };
-
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InAProgramme(Moq.It.IsAny<ILearningDelivery>()))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(Moq.It.IsAny<ILearningDelivery>(), 36))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(Moq.It.IsAny<ILearningDelivery>()))
-                .Returns(true);
-
-            var sut = new R99Rule(handler.Object, commonOps.Object);
-
-            // act
-            sut.Validate(mockLearner.Object);
-
-            // assert
-            handler.VerifyAll();
-            commonOps.VerifyAll();
+            NewRule().AchievementDateConditionMet(learningDelivery, comparison).Should().BeFalse();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
-        public R99Rule NewRule()
+        [Fact]
+        public void AchievementDateConditionMet_False_Dates()
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                LearnActEndDateNullable = new DateTime(2018, 1, 1),
+                LearnStartDate = new DateTime(2017, 1, 1)
+            };
 
-            return new R99Rule(handler.Object, commonOps.Object);
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().AchievementDateConditionMet(learningDelivery, comparison).Should().BeFalse();
         }
+
+        [Fact]
+        public void ApprenticeshipStandardConditionMet_True()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                AchDateNullable = new DateTime(2018, 1, 1),
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 1, 1)
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ApprenticeshipStandardsConditionMet_False_LearningDeliveryFundModel()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 35,
+                AchDateNullable = new DateTime(2018, 1, 1),
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 1, 1)
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ApprenticeshipStandardsConditionMet_False_LearningDeliveryAchDate()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                AchDateNullable = null,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 1, 1)
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ApprenticeshipStandardsConditionMet_False_ComparisonFundModel()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                AchDateNullable = new DateTime(2018, 1, 1),
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 1, 1)
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 35,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ApprenticeshipStandardsConditionMet_False_ComparisonProgType()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                AchDateNullable = new DateTime(2018, 1, 1),
+                ProgTypeNullable = 20,
+                LearnStartDate = new DateTime(2019, 1, 1)
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ApprenticeshipStandardsConditionMet_False_Dates()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                AchDateNullable = new DateTime(2018, 1, 1),
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2017, 1, 1)
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                AchDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Validate_Invalid()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2018, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2017, 1, 1),
+                        LearnActEndDateNullable = new DateTime(2019, 1, 1),
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Valid()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2018, 1, 1)
+                    },
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        private R99Rule NewRule(IValidationErrorHandler validationErrorHandler = null) => new R99Rule(validationErrorHandler ?? Mock.Of<IValidationErrorHandler>());
     }
 }
