@@ -31,13 +31,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             {
                 if (ConditionMet(learningDelivery))
                 {
-                    var learnDelFAMDateToTuple = GetMaxLearnDelFAMDateTo(learningDelivery.LearningDeliveryFAMs);
+                    var learnDelFAMDateTo = GetMaxLearnDelFAMDateTo(learningDelivery.LearningDeliveryFAMs);
 
                     HandleValidationError(
                         learner.LearnRefNumber,
                         learningDelivery.AimSeqNumber,
                         BuildErrorMessageParameters(
-                            learnDelFAMDateToTuple.LearnDelFAMDateTo,
+                            learnDelFAMDateTo,
                             learningDelivery.CompStatus));
                 }
             }
@@ -60,8 +60,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool FAMDateConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            var learnDelFAMDateToTuple = GetMaxLearnDelFAMDateTo(learningDeliveryFAMs);
-            return learnDelFAMDateToTuple.Found && learnDelFAMDateToTuple.LearnDelFAMDateTo.HasValue;
+            var learnDelFAMDateTo = GetMaxLearnDelFAMDateTo(learningDeliveryFAMs);
+            return learnDelFAMDateTo.HasValue;
         }
 
         public bool FAMTypeConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
@@ -69,14 +69,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT);
         }
 
-        private (bool Found, DateTime? LearnDelFAMDateTo) GetMaxLearnDelFAMDateTo(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        private DateTime? GetMaxLearnDelFAMDateTo(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            var learnDelFam = learningDeliveryFAMs?
+            return learningDeliveryFAMs?
                 .Where(f => f.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.ACT))
                 .OrderByDescending(o => o.LearnDelFAMDateFromNullable)
-                .FirstOrDefault();
-
-            return learnDelFam != null ? (true, learnDelFam.LearnDelFAMDateToNullable) : (false, null);
+                .FirstOrDefault()
+                .LearnDelFAMDateToNullable;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? famDateTo, int compStatus)
