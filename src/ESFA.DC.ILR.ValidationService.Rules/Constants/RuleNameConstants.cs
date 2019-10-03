@@ -195,6 +195,7 @@
         public const string FundModel_07 = "FundModel_07";
         public const string FundModel_08 = "FundModel_08";
         public const string FundModel_09 = "FundModel_09";
+        public const string FundModel_10 = "FundModel_10";
 
         public const string FworkCode_01 = "FworkCode_01";
         public const string FworkCode_02 = "FworkCode_02";
