@@ -18,6 +18,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
         public bool HasLearningDeliveryFAMCodeForType(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, string famType, string famCode)
         {
+            if (learningDeliveryFAMs == null)
+            {
+                return false;
+            }
+
             return GetLearningDeliveryFAMsForTypeAndCode(learningDeliveryFAMs, famType, famCode)?
                        .Any()
                    ?? false;
@@ -42,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
         public IEnumerable<ILearningDeliveryFAM> GetLearningDeliveryFAMsForType(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams, string famType)
         {
-            return learningDeliveryFams?.Where(fam => HasFamType(fam, famType)) ?? new List<ILearningDeliveryFAM>();
+            return learningDeliveryFams?.Where(fam => HasFamType(fam, famType)) ?? Enumerable.Empty<ILearningDeliveryFAM>();
         }
 
         public IEnumerable<ILearningDeliveryFAM> GetLearningDeliveryFAMsForTypeAndCode(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams, string famType, string famCode)
@@ -72,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
             var arraySize = learnDelFAMs.Length;
 
-            if (arraySize >= 2 && !learnDelFAMs.All(ldf => ldf.LearnDelFAMDateFromNullable == null))
+            if (arraySize >= 2 && learnDelFAMs.Any(ldf => ldf.LearnDelFAMDateFromNullable != null))
             {
                 for (var i = 0; i < arraySize - 1; i++)
                 {
@@ -101,7 +106,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
         public bool HasFamCode(ILearningDeliveryFAM learningDeliveryFam, string famCode)
         {
-            return learningDeliveryFam.LearnDelFAMCode == famCode;
+            return learningDeliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(famCode);
         }
     }
 }
