@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
@@ -103,8 +104,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         public bool IsExcluded(int? progType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, string legalOrgType)
         {
             return progType.HasValue
-                || CaseInsensitiveEquals(lsdPostcode, ValidationConstants.TemporaryPostCode)
-                || CaseInsensitiveEquals(legalOrgType, LegalOrgTypeConstants.LTR)
+                || lsdPostcode.CaseInsensitiveEquals(ValidationConstants.TemporaryPostCode)
+                || legalOrgType.CaseInsensitiveEquals(LegalOrgTypeConstants.LTR)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);
