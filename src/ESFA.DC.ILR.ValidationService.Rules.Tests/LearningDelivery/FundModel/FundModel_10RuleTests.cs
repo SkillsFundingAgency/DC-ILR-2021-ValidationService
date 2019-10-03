@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.FundModel
         }
 
         [Fact]
-        public void ConditionMet_False()
+        public void ConditionMet_True()
         {
             NewRule().ConditionMet(36).Should().BeTrue();
         }
@@ -115,10 +115,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.FundModel
                 {
                     new TestLearningDeliveryFAM
                     {
-                        LearnDelFAMType = "SOF"
-                    },
-                    new TestLearningDeliveryFAM
-                    {
+                        LearnDelFAMType = "SOF",
                         LearnDelFAMCode = "105"
                     }
                 }
@@ -140,6 +137,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.FundModel
             {
                 NewRule(dd35Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
+        }
+
+        [Fact]
+        public void BuildErrorMessageParameters()
+        {
+            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
+
+            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnDelFAMType", "SOF")).Verifiable();
+            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnDelFAMCode", "105")).Verifiable();
+            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("FundModel", 10)).Verifiable();
+
+            NewRule(new Mock<IDerivedData_35Rule>().Object, validationErrorHandlerMock.Object).BuildErrorMessageParameters(10, "105");
+
+            validationErrorHandlerMock.Verify();
         }
 
         private FundModel_10Rule NewRule(

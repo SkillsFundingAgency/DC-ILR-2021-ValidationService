@@ -29,9 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                var combinedAuthorities =
-                    _derivedData35.IsCombinedAuthorities(learningDelivery);
-                if (!combinedAuthorities)
+                if (!_derivedData35.IsCombinedAuthorities(learningDelivery))
                 {
                     continue;
                 }
@@ -41,7 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
                     HandleValidationError(
                         learner.LearnRefNumber,
                         learningDelivery.AimSeqNumber,
-                        BuildErrorMessageParameters(learningDelivery.FundModel, learningDelivery.LearningDeliveryFAMs.Where(x => x.LearnDelFAMType.ToUpper()=="SOF").FirstOrDefault().LearnDelFAMCode));
+                        BuildErrorMessageParameters(learningDelivery.FundModel, learningDelivery.LearningDeliveryFAMs.Where(x => x.LearnDelFAMType.ToUpper()== LearningDeliveryFAMTypeConstants.SOF).FirstOrDefault().LearnDelFAMCode));
                 }
             }
         }
@@ -49,12 +47,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
         public bool ConditionMet(int fundModel) =>
             fundModel != TypeOfFunding.AdultSkills && fundModel != TypeOfFunding.CommunityLearning;
 
-        private IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel, string learnDelFAMCode)
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel, string learnDelFAMCode)
         {
             return new[]
             {
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.SOF),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnFAMCode, learnDelFAMCode),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, learnDelFAMCode),
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel)
 
             };
