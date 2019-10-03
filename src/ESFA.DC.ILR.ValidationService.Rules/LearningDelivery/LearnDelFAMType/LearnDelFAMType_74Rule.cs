@@ -9,136 +9,48 @@ using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
-    /// <summary>
-    /// learning delivery funding amd monitoring rule 09
-    /// </summary>
-    /// <seealso cref="AbstractRule" />
-    /// <seealso cref="Interface.IRule{ILearner}" />
-    public class LearnDelFAMType_74Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnDelFAMType_74Rule : AbstractRule, IRule<ILearner>
     {
-        /// <summary>
-        /// The check (rule common operations provider)
-        /// </summary>
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly HashSet<int> _fundModelsAppsAndEsf = new HashSet<int>
+        {
+            TypeOfFunding.ApprenticeshipsFrom1May2017,
+            TypeOfFunding.EuropeanSocialFund,
+            TypeOfFunding.OtherAdult
+        };
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LearnDelFAMType_74Rule" /> class.
-        /// </summary>
-        /// <param name="validationErrorHandler">The validation error handler.</param>
-        /// <param name="commonOperations">The common operations.</param>
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
+
         public LearnDelFAMType_74Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations)
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_74)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
-            _check = commonOperations;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
-        /// <summary>
-        /// Gets the last inviable date.
-        /// </summary>
         public static DateTime LastInviableDate => new DateTime(2019, 07, 31);
 
-        /// <summary>
-        /// Determines whether [has qualifying start] [the specified the delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [has qualifying start] [the specified the delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasQualifyingStart(ILearningDelivery theDelivery) =>
-            theDelivery.LearnStartDate > LastInviableDate;
+        public bool HasQualifyingStart(DateTime learnStartDate) =>
+            learnStartDate > LastInviableDate;
 
-        /// <summary>
-        /// Determines whether [has disqualifying monitor] [the specified monitor].
-        /// there can only be one SOF code on a delivery
-        /// </summary>
-        /// <param name="monitor">The monitor.</param>
-        /// <returns>
-        ///   <c>true</c> if [has disqualifying monitor] [the specified monitor]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasDisqualifyingMonitor(ILearningDeliveryFAM monitor) =>
-            It.IsInRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding)
-            && It.IsOutOfRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
+        public bool HasDisqualifyingMonitor(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs) =>
+            !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                learningDeliveryFAMs,
+                Monitoring.Delivery.Types.SourceOfFunding,
+                LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
 
-        /// <summary>
-        /// Determines whether [has disqualifying monitor] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [has disqualifying monitor] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasDisqualifyingMonitor(ILearningDelivery delivery) =>
-            _check.CheckDeliveryFAMs(delivery, HasDisqualifyingMonitor);
+        public bool HasQualifyingFunding(int fundModel) =>
+            _fundModelsAppsAndEsf.Contains(fundModel);
 
-        /// <summary>
-        /// Determines whether [has qualifying funding] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [has qualifying funding] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasQualifyingFunding(ILearningDelivery delivery) =>
-            _check.HasQualifyingFunding(
-                delivery,
-                TypeOfFunding.ApprenticeshipsFrom1May2017,
-                TypeOfFunding.EuropeanSocialFund,
-                TypeOfFunding.OtherAdult);
+        public bool HasTraineeshipFunding(int fundModel, int? progType) =>
+            fundModel == TypeOfFunding.AdultSkills
+            && progType.HasValue;
 
-        /// <summary>
-        /// Determines whether [has traineeship funding] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [has traineeship funding] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasTraineeshipFunding(ILearningDelivery theDelivery) =>
-            HasQualifyingTraineeshipModel(theDelivery)
-            && IsTraineeship(theDelivery);
+        public bool ConditionMet(ILearningDelivery theDelivery) =>
+            HasQualifyingStart(theDelivery.LearnStartDate)
+            && (HasQualifyingFunding(theDelivery.FundModel) || HasTraineeshipFunding(theDelivery.FundModel, theDelivery.ProgTypeNullable))
+            && HasDisqualifyingMonitor(theDelivery.LearningDeliveryFAMs);
 
-        /// <summary>
-        /// Determines whether [has qualifying traineeship model] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [has qualifying traineeship model] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasQualifyingTraineeshipModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.AdultSkills);
-
-        /// <summary>
-        /// Determines whether the specified delivery is traineeship.
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified delivery is traineeship; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsTraineeship(ILearningDelivery theDelivery) =>
-            _check.IsTraineeship(theDelivery);
-
-        /// <summary>
-        /// Determines whether [is not valid] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsNotValid(ILearningDelivery theDelivery) =>
-            HasQualifyingStart(theDelivery)
-            && (HasQualifyingFunding(theDelivery) || HasTraineeshipFunding(theDelivery))
-            && HasDisqualifyingMonitor(theDelivery);
-
-        /// <summary>
-        /// Validates the specified learner.
-        /// </summary>
-        /// <param name="theLearner">The learner.</param>
         public void Validate(ILearner theLearner)
         {
             It.IsNull(theLearner)
@@ -147,27 +59,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             var learnRefNumber = theLearner.LearnRefNumber;
 
             theLearner.LearningDeliveries
-                .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));
+                .ForAny(ConditionMet, x => RaiseValidationMessage(learnRefNumber, x));
         }
 
-        /// <summary>
-        /// Raises the validation message.
-        /// </summary>
-        /// <param name="learnRefNumber">The learn reference number.</param>
-        /// <param name="thisDelivery">this delivery.</param>
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery) =>
-            HandleValidationError(learnRefNumber, thisDelivery.AimSeqNumber, BuildMessageParametersFor(thisDelivery));
+            HandleValidationError(learnRefNumber, thisDelivery.AimSeqNumber, BuildErrorMessageParameters(thisDelivery.FundModel));
 
-        /// <summary>
-        /// Builds the message parameters for (this delivery).
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        /// returns a list of message parameters
-        /// </returns>
-        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery theDelivery) => new[]
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel) => new[]
         {
-            BuildErrorMessageParameter(PropertyNameConstants.FundModel, theDelivery.FundModel),
+            BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
             BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding),
             BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult)
         };
