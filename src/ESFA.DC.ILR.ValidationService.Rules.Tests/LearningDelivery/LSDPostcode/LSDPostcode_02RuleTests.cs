@@ -1,940 +1,414 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
+using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
+using FluentAssertions;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
 {
-    /// <summary>
-    /// learn start date postcode rule 02 tests
-    /// </summary>
-    public class LSDPostcode_02RuleTests
+    public class LSDPostcode_02RuleTests : AbstractRuleTests<LSDPostcode_02Rule>
     {
-        private const int TestProviderID = 10001973;
-
-        private const string TestLegalOrgType = "PLBG"; // not specialist designated college
-
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LSDPostcode_02Rule(null, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object));
-        }
-
-        /// <summary>
-        /// New rule with null common ops throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullCommonOpsThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LSDPostcode_02Rule(handler.Object, null, organisationData.Object, fileData.Object, postcodeData.Object));
+            NewRule().RuleName.Should().Be("LSDPostcode_02");
         }
 
         [Fact]
-        public void NewRuleWithNullOrganisationDataThrows()
+        public void LearnSartDateConditionMet_True()
         {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LSDPostcode_02Rule(handler.Object, commonOps.Object, null, fileData.Object, postcodeData.Object));
+            NewRule().LearnStartDateConditionMet(new DateTime(2019, 8, 1)).Should().BeTrue();
         }
 
         [Fact]
-        public void NewRuleWithNullFileDataThrows()
+        public void LearnSartDateConditionMet_False()
         {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, null, postcodeData.Object));
-        }
-
-        /// <summary>
-        /// New rule with null file data throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullPostcodeDataThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal("LSDPostcode_02", result);
-        }
-
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(RuleNameConstants.LSDPostcode_02, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// First viable start meets expectation.
-        /// </summary>
-        [Fact]
-        public void FirstViableStartMeetsExpectation()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Equal(DateTime.Parse("2019-08-01"), sut.FirstViableStart);
-        }
-
-        /// <summary>
-        /// Organisation type meets expectation.
-        /// </summary>
-        [Fact]
-        public void OrganisationTypeMeetsExpectation()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Equal(TestLegalOrgType, sut.OrganisationType);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
+            NewRule().LearnStartDateConditionMet(new DateTime(2018, 8, 1)).Should().BeFalse();
         }
 
         [Theory]
-        [InlineData(1003, "PBLG", false)]
-        [InlineData(1005, "PBLG", false)]
-        [InlineData(1006, "USDC", true)]
-        [InlineData(1007, "USDC", true)]
-        public void IsSpecialistDesignatedCollegeMeetsExpectation(int ukprn, string candidate, bool expectation)
+        [InlineData(10)]
+        [InlineData(35)]
+        public void FundModelConditionMet_True(int fundModel)
         {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            organisationData
-                .Setup(x => x.GetLegalOrgTypeForUkprn(ukprn))
-                .Returns(candidate);
-
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(ukprn);
-
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            var sut = new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object);
-
-            // act
-            var result = sut.IsSpecialistDesignatedCollege();
-
-            // assert
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            organisationData.VerifyAll();
-            fileData.VerifyAll();
-            postcodeData.VerifyAll();
-
-            Assert.Equal(expectation, result);
+            NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
         }
 
-        [Theory]
-        [InlineData(null, false)]
-        [InlineData(21, true)]
-        [InlineData(24, true)]
-        [InlineData(25, true)]
-        [InlineData(22, true)]
-        [InlineData(1, true)]
-        [InlineData(0, true)]
-        public void HasProgrammeDefinedMeetsExpectation(int? candidate, bool expectation)
-        {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .SetupGet(x => x.ProgTypeNullable)
-                .Returns(candidate);
-
-            var sut = NewRule();
-
-            // act
-            var result = sut.HasProgrammeDefined(delivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsRestartMeetsExpectation(bool expectation)
-        {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsRestart(delivery.Object))
-                .Returns(expectation);
-
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            organisationData
-                .Setup(x => x.GetLegalOrgTypeForUkprn(TestProviderID))
-                .Returns(TestLegalOrgType);
-
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(TestProviderID);
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            var sut = new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object);
-
-            // act
-            var result = sut.IsRestart(delivery.Object);
-
-            // assert
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            organisationData.VerifyAll();
-            fileData.VerifyAll();
-            postcodeData.VerifyAll();
-
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
-        [InlineData("DAM001", Monitoring.Delivery.PostcodeValidationExclusion)]
-        public void MonitoringDeliveryMeetsExpectation(string expectation, string candidate)
-        {
-            // arrange / act / assert
-            Assert.Equal(expectation, candidate);
-        }
-
-        [Theory]
-        [InlineData("DAM", "012", false)]
-        [InlineData("DAM", "002", false)]
-        [InlineData("LDM", "034", false)]
-        [InlineData("DAM", "001", true)]
-        public void IsPostcodeValidationExclusionMeetsExpectation(string candidateType, string candidateCode, bool expectation)
-        {
-            // arrange
-            var monitor = new Mock<ILearningDeliveryFAM>();
-            monitor
-                .SetupGet(x => x.LearnDelFAMType)
-                .Returns(candidateType);
-            monitor
-                .SetupGet(x => x.LearnDelFAMCode)
-                .Returns(candidateCode);
-
-            var sut = NewRule();
-
-            // act
-            var result = sut.IsPostcodeValidationExclusion(monitor.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-        }
-
-        /// <summary>
-        /// Type of funding meets expectation.
-        /// </summary>
-        /// <param name="expectation">The expectation.</param>
-        /// <param name="candidate">The candidate.</param>
-        [Theory]
-        [InlineData(35, TypeOfFunding.AdultSkills)]
-        [InlineData(10, TypeOfFunding.CommunityLearning)]
-        public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
-        {
-            // arrange / act / assert
-            Assert.Equal(expectation, candidate);
-        }
-
-        /// <summary>
-        /// Has qualifying model meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void HasQualifyingModelMeetsExpectation(bool expectation)
-        {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 10))
-                .Returns(expectation);
-
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            organisationData
-                .Setup(x => x.GetLegalOrgTypeForUkprn(TestProviderID))
-                .Returns(TestLegalOrgType);
-
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(TestProviderID);
-
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            var sut = new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object);
-
-            // act
-            var result = sut.HasQualifyingModel(delivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            organisationData.VerifyAll();
-            fileData.VerifyAll();
-            postcodeData.VerifyAll();
-        }
-
-        /// <summary>
-        /// Has qualifying start meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void HasQualifyingStartMeetsExpectation(bool expectation)
-        {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, DateTime.Parse("2019-08-01"), null))
-                .Returns(expectation);
-
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            organisationData
-                .Setup(x => x.GetLegalOrgTypeForUkprn(TestProviderID))
-                .Returns(TestLegalOrgType);
-
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(TestProviderID);
-
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            var sut = new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object);
-
-            // act
-            var result = sut.HasQualifyingStart(delivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            organisationData.VerifyAll();
-            fileData.VerifyAll();
-            postcodeData.VerifyAll();
-        }
-
-        [Theory]
-        [InlineData("blah")]
-        [InlineData("blah blah")]
-        public void GetDevolvedPostcodesMeetsExpectation(string candidate)
-        {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            delivery
-                .Setup(x => x.LSDPostcode)
-                .Returns(candidate);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            organisationData
-                .Setup(x => x.GetLegalOrgTypeForUkprn(TestProviderID))
-                .Returns(TestLegalOrgType);
-
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(TestProviderID);
-
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-            postcodeData
-                .Setup(x => x.GetDevolvedPostcodes(candidate))
-                .Returns(new IDevolvedPostcode[] { });
-
-            var sut = new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object);
-
-            // act
-            var result = sut.GetDevolvedPostcodes(delivery.Object);
-
-            // assert
-            Assert.Empty(result);
-
-            delivery.VerifyAll();
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            organisationData.VerifyAll();
-            fileData.VerifyAll();
-            postcodeData.VerifyAll();
-        }
-
-        /// <summary>
-        /// Get delivery funding codes returns empty set by default.
-        /// </summary>
         [Fact]
-        public void GetDeliveryFundingCodesReturnsEmptySetByDefault()
+        public void FundModelConditionMet_False()
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            delivery
-                .SetupGet(x => x.LearningDeliveryFAMs)
-                .Returns((IReadOnlyCollection<ILearningDeliveryFAM>)null);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            organisationData
-                .Setup(x => x.GetLegalOrgTypeForUkprn(TestProviderID))
-                .Returns(TestLegalOrgType);
-
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(TestProviderID);
-
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            var sut = new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object);
-
-            // act
-            var result = sut.GetDeliveryFundingCodes(delivery.Object);
-
-            // assert
-            Assert.Empty(result);
-
-            delivery.VerifyAll();
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            organisationData.VerifyAll();
-            fileData.VerifyAll();
-            postcodeData.VerifyAll();
+            NewRule().FundModelConditionMet(70).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Has qualifying funding type meets expectaton
-        /// this is a 'random' selection of funding and monitoring types
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData("SOF", true)] // Monitoring.Delivery.Types.SourceOfFunding
-        [InlineData("DAM", false)] // Monitoring.Delivery.Types.DevolvedAreaMonitoring
-        [InlineData("ADL", false)] // Monitoring.Delivery.Types.AdvancedLearnerLoan
-        [InlineData("ALB", false)] // Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding
-        [InlineData("LDM", false)] // Monitoring.Delivery.Types.Learner
-        [InlineData("ACT", false)] // Monitoring.Delivery.Types.ApprenticeshipContract
-        [InlineData("ASL", false)] // Monitoring.Delivery.Types.CommunityLearningProvision
-        [InlineData("EEF", false)] // Monitoring.Delivery.Types.CommunityLearningProvision
-        [InlineData("FLN", false)] // Monitoring.Delivery.Types.FamilyEnglishMathsAndLanguage
-        [InlineData("FFI", false)] // Monitoring.Delivery.Types.FullOrCoFunding
-        public void HasQualifyingFundingTypeMeetsExpectaton(string candidate, bool expectation)
-        {
-            // arrange
-            var fam = new Mock<ILearningDeliveryFAM>();
-            fam
-                .Setup(x => x.LearnDelFAMType)
-                .Returns(candidate);
-
-            var sut = NewRule();
-
-            // act
-            var result = sut.HasQualifyingFundingType(fam.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
-        [InlineData("blah")]
-        [InlineData("blah blah")]
-        public void GetFundingCodeMeetsExpectaton(string expectation)
-        {
-            // arrange
-            var fam = new Mock<ILearningDeliveryFAM>(MockBehavior.Strict);
-            fam
-                .Setup(x => x.LearnDelFAMCode)
-                .Returns(expectation);
-
-            var sut = NewRule();
-
-            // act
-            var result = sut.GetFundingCode(fam.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-            fam.VerifyAll();
-        }
-
-        /// <summary>
-        /// Get devolved postcodes for sof returns empty set using duff parameters.
-        /// </summary>
         [Fact]
-        public void GetDevolvedPostcodesForSoFReturnsEmptySetUsingDuffParameters()
+        public void PostcodeConditionMet_False_StartDate()
         {
-            // arrange
-            var sut = NewRule();
+            var learnStartDate = new DateTime(2019, 9, 1);
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = "Postcode",
+                    EffectiveFrom = new DateTime(2019, 9, 1),
+                    SourceOfFunding = sofCode
+                }
+            };
 
-            // act
-            var result = sut.GetDevolvedPostcodesForSoF(null, x => true);
-
-            // assert
-            Assert.Empty(result);
+            NewRule().PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Get devolved postcodes for sof returns empty set using empty parameters.
-        /// </summary>
         [Fact]
-        public void GetDevolvedPostcodesForSoFReturnsEmptySetUsingEmptyParameters()
+        public void PostcodeConditionMet_False_EmptyDevolvedPostcodes()
         {
-            // arrange
-            var sut = NewRule();
+            var learnStartDate = new DateTime(2019, 9, 1);
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = "Postcode",
+                    EffectiveFrom = new DateTime(2019, 9, 1),
+                    SourceOfFunding = sofCode
+                }
+            };
 
-            // act
-            var result = sut.GetDevolvedPostcodesForSoF(new IDevolvedPostcode[] { }, x => true);
+            NewRule().PostcodeConditionMet(Array.Empty<IDevolvedPostcode>(), learnStartDate, sofCode).Should().BeFalse();
+        }
 
-            // assert
-            Assert.Empty(result);
+        [Fact]
+        public void PostcodeConditionMet_False_SofCode()
+        {
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = "Postcode",
+                    EffectiveFrom = new DateTime(2019, 9, 1),
+                    SourceOfFunding = "106"
+                }
+            };
+
+            NewRule().PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
+        }
+
+        [Fact]
+        public void PostcodeConditionMet_True()
+        {
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = "Postcode",
+                    EffectiveFrom = new DateTime(2019, 9, 1),
+                    SourceOfFunding = sofCode
+                }
+            };
+
+            NewRule().PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData("blah blah", true)]
-        [InlineData("blah blah blah", false)]
-        public void HasQualifyingFundingCodeMeetsExpectation(string candidate, bool expectation)
+        [InlineData("LTR", "LDM", null, null, false, false, false)]
+        [InlineData("XLTR", "LDM", null, null, true, false, false)]
+        [InlineData("XLTR", "RES", null, null, false, false, true)]
+        [InlineData("XLTR", "DAM", null, null, false, false, true)]
+        [InlineData("XLTR", "ACT", "ZZ99 9ZZ", null, false, false, false)]
+        [InlineData("XLTR", "ACT", null, 1, false, false, false)]
+        public void IsExcluded_True(string legalOrgType, string famType, string postcode, int? progType, bool mockResultLDM, bool mockResultDAM, bool mockResultRES)
         {
-            // arrange
-            var devolvedCode = new Mock<IDevolvedPostcode>(MockBehavior.Strict);
-            devolvedCode
-                .SetupGet(x => x.SourceOfFunding)
-                .Returns(candidate);
+            var learningDeliveryFAMs = new List<ILearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = famType,
+                    LearnDelFAMCode = "034"
+                },
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMCode = "034"
+                }
+            };
 
-            var sofCodes = new Mock<IContainThis<string>>(MockBehavior.Strict);
-            sofCodes
-                .Setup(x => x.Contains(candidate))
-                .Returns(expectation);
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            var sut = NewRule();
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(mockResultLDM);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(mockResultDAM);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)).Returns(mockResultRES);
 
-            // act
-            var result = sut.HasQualifyingFundingCode(devolvedCode.Object, sofCodes.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-
-            devolvedCode.VerifyAll();
-            sofCodes.VerifyAll();
+            NewRule(learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object).IsExcluded(progType, postcode, learningDeliveryFAMs, legalOrgType).Should().BeTrue();
         }
 
-        /// <summary>
-        /// Has valid source of funding with null devolved postcodes returns false
-        /// </summary>
         [Fact]
-        public void HasValidSourceOfFundingWithNullDevolvedPostcodesReturnsFalse()
+        public void IsExcluded_False()
         {
-            // arrange
-            var sut = NewRule();
+            var learningDeliveryFAMs = new List<ILearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMCode = "034"
+                },
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMCode = "034"
+                }
+            };
 
-            // act
-            var result = sut.HasValidSourceOfFunding(null, x => true);
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            // assert
-            Assert.False(result);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)).Returns(false);
+
+            NewRule(learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object).IsExcluded(null, null, learningDeliveryFAMs, "USDC").Should().BeFalse();
         }
 
-        /// <summary>
-        /// Has valid source of funding with empty devolved postcodes returns false
-        /// </summary>
         [Fact]
-        public void HasValidSourceOfFundingWithEmptyDevolvedPostcodesReturnsFalse()
+        public void ConditionMet_True()
         {
-            // arrange
-            var sut = NewRule();
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var fundModel = 35;
+            var lsdPostcode = "Postcode";
+            var legalOrgType = "USDC";
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = lsdPostcode,
+                    EffectiveFrom = new DateTime(2019, 9, 1),
+                    SourceOfFunding = sofCode
+                }
+            };
 
-            // act
-            var result = sut.HasValidSourceOfFunding(new IDevolvedPostcode[] { }, x => true);
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            // assert
-            Assert.False(result);
+            postcodeDataServiceMock.Setup(p => p.GetDevolvedPostcodes(lsdPostcode)).Returns(devolvedPostcodes);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES)).Returns(false);
+
+            NewRule(postcodesDataService: postcodeDataServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, devolvedPostcodes, sofCode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), legalOrgType).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData("2018-06-04", "2018-06-03", false)]
-        [InlineData("2018-06-04", "2018-06-04", true)]
-        [InlineData("2018-06-04", "2018-06-05", true)]
-        public void HasQualifyingEffectiveStartMeetsExpectation(string effective, string start, bool expectation)
+        [InlineData(2018, 8, 35, "USDC", false, false, false)]
+        [InlineData(2019, 9, 35, "USDC", false, false, false)]
+        [InlineData(2019, 8, 70, "USDC", false, false, false)]
+        [InlineData(2019, 8, 35, "LTR", true, false, false)]
+        [InlineData(2019, 8, 35, "USDC", true, false, false)]
+        [InlineData(2019, 8, 35, "USDC", false, true, false)]
+        [InlineData(2019, 8, 35, "USDC", false, false, true)]
+        public void ConditionMet_False(int year, int month, int fundModel, string legalOrgType, bool mockResultLDM, bool mockResultDAM, bool mockResultRES)
         {
-            // arrange
-            var devolvedCode = new Mock<IDevolvedPostcode>(MockBehavior.Strict);
-            devolvedCode
-                .SetupGet(x => x.EffectiveFrom)
-                .Returns(DateTime.Parse(effective));
+            var learnStartDate = new DateTime(year, month, 1);
+            var lsdPostcode = "Postcode";
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = lsdPostcode,
+                    EffectiveFrom = new DateTime(2019, 9, 1),
+                    SourceOfFunding = sofCode
+                }
+            };
 
-            var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            delivery
-                .Setup(x => x.LearnStartDate)
-                .Returns(DateTime.Parse(start));
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            var sut = NewRule();
-
-            // act
-            var result = sut.HasQualifyingEffectiveStart(devolvedCode.Object, delivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-
-            devolvedCode.VerifyAll();
-            delivery.VerifyAll();
+            postcodeDataServiceMock.Setup(p => p.GetDevolvedPostcodes(lsdPostcode)).Returns(devolvedPostcodes);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(mockResultLDM);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(mockResultDAM);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES)).Returns(mockResultRES);
+            NewRule(postcodesDataService: postcodeDataServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object)
+                  .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, devolvedPostcodes, sofCode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), legalOrgType).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
         [Fact]
-        public void InvalidItemRaisesValidationMessage()
+        public void ValidateError()
         {
-            // arrange
-            const string LearnRefNumber = "123456789X";
-            const string testSofCode = "112";
+            var ukprn = 1;
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var fundModel = 35;
+            var lsdPostcode = "Postcode";
+            var legalOrgType = "USDC";
+            var learningDeliveryFams = new List<TestLearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "SOF",
+                    LearnDelFAMCode = "105"
+                },
+            };
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnStartDate = learnStartDate,
+                FundModel = fundModel,
+                LSDPostcode = lsdPostcode,
+                LearningDeliveryFAMs = learningDeliveryFams
+            };
 
-            var testStart = DateTime.Parse("2016-05-01");
-            var testCode = "blah blah";
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    learningDelivery,
+                    learningDelivery,
+                }
+            };
 
-            var fam = new Mock<ILearningDeliveryFAM>();
-            fam
-                .SetupGet(x => x.LearnDelFAMType)
-                .Returns("SOF"); // Monitoring.Delivery.Types.SourceOfFunding
-            fam
-                .SetupGet(x => x.LearnDelFAMCode)
-                .Returns(testSofCode);
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = lsdPostcode,
+                    EffectiveFrom = new DateTime(2019, 9, 1),
+                    SourceOfFunding = "105"
+                }
+            };
 
-            var fams = new ILearningDeliveryFAM[] { fam.Object };
+            var fileDataServiceMock = new Mock<IFileDataService>();
+            var organisationsDataServiceMock = new Mock<IOrganisationDataService>();
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .SetupGet(y => y.FundModel)
-                .Returns(35);
-            delivery
-                .SetupGet(y => y.LearnStartDate)
-                .Returns(testStart);
-            delivery
-                .SetupGet(y => y.LSDPostcode)
-                .Returns(testCode);
-            delivery
-                .SetupGet(y => y.LearningDeliveryFAMs)
-                .Returns(fams);
+            fileDataServiceMock.Setup(fm => fm.UKPRN()).Returns(ukprn);
+            organisationsDataServiceMock.Setup(o => o.GetLegalOrgTypeForUkprn(ukprn)).Returns(legalOrgType);
+            postcodeDataServiceMock.Setup(p => p.GetDevolvedPostcodes(lsdPostcode)).Returns(devolvedPostcodes);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.GetLearningDeliveryFAMsForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.SOF)).Returns(learningDeliveryFams);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES)).Returns(false);
 
-            var deliveries = new ILearningDelivery[] { delivery.Object };
-
-            var learner = new Mock<ILearner>();
-            learner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
-            learner
-                .SetupGet(x => x.ULN)
-                .Returns(ValidationConstants.TemporaryULN);
-            learner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            handler
-                .Setup(x => x.Handle(RuleNameConstants.LSDPostcode_02, LearnRefNumber, 0, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("FundModel", 35))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testStart)))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LSDPostcode", testCode))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMType", "SOF"))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsRestart(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 10))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, DateTime.Parse("2019-08-01"), null))
-                .Returns(true);
-
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            organisationData
-                .Setup(x => x.GetLegalOrgTypeForUkprn(TestProviderID))
-                .Returns(TestLegalOrgType);
-
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(TestProviderID);
-
-            var devolvedCode = new Mock<IDevolvedPostcode>();
-            devolvedCode
-                .SetupGet(x => x.SourceOfFunding)
-                .Returns(testSofCode);
-            devolvedCode
-                .SetupGet(x => x.EffectiveFrom)
-                .Returns(testStart.AddDays(1)); // to push it out of range
-            var devolvedCodes = new IDevolvedPostcode[] { devolvedCode.Object };
-
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-            postcodeData
-                .Setup(x => x.GetDevolvedPostcodes(testCode))
-                .Returns(devolvedCodes);
-
-            var sut = new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object);
-
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsPostcodeValidationExclusion))
-                .Returns(false);
-
-            // act
-            sut.Validate(learner.Object);
-
-            // assert
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            organisationData.VerifyAll();
-            fileData.VerifyAll();
-            postcodeData.VerifyAll();
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(
+                    validationErrorHandlerMock.Object,
+                    fileDataServiceMock.Object,
+                    postcodeDataServiceMock.Object,
+                    organisationsDataServiceMock.Object,
+                    learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<object>()), Times.Exactly(8));
+            }
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
         [Fact]
-        public void ValidItemDoesNotRaiseValidationMessage()
+        public void ValidateNoError()
         {
-            // arrange
-            const string LearnRefNumber = "123456789X";
-            const string testSofCode = "112";
+            var ukprn = 1;
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var fundModel = 35;
+            var lsdPostcode = "Postcode";
+            var legalOrgType = "USDC";
+            var learningDeliveryFams = new List<TestLearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "SOF",
+                    LearnDelFAMCode = "105"
+                },
+            };
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnStartDate = learnStartDate,
+                FundModel = fundModel,
+                LSDPostcode = lsdPostcode,
+                LearningDeliveryFAMs = learningDeliveryFams
+            };
 
-            var testStart = DateTime.Parse("2016-05-01");
-            var testCode = "blah blah";
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    learningDelivery,
+                    learningDelivery,
+                }
+            };
 
-            var fam = new Mock<ILearningDeliveryFAM>();
-            fam
-                .SetupGet(x => x.LearnDelFAMType)
-                .Returns("SOF"); // Monitoring.Delivery.Types.SourceOfFunding
-            fam
-                .SetupGet(x => x.LearnDelFAMCode)
-                .Returns(testSofCode);
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = lsdPostcode,
+                    EffectiveFrom = new DateTime(2019, 9, 1),
+                    SourceOfFunding = "105"
+                }
+            };
 
-            var fams = new ILearningDeliveryFAM[] { fam.Object };
+            var fileDataServiceMock = new Mock<IFileDataService>();
+            var organisationsDataServiceMock = new Mock<IOrganisationDataService>();
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .SetupGet(y => y.FundModel)
-                .Returns(35);
-            delivery
-                .SetupGet(y => y.LearnStartDate)
-                .Returns(testStart);
-            delivery
-                .SetupGet(y => y.LSDPostcode)
-                .Returns(testCode);
-            delivery
-                .SetupGet(y => y.LearningDeliveryFAMs)
-                .Returns(fams);
+            fileDataServiceMock.Setup(fm => fm.UKPRN()).Returns(ukprn);
+            organisationsDataServiceMock.Setup(o => o.GetLegalOrgTypeForUkprn(ukprn)).Returns(legalOrgType);
+            postcodeDataServiceMock.Setup(p => p.GetDevolvedPostcodes(lsdPostcode)).Returns(devolvedPostcodes);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.GetLearningDeliveryFAMsForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.SOF)).Returns(learningDeliveryFams);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES)).Returns(true);
 
-            var deliveries = new ILearningDelivery[] { delivery.Object };
-
-            var learner = new Mock<ILearner>();
-            learner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
-            learner
-                .SetupGet(x => x.ULN)
-                .Returns(ValidationConstants.TemporaryULN);
-            learner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsRestart(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 10))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, DateTime.Parse("2019-08-01"), null))
-                .Returns(true);
-
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            organisationData
-                .Setup(x => x.GetLegalOrgTypeForUkprn(TestProviderID))
-                .Returns(TestLegalOrgType);
-
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(TestProviderID);
-
-            var devolvedCode = new Mock<IDevolvedPostcode>();
-            devolvedCode
-                .SetupGet(x => x.SourceOfFunding)
-                .Returns(testSofCode);
-            devolvedCode
-                .SetupGet(x => x.EffectiveFrom)
-                .Returns(testStart);
-            var devolvedCodes = new IDevolvedPostcode[] { devolvedCode.Object };
-
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-            postcodeData
-                .Setup(x => x.GetDevolvedPostcodes(testCode))
-                .Returns(devolvedCodes);
-
-            var sut = new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object);
-
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsPostcodeValidationExclusion))
-                .Returns(false);
-
-            // act
-            sut.Validate(learner.Object);
-
-            // assert
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            organisationData.VerifyAll();
-            fileData.VerifyAll();
-            postcodeData.VerifyAll();
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(
+                    validationErrorHandlerMock.Object,
+                    fileDataServiceMock.Object,
+                    postcodeDataServiceMock.Object,
+                    organisationsDataServiceMock.Object,
+                    learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<object>()), Times.Exactly(0));
+            }
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
-        public LSDPostcode_02Rule NewRule()
+        [Fact]
+        public void BuildErrorMessageParameters()
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learsStartDate = new DateTime(2019, 8, 1);
+            var fundModel = 36;
+            var lsdPostcode = "Postcode";
+            var learnDelFamType = "SOF";
 
-            var organisationData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            organisationData
-                .Setup(x => x.GetLegalOrgTypeForUkprn(TestProviderID))
-                .Returns(TestLegalOrgType);
+            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(TestProviderID);
+            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, "01/08/2019")).Verifiable();
+            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.FundModel, 36)).Verifiable();
+            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.LSDPostcode, "Postcode")).Verifiable();
+            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, "SOF")).Verifiable();
 
-            var postcodeData = new Mock<IPostcodesDataService>(MockBehavior.Strict);
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(learsStartDate, fundModel, lsdPostcode, learnDelFamType);
 
-            return new LSDPostcode_02Rule(handler.Object, commonOps.Object, organisationData.Object, fileData.Object, postcodeData.Object);
+            validationErrorHandlerMock.Verify();
+        }
+
+        private LSDPostcode_02Rule NewRule(
+            IValidationErrorHandler validationErrorHandler = null,
+            IFileDataService fileDataService = null,
+            IPostcodesDataService postcodesDataService = null,
+            IOrganisationDataService organisationDataService = null,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null)
+        {
+            return new LSDPostcode_02Rule(validationErrorHandler, fileDataService, postcodesDataService, organisationDataService, learningDeliveryFAMQueryService);
         }
     }
 }
