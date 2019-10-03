@@ -462,14 +462,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         }
 
         [Fact]
-        public void HasFamCode_False_CaseInsensitive()
+        public void HasFamCode_True_CaseInsensitive()
         {
             var learningDeliveryFam = new TestLearningDeliveryFAM()
             {
                 LearnDelFAMCode = "Code"
             };
 
-            NewService().HasFamCode(learningDeliveryFam, "cODE").Should().BeFalse();
+            NewService().HasFamCode(learningDeliveryFam, "cODE").Should().BeTrue();
         }
 
         [Fact]
