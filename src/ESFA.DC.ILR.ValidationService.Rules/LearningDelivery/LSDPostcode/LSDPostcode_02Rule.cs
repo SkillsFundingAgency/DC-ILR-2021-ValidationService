@@ -103,8 +103,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         public bool IsExcluded(int? progType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, string legalOrgType)
         {
             return progType.HasValue
-                || string.Equals(lsdPostcode, ValidationConstants.TemporaryPostCode, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(legalOrgType, LegalOrgTypeConstants.LTR, StringComparison.OrdinalIgnoreCase)
+                || CaseInsensitiveEquals(lsdPostcode, ValidationConstants.TemporaryPostCode)
+                || CaseInsensitiveEquals(legalOrgType, LegalOrgTypeConstants.LTR)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);

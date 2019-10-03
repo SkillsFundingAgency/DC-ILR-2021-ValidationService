@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         public bool IsExcluded(int? progType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return progType.HasValue
-                || string.Equals(lsdPostcode, ValidationConstants.TemporaryPostCode, StringComparison.OrdinalIgnoreCase)
+                || CaseInsensitiveEquals(lsdPostcode, ValidationConstants.TemporaryPostCode)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS);
         }
 
