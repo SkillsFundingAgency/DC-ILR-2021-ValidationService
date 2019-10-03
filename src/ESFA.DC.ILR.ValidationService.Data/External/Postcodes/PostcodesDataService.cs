@@ -7,29 +7,15 @@ using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
 {
-    /// <summary>
-    /// the postcodes data service implementation
-    /// </summary>
-    /// <seealso cref="IPostcodesDataService" />
     public class PostcodesDataService :
         IPostcodesDataService
     {
         private readonly IExternalDataCache _externalDataCache;
 
-        /// <summary>
-        /// The ons postcodes
-        /// </summary>
         private readonly IReadOnlyCollection<IONSPostcode> _onsPostcodes;
 
-        /// <summary>
-        /// The Devolved postcodes
-        /// </summary>
         private readonly IReadOnlyDictionary<string, IReadOnlyCollection<IDevolvedPostcode>> _devolvedPostcodes;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PostcodesDataService"/> class.
-        /// </summary>
-        /// <param name="externalDataCache">The external data cache.</param>
         public PostcodesDataService(IExternalDataCache externalDataCache)
         {
             It.IsNull(externalDataCache)
@@ -46,19 +32,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
                    && _externalDataCache.Postcodes.Contains(postcode);
         }
 
-        /// <summary>
-        /// Gets the ons postcode.
-        /// </summary>
-        /// <param name="fromPostcode">From postcode.</param>
-        /// <returns>an ons postcodes (if found)</returns>
         public IReadOnlyCollection<IONSPostcode> GetONSPostcodes(string fromPostcode) =>
             _onsPostcodes.Where(x => x.Postcode.ComparesWith(fromPostcode)).ToList();
 
-        /// <summary>
-        /// Gets the Devolved postcode.
-        /// </summary>
-        /// <param name="fromPostcode">From postcode.</param>
-        /// <returns>Devolved postcodes (if found)</returns>
         public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodes(string fromPostcode) =>
             _devolvedPostcodes.GetValueOrDefault(fromPostcode, Collection.EmptyAndReadOnly<IDevolvedPostcode>());
     }
