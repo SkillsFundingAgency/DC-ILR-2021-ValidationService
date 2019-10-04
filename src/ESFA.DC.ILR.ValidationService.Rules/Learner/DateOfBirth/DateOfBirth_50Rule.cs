@@ -31,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             if (objectToValidate.DateOfBirthNullable.HasValue)
             {
                 var learnersSixteenthBirthdate = objectToValidate.DateOfBirthNullable.Value.AddYears(16);
-                var firstAugustForAcademicYearOfLearnersSixteenthBirthDate = _academicYearDataService.GetAcademicYearOfLearningDate(learnersSixteenthBirthdate, AcademicYearDates.NextYearCommencement);
+                var firstAugustForAcademicYearOfLearnersSixteenthBirthDate = _academicYearDataService.GetAcademicYearOfLearningDate(learnersSixteenthBirthdate, AcademicYearDates.TraineeshipsAugust1);
 
                 foreach (var learningDelivery in objectToValidate.LearningDeliveries)
                 {

@@ -18,6 +18,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface
             [AcademicYearDates.August31] = new AcademicYearDateDefinition(8, 31, x => GetYear(x, 7)),
             [AcademicYearDates.CurrentYearEnd] = new AcademicYearDateDefinition(7, 31, x => x.Month < 8 ? x.Year : x.Year + 1),
             [AcademicYearDates.NextYearCommencement] = new AcademicYearDateDefinition(8, 1, x => x.Month < 8 ? x.Year : x.Year + 1),
+            [AcademicYearDates.TraineeshipsAugust1] = new AcademicYearDateDefinition(8, 1, x => x.Month < 9 ? x.Year : x.Year + 1),
         };
 
         private static int GetYear(DateTime dateTime, int monthToCompare)

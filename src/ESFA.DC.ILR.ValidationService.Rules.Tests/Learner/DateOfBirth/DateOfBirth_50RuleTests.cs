@@ -105,7 +105,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
             academicYearDataServiceMock
-                .Setup(ds => ds.GetAcademicYearOfLearningDate(It.IsAny<DateTime>(), AcademicYearDates.NextYearCommencement))
+                .Setup(ds => ds.GetAcademicYearOfLearningDate(It.IsAny<DateTime>(), AcademicYearDates.TraineeshipsAugust1))
                 .Returns(new DateTime(2018, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
@@ -158,7 +158,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
             academicYearDataServiceMock
-                .Setup(ds => ds.GetAcademicYearOfLearningDate(It.IsAny<DateTime>(), AcademicYearDates.NextYearCommencement))
+                .Setup(ds => ds.GetAcademicYearOfLearningDate(It.IsAny<DateTime>(), AcademicYearDates.TraineeshipsAugust1))
                 .Returns(new DateTime(2018, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
