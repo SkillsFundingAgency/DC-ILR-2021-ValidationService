@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -29,23 +30,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if (!_derivedData35.IsCombinedAuthorities(learningDelivery))
+                if (ConditionMet(learningDelivery))
                 {
-                    continue;
-                }
-
-                if (ConditionMet(learningDelivery.FundModel))
-                {
-                    HandleValidationError(
-                        learner.LearnRefNumber,
-                        learningDelivery.AimSeqNumber,
-                        BuildErrorMessageParameters(learningDelivery.FundModel, learningDelivery.LearningDeliveryFAMs.Where(x => x.LearnDelFAMType.ToUpper()== LearningDeliveryFAMTypeConstants.SOF).FirstOrDefault().LearnDelFAMCode));
+                    var errorMessageParameters = BuildErrorMessageParameters(learningDelivery.FundModel, learningDelivery.LearningDeliveryFAMs.FirstOrDefault(x => x.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.SOF))?.LearnDelFAMCode);
+                    HandleValidationError(learner.LearnRefNumber, learningDelivery.AimSeqNumber, errorMessageParameters);
                 }
             }
         }
 
-        public bool ConditionMet(int fundModel) =>
-            fundModel != TypeOfFunding.AdultSkills && fundModel != TypeOfFunding.CommunityLearning;
+        public bool ConditionMet(ILearningDelivery learningDelivery) =>
+            DD35ConditionMet(learningDelivery) && FundModelConditionMet(learningDelivery.FundModel);
+
+        public bool DD35ConditionMet(ILearningDelivery learningDelivery) => _derivedData35.IsCombinedAuthorities(learningDelivery);
+
+        public bool FundModelConditionMet(int fundModel) => fundModel != TypeOfFunding.AdultSkills && fundModel != TypeOfFunding.CommunityLearning;
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel, string learnDelFAMCode)
         {

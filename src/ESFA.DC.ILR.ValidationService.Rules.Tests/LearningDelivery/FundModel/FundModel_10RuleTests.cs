@@ -19,22 +19,151 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.FundModel
             NewRule().RuleName.Should().Be("FundModel_10");
         }
 
-        [Fact]
-        public void ConditionMet_AdultSkills()
+        [Theory]
+        [InlineData(10, false)]
+        [InlineData(35, false)]
+        [InlineData(36, true)]
+        [InlineData(70, true)]
+        [InlineData(25, true)]
+        public void FundModelConditionMet(int fundModel, bool expectedResult)
         {
-            NewRule().ConditionMet(35).Should().BeFalse();
+            var actualResult = NewRule().FundModelConditionMet(fundModel);
+            Assert.Equal(expectedResult, actualResult);
+        }
+
+        [Theory]
+        [InlineData(10)]
+        [InlineData(35)]
+        public void FundModelConditionMet_False(int fundModel)
+        {
+            NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(36)]
+        [InlineData(70)]
+        public void FundModelConditionMet_True(int fundModel)
+        {
+            NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
         }
 
         [Fact]
-        public void ConditionMet_CommunityLearning()
+        public void DD35ConditionMet_True()
         {
-            NewRule().ConditionMet(10).Should().BeFalse();
+            var learningDelivery = new TestLearningDelivery()
+            {
+                LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMType = "SOF",
+                        LearnDelFAMCode = "112"
+                    }
+                }
+            };
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    learningDelivery
+                }
+            };
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learningDelivery)).Returns(true);
+
+            NewRule(dd35Mock.Object).DD35ConditionMet(learningDelivery).Should().BeTrue();
         }
 
         [Fact]
-        public void ConditionMet_True()
+        public void DD35ConditionMet_False()
         {
-            NewRule().ConditionMet(36).Should().BeTrue();
+            var learningDelivery = new TestLearningDelivery()
+            {
+                LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMType = "SOF",
+                        LearnDelFAMCode = "105"
+                    }
+                }
+            };
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learningDelivery)).Returns(false);
+
+            NewRule(dd35Mock.Object).DD35ConditionMet(learningDelivery).Should().BeFalse();
+        }
+
+        [Fact]
+        public void DD35ConditionMet_False_No_LDFAM()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+            };
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learningDelivery)).Returns(false);
+
+            NewRule(dd35Mock.Object).DD35ConditionMet(learningDelivery).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(1, "112")]
+        [InlineData(36, "111")]
+        [InlineData(70, "113")]
+        public void ConditionMet_True(int fundModel, string learnDelFAMCode)
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = fundModel,
+                LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMType = "SOF",
+                        LearnDelFAMCode = learnDelFAMCode
+                    }
+                }
+            };
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learningDelivery)).Returns(true);
+
+            NewRule(dd35Mock.Object).ConditionMet(learningDelivery).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(35, "112")]
+        [InlineData(10, "111")]
+        [InlineData(36, "105")]
+        public void ConditionMet_False(int fundModel, string learnDelFAMCode)
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = fundModel,
+                LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMType = "SOF",
+                        LearnDelFAMCode = learnDelFAMCode
+                    }
+                }
+            };
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learningDelivery)).Returns(false);
+
+            NewRule(dd35Mock.Object).ConditionMet(learningDelivery).Should().BeFalse();
         }
 
         [Fact]
@@ -117,6 +246,40 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.FundModel
                     {
                         LearnDelFAMType = "SOF",
                         LearnDelFAMCode = "105"
+                    }
+                }
+            };
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    learningDelivery
+                }
+            };
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learningDelivery)).Returns(false);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(dd35Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Error_False_SOF_MISSING()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 35,
+                LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMType = "RES",
+                        LearnDelFAMCode = "1"
                     }
                 }
             };
