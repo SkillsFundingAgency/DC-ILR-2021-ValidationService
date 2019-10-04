@@ -12,7 +12,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     public class LearnDelFAMType_75Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IDerivedData_35Rule _dd35;
-        private readonly IEnumerable<string> _famCodes = new HashSet<string>() { "034", "357", "363" };
+        private readonly IEnumerable<string> _famCodes = new HashSet<string>()
+        {
+            LearningDeliveryFAMCodeConstants.LDM_OLASS,
+            LearningDeliveryFAMCodeConstants.LDM_ProcuredAdultEducationBudget,
+            LearningDeliveryFAMCodeConstants.LDM_LowWages
+        };
 
         public LearnDelFAMType_75Rule(
             IValidationErrorHandler validationErrorHandler,
