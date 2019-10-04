@@ -305,7 +305,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         [InlineData("8", TypeOfNotionalNVQLevelV2.OutOfScope)]
         [InlineData("M", TypeOfNotionalNVQLevelV2.OutOfScope)]
         [InlineData("X", TypeOfNotionalNVQLevelV2.OutOfScope)]
-        public void GetNotionalNVQLevelV2MeetsExpectation(string candidate, TypeOfNotionalNVQLevelV2 expectation)
+        public void GetNotionalNVQLevelV2MeetsExpectation(string candidate, double expectation)
         {
             // arrange
             var sut = NewRule();
@@ -333,7 +333,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         [InlineData(TypeOfNotionalNVQLevelV2.Level2, false)]
         [InlineData(TypeOfNotionalNVQLevelV2.Level3, false)]
         [InlineData(TypeOfNotionalNVQLevelV2.HigherLevel, false)]
-        public void IsOutOfScopeMeetsExpectation(TypeOfNotionalNVQLevelV2 candidate, bool expectation)
+        public void IsOutOfScopeMeetsExpectation(double candidate, bool expectation)
         {
             // arrange
             var sut = NewRule();
@@ -359,7 +359,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         [InlineData("1", TypeOfNotionalNVQLevelV2.Level2, false)]
         [InlineData("2", TypeOfNotionalNVQLevelV2.Level2, false)]
         [InlineData("1234568", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
-        public void HasDisqualifyingMinimumLevelMeetsExpectation(string candidate, TypeOfNotionalNVQLevelV2 notionalLevel, bool expectation)
+        public void HasDisqualifyingMinimumLevelMeetsExpectation(string candidate, double notionalLevel, bool expectation)
         {
             // arrange
             var sut = NewRule();
@@ -389,7 +389,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         [InlineData("1", TypeOfNotionalNVQLevelV2.Level2, true)]
         [InlineData("2", TypeOfNotionalNVQLevelV2.Level2, false)]
         [InlineData("1234568", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
-        public void HasDisqualifyingMaximumLevelMeetsExpectation(string candidate, TypeOfNotionalNVQLevelV2 notionalLevel, bool expectation)
+        public void HasDisqualifyingMaximumLevelMeetsExpectation(string candidate, double notionalLevel, bool expectation)
         {
             // arrange
             var sut = NewRule();
