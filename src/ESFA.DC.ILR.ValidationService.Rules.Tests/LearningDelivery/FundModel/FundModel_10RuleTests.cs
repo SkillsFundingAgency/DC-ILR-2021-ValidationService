@@ -20,18 +20,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.FundModel
         }
 
         [Theory]
-        [InlineData(10, false)]
-        [InlineData(35, false)]
-        [InlineData(36, true)]
-        [InlineData(70, true)]
-        [InlineData(25, true)]
-        public void FundModelConditionMet(int fundModel, bool expectedResult)
-        {
-            var actualResult = NewRule().FundModelConditionMet(fundModel);
-            Assert.Equal(expectedResult, actualResult);
-        }
-
-        [Theory]
         [InlineData(10)]
         [InlineData(35)]
         public void FundModelConditionMet_False(int fundModel)
@@ -51,25 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.FundModel
         [Fact]
         public void DD35ConditionMet_True()
         {
-            var learningDelivery = new TestLearningDelivery()
-            {
-                LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-                {
-                    new TestLearningDeliveryFAM
-                    {
-                        LearnDelFAMType = "SOF",
-                        LearnDelFAMCode = "112"
-                    }
-                }
-            };
-
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = new List<TestLearningDelivery>()
-                {
-                    learningDelivery
-                }
-            };
+            var learningDelivery = new TestLearningDelivery();
 
             var dd35Mock = new Mock<IDerivedData_35Rule>();
 
@@ -103,9 +73,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.FundModel
         [Fact]
         public void DD35ConditionMet_False_No_LDFAM()
         {
-            var learningDelivery = new TestLearningDelivery()
-            {
-            };
+            var learningDelivery = new TestLearningDelivery();
 
             var dd35Mock = new Mock<IDerivedData_35Rule>();
 
