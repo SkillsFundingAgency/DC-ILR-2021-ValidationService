@@ -175,39 +175,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         /// <summary>
-        /// Is programe aim meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsProgrameAimMeetsExpectation(bool expectation)
-        {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(expectation);
-
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            var sut = new LearnDelFAMType_67Rule(handler.Object, commonOps.Object, larsData.Object);
-
-            // act
-            var result = sut.IsProgrameAim(delivery.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            larsData.VerifyAll();
-        }
-
-        /// <summary>
         /// Is component aim meets expectation
         /// </summary>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
@@ -698,9 +665,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 36))
                 .Returns(true);
             commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(false);
-            commonOps
                 .Setup(x => x.IsComponentOfAProgram(delivery.Object))
                 .Returns(true);
 
@@ -775,9 +739,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             commonOps
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 36))
                 .Returns(true);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(false);
             commonOps
                 .Setup(x => x.IsComponentOfAProgram(delivery.Object))
                 .Returns(true);

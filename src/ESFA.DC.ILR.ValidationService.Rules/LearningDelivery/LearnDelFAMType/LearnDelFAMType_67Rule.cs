@@ -57,10 +57,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool IsNotValid(ILearningDelivery theDelivery) =>
             HasQualifyingModel(theDelivery)
-            && (IsProgrameAim(theDelivery)
-                || (IsComponentAim(theDelivery)
-                    && !(HasQualifyingBasicSkillsType(theDelivery)
-                        || HasQualifyingCommonComponent(GetLarsAim(theDelivery)))))
+            && IsComponentAim(theDelivery)
+            && !(HasQualifyingBasicSkillsType(theDelivery)
+                        || HasQualifyingCommonComponent(GetLarsAim(theDelivery)))
             && HasDisqualifyingMonitor(theDelivery);
 
         /// <summary>
@@ -72,16 +71,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// </returns>
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
             _check.HasQualifyingFunding(theDelivery, TypeOfFunding.ApprenticeshipsFrom1May2017);
-
-        /// <summary>
-        /// Determines whether [is programe aim] [the specified delivery].
-        /// </summary>
-        /// <param name="theDelivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [is programe aim] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsProgrameAim(ILearningDelivery theDelivery) =>
-            _check.InAProgramme(theDelivery);
 
         /// <summary>
         /// Determines whether [is component aim] [the specified delivery].
