@@ -14,9 +14,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 {
     public class LearnAimRef_72RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
         public void NewRuleWithNullMessageHandlerThrows()
         {
@@ -29,9 +26,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Throws<ArgumentNullException>(() => new LearnAimRef_72Rule(null, commonOps.Object, fcsData.Object, larsData.Object));
         }
 
-        /// <summary>
-        /// New rule with null common operations throws.
-        /// </summary>
         [Fact]
         public void NewRuleWithNullCommonOperationsThrows()
         {
@@ -44,9 +38,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Throws<ArgumentNullException>(() => new LearnAimRef_72Rule(handler.Object, null, fcsData.Object, larsData.Object));
         }
 
-        /// <summary>
-        /// New rule with null FCS data throws.
-        /// </summary>
         [Fact]
         public void NewRuleWithNullFCSDataThrows()
         {
@@ -59,9 +50,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Throws<ArgumentNullException>(() => new LearnAimRef_72Rule(handler.Object, commonOps.Object, null, larsData.Object));
         }
 
-        /// <summary>
-        /// New rule with null lars data throws.
-        /// </summary>
         [Fact]
         public void NewRuleWithNullLARSDataThrows()
         {
@@ -74,9 +62,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Throws<ArgumentNullException>(() => new LearnAimRef_72Rule(handler.Object, commonOps.Object, fcsData.Object, null));
         }
 
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
         [Fact]
         public void RuleName1()
         {
@@ -90,9 +75,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Equal("LearnAimRef_72", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
         [Fact]
         public void RuleName2()
         {
@@ -106,9 +88,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Equal(RuleNameConstants.LearnAimRef_72, result);
         }
 
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
         [Fact]
         public void RuleName3()
         {
@@ -122,9 +101,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.NotEqual("SomeOtherRuleName_07", result);
         }
 
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
         [Fact]
         public void ValidateWithNullLearnerThrows()
         {
@@ -135,10 +111,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
-        /// <summary>
-        /// Get lars learning delivery for, meets exepctation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData("testAim_1")]
         [InlineData("testAim_2")]
@@ -175,10 +147,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             larsData.VerifyAll();
         }
 
-        /// <summary>
-        /// Get subject area levels for, meets expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData("testAim_1")]
         [InlineData("testAim_2")]
@@ -214,9 +182,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             larsData.VerifyAll();
         }
 
-        /// <summary>
-        /// Has disqualifying subject sector with null lars delivery returns false
-        /// </summary>
         [Fact]
         public void HasDisqualifyingSubjectSectorWithNullLARSDeliveryReturnsFalse()
         {
@@ -230,9 +195,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.True(result);
         }
 
-        /// <summary>
-        /// Is usable subject area with null subject area returns false
-        /// </summary>
         [Fact]
         public void IsUsableSubjectAreaWithNullSubjectAreaReturnsFalse()
         {
@@ -246,13 +208,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.False(result);
         }
 
-        /// <summary>
-        /// Is usable subject area meets expectation
-        /// </summary>
-        /// <param name="area">The area.</param>
-        /// <param name="minLevel">The minimum level.</param>
-        /// <param name="maxLevel">The maximum level.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(null, "blahMin", "blahMax", true)]
         [InlineData(1.0, "blahMin", "blahMax", false)]
@@ -284,11 +239,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Get notional NVQ level v2 meets expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">The expectation.</param>
         [Theory]
         [InlineData(null, TypeOfNotionalNVQLevelV2.OutOfScope)]
         [InlineData("A", TypeOfNotionalNVQLevelV2.OutOfScope)]
@@ -297,14 +247,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         [InlineData("2", TypeOfNotionalNVQLevelV2.Level2)]
         [InlineData("3", TypeOfNotionalNVQLevelV2.Level3)]
         [InlineData("H", TypeOfNotionalNVQLevelV2.HigherLevel)]
-        [InlineData("1.5", TypeOfNotionalNVQLevelV2.OutOfScope)]
-        [InlineData("4", TypeOfNotionalNVQLevelV2.OutOfScope)]
-        [InlineData("5", TypeOfNotionalNVQLevelV2.OutOfScope)]
-        [InlineData("6", TypeOfNotionalNVQLevelV2.OutOfScope)]
-        [InlineData("7", TypeOfNotionalNVQLevelV2.OutOfScope)]
-        [InlineData("8", TypeOfNotionalNVQLevelV2.OutOfScope)]
-        [InlineData("M", TypeOfNotionalNVQLevelV2.OutOfScope)]
-        [InlineData("X", TypeOfNotionalNVQLevelV2.OutOfScope)]
+        [InlineData("1.5", TypeOfNotionalNVQLevelV2.Level1_2)]
+        [InlineData("4", TypeOfNotionalNVQLevelV2.Level4)]
+        [InlineData("5", TypeOfNotionalNVQLevelV2.Level5)]
+        [InlineData("6", TypeOfNotionalNVQLevelV2.Level6)]
+        [InlineData("7", TypeOfNotionalNVQLevelV2.Level7)]
+        [InlineData("8", TypeOfNotionalNVQLevelV2.Level8)]
+        [InlineData("M", TypeOfNotionalNVQLevelV2.MixedLevel)]
+        [InlineData("X", TypeOfNotionalNVQLevelV2.NotKnown)]
         public void GetNotionalNVQLevelV2MeetsExpectation(string candidate, double expectation)
         {
             // arrange
@@ -321,44 +271,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Has disqualifying notional level meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData(TypeOfNotionalNVQLevelV2.OutOfScope, true)]
-        [InlineData(TypeOfNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData(TypeOfNotionalNVQLevelV2.Level1, false)]
-        [InlineData(TypeOfNotionalNVQLevelV2.Level2, false)]
-        [InlineData(TypeOfNotionalNVQLevelV2.Level3, false)]
-        [InlineData(TypeOfNotionalNVQLevelV2.HigherLevel, false)]
-        public void IsOutOfScopeMeetsExpectation(double candidate, bool expectation)
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.IsOutOfScope(candidate);
-
-            // assert
-            Assert.Equal(expectation, result);
-        }
-
-        /// <summary>
-        /// Has disqualifying minimum level meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="notionalLevel">The notional level.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData("E", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData("A", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
+        [InlineData("A", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
         [InlineData("1", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
         [InlineData("2", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
         [InlineData("1", TypeOfNotionalNVQLevelV2.Level2, false)]
         [InlineData("2", TypeOfNotionalNVQLevelV2.Level2, false)]
-        [InlineData("1234568", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
+        [InlineData("1234568", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
         public void HasDisqualifyingMinimumLevelMeetsExpectation(string candidate, double notionalLevel, bool expectation)
         {
             // arrange
@@ -375,20 +295,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Has qualifying maximum level meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="notionalLevel">The notional level.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData("E", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData("A", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
+        [InlineData("A", TypeOfNotionalNVQLevelV2.Level3, false)]
         [InlineData("1", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
         [InlineData("2", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
         [InlineData("1", TypeOfNotionalNVQLevelV2.Level2, true)]
         [InlineData("2", TypeOfNotionalNVQLevelV2.Level2, false)]
-        [InlineData("1234568", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
+        [InlineData("1234568", TypeOfNotionalNVQLevelV2.OutOfScope, false)]
         public void HasDisqualifyingMaximumLevelMeetsExpectation(string candidate, double notionalLevel, bool expectation)
         {
             // arrange
@@ -405,12 +319,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="notional">The notional.</param>
-        /// <param name="min">The minimum.</param>
-        /// <param name="max">The maximum.</param>
         [Theory]
         [InlineData("1", "2", "3")] // fails @ min level
         [InlineData("H", "2", "3")] // fails @ max level
@@ -491,13 +399,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             larsData.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="notional">The notional.</param>
-        /// <param name="min">The minimum.</param>
-        /// <param name="max">The maximum.</param>
-        /// <param name="area">The area.</param>
         [Theory]
         [InlineData("2", "2", "3", 1.0)]
         [InlineData("2", "2", "3", null)]
@@ -573,10 +474,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             larsData.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public LearnAimRef_72Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

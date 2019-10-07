@@ -15,54 +15,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
     public class LearnAimRef_73RuleTests
     {
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            // arrange
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_73Rule(null, commonOps.Object, fcsData.Object, larsData.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullCommonOperationsThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_73Rule(handler.Object, null, fcsData.Object, larsData.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullFCSDataThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_73Rule(handler.Object, commonOps.Object, null, larsData.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullLARSDataThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_73Rule(handler.Object, commonOps.Object, fcsData.Object, null));
-        }
-
-        [Fact]
         public void RuleName1()
         {
             // arrange
@@ -99,87 +51,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             // assert
             Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        [Theory]
-        [InlineData("testAim_1")]
-        [InlineData("testAim_2")]
-        [InlineData("testAim_3")]
-        public void GetLARSLearningDeliveryForMeetsExepctation(string candidate)
-        {
-            // arrange
-            var mockItem = new Mock<ILearningDelivery>();
-            mockItem
-                .SetupGet(x => x.LearnAimRef)
-                .Returns(candidate);
-
-            var mockReturn = new Mock<ILARSLearningDelivery>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            larsData
-                .Setup(x => x.GetDeliveryFor(candidate))
-                .Returns(mockReturn.Object);
-
-            var sut = new LearnAimRef_73Rule(handler.Object, commonOps.Object, fcsData.Object, larsData.Object);
-
-            // act
-            //var result = sut.GetLARSLearningDeliveryFor(mockItem.Object);
-
-            // assert
-            //Assert.Equal(mockReturn.Object, result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            fcsData.VerifyAll();
-            larsData.VerifyAll();
-        }
-
-        [Theory]
-        [InlineData("testAim_1")]
-        [InlineData("testAim_2")]
-        [InlineData("testAim_3")]
-        public void GetSubjectAreaLevelsForMeetsExpectation(string candidate)
-        {
-            // arrange
-            var mockItem = new Mock<ILearningDelivery>();
-            mockItem
-                .SetupGet(x => x.ConRefNumber)
-                .Returns(candidate);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            fcsData
-                .Setup(x => x.GetEligibilityRuleSectorSubjectAreaLevelsFor(candidate))
-                .Returns(new IEsfEligibilityRuleSectorSubjectAreaLevel[] { });
-
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            var sut = new LearnAimRef_73Rule(handler.Object, commonOps.Object, fcsData.Object, larsData.Object);
-
-            // act
-            var result = "dog"; // sut.GetSubjectAreaLevelsFor(mockItem.Object);
-
-            // assert
-            Assert.Empty(result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            fcsData.VerifyAll();
-            larsData.VerifyAll();
         }
 
         [Fact]
@@ -266,25 +137,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             // act
             var result = sut.GetNotionalNVQLevelV2(mockItem.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
-        [InlineData(TypeOfNotionalNVQLevelV2.OutOfScope, true)]
-        [InlineData(TypeOfNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData(TypeOfNotionalNVQLevelV2.Level1, false)]
-        [InlineData(TypeOfNotionalNVQLevelV2.Level2, false)]
-        [InlineData(TypeOfNotionalNVQLevelV2.Level3, false)]
-        [InlineData(TypeOfNotionalNVQLevelV2.HigherLevel, false)]
-        public void IsOutOfScopeMeetsExpectation(double candidate, bool expectation)
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = true; //sut.IsOutOfScope(candidate);
 
             // assert
             Assert.Equal(expectation, result);

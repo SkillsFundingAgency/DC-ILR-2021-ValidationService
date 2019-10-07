@@ -6,7 +6,7 @@
     /// </summary>
     public static class TypeOfNotionalNVQLevelV2
     {
-        public const double OutOfScope = 0;
+        public const double OutOfScope = 999;
         public const double EntryLevel = 0;
         public const double Level1 = 1;
         public const double Level2 = 2;
