@@ -281,7 +281,6 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(DateOfBirth_51Rule),
                 typeof(DateOfBirth_52Rule),
                 typeof(DateOfBirth_53Rule),
-                typeof(DateOfBirth_54Rule),
                 typeof(DateOfBirth_55Rule),
                 typeof(DelLocPostCode_03Rule),
                 typeof(DelLocPostCode_11Rule),
