@@ -22,7 +22,6 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor.Modules
             builder.RegisterType<LearningDeliveryWorkPlacementQueryService>().As<ILearningDeliveryWorkPlacementQueryService>().InstancePerLifetimeScope();
 
             builder.RegisterType<RuleCommonOperationsProvider>().As<IProvideRuleCommonOperations>().InstancePerLifetimeScope();
-            builder.RegisterType<LearnAimRefRuleActionProvider>().As<IProvideLearnAimRefRuleActions>().InstancePerLifetimeScope();
         }
     }
 }

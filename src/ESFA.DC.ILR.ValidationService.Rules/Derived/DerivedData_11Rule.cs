@@ -8,22 +8,11 @@ using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
-    /// <summary>
-    /// derived data rule 11
-    /// Adult skills funded learner on benefits at the start of the learning aim
-    /// </summary>
     public class DerivedData_11Rule :
         IDerivedData_11Rule
     {
-        /// <summary>
-        /// The check (common operations provider)
-        /// </summary>
         private readonly IProvideRuleCommonOperations _check;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DerivedData_11Rule"/> class.
-        /// </summary>
-        /// <param name="commonOps">The common ops.</param>
         public DerivedData_11Rule(IProvideRuleCommonOperations commonOps)
         {
             It.IsNull(commonOps)
@@ -32,14 +21,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             _check = commonOps;
         }
 
-        /// <summary>
-        /// In receipt of benefits.
-        /// </summary>
-        /// <param name="learnerEmploymentStatus">The learner employment status.</param>
-        /// <param name="startDate">The start date.</param>
-        /// <returns>
-        /// true, if on state benefits at start of learning aim
-        /// </returns>
         public bool InReceiptOfBenefits(IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatus, DateTime startDate)
         {
             var candidate = _check.GetEmploymentStatusOn(startDate, learnerEmploymentStatus);
@@ -47,21 +28,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             return InReceiptOfBenefits(candidate?.EmploymentStatusMonitorings);
         }
 
-        /// <summary>
-        /// In receipt of benefits.
-        /// </summary>
-        /// <param name="monitors">The monitors.</param>
-        /// <returns>if any item in the set matches the required criteria</returns>
         public bool InReceiptOfBenefits(IReadOnlyCollection<IEmploymentStatusMonitoring> monitors)
         {
             return monitors.SafeAny(InReceiptOfBenefits);
         }
 
-        /// <summary>
-        /// In receipt of benefits.
-        /// </summary>
-        /// <param name="monitor">The monitor.</param>
-        /// <returns>true if the 'typed code' matches one from the set</returns>
         public bool InReceiptOfBenefits(IEmploymentStatusMonitoring monitor) =>
             It.IsInRange(
                 $"{monitor.ESMType}{monitor.ESMCode}",
@@ -70,14 +41,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance,
                 Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance);
 
-        /// <summary>
-        /// Determines whether [is adult funded on benefits at start of aim] [the specified candidate].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="learnerEmployments">The learner employments.</param>
-        /// <returns>
-        ///   <c>true</c> if [is adult funded on benefits at start of aim] [the specified candidate]; otherwise, <c>false</c>.
-        /// </returns>
         public bool IsAdultFundedOnBenefitsAtStartOfAim(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmployments)
         {
             It.IsNull(delivery)

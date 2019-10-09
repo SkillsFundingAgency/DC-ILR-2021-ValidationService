@@ -1,102 +1,74 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
-using System.Linq;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
-    /// <summary>
-    /// learn aim ref rule 89
-    /// </summary>
-    /// <seealso cref="LearnAimRefRuleBase" />
-    public class LearnAimRef_89Rule :
-        LearnAimRefRuleBase
+    public class LearnAimRef_89Rule : AbstractRule, IRule<ILearner>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LearnAimRef_89Rule" /> class.
-        /// </summary>
-        /// <param name="validationErrorHandler">The validation error handler.</param>
-        /// <param name="provider">The action result provider.</param>
-        /// <param name="larsData">The lars data.</param>
-        /// <param name="yearService">The year service.</param>
+        private readonly ILARSDataService _larsDataService;
+        private readonly IDerivedData_ValidityCategory _ddValidityCategory;
+        private readonly IAcademicYearDataService _academicYearDataService;
+
         public LearnAimRef_89Rule(
-            IValidationErrorHandler validationErrorHandler,
-            IProvideLearnAimRefRuleActions provider,
-            ILARSDataService larsData,
-            IAcademicYearDataService yearService)
-                : base(validationErrorHandler, provider, larsData, RuleNameConstants.LearnAimRef_89)
+            ILARSDataService larsDataService,
+            IDerivedData_ValidityCategory ddValidityCategory,
+            IAcademicYearDataService academicYearDataService,
+            IValidationErrorHandler validationErrorHandler)
+            : base(validationErrorHandler, RuleNameConstants.LearnAimRef_89)
         {
-            It.IsNull(yearService)
-                .AsGuard<ArgumentNullException>(nameof(yearService));
-
-            YearData = yearService;
+            _larsDataService = larsDataService;
+            _ddValidityCategory = ddValidityCategory;
+            _academicYearDataService = academicYearDataService;
         }
 
-        /// <summary>
-        /// Gets the (academic) year data.
-        /// </summary>
-        /// <value>
-        /// The year data.
-        /// </value>
-        public IAcademicYearDataService YearData { get; }
-
-        /// <summary>
-        /// Gets the closing date of last academic year.
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>the closing date of the last academic year</returns>
-        public DateTime GetClosingDateOfLastAcademicYear() =>
-            YearData.PreviousYearEnd();
-
-        /// <summary>
-        /// Determines whether [has valid learning aim] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="branchCategory">The branch category.</param>
-        /// <returns>
-        ///   <c>true</c> if [has valid learning aim] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasValidLearningAim(ILearningDelivery delivery, string branchCategory)
+        public void Validate(ILearner objectToValidate)
         {
-            var lastYearEnd = GetClosingDateOfLastAcademicYear();
-            var validity = LarsData.GetValiditiesFor(delivery.LearnAimRef)
-                .Where(x => x.ValidityCategory.ComparesWith(branchCategory))
-                .OrderByDescending(x => x.StartDate)
-                .FirstOrDefault();
+            var previousYearEnd = _academicYearDataService.PreviousYearEnd();
 
-            return It.Has(validity) && (validity.EndDate ?? DateTime.MaxValue) > lastYearEnd;
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
+            {
+                if (ConditionMet(learningDelivery, objectToValidate.LearnerEmploymentStatuses, previousYearEnd))
+                {
+                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.LearnAimRef));
+                }
+            }
         }
 
-        /// <summary>
-        /// Passes the (rule) conditions.
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="branch">The branch result.</param>
-        /// <returns>
-        /// true if it does...
-        /// </returns>
-        public override bool PassesConditions(ILearningDelivery delivery, IBranchResult branch)
+        public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime previousYearEnd)
         {
-            /*
-            Where the learning aim validity criteria has been met in Table 1,
-            the record with the latest validity start date in the LARS database for this Learning aim reference
-            must have a validity end date (if entered) on or after the beginning of the current teaching year
+            var category = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
 
-            And in ’structured’ English:
+            if (category == null)
+            {
+                return false;
+            }
 
-            for the latest LARS_Validity (max LARS_Validity_StartDate) matching the LearningDelivery_LearnAimRef
-            if      LARS_Validity_EndDate != null
-            and     LARS_Validity_EndDate >= CommencementDateOfCurrentAcademicYear (i.e. 2018-08-01)
-                        return OK
-            otherwise   return error
-            */
+            return LarsConditionMet(category, learningDelivery.LearnAimRef, previousYearEnd);
+        }
 
-            return branch.OutOfScope || HasValidLearningAim(delivery, branch.Category);
+        public bool LarsConditionMet(string category, string learnAimRef, DateTime previousYearEnd)
+        {
+            var larsValidity = _larsDataService?.GetValiditiesFor(learnAimRef)
+                .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)).OrderByDescending(s => s.StartDate).FirstOrDefault();
+
+            return larsValidity == null ? false : larsValidity.EndDate.HasValue && larsValidity.EndDate <= previousYearEnd;
+        }
+
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string learnAimRef)
+        {
+            return new[]
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, learnAimRef)
+            };
         }
     }
 }
