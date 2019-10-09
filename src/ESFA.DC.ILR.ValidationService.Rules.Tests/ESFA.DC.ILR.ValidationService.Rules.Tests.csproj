@@ -178,6 +178,7 @@
     <Compile Include="Derived\DerivedData_31RuleTests.cs" />
     <Compile Include="Derived\DerivedData_17RuleTests.cs" />
     <Compile Include="Derived\DerivedData_32RuleTests.cs" />
+    <Compile Include="Derived\DerivedData_ValidityCategoryTests.cs" />
     <Compile Include="Derived\DerivedData_35RuleTests.cs" />
     <Compile Include="DestinationAndProgression\OutCollDate\OutCollDate_01RuleTests.cs" />
     <Compile Include="DestinationAndProgression\OutCollDate\OutCollDate_02RuleTests.cs" />
@@ -557,9 +558,7 @@
     <Compile Include="LearningDelivery\FworkCode\FworkCode_01RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnActEndDate\LearnActEndDate_04RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnActEndDate\LearnActEndDate_01RuleTests.cs" />
-    <Compile Include="LearningDelivery\LearnAimRef\LearnAimRefRuleBaseTestRule.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_88RuleTests.cs" />
-    <Compile Include="LearningDelivery\LearnAimRef\LearnAimRefRuleBaseTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_01RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_30RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_29RuleTests.cs" />
@@ -646,7 +645,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query\AcademicYearQueryServiceTests.cs" />
     <Compile Include="Query\DateTimeQueryServiceTests.cs" />
-    <Compile Include="Query\LearnAimRefRuleActionProviderTests.cs" />
     <Compile Include="Query\LearnerEmploymentStatusQueryServiceTests.cs" />
     <Compile Include="Query\LearnerEmploymentStatusMonitoringQueryServiceTests.cs" />
     <Compile Include="Query\LearnerDPQueryServiceTests.cs" />
