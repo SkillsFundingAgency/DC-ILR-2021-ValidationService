@@ -45,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             }
 
             var ukprn = _fileDataService.UKPRN();
-            var legalOrgType = _organisationDataService.GetLegalOrgTypeForUkprn(ukprn);
+            var longTermResUkprn = _organisationDataService.IsLongTermResForUkprn(ukprn);
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
@@ -62,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                        devolvedPostcodes,
                        sofLdFams.LearnDelFAMCode,
                        learningDelivery.LearningDeliveryFAMs,
-                       legalOrgType))
+                       longTermResUkprn))
                     {
                         HandleValidationError(
                             objectToValidate.LearnRefNumber,
@@ -71,7 +71,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                                 learningDelivery.LearnStartDate,
                                 learningDelivery.FundModel,
                                 learningDelivery.LSDPostcode,
-                                LearningDeliveryFAMTypeConstants.SOF));
+                                LearningDeliveryFAMTypeConstants.SOF,
+                                sofLdFams.LearnDelFAMCode));
                     }
                 }
             }
@@ -85,13 +86,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             IEnumerable<IDevolvedPostcode> devolvedPostcodes,
             string sofCode,
             IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs,
-            string legalOrgType)
+            bool longTermResUkprn)
         {
             return
                 LearnStartDateConditionMet(learnStartDate)
                 && FundModelConditionMet(fundModel)
                 && PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode)
-                && !IsExcluded(ProgType, lsdPostcode, learningDeliveryFAMs, legalOrgType);
+                && !IsExcluded(ProgType, lsdPostcode, learningDeliveryFAMs, longTermResUkprn);
         }
 
         public bool LearnStartDateConditionMet(DateTime learnStartDate) => learnStartDate >= _firstAugust2019;
@@ -99,27 +100,35 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         public bool FundModelConditionMet(int fundModel) => _fundModels.Contains(fundModel);
 
         public bool PostcodeConditionMet(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
-            devolvedPostcodes.Any(dp => learnStartDate < dp.EffectiveFrom && sofCode == dp.SourceOfFunding);
+            PostcodeConditionOne(devolvedPostcodes, learnStartDate, sofCode)
+            || PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode);
 
-        public bool IsExcluded(int? progType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, string legalOrgType)
+        public bool PostcodeConditionOne(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
+            devolvedPostcodes.Any(dp => sofCode != dp.SourceOfFunding);
+
+        public bool PostcodeConditionTwo(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
+            devolvedPostcodes.Any(dp => sofCode == dp.SourceOfFunding && !(learnStartDate >= dp.EffectiveFrom && learnStartDate <= (dp.EffectiveTo ?? DateTime.MaxValue)));
+
+        public bool IsExcluded(int? progType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, bool longTermResUkprn)
         {
             return progType.HasValue
                 || lsdPostcode.CaseInsensitiveEquals(ValidationConstants.TemporaryPostCode)
-                || legalOrgType.CaseInsensitiveEquals(LegalOrgTypeConstants.LTR)
+                || longTermResUkprn
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);
 
         }
 
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, int fundModel, string lsdPostcode, string learnDelFamType)
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, int fundModel, string lsdPostcode, string learnDelFamType, string learnDelFamCode)
         {
             return new[]
             {
                 BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learnStartDate),
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
                 BuildErrorMessageParameter(PropertyNameConstants.LSDPostcode, lsdPostcode),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, learnDelFamType)
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, learnDelFamType),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, learnDelFamCode)
             };
         }
     }
