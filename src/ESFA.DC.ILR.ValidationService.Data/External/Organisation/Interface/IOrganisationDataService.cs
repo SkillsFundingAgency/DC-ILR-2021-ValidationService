@@ -15,5 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface
         bool CampIdExists(string campId);
 
         bool CampIdMatchForUkprn(string campId, long ukprn);
+
+        bool IsLongTermResForUkprn(long ukprn);
     }
 }

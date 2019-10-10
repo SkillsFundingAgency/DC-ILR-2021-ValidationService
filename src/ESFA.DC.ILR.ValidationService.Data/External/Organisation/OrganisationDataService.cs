@@ -1,12 +1,14 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation
 {
     public class OrganisationDataService : IOrganisationDataService
     {
+        private readonly IEnumerable<long> _longTermResOrgs = new HashSet<long> { 10003088, 10004739, 10005583, 10008641 };
         private readonly IExternalDataCache _referenceDataCache;
 
         public OrganisationDataService(IExternalDataCache referenceDataCache)
@@ -46,6 +48,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation
         public bool CampIdMatchForUkprn(string campId, long ukprn)
         {
             return _referenceDataCache.CampusIdentifiers.Any(ci => ci.CampusIdentifer.CaseInsensitiveEquals(campId) && ci.MasterUKPRN == ukprn);
+        }
+
+        public bool IsLongTermResForUkprn(long ukprn)
+        {
+            return _longTermResOrgs.Contains(ukprn);
         }
     }
 }

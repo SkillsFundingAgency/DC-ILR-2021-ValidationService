@@ -168,6 +168,18 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
             NewService(externalDataCacheMock.Object).IsPartnerUkprn(ukprn).Should().BeFalse();
         }
 
+        [Fact]
+        public void IsLongTermResForUkprn_True()
+        {
+            NewService(new Mock<IExternalDataCache>().Object).IsLongTermResForUkprn(10004739).Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsLongTermResForUkprn_False()
+        {
+            NewService(new Mock<IExternalDataCache>().Object).IsLongTermResForUkprn(1).Should().BeFalse();
+        }
+
         private OrganisationDataService NewService(IExternalDataCache externalDataCache)
         {
             return new OrganisationDataService(externalDataCache);
