@@ -3,8 +3,9 @@ using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
+using ESFA.DC.ILR.ValidationService.Rules.Query;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
@@ -24,7 +25,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData("SOF", "034")]
         [InlineData("sof", "357")]
         [InlineData("Sof", "115")]
-        public void ConditionMet_True(string famType, string famCode)
+        public void LearnDelFamTypeSOFConditionMet_True(string famType, string famCode)
         {
             var testLearningDeliveryFam = new TestLearningDeliveryFAM()
             {
@@ -32,14 +33,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 LearnDelFAMCode = famCode
             };
 
-            NewRule().ConditionMet(testLearningDeliveryFam).Should().BeTrue();
+            NewRule().LearnDelFamTypeSOFConditionMet(testLearningDeliveryFam).Should().BeTrue();
         }
 
         [Theory]
         [InlineData("SOF", "105")]
         [InlineData("LDM", "357")]
         [InlineData("ldm", "034")]
-        public void ConditionMet_false(string famType, string famCode)
+        public void LearnDelFamTypeSOFConditionMet_false(string famType, string famCode)
         {
             var testLearningDeliveryFam = new TestLearningDeliveryFAM()
             {
@@ -47,7 +48,47 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 LearnDelFAMCode = famCode
             };
 
-            NewRule().ConditionMet(testLearningDeliveryFam).Should().BeFalse();
+            NewRule().LearnDelFamTypeSOFConditionMet(testLearningDeliveryFam).Should().BeFalse();
+        }
+
+        [Fact]
+        public void LearnDelFamTypeLDMConditionMet_True()
+        {
+            var learningDeliveryFAMs = new List<ILearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                    LearnDelFAMCode = "034"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF,
+                    LearnDelFAMCode = "102"
+                }
+            };
+
+            NewRule(new LearningDeliveryFAMQueryService()).LearnDelFamTypeLDMConditionMet(learningDeliveryFAMs).Should().BeTrue();
+        }
+
+        [Fact]
+        public void LearnDelFamTypeLDMConditionMet_False()
+        {
+            var learningDeliveryFAMs = new List<ILearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                    LearnDelFAMCode = "032"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF,
+                    LearnDelFAMCode = "102"
+                }
+            };
+
+            NewRule(new LearningDeliveryFAMQueryService()).LearnDelFamTypeLDMConditionMet(learningDeliveryFAMs).Should().BeFalse();
         }
 
         [Fact]
@@ -57,8 +98,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             {
                 new TestLearningDeliveryFAM()
                 {
-                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF,
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
                     LearnDelFAMCode = "034"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF,
+                    LearnDelFAMCode = "102"
                 }
             };
 
@@ -73,9 +119,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
+            var learningDeliveryFaMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFaMsQueryServiceMock.Setup(dd => dd.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, "034")).Returns(true);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(learningDeliveryFaMsQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -84,6 +133,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var learningDeliveryFAMs = new List<ILearningDeliveryFAM>()
             {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                    LearnDelFAMCode = "034"
+                },
                 new TestLearningDeliveryFAM()
                 {
                     LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF,
@@ -103,9 +157,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
+            var learningDeliveryFaMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFaMsQueryServiceMock.Setup(dd => dd.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, "034")).Returns(true);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(learningDeliveryFaMsQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -115,7 +172,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learner = new TestLearner();
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(null, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -124,17 +181,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.SOF)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, "034")).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, "102")).Verifiable();
 
-            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters(LearningDeliveryFAMTypeConstants.SOF, "034");
+            NewRule(null, validationErrorHandlerMock.Object).BuildErrorMessageParameters(LearningDeliveryFAMTypeConstants.SOF, "102");
 
             validationErrorHandlerMock.Verify();
         }
 
         public LearnDelFAMType_76Rule NewRule(
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
             IValidationErrorHandler validationErrorHandler = null)
         {
-            return new LearnDelFAMType_76Rule(validationErrorHandler: validationErrorHandler);
+            return new LearnDelFAMType_76Rule(learningDeliveryFamQueryService: learningDeliveryFAMQueryService, validationErrorHandler: validationErrorHandler);
         }
     }
 }
