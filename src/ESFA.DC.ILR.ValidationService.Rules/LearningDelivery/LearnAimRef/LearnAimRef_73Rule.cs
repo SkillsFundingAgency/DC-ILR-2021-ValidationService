@@ -35,18 +35,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             _check = commonOperations;
         }
 
-        public bool IsDisqualifyingSubjectAreaTier(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, ILARSLearningDelivery larsDelivery) =>
-            !(subjectAreaLevel.SectorSubjectAreaCode == larsDelivery.SectorSubjectAreaTier1
+        public bool SubjectAreaTierFilter(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, ILARSLearningDelivery larsDelivery) =>
+            (subjectAreaLevel.SectorSubjectAreaCode == larsDelivery.SectorSubjectAreaTier1
             || subjectAreaLevel.SectorSubjectAreaCode == larsDelivery.SectorSubjectAreaTier2);
 
         public bool HasDisqualifyingSubjectSector(ILARSLearningDelivery larsDelivery, IReadOnlyCollection<IEsfEligibilityRuleSectorSubjectAreaLevel> subjectAreaLevels) =>
             It.IsNull(larsDelivery)
-            || subjectAreaLevels.Any(x => HasDisqualifyingSubjectSector(x, larsDelivery));
+            || (subjectAreaLevels.Where(x => SubjectAreaTierFilter(x, larsDelivery)).Count() > 0
+            ? subjectAreaLevels.Where(x => SubjectAreaTierFilter(x, larsDelivery)).Any(x => HasDisqualifyingSubjectSector(x, larsDelivery))
+            : true);
 
         public bool HasDisqualifyingSubjectSector(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, ILARSLearningDelivery larsDelivery) =>
             IsUsableSubjectArea(subjectAreaLevel)
-            && (IsDisqualifyingSubjectAreaLevel(subjectAreaLevel, GetNotionalNVQLevelV2(larsDelivery))
-                || IsDisqualifyingSubjectAreaTier(subjectAreaLevel, larsDelivery));
+            && IsDisqualifyingSubjectAreaLevel(subjectAreaLevel, GetNotionalNVQLevelV2(larsDelivery));
 
         public bool IsUsableSubjectArea(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel) =>
             It.Has(subjectAreaLevel?.SectorSubjectAreaCode)
