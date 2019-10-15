@@ -271,20 +271,31 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 70)) // TypeOfFunding.EuropeanSocialFund
                 .Returns(true);
 
-            var eligibilityItem = new Mock<IEsfEligibilityRuleSectorSubjectAreaLevel>();
-            eligibilityItem
+            var eligibilityItem1 = new Mock<IEsfEligibilityRuleSectorSubjectAreaLevel>();
+            eligibilityItem1
                 .SetupGet(x => x.SectorSubjectAreaCode)
                 .Returns(area);
-            eligibilityItem
+            eligibilityItem1
                 .SetupGet(x => x.MinLevelCode)
                 .Returns(min);
-            eligibilityItem
+            eligibilityItem1
                 .SetupGet(x => x.MaxLevelCode)
                 .Returns(max);
+
+            var eligibilityItem2 = new Mock<IEsfEligibilityRuleSectorSubjectAreaLevel>();
+            eligibilityItem2
+                .SetupGet(x => x.SectorSubjectAreaCode)
+                .Returns(5m);
+            eligibilityItem2
+                .SetupGet(x => x.MinLevelCode)
+                .Returns("1");
+            eligibilityItem2
+                .SetupGet(x => x.MaxLevelCode)
+                .Returns("3");
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             fcsData
                 .Setup(x => x.GetEligibilityRuleSectorSubjectAreaLevelsFor(ContractRefNumber))
-                .Returns(new IEsfEligibilityRuleSectorSubjectAreaLevel[] { eligibilityItem.Object });
+                .Returns(new IEsfEligibilityRuleSectorSubjectAreaLevel[] { eligibilityItem1.Object, eligibilityItem2.Object });
 
             var larsItem = new Mock<ILARSLearningDelivery>();
             larsItem
