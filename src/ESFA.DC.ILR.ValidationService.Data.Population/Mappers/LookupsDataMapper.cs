@@ -43,7 +43,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                 AugustThirtyFirst = academicYear.AugustThirtyFirst,
                 JanuaryFirst = academicYear.JanuaryFirst,
                 JulyThirtyFirst = academicYear.JulyThirtyFirst,
-                End = academicYear.End
+                End = academicYear.End,
+                PreviousYearEnd = academicYear.PreviousYearEnd
             };
         }
 
