@@ -43,45 +43,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if (learningDelivery.LearnStartDate > _ruleEndDate)
-                {
-                    continue;
-                }
 
-                if (learningDelivery.FundModel != FundModel
-                    || learningDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment)
-                    || learningDelivery.DelLocPostCode.CaseInsensitiveEquals(ValidationConstants.TemporaryPostCode))
-                {
-                    continue;
-                }
+                var latestLearningStart = _derivedData22.GetLatestLearningStartForESFContract(learningDelivery, learner.LearningDeliveries);
 
                 var partnerships = _fcsDataService.GetEligibilityRuleEnterprisePartnershipsFor(learningDelivery.ConRefNumber);
-                if (partnerships == null || partnerships.All(la => string.IsNullOrEmpty(la.Code?.Trim())))
-                {
-                    continue;
-                }
 
-                var onsPostCodes = _postcodeService.GetONSPostcodes(learningDelivery.DelLocPostCode);
-                if ((onsPostCodes?.Count ?? 0) == 0)
-                {
-                    continue;
-                }
+                var onsPostCode = _postcodeService.GetONSPostcodes(learningDelivery.DelLocPostCode);
 
-                DateTime? latestLearningStart =
-                    _derivedData22.GetLatestLearningStartForESFContract(learningDelivery, learner.LearningDeliveries);
-                if (!latestLearningStart.HasValue)
-                {
-                    continue;
-                }
-
-                if (PostcodesContainValidPostcode(latestLearningStart, onsPostCodes))
-                {
-                    continue;
-                }
-
-                if (partnerships.Any(
-                    eli => onsPostCodes.Any(pc => (pc.Lep1.CaseInsensitiveEquals(eli.Code) || pc.Lep2.CaseInsensitiveEquals(eli.Code))
-                    && CheckQualifyingPeriod(latestLearningStart, pc))))
+                if (ConditionMetDD22Exists(latestLearningStart)
+                    && ConditionMetStartDate(learningDelivery.LearnStartDate)
+                    && ConditionMetFundModel(learningDelivery.FundModel)
+                    && ConditionMetLearnAimRef(learningDelivery.LearnAimRef)
+                    && ConditionMetTemporaryPostcode(learningDelivery.DelLocPostCode)
+                    && (ConditionMetONSPostcode(latestLearningStart, onsPostCode)
+                        || ConditionMetPartnership(partnerships, onsPostCode)
+                    ))
                 {
                     HandleValidationError(
                         learner.LearnRefNumber,
@@ -91,23 +67,38 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
             }
         }
 
-        public bool PostcodesContainValidPostcode(DateTime? latestLearningStart, IEnumerable<IONSPostcode> onsPostcodes)
-        {
-            return onsPostcodes.Count() > 1
-                   && onsPostcodes.Any(vp => latestLearningStart >= vp.EffectiveFrom
-                                             && latestLearningStart < (vp.EffectiveTo ?? DateTime.MaxValue)
-                                             && latestLearningStart < (vp.Termination ?? DateTime.MaxValue));
-        }
+        public bool ConditionMetDD22Exists(DateTime? latestLearningStart) =>
+            latestLearningStart.HasValue;
 
-        public bool CheckQualifyingPeriod(DateTime? latestLearningStart, IONSPostcode onsPostCode) =>
-            latestLearningStart < onsPostCode.EffectiveFrom
-            || latestLearningStart > (onsPostCode.EffectiveTo ?? DateTime.MaxValue)
-            || latestLearningStart >= (onsPostCode.Termination ?? DateTime.MaxValue);
+        public bool ConditionMetStartDate(DateTime learnStartDate) =>
+            learnStartDate <= _ruleEndDate;
+
+        public bool ConditionMetFundModel(int fundModel) =>
+            fundModel == FundModel;
+
+        public bool ConditionMetLearnAimRef(string learnAimRef) =>
+            !learnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment);
+
+        public bool ConditionMetTemporaryPostcode(string postcode) =>
+            !postcode.CaseInsensitiveEquals(ValidationConstants.TemporaryPostCode);
+
+        public bool ConditionMetONSPostcode(DateTime? latestLearningStart, IEnumerable<IONSPostcode> onsPostcodes) =>
+            onsPostcodes != null
+                   && !onsPostcodes.Any(vp => latestLearningStart >= vp.EffectiveFrom
+                                             && latestLearningStart <= (vp.EffectiveTo ?? DateTime.MaxValue)
+                                             && latestLearningStart < (vp.Termination ?? DateTime.MaxValue));
+
+        public bool ConditionMetPartnership(IEnumerable<IEsfEligibilityRuleLocalEnterprisePartnership> eligibilityRulesPartnerships, IEnumerable<IONSPostcode> onsPostcodes) =>
+            eligibilityRulesPartnerships != null
+                && (onsPostcodes == null
+                    || !eligibilityRulesPartnerships.Any(eli => onsPostcodes.Any(pc => pc.Lep1.CaseInsensitiveEquals(eli.Code) || pc.Lep2.CaseInsensitiveEquals(eli.Code))));
 
         private IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(ILearningDelivery learningDelivery)
         {
             return new[]
             {
+                BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, learningDelivery.LearnAimRef),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, learningDelivery.FundModel),
                 BuildErrorMessageParameter(PropertyNameConstants.DelLocPostCode, learningDelivery.DelLocPostCode),
                 BuildErrorMessageParameter(PropertyNameConstants.ConRefNumber, learningDelivery.ConRefNumber)
             };
