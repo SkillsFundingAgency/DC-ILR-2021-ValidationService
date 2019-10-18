@@ -1,635 +1,341 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
+using ESFA.DC.ILR.ValidationService.Data.External.FCS.Model;
+using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
+using FluentAssertions;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostCode
 {
-    public class DelLocPostCode_18RuleTests
+    public class DelLocPostCode_18RuleTests : AbstractRuleTests<DelLocPostCode_18Rule>
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var postcodes = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new DelLocPostCode_18Rule(null, common.Object, fcsData.Object, postcodes.Object));
+            NewRule().RuleName.Should().Be("DelLocPostCode_18");
         }
 
-        /// <summary>
-        /// New rule with null common operations throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullCommonOperationsThrows()
+        public void ConditionMetDD22Exists_True()
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var postcodes = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new DelLocPostCode_18Rule(handler.Object, null, fcsData.Object, postcodes.Object));
+            NewRule().ConditionMetDD22Exists(new DateTime(2017, 8, 1)).Should().BeTrue();
         }
 
-        /// <summary>
-        /// New rule with null contract data throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullContractDataThrows()
+        public void ConditionMetDD22Exists_False()
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var postcodes = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new DelLocPostCode_18Rule(handler.Object, common.Object, null, postcodes.Object));
+            NewRule().ConditionMetDD22Exists(null).Should().BeFalse();
         }
 
-        /// <summary>
-        /// New rule with null postcode data throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullPostcodeDataThrows()
+        public void ConditionMetStartDate_True()
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new DelLocPostCode_18Rule(handler.Object, common.Object, fcsData.Object, null));
+            NewRule().ConditionMetStartDate(new DateTime(2017, 8, 1)).Should().BeTrue();
         }
 
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
         [Fact]
-        public void RuleName1()
+        public void ConditionMetStartDate_False()
         {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal("DelLocPostCode_18", result);
+            NewRule().ConditionMetStartDate(new DateTime(2017, 7, 31)).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
         [Fact]
-        public void RuleName2()
+        public void ConditionMetFundModel_True()
         {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(RuleNameConstants.DelLocPostCode_18, result);
+            NewRule().ConditionMetFundModel(70).Should().BeTrue();
         }
 
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
         [Fact]
-        public void RuleName3()
+        public void ConditionMetFundModel_False()
         {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
+            NewRule().ConditionMetFundModel(36).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
         [Fact]
-        public void ValidateWithNullLearnerThrows()
+        public void ConditionMetONSPostcode_False_Null()
         {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
+            NewRule().ConditionMetONSPostcode(null, null).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Gets the qualifying aim meets null expectation.
-        /// </summary>
-        [Fact]
-        public void GetQualifyingAimMeetsNullExpectation()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.GetQualifyingAim(null);
-
-            // assert
-            Assert.Null(result);
-        }
-
-        /// <summary>
-        /// Get qualifying aim meets empty expectation.
-        /// </summary>
-        [Fact]
-        public void GetQualifyingAimMeetsEmptyExpectation()
-        {
-            // arrange
-            var deliveries = Collection.EmptyAndReadOnly<ILearningDelivery>();
-            var sut = NewRule();
-
-            // act
-            var result = sut.GetQualifyingAim(deliveries);
-
-            // assert
-            Assert.Null(result);
-        }
-
-        /// <summary>
-        /// Get eligibility item meets expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData("TestThingy1")]
-        [InlineData("TestThingy2")]
-        [InlineData("TestThingy3")]
-        [InlineData("TestThingy4")]
-        public void GetEligibilityItemMeetsExpectation(string candidate)
+        [InlineData("2017-08-01", "2017-08-02", null, null)]
+        [InlineData("2017-08-01", "2016-08-01", "2016-12-31", null)]
+        [InlineData("2017-08-01", "2017-08-01", "2020-01-01", "2017-01-01")]
+        public void ConditionMetONSPostcode_True(string dd22, string effectiveFrom, string effectiveTo, string termination)
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .SetupGet(x => x.ConRefNumber)
-                .Returns(candidate);
+            DateTime? dateDD22 = string.IsNullOrEmpty(dd22) ? (DateTime?)null : DateTime.Parse(dd22);
+            DateTime effectiveFromDate = DateTime.Parse(effectiveFrom);
+            DateTime? effectiveToDate = string.IsNullOrEmpty(effectiveTo) ? (DateTime?)null : DateTime.Parse(effectiveTo);
+            DateTime? dateOfTermination = string.IsNullOrEmpty(termination) ? (DateTime?)null : DateTime.Parse(termination);
 
-            var expectation = new[] { new Mock<IEsfEligibilityRuleLocalEnterprisePartnership>().Object };
+            var onsPostCodes = new ONSPostcode[]
+                {
+                    new ONSPostcode()
+                    {
+                        EffectiveFrom = effectiveFromDate,
+                        EffectiveTo = effectiveToDate,
+                        Termination = dateOfTermination
+                    }
+                };
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            fcsData
-                .Setup(x => x.GetEligibilityRuleEnterprisePartnershipsFor(candidate))
-                .Returns(expectation);
-
-            var postcodes = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-
-            var sut = new DelLocPostCode_18Rule(handler.Object, common.Object, fcsData.Object, postcodes.Object);
-
-            // act
-            var result = sut.GetEligibilityItemsFor(delivery.Object);
-
-            // assert
-            handler.VerifyAll();
-            common.VerifyAll();
-            fcsData.VerifyAll();
-            postcodes.VerifyAll();
-
-            Assert.IsAssignableFrom<IReadOnlyCollection<IEsfEligibilityRuleLocalEnterprisePartnership>>(result);
-            Assert.Equal(expectation, result);
+            NewRule().ConditionMetONSPostcode(dateDD22, onsPostCodes).Should().BeTrue();
         }
 
-        /// <summary>
-        /// Get ons postcode meets expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData("TestThingy1")]
-        [InlineData("TestThingy2")]
-        [InlineData("TestThingy3")]
-        [InlineData("TestThingy4")]
-        public void GetONSPostcodeMeetsExpectation(string candidate)
+        [InlineData("2017-08-01", "2016-08-01", null, null)]
+        [InlineData("2017-08-01", "2016-08-01", "2019-01-01", null)]
+        [InlineData("2017-08-01", "2017-01-01", null, "2017-08-02")]
+        public void ConditionMetONSPostcode_False(string dd22, string effectiveFrom, string effectiveTo, string termination)
         {
-            // arrange
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .SetupGet(x => x.DelLocPostCode)
-                .Returns(candidate);
+            DateTime? dateDD22 = string.IsNullOrEmpty(dd22) ? (DateTime?)null : DateTime.Parse(dd22);
+            DateTime effectiveFromDate = DateTime.Parse(effectiveFrom);
+            DateTime? effectiveToDate = string.IsNullOrEmpty(effectiveTo) ? (DateTime?)null : DateTime.Parse(effectiveTo);
+            DateTime? dateOfTermination = string.IsNullOrEmpty(termination) ? (DateTime?)null : DateTime.Parse(termination);
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var postcodes = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-            postcodes
-                .Setup(x => x.GetONSPostcodes(candidate))
-                .Returns(new[] { new Mock<IONSPostcode>().Object });
-
-            var sut = new DelLocPostCode_18Rule(handler.Object, common.Object, fcsData.Object, postcodes.Object);
-
-            // act
-            var result = sut.GetONSPostcodes(delivery.Object);
-
-            // assert
-            handler.VerifyAll();
-            common.VerifyAll();
-            fcsData.VerifyAll();
-            postcodes.VerifyAll();
-
-            Assert.IsAssignableFrom<IONSPostcode[]>(result);
-        }
-
-        /// <summary>
-        /// Has qualifying eligibility meets null postcode expectation
-        /// </summary>
-        [Fact]
-        public void HasQualifyingEligibilityMeetsNullPostcodeExpectation()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.HasQualifyingEligibility(new Mock<ILearningDelivery>().Object, null, Collection.EmptyAndReadOnly<IEsfEligibilityRuleLocalEnterprisePartnership>());
-
-            // assert
-            Assert.False(result);
-        }
-
-        /// <summary>
-        /// Has qualifying eligibility meets null eligibility expectation
-        /// </summary>
-        [Fact]
-        public void HasQualifyingEligibilityMeetsNullEligibilityExpectation()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.HasQualifyingEligibility(new Mock<ILearningDelivery>().Object, new[] { new Mock<IONSPostcode>().Object }, null);
-
-            // assert
-            Assert.False(result);
-        }
-
-        /// <summary>
-        /// Has qualifying local authority meets expectation
-        /// </summary>
-        /// <param name="learnStartDateString">The learn start date.</param>
-        /// <param name="elCode">The el code.</param>
-        /// <param name="pcCode">The pc code.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData("2018-10-01", "ESF0002", "tt_9972", false)]
-        [InlineData("2019-10-01", "tt_9972", "ESF0002", false)]
-        [InlineData("2018-09-01", "TT_9972", "tt_9972", false)]
-        [InlineData("2018-08-01", "tt_9972", "TT_9972", true)]
-        [InlineData("2018-08-30", "tt_9972", "tt_9972", true)]
-        [InlineData("2018-09-02", "TT_9973", "tt_9972", false)]
-        [InlineData("2018-09-02", "tt_9972", "TT_9973", false)]
-        [InlineData("2018-09-02", "tt_9973", "tt_9972", false)]
-        [InlineData("2018-09-02", "tt_9972", "tt_9973", false)]
-        public void HasQualifyingEligibilityMeetsExpectation(string learnStartDateString, string elCode, string pcCode, bool expectation)
-        {
-            // arrange
-            var sut = NewRule();
-            var learnStartDate = DateTime.Parse(learnStartDateString);
-            var effectiveFrom = new DateTime(2018, 09, 01);
-            var effectiveTo = new DateTime(2018, 11, 01);
-
-            var delivery = new Mock<ILearningDelivery>();
-            delivery
-                .SetupGet(x => x.LearnStartDate)
-                .Returns(learnStartDate);
-
-            var postcode = new Mock<IONSPostcode>();
-            postcode
-                .SetupGet(x => x.Lep1)
-                .Returns(pcCode);
-            postcode
-                .SetupGet(x => x.EffectiveFrom)
-                .Returns(effectiveFrom);
-            postcode
-                .SetupGet(x => x.EffectiveTo)
-                .Returns(effectiveTo);
-
-            var authority = new Mock<IEsfEligibilityRuleLocalEnterprisePartnership>();
-            authority
-                .SetupGet(x => x.Code)
-                .Returns(elCode);
-
-            // act
-            var result = sut.HasQualifyingEligibility(delivery.Object, new[] { postcode.Object }, new[] { authority.Object });
-
-            // assert
-            Assert.Equal(expectation, result);
-        }
-
-        /// <summary>
-        /// In qualifying period meets expectation.
-        /// </summary>
-        /// <param name="startDate">The start date.</param>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="termination">Termination.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData("2016-02-29", "2016-03-01", "2016-03-10", "2016-03-10", true)]
-        [InlineData("2016-03-11", "2016-03-01", "2016-03-10", "2016-03-10", true)]
-        [InlineData("2016-03-06", "2016-03-01", "2016-03-10", "2016-03-10", false)]
-        [InlineData("2016-03-03", "2016-03-01", null, "2016-03-10", false)]
-        [InlineData("2016-02-28", "2016-02-28", "2016-03-01", "2016-03-01", false)]
-        [InlineData("2016-02-26", "2016-02-27", "2016-03-01", "2016-03-01", true)]
-        [InlineData("2016-02-29", "2016-02-28", null, "2016-02-29", true)]
-        [InlineData("2016-03-01", "2016-02-28", null, "2016-02-29", true)]
-        [InlineData("2016-02-25", "2016-02-28", null, "2016-02-25", true)]
-        public void InQualifyingPeriodMeetsExpectation(string startDate, string from, string to, string termination, bool expectation)
-        {
-            // arrange
-            var sut = NewRule();
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnStartDate)
-                .Returns(DateTime.Parse(startDate));
-
-            var toDate = string.IsNullOrWhiteSpace(to)
-                ? (DateTime?)null
-                : DateTime.Parse(to);
-            var terminationDate = string.IsNullOrWhiteSpace(termination)
-                ? (DateTime?)null
-                : DateTime.Parse(termination);
-
-            var postcode = new Mock<IONSPostcode>();
-            postcode
-                .SetupGet(x => x.EffectiveFrom)
-                .Returns(DateTime.Parse(from));
-            postcode
-                .SetupGet(x => x.EffectiveTo)
-                .Returns(toDate);
-            postcode
-                .SetupGet(x => x.Termination)
-                .Returns(terminationDate);
-
-            // act
-            var result = sut.InQualifyingPeriod(mockDelivery.Object, postcode.Object);
-
-            // assert
-            Assert.Equal(expectation, result);
-        }
-
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="startDate">The start date.</param>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="partnership">The partnership.</param>
-        [Theory]
-        [InlineData("2016-02-01", "2016-02-28", "2016-04-10", "LEP001")]
-        [InlineData("2016-03-11", "2016-01-01", "2016-03-10", "LEP002")]
-        [InlineData("2016-01-01", "2016-01-02", null, "LEP001")]
-        [InlineData("2016-01-28", "2016-02-01", null, "LEP002")]
-        public void InvalidItemRaisesValidationMessage(string startDate, string from, string to, string partnership)
-        {
-            // arrange
-            const string learnRefNumber = "123456789X";
-            const string delLocPC = "testPostcode";
-            const string conRefNum = "tt_1234";
-            const string learnAimRef = "ZESF0001";
-            const int testFunding = 70; // TypeOfFunding.EuropeanSocialFund
-
-            var learnStart = DateTime.Parse(startDate);
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(x => x.FundModel)
-                .Returns(testFunding);
-            mockDelivery
-                .SetupGet(x => x.LearnAimRef)
-                .Returns(learnAimRef);
-            mockDelivery
-                .SetupGet(x => x.CompStatus)
-                .Returns(2); // has completed
-            mockDelivery
-                .SetupGet(x => x.ConRefNumber)
-                .Returns(conRefNum);
-            mockDelivery
-                .SetupGet(x => x.DelLocPostCode)
-                .Returns(delLocPC);
-            mockDelivery
-                .SetupGet(y => y.LearnStartDate)
-                .Returns(learnStart);
-
-            var toDate = string.IsNullOrWhiteSpace(to)
-                ? (DateTime?)null
-                : DateTime.Parse(to);
-
-            var postcode = new Mock<IONSPostcode>();
-            postcode
-                .SetupGet(x => x.Lep1)
-                .Returns("LEP001");
-            postcode
-                .SetupGet(x => x.Lep2)
-                .Returns("LEP002");
-            postcode
-                .SetupGet(x => x.EffectiveFrom)
-                .Returns(DateTime.Parse(from));
-            postcode
-                .SetupGet(x => x.EffectiveTo)
-                .Returns(toDate);
-
-            var postcodes = new List<IONSPostcode>
+            var onsPostCodes = new ONSPostcode[]
             {
-                postcode.Object
+                new ONSPostcode()
+                {
+                    EffectiveFrom = effectiveFromDate,
+                    EffectiveTo = effectiveToDate,
+                    Termination = dateOfTermination
+                }
             };
 
-            var localEnterprisePartnership = new Mock<IEsfEligibilityRuleLocalEnterprisePartnership>();
-            localEnterprisePartnership
-                .SetupGet(x => x.Code)
-                .Returns(partnership);
-
-            var localEnterprisePartnerships = new IEsfEligibilityRuleLocalEnterprisePartnership[] { localEnterprisePartnership.Object };
-            var deliveries = new ILearningDelivery[] { mockDelivery.Object };
-
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(learnRefNumber);
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            handler
-                .Setup(x => x.Handle(RuleNameConstants.DelLocPostCode_18, learnRefNumber, null, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnAimRef", learnAimRef))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("FundModel", testFunding))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("DelLocPostCode", delLocPC))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("ConRefNumber", conRefNum))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            common
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DelLocPostCode_18Rule.FirstViableDate, null))
-                .Returns(true);
-
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            fcsData
-                .Setup(x => x.GetEligibilityRuleEnterprisePartnershipsFor(conRefNum))
-                .Returns(localEnterprisePartnerships);
-
-            var postcodesds = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-            postcodesds
-                .Setup(x => x.GetONSPostcodes(delLocPC))
-                .Returns(postcodes);
-
-            var sut = new DelLocPostCode_18Rule(handler.Object, common.Object, fcsData.Object, postcodesds.Object);
-
-            // act
-            sut.Validate(mockLearner.Object);
-
-            // assert
-            handler.VerifyAll();
-            common.VerifyAll();
-            fcsData.VerifyAll();
-            postcodesds.VerifyAll();
+            NewRule().ConditionMetONSPostcode(dateDD22, onsPostCodes).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Valid item does not raise a validation message.
-        /// </summary>
-        /// <param name="startDate">The start date.</param>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="partnership">The partnership.</param>
         [Theory]
-        [InlineData("2016-02-28", "2016-02-28", "2016-03-01", "LEP001")]
-        [InlineData("2016-02-27", "2016-02-01", "2016-02-28", "LEP002")]
-        [InlineData("2016-02-28", "2016-02-01", "2016-02-27", "LEP005")]
-        [InlineData("2016-02-24", "2016-02-25", "2016-03-01", "LEP005")]
-        [InlineData("2016-02-28", "2016-02-27", null, "LEP001")]
-        [InlineData("2016-02-28", "2016-02-27", null, "LEP002")]
-        [InlineData("2016-02-26", "2016-02-27", null, "LEP005")]
-        public void ValidItemDoesNotRaiseAValidationMessage(string startDate, string from, string to, string partnership)
+        [InlineData("abc", "efg", "hij")]
+        [InlineData(null, "efg", "hij")]
+        [InlineData("abc", null, "hij")]
+        [InlineData("abc", "efg", null)]
+        [InlineData("abc", null, null)]
+        public void ConditionMetPartnership_True(string code, string lep1, string lep2)
         {
-            // arrange
-            const string learnRefNumber = "123456789X";
-            const string delLocPC = "testPostcode";
-            const string conRefNum = "tt_1234";
-            const string learnAimRef = "ZESF0001";
-            const int testFunding = 70; // TypeOfFunding.EuropeanSocialFund
-
-            var learnStart = DateTime.Parse(startDate);
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(x => x.FundModel)
-                .Returns(testFunding);
-            mockDelivery
-                .SetupGet(x => x.LearnAimRef)
-                .Returns(learnAimRef);
-            mockDelivery
-                .SetupGet(x => x.CompStatus)
-                .Returns(2); // has completed
-            mockDelivery
-                .SetupGet(x => x.ConRefNumber)
-                .Returns(conRefNum);
-            mockDelivery
-                .SetupGet(x => x.DelLocPostCode)
-                .Returns(delLocPC);
-            mockDelivery
-                .SetupGet(y => y.LearnStartDate)
-                .Returns(learnStart);
-
-            var toDate = string.IsNullOrWhiteSpace(to)
-                ? (DateTime?)null
-                : DateTime.Parse(to);
-
-            var postcode = new Mock<IONSPostcode>();
-            postcode
-                .SetupGet(x => x.Lep1)
-                .Returns("LEP001");
-            postcode
-                .SetupGet(x => x.Lep2)
-                .Returns("LEP002");
-            postcode
-                .SetupGet(x => x.EffectiveFrom)
-                .Returns(DateTime.Parse(from));
-            postcode
-                .SetupGet(x => x.EffectiveTo)
-                .Returns(toDate);
-
-            var postcodes = new List<IONSPostcode>()
+            var partnershipEligibility = new List<EsfEligibilityRuleLocalEnterprisePartnership>
             {
-                postcode.Object
+                new EsfEligibilityRuleLocalEnterprisePartnership
+                {
+                    Code = code
+                }
             };
 
-            var localEP = new Mock<IEsfEligibilityRuleLocalEnterprisePartnership>();
-            localEP
-                .SetupGet(x => x.Code)
-                .Returns(partnership);
+            var onsPostCodes = new ONSPostcode[]
+            {
+                new ONSPostcode()
+                {
+                      Lep1 = lep1,
+                      Lep2 = lep2
+                }
+            };
 
-            var localEnterprisePartnerships = new IEsfEligibilityRuleLocalEnterprisePartnership[] { localEP.Object };
-            var deliveries = new ILearningDelivery[] { mockDelivery.Object };
-
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(learnRefNumber);
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries);
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            common
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DelLocPostCode_18Rule.FirstViableDate, null))
-                .Returns(true);
-
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            fcsData
-                .Setup(x => x.GetEligibilityRuleEnterprisePartnershipsFor(conRefNum))
-                .Returns(localEnterprisePartnerships);
-
-            var postcodesds = new Mock<IPostcodesDataService>(MockBehavior.Strict);
-            postcodesds
-                .Setup(x => x.GetONSPostcodes(delLocPC))
-                .Returns(postcodes);
-
-            var sut = new DelLocPostCode_18Rule(handler.Object, common.Object, fcsData.Object, postcodesds.Object);
-
-            // act
-            sut.Validate(mockLearner.Object);
-
-            // assert
-            handler.VerifyAll();
-            common.VerifyAll();
-            fcsData.VerifyAll();
-            postcodesds.VerifyAll();
+            NewRule().ConditionMetPartnership(partnershipEligibility, onsPostCodes).Should().BeTrue();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
-        public DelLocPostCode_18Rule NewRule()
+        [Theory]
+        [InlineData(null, null, null)]
+        [InlineData("abc", "abc", "abc")]
+        [InlineData("abc", "efg", "abc")]
+        [InlineData("abc", "abc", "efg")]
+        [InlineData(null, "abc", null)]
+        [InlineData(null, null, "abc")]
+        public void ConditionMetPartnership_False(string code, string lep1, string lep2)
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var postcodes = new Mock<IPostcodesDataService>(MockBehavior.Strict);
+            var partnershipEligibility = new List<EsfEligibilityRuleLocalEnterprisePartnership>
+            {
+                new EsfEligibilityRuleLocalEnterprisePartnership
+                {
+                    Code = code
+                }
+            };
 
-            return new DelLocPostCode_18Rule(handler.Object, common.Object, fcsData.Object, postcodes.Object);
+            var onsPostCodes = new ONSPostcode[]
+            {
+                new ONSPostcode()
+                {
+                      Lep1 = lep1,
+                      Lep2 = lep2
+                }
+            };
+
+            NewRule().ConditionMetPartnership(partnershipEligibility, onsPostCodes).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Validate_Error_NonMatchingPartnership()
+        {
+            var fcsServiceMock = new Mock<IFCSDataService>();
+            fcsServiceMock
+                .Setup(m => m.GetEligibilityRuleEnterprisePartnershipsFor(It.IsAny<string>()))
+                .Returns(new List<EsfEligibilityRuleLocalEnterprisePartnership>
+                {
+                        new EsfEligibilityRuleLocalEnterprisePartnership
+                        {
+                            Code = "123"
+                        },
+                });
+
+            var postcodeServiceMock = new Mock<IPostcodesDataService>();
+            postcodeServiceMock
+                .Setup(m => m.GetONSPostcodes(It.IsAny<string>()))
+                .Returns(new ONSPostcode[]
+                {
+                        new ONSPostcode()
+                        {
+                            Lep1 = "ABC",
+                            Lep2 = "XYZ",
+                            EffectiveFrom = new DateTime(2016, 1, 1)
+                        }
+                });
+
+            var learningDeliveries = new List<TestLearningDelivery> { };
+            var dd22Mock = new Mock<IDerivedData_22Rule>();
+            dd22Mock
+                .Setup(m => m.GetLatestLearningStartForESFContract(It.IsAny<TestLearningDelivery>(), It.IsAny<List<TestLearningDelivery>>()))
+                        .Returns(new DateTime(2017, 8, 1));
+
+            var testLearner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>
+                    {
+                        new TestLearningDelivery
+                        {
+                            LearnStartDate = new DateTime(2017, 8, 1),
+                            FundModel = 70,
+                            LearnAimRef = "12345678",
+                            DelLocPostCode = "CV1 2WT"
+                        },
+                    }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Error_LearnStartBeforeEffectiveDate()
+        {
+            var fcsServiceMock = new Mock<IFCSDataService>();
+            fcsServiceMock
+                .Setup(m => m.GetEligibilityRuleEnterprisePartnershipsFor(It.IsAny<string>()))
+                .Returns(new List<EsfEligibilityRuleLocalEnterprisePartnership>
+                {
+                        new EsfEligibilityRuleLocalEnterprisePartnership
+                        {
+                            Code = "ABC"
+                        },
+                });
+
+            var postcodeServiceMock = new Mock<IPostcodesDataService>();
+            postcodeServiceMock
+                .Setup(m => m.GetONSPostcodes(It.IsAny<string>()))
+                .Returns(new ONSPostcode[]
+                {
+                        new ONSPostcode()
+                        {
+                            Lep1 = "ABC",
+                            EffectiveFrom = new DateTime(2019, 1, 1)
+                        }
+                });
+
+            var learningDeliveries = new List<TestLearningDelivery> { };
+            var dd22Mock = new Mock<IDerivedData_22Rule>();
+            dd22Mock
+                .Setup(m => m.GetLatestLearningStartForESFContract(It.IsAny<TestLearningDelivery>(), It.IsAny<List<TestLearningDelivery>>()))
+                        .Returns(new DateTime(2017, 8, 1));
+
+            var testLearner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>
+                    {
+                        new TestLearningDelivery
+                        {
+                            LearnStartDate = new DateTime(2017, 8, 1),
+                            FundModel = 70,
+                            LearnAimRef = "12345678",
+                            DelLocPostCode = "CV1 2WT"
+                        },
+                    }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
+            }
+        }
+
+        [Fact]
+        public void Validate_No_Error()
+        {
+            var fcsServiceMock = new Mock<IFCSDataService>();
+            fcsServiceMock
+                .Setup(m => m.GetEligibilityRuleEnterprisePartnershipsFor(It.IsAny<string>()))
+                .Returns(new List<EsfEligibilityRuleLocalEnterprisePartnership>
+                {
+                        new EsfEligibilityRuleLocalEnterprisePartnership
+                        {
+                            Code = "ABC"
+                        },
+                });
+
+            var postcodeServiceMock = new Mock<IPostcodesDataService>();
+            postcodeServiceMock
+                .Setup(m => m.GetONSPostcodes(It.IsAny<string>()))
+                .Returns(new ONSPostcode[]
+                {
+                        new ONSPostcode()
+                        {
+                            Lep1 = "ABC",
+                            Lep2 = "XYZ",
+                            EffectiveFrom = new DateTime(2016, 1, 1)
+                        }
+                });
+
+            var learningDeliveries = new List<TestLearningDelivery> { };
+            var dd22Mock = new Mock<IDerivedData_22Rule>();
+            dd22Mock
+                .Setup(m => m.GetLatestLearningStartForESFContract(It.IsAny<TestLearningDelivery>(), It.IsAny<List<TestLearningDelivery>>()))
+                        .Returns(new DateTime(2017, 8, 1));
+
+            var testLearner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>
+                    {
+                        new TestLearningDelivery
+                        {
+                            LearnStartDate = new DateTime(2017, 8, 1),
+                            FundModel = 70,
+                            LearnAimRef = "12345678",
+                            DelLocPostCode = "CV1 2WT"
+                        },
+                    }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
+            }
+        }
+
+        private DelLocPostCode_18Rule NewRule(
+            IValidationErrorHandler validationErrorHandler = null,
+            IFCSDataService fcsDataService = null,
+            IPostcodesDataService postcodesDataService = null,
+            IDerivedData_22Rule derivedData22 = null)
+        {
+            return new DelLocPostCode_18Rule(fcsDataService, postcodesDataService, derivedData22, validationErrorHandler);
         }
     }
 }
