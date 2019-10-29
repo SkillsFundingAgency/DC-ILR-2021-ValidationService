@@ -1,4 +1,6 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
@@ -7,32 +9,22 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
-    public class LearnAimRef_73Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnAimRef_73Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IFCSDataService _fcsData;
-
         private readonly ILARSDataService _larsData;
-
-        private readonly IProvideRuleCommonOperations _check;
 
         public LearnAimRef_73Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations,
             IFCSDataService fcsDataService,
             ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.LearnAimRef_73)
         {
             _fcsData = fcsDataService;
             _larsData = larsDataService;
-            _check = commonOperations;
         }
 
         public bool SubjectAreaTierFilter(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, ILARSLearningDelivery larsDelivery) =>
@@ -62,10 +54,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             && (notionalNVQLevel2 < subjectAreaLevel.MinLevelCode.AsNotionalNVQLevelV2()
                 || notionalNVQLevel2 > subjectAreaLevel.MaxLevelCode.AsNotionalNVQLevelV2());
 
-        public bool IsNotValid(ILearningDelivery thisDelivery) =>
-            !thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment)
-                && _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.EuropeanSocialFund)
-                && HasDisqualifyingSubjectSector(_larsData.GetDeliveryFor(thisDelivery.LearnAimRef), _fcsData.GetEligibilityRuleSectorSubjectAreaLevelsFor(thisDelivery.ConRefNumber).AsSafeReadOnlyList());
+        public bool IsNotValid(ILearningDelivery thisDelivery)
+        {
+            var esfEligibilities = _fcsData.GetEligibilityRuleSectorSubjectAreaLevelsFor(thisDelivery.ConRefNumber).AsSafeReadOnlyList();
+            var larsLearningDelivery = _larsData.GetDeliveryFor(thisDelivery.LearnAimRef);
+
+            if (esfEligibilities.Count > 0 && larsLearningDelivery != null)
+            {
+                return
+                    !thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment)
+                && FundModelConditionMet(thisDelivery.FundModel)
+                && HasDisqualifyingSubjectSector(larsLearningDelivery, esfEligibilities);
+            }
+
+            return false;
+        }           
+
+        public bool FundModelConditionMet(int fundModel)
+        {
+            return fundModel == TypeOfFunding.EuropeanSocialFund;
+        }
 
         public void Validate(ILearner thisLearner)
         {
