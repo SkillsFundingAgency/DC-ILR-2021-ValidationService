@@ -48,6 +48,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 
                 var partnerships = _fcsDataService.GetEligibilityRuleEnterprisePartnershipsFor(learningDelivery.ConRefNumber);
 
+                if (!partnerships.Any())
+                {
+                    break;
+                }
+
                 var onsPostCode = _postcodeService.GetONSPostcodes(learningDelivery.DelLocPostCode);
 
                 if (ConditionMetDD22Exists(latestLearningStart)
