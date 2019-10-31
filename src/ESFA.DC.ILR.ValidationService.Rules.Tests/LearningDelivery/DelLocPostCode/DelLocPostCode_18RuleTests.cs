@@ -329,6 +329,53 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
             }
         }
 
+        [Fact]
+        public void Validate_No_Error_NoEligibility()
+        {
+            var fcsServiceMock = new Mock<IFCSDataService>();
+            fcsServiceMock
+                .Setup(m => m.GetEligibilityRuleEnterprisePartnershipsFor(It.IsAny<string>()))
+                .Returns(Utility.Collection.EmptyAndReadOnly<IEsfEligibilityRuleLocalEnterprisePartnership>());
+
+            var postcodeServiceMock = new Mock<IPostcodesDataService>();
+            postcodeServiceMock
+                .Setup(m => m.GetONSPostcodes(It.IsAny<string>()))
+                .Returns(new ONSPostcode[]
+                {
+                        new ONSPostcode()
+                        {
+                            Lep1 = "ABC",
+                            Lep2 = "XYZ",
+                            EffectiveFrom = new DateTime(2016, 1, 1)
+                        }
+                });
+
+            var learningDeliveries = new List<TestLearningDelivery> { };
+            var dd22Mock = new Mock<IDerivedData_22Rule>();
+            dd22Mock
+                .Setup(m => m.GetLatestLearningStartForESFContract(It.IsAny<TestLearningDelivery>(), It.IsAny<List<TestLearningDelivery>>()))
+                        .Returns(new DateTime(2017, 8, 1));
+
+            var testLearner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>
+                    {
+                        new TestLearningDelivery
+                        {
+                            LearnStartDate = new DateTime(2017, 8, 1),
+                            FundModel = 70,
+                            LearnAimRef = "12345678",
+                            DelLocPostCode = "CV1 2WT"
+                        },
+                    }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
+            }
+        }
+
         private DelLocPostCode_18Rule NewRule(
             IValidationErrorHandler validationErrorHandler = null,
             IFCSDataService fcsDataService = null,
