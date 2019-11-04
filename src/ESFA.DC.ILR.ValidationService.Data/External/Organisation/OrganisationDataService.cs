@@ -8,7 +8,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation
 {
     public class OrganisationDataService : IOrganisationDataService
     {
-        private readonly IEnumerable<long> _longTermResOrgs = new HashSet<long> { 10003088, 10004739, 10005583, 10008641 };
         private readonly IExternalDataCache _referenceDataCache;
 
         public OrganisationDataService(IExternalDataCache referenceDataCache)
@@ -52,7 +51,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation
 
         public bool IsLongTermResForUkprn(long ukprn)
         {
-            return _longTermResOrgs.Contains(ukprn);
+            _referenceDataCache.Organisations.TryGetValue(ukprn, out var organisation);
+
+            return organisation.LongTermResid ?? false;
         }
     }
 }
