@@ -23,6 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         UKPRN = 1,
                         PartnerUKPRN = true,
                         LegalOrgType = "LegalOrgType",
+                        LongTermResid = true
                     }
                 },
                 {
@@ -31,6 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         UKPRN = 2,
                         PartnerUKPRN = false,
                         LegalOrgType = "LegalOrgType",
+                        LongTermResid = false
                     }
                 }
             };
@@ -63,6 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                     UKPRN = 1,
                     PartnerUKPRN = true,
                     LegalOrgType = "LegalOrgType",
+                    LongTermResid = true,
                     OrganisationFundings = new List<OrganisationFunding>(),
                     CampusIdentifers = new List<OrganisationCampusIdentifier>
                     {
@@ -83,6 +86,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                     UKPRN = 2,
                     PartnerUKPRN = false,
                     LegalOrgType = "LegalOrgType",
+                    LongTermResid = false,
                     OrganisationFundings = new List<OrganisationFunding>(),
                     CampusIdentifers = new List<OrganisationCampusIdentifier>
                     {
