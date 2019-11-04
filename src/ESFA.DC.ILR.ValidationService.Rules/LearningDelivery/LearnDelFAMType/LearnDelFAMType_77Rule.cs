@@ -5,17 +5,20 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_77Rule : AbstractRule, IRule<ILearner>
     {
         private const int MaxOccurences = 4;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public LearnDelFAMType_77Rule(
-            IValidationErrorHandler validationErrorHandler)
+            IValidationErrorHandler validationErrorHandler, ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_77)
         {
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
         /// <summary>
@@ -31,15 +34,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if (learningDelivery.LearningDeliveryFAMs == null)
+                var famCount = _learningDeliveryFAMQueryService.GetLearningDeliveryFAMsCountByFAMType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM);
+
+                if (famCount == 0)
                 {
                     continue;
                 }
 
-                var count = learningDelivery.LearningDeliveryFAMs
-                    .Count(ldf => ldf.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.DAM));
-
-                if (count > MaxOccurences)
+                if (famCount > MaxOccurences)
                 {
                     RaiseValidationMessage(learner.LearnRefNumber, learningDelivery);
                 }

@@ -4,6 +4,7 @@ using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Mocks;
 using FluentAssertions;
@@ -25,72 +26,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
 
-            var testLearner = new TestLearner
-            {
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM
-                            },
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                            },
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                            },
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                            },
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                            }
-                        }
-                    },
-                    new TestLearningDelivery
-                    {
-                        LearningDeliveryFAMs = new List<ILearningDeliveryFAM>
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                            },
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                            },
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                            },
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                            }
-                        }
-                    },
-                    new TestLearningDelivery
-                    {
-                        LearningDeliveryFAMs = new List<ILearningDeliveryFAM>
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM
-                            }
-                        }
-                    }
-                }
-            };
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            learningDeliveryFAMsQueryServiceMock
+                .Setup(s => s.GetLearningDeliveryFAMsCountByFAMType(It.IsAny<List<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM))
+                .Returns(4);
+
+            NewRule(validationErrorHandlerMock.Object, learningDeliveryFAMsQueryServiceMock.Object).Validate(It.IsAny<TestLearner>());
             VerifyHandleNotCalled(validationErrorHandlerMock);
         }
 
@@ -99,9 +41,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
 
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+
+            learningDeliveryFAMsQueryServiceMock
+                .Setup(s => s.GetLearningDeliveryFAMsCountByFAMType(It.IsAny<List<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM))
+                .Returns(0);
+
             var testLearner = new TestLearner();
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            NewRule(validationErrorHandlerMock.Object, learningDeliveryFAMsQueryServiceMock.Object).Validate(testLearner);
             VerifyHandleNotCalled(validationErrorHandlerMock);
         }
 
@@ -118,55 +66,71 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+
+            learningDeliveryFAMsQueryServiceMock
+                .Setup(s => s.GetLearningDeliveryFAMsCountByFAMType(It.IsAny<List<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM))
+                .Returns(0);
+
+            NewRule(validationErrorHandlerMock.Object, learningDeliveryFAMsQueryServiceMock.Object).Validate(testLearner);
             VerifyHandleNotCalled(validationErrorHandlerMock);
         }
 
         [Fact]
         public void ValidationFails()
         {
+            List<TestLearningDeliveryFAM> learningDeliveryFams = new List<TestLearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM()
+                {
+                   LearnDelFAMType = "DAM"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                   LearnDelFAMType = "DAM"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                   LearnDelFAMType = "DAM"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                   LearnDelFAMType = "DAM"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                   LearnDelFAMType = "DAM"
+                },
+            };
+
+            var testLearner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearningDeliveryFAMs = learningDeliveryFams
+                    }
+                }
+            };
+
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+
+            learningDeliveryFAMsQueryServiceMock
+                .Setup(s => s.GetLearningDeliveryFAMsCountByFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.DAM))
+                .Returns(5);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                var testLearner = new TestLearner
-                {
-                    LearningDeliveries = new List<TestLearningDelivery>
-                    {
-                        new TestLearningDelivery
-                        {
-                            LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-                            {
-                                new TestLearningDeliveryFAM
-                                {
-                                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                                },
-                                new TestLearningDeliveryFAM
-                                {
-                                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                                },
-                                new TestLearningDeliveryFAM
-                                {
-                                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                                },
-                                new TestLearningDeliveryFAM
-                                {
-                                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                                },
-                                new TestLearningDeliveryFAM
-                                {
-                                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM
-                                }
-                            }
-                        }
-                    }
-                };
-
-                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+                NewRule(validationErrorHandlerMock.Object, learningDeliveryFAMsQueryServiceMock.Object).Validate(testLearner);
             }
         }
 
-        private LearnDelFAMType_77Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
+        private LearnDelFAMType_77Rule NewRule(IValidationErrorHandler validationErrorHandler = null, ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null)
         {
-            return new LearnDelFAMType_77Rule(validationErrorHandler);
+            return new LearnDelFAMType_77Rule(
+                validationErrorHandler: validationErrorHandler,
+                learningDeliveryFAMQueryService: learningDeliveryFAMQueryService);
         }
 
         private void VerifyHandleNotCalled(ValidationErrorHandlerMock errorHandlerMock)
