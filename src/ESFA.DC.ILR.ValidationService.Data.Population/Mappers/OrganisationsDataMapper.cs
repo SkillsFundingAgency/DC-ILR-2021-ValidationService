@@ -17,7 +17,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                 {
                     UKPRN = o.UKPRN,
                     LegalOrgType = o.LegalOrgType,
-                    PartnerUKPRN = o.PartnerUKPRN
+                    PartnerUKPRN = o.PartnerUKPRN,
+                    LongTermResid = o.LongTermResid
                 });
         }
 
