@@ -36,11 +36,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             {
                 var famCount = _learningDeliveryFAMQueryService.GetLearningDeliveryFAMsCountByFAMType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM);
 
-                if (famCount == 0)
-                {
-                    continue;
-                }
-
                 if (famCount > MaxOccurences)
                 {
                     RaiseValidationMessage(learner.LearnRefNumber, learningDelivery);
