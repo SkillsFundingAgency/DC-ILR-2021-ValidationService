@@ -96,6 +96,17 @@ namespace ESFA.DC.ILR.ValidationService.Data.Interface
         bool IsCurrent(TypeOfLimitedLifeLookup lookupKey, string candidate, DateTime referenceDate);
 
         /// <summary>
+        /// Determines whether the specified candidate lookup is current.
+        /// </summary>
+        /// <param name="lookupKey">The lookup key.</param>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="referenceDate">The reference date.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified lookup key is current; otherwise, <c>false</c>.
+        /// </returns>
+        bool IsExpired(TypeOfLimitedLifeLookup lookupKey, string candidate, DateTime referenceDate);
+
+        /// <summary>
         /// Determines whether [is vaguely cuurrent] [the specified lookup].
         /// a loose check for things with a bottomless beginning
         /// </summary>
