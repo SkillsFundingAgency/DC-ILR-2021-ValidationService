@@ -60,6 +60,19 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
             t.Should().Be(expectedResult);
         }
 
+        [Theory]
+        [InlineData("ECF", "5", "2019/09/09", true)]
+        [InlineData("ECF", "5", "2017/09/09", false)]
+        [InlineData("MCF", "5", "2019/10/10", false)]
+        public void ProviderIsExpredValuesMatchForFAMType(string famType, string famCode, string dateToCheckString, bool expectedResult)
+        {
+            var dateToCheck = DateTime.Parse(dateToCheckString);
+
+            var t = NewService().IsExpired(TypeOfLimitedLifeLookup.LearnFAMType, $"{famType}{famCode}", dateToCheck);
+
+            t.Should().Be(expectedResult);
+        }
+
         /// <summary>
         /// Provider contains value matches expectation.
         /// </summary>
@@ -179,6 +192,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
                 ["LOE4"] = new ValidityPeriods(DateTime.Parse("2000-02-01"), DateTime.Parse("2008-08-26")),
             };
 
+            var famTypes = new Dictionary<string, ValidityPeriods>()
+            {
+                ["ECF5"] = new ValidityPeriods(DateTime.Parse("2000-06-14"), DateTime.Parse("2018-06-14")),
+                ["MCF5"] = new ValidityPeriods(DateTime.Parse("2000-06-14"), null),
+            };
+
             var cache = new InternalDataCache
             {
                 IntegerLookups = new Dictionary<TypeOfIntegerCodedLookup, IReadOnlyCollection<int>>
@@ -193,7 +212,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
                 LimitedLifeLookups = new Dictionary<TypeOfLimitedLifeLookup, IReadOnlyDictionary<string, ValidityPeriods>>
                 {
                     { TypeOfLimitedLifeLookup.TTAccom, tTAccomItems },
-                    { TypeOfLimitedLifeLookup.ESMType, esmTypes }
+                    { TypeOfLimitedLifeLookup.ESMType, esmTypes },
+                    { TypeOfLimitedLifeLookup.LearnFAMType, famTypes },
                 },
                 ListItemLookups = new Dictionary<TypeOfListItemLookup, IReadOnlyDictionary<string, IReadOnlyCollection<string>>>()
             };
