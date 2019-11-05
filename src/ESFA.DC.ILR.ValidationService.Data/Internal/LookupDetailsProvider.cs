@@ -145,6 +145,7 @@ namespace ESFA.DC.ILR.ValidationService.Data
         {
             return Contains(lookupKey, candidate)
                 && _internalCache.LimitedLifeLookups[lookupKey].TryGetValue(candidate, out var value)
+                && value.ValidTo.HasValue
                 && (referenceDate > value.ValidTo);
         }
 

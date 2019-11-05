@@ -63,6 +63,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
         [Theory]
         [InlineData("ECF", "5", "2019/09/09", true)]
         [InlineData("ECF", "5", "2017/09/09", false)]
+        [InlineData("MCF", "5", "2019/10/10", false)]
         public void ProviderIsExpredValuesMatchForFAMType(string famType, string famCode, string dateToCheckString, bool expectedResult)
         {
             var dateToCheck = DateTime.Parse(dateToCheckString);
@@ -194,6 +195,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
             var famTypes = new Dictionary<string, ValidityPeriods>()
             {
                 ["ECF5"] = new ValidityPeriods(DateTime.Parse("2000-06-14"), DateTime.Parse("2018-06-14")),
+                ["MCF5"] = new ValidityPeriods(DateTime.Parse("2000-06-14"), null),
             };
 
             var cache = new InternalDataCache
