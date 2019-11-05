@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.LearnFAMType
 
         public bool ConditionMet(ILearnerFAM learnerFam, DateTime dd06Date)
         {
-            return !_lookupDetails.IsCurrent(TypeOfLimitedLifeLookup.LearnFAMType, $"{learnerFam.LearnFAMType}{learnerFam.LearnFAMCode}", dd06Date);
+            return _lookupDetails.IsExpired(TypeOfLimitedLifeLookup.LearnFAMType, $"{learnerFam.LearnFAMType}{learnerFam.LearnFAMCode}", dd06Date);
         }
     }
 }

@@ -133,6 +133,22 @@ namespace ESFA.DC.ILR.ValidationService.Data
         }
 
         /// <summary>
+        /// Determines whether the specified lookup key is expired.
+        /// </summary>
+        /// <param name="lookupKey">The lookup key.</param>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="referenceDate">The reference date.</param>
+        /// <returns>
+        /// <c>true</c> if the specified lookup key is expired; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsExpired(TypeOfLimitedLifeLookup lookupKey, string candidate, DateTime referenceDate)
+        {
+            return Contains(lookupKey, candidate)
+                && _internalCache.LimitedLifeLookups[lookupKey].TryGetValue(candidate, out var value)
+                && (referenceDate > value.ValidTo);
+        }
+
+        /// <summary>
         /// Determines whether [is vaguely cuurrent] [the specified lookup key].
         /// a loose check for things with a bottomless beginning
         /// </summary>
