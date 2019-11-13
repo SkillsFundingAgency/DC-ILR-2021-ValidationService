@@ -416,6 +416,71 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
+        public void Validate_Invalid_OpenAims()
+        {
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(false);
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2018, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        FundModel = 36,
+                        LearnStartDate = new DateTime(2017, 1, 1),
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Invalid_OpenAims_Standard()
+        {
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(false);
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2018, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        FundModel = 36,
+                        ProgTypeNullable = 25,
+                        LearnStartDate = new DateTime(2017, 1, 1),
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void Validate_Invalid_OverlapActualEndDate()
         {
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
