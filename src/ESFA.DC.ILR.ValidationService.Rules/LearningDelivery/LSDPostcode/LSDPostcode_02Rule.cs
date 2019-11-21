@@ -9,6 +9,7 @@ using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
@@ -22,19 +23,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
         private readonly IPostcodesDataService _postcodesDataService;
         private readonly IOrganisationDataService _organisationDataService;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
+        private readonly IDerivedData_35Rule _dd35;
 
         public LSDPostcode_02Rule(
             IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
             IPostcodesDataService postcodesDataService,
             IOrganisationDataService organisationDataService,
-            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
+            IDerivedData_35Rule dd35)
             : base(validationErrorHandler, RuleNameConstants.LSDPostcode_02)
         {
             _fileDataService = fileDataService;
             _postcodesDataService = postcodesDataService;
             _organisationDataService = organisationDataService;
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
+            _dd35 = dd35;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -50,6 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 var devolvedPostcodes = _postcodesDataService.GetDevolvedPostcodes(learningDelivery.LSDPostcode);
+                var dd35 = _dd35.IsCombinedAuthorities(learningDelivery);
 
                 foreach (var sofLdFams in _learningDeliveryFAMQueryService.GetLearningDeliveryFAMsForType(learningDelivery?.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.SOF))
                 {
@@ -60,6 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                        learningDelivery.ProgTypeNullable,
                        learningDelivery.LSDPostcode,
                        devolvedPostcodes,
+                       dd35,
                        sofLdFams.LearnDelFAMCode,
                        learningDelivery.LearningDeliveryFAMs,
                        longTermResUkprn))
@@ -84,6 +90,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             int? ProgType,
             string lsdPostcode,
             IEnumerable<IDevolvedPostcode> devolvedPostcodes,
+            bool dd35,
             string sofCode,
             IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs,
             bool longTermResUkprn)
@@ -91,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             return
                 LearnStartDateConditionMet(learnStartDate)
                 && FundModelConditionMet(fundModel)
-                && PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode)
+                && PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode, dd35)
                 && !IsExcluded(ProgType, lsdPostcode, learningDeliveryFAMs, longTermResUkprn);
         }
 
@@ -99,14 +106,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public bool FundModelConditionMet(int fundModel) => _fundModels.Contains(fundModel);
 
-        public bool PostcodeConditionMet(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
-            PostcodeConditionOne(devolvedPostcodes, learnStartDate, sofCode)
-            || PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode);
+        public bool PostcodeConditionMet(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode, bool dd35) =>
+            PostcodeConditionOne(devolvedPostcodes, dd35)
+            || PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode)
+            || PostcodeConditionThree(devolvedPostcodes, learnStartDate, sofCode);
 
-        public bool PostcodeConditionOne(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
-            devolvedPostcodes.Any(dp => sofCode != dp.SourceOfFunding);
+        public bool PostcodeConditionOne(IEnumerable<IDevolvedPostcode> devolvedPostcodes, bool dd35) =>
+            (devolvedPostcodes == null || !devolvedPostcodes.Any()) && dd35;
 
         public bool PostcodeConditionTwo(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
+            devolvedPostcodes.Any(dp => sofCode != dp.SourceOfFunding);
+
+        public bool PostcodeConditionThree(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
             devolvedPostcodes.Any(dp => sofCode == dp.SourceOfFunding && !(learnStartDate >= dp.EffectiveFrom && learnStartDate <= (dp.EffectiveTo ?? DateTime.MaxValue)));
 
         public bool IsExcluded(int? progType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, bool longTermResUkprn)
