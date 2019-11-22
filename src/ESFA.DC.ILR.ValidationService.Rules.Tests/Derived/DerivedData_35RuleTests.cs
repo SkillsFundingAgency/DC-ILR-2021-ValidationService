@@ -16,13 +16,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
     {
         private readonly List<string> _famCodesSOF = new List<string>()
         {
-            LearningDeliveryFAMCodeConstants.SOF_Unassigned_110,
-            LearningDeliveryFAMCodeConstants.SOF_Unassigned_111,
-            LearningDeliveryFAMCodeConstants.SOF_Unassigned_112,
-            LearningDeliveryFAMCodeConstants.SOF_Unassigned_113,
-            LearningDeliveryFAMCodeConstants.SOF_Unassigned_114,
-            LearningDeliveryFAMCodeConstants.SOF_Unassigned_115,
-            LearningDeliveryFAMCodeConstants.SOF_Unassigned_116
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_GMCA,
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_LCRCA,
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_WMCA,
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_WECA,
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_TVCA,
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_CPCA,
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_London
         };
 
         [Fact]

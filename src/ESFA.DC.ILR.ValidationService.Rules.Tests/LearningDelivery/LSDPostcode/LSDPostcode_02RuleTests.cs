@@ -8,6 +8,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
@@ -51,8 +52,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             NewRule().FundModelConditionMet(70).Should().BeFalse();
         }
 
-       [Fact]
+        [Fact]
         public void PostcodeConditionOne_True()
+        {
+            var learnStartDate = new DateTime(2019, 9, 1);
+            var devolvedPostcodes = new List<IDevolvedPostcode>();
+
+            NewRule().PostcodeConditionOne(devolvedPostcodes, true).Should().BeTrue();
+        }
+
+        [Fact]
+        public void PostcodeConditionOne_False()
+        {
+            var devolvedPostcodes = new List<IDevolvedPostcode>();
+
+            NewRule().PostcodeConditionOne(devolvedPostcodes, false).Should().BeFalse();
+        }
+
+        [Fact]
+        public void PostcodeConditionTwo_True()
         {
             var learnStartDate = new DateTime(2019, 9, 1);
             var sofCode = "105";
@@ -66,11 +84,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 }
             };
 
-            NewRule().PostcodeConditionOne(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
+            NewRule().PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
         }
 
         [Fact]
-        public void PostcodeConditionOne_False()
+        public void PostcodeConditionTwo_False()
         {
             var learnStartDate = new DateTime(2019, 9, 1);
             var sofCode = "105";
@@ -84,11 +102,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 }
             };
 
-            NewRule().PostcodeConditionOne(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
+            NewRule().PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
         }
 
         [Fact]
-        public void PostcodeConditionTwo_False_SOF()
+        public void PostcodeConditionThree_False_SOF()
         {
             var learnStartDate = new DateTime(2019, 9, 1);
             var sofCode = "105";
@@ -102,11 +120,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 }
             };
 
-            NewRule().PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
+            NewRule().PostcodeConditionThree(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
         }
 
         [Fact]
-        public void PostcodeConditionTwo_False_DateWithinRange()
+        public void PostcodeConditionThree_False_DateWithinRange()
         {
             var learnStartDate = new DateTime(2019, 10, 1);
             var sofCode = "105";
@@ -120,11 +138,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 }
             };
 
-            NewRule().PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
+            NewRule().PostcodeConditionThree(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
         }
 
         [Fact]
-        public void PostcodeConditionTwo_True_DateOutOfRange_Lower()
+        public void PostcodeConditionThree_True_DateOutOfRange_Lower()
         {
             var learnStartDate = new DateTime(2019, 8, 1);
             var sofCode = "105";
@@ -138,11 +156,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 }
             };
 
-            NewRule().PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
+            NewRule().PostcodeConditionThree(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
         }
 
         [Fact]
-        public void PostcodeConditionTwo_True_DateOutOfRange_Upper()
+        public void PostcodeConditionThree_True_DateOutOfRange_Upper()
         {
             var learnStartDate = new DateTime(2019, 12, 1);
             var sofCode = "105";
@@ -157,7 +175,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 }
             };
 
-            NewRule().PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
+            NewRule().PostcodeConditionThree(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
         }
 
         [Fact]
@@ -175,7 +193,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 }
             };
 
-            NewRule().PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
+            NewRule().PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode, false).Should().BeFalse();
         }
 
         [Fact]
@@ -193,7 +211,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 }
             };
 
-            NewRule().PostcodeConditionMet(Array.Empty<IDevolvedPostcode>(), learnStartDate, sofCode).Should().BeFalse();
+            NewRule().PostcodeConditionMet(Array.Empty<IDevolvedPostcode>(), learnStartDate, sofCode, false).Should().BeFalse();
         }
 
         [Fact]
@@ -211,7 +229,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 }
             };
 
-            NewRule().PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
+            NewRule().PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode, false).Should().BeTrue();
         }
 
         [Fact]
@@ -229,7 +247,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 }
             };
 
-            NewRule().PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
+            NewRule().PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode, false).Should().BeTrue();
+        }
+
+        [Fact]
+        public void PostcodeConditionMet_True_EmtpyDevolvedPostcodesforDD35()
+        {
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>();
+
+            NewRule().PostcodeConditionMet(devolvedPostcodes, learnStartDate, sofCode, true).Should().BeTrue();
         }
 
         [Theory]
@@ -316,7 +344,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES)).Returns(false);
 
             NewRule(postcodesDataService: postcodeDataServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object)
-                .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, devolvedPostcodes, sofCode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), false).Should().BeTrue();
+                .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, devolvedPostcodes, false, sofCode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), false).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMet_True_dd35()
+        {
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var fundModel = 35;
+            var lsdPostcode = "Postcode";
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>();
+
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+
+            postcodeDataServiceMock.Setup(p => p.GetDevolvedPostcodes(lsdPostcode)).Returns(devolvedPostcodes);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES)).Returns(false);
+
+            NewRule(postcodesDataService: postcodeDataServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, devolvedPostcodes, true, sofCode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), false).Should().BeTrue();
         }
 
         [Theory]
@@ -350,7 +399,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(mockResultDAM);
             learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES)).Returns(mockResultRES);
             NewRule(postcodesDataService: postcodeDataServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object)
-                  .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, devolvedPostcodes, sofCode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), false).Should().BeFalse();
+                  .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, devolvedPostcodes, false, sofCode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), false).Should().BeFalse();
         }
 
         [Fact]
@@ -400,6 +449,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             var organisationsDataServiceMock = new Mock<IOrganisationDataService>();
             var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
 
             fileDataServiceMock.Setup(fm => fm.UKPRN()).Returns(ukprn);
             organisationsDataServiceMock.Setup(o => o.GetLegalOrgTypeForUkprn(ukprn)).Returns(legalOrgType);
@@ -408,6 +458,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
             learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(false);
             learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES)).Returns(false);
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(It.IsAny<ILearningDelivery>())).Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
@@ -416,7 +467,71 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                     fileDataServiceMock.Object,
                     postcodeDataServiceMock.Object,
                     organisationsDataServiceMock.Object,
-                    learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+                    learningDeliveryFamQueryServiceMock.Object,
+                    dd35Mock.Object).Validate(learner);
+                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<object>()), Times.Exactly(10));
+            }
+        }
+
+        [Fact]
+        public void ValidateError_EmptyDevolvedPostcodes()
+        {
+            var ukprn = 1;
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var fundModel = 35;
+            var lsdPostcode = "Postcode";
+            var legalOrgType = "USDC";
+            var learningDeliveryFams = new List<TestLearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "SOF",
+                    LearnDelFAMCode = "110"
+                },
+            };
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnStartDate = learnStartDate,
+                FundModel = fundModel,
+                LSDPostcode = lsdPostcode,
+                LearningDeliveryFAMs = learningDeliveryFams
+            };
+
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    learningDelivery,
+                    learningDelivery,
+                }
+            };
+
+            var devolvedPostcodes = new List<IDevolvedPostcode>();
+
+            var fileDataServiceMock = new Mock<IFileDataService>();
+            var organisationsDataServiceMock = new Mock<IOrganisationDataService>();
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+
+            fileDataServiceMock.Setup(fm => fm.UKPRN()).Returns(ukprn);
+            organisationsDataServiceMock.Setup(o => o.GetLegalOrgTypeForUkprn(ukprn)).Returns(legalOrgType);
+            postcodeDataServiceMock.Setup(p => p.GetDevolvedPostcodes(lsdPostcode)).Returns(devolvedPostcodes);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.GetLearningDeliveryFAMsForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.SOF)).Returns(learningDeliveryFams);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES)).Returns(false);
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(It.IsAny<ILearningDelivery>())).Returns(true);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(
+                    validationErrorHandlerMock.Object,
+                    fileDataServiceMock.Object,
+                    postcodeDataServiceMock.Object,
+                    organisationsDataServiceMock.Object,
+                    learningDeliveryFamQueryServiceMock.Object,
+                    dd35Mock.Object).Validate(learner);
                 validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<object>()), Times.Exactly(10));
             }
         }
@@ -468,6 +583,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             var organisationsDataServiceMock = new Mock<IOrganisationDataService>();
             var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
 
             fileDataServiceMock.Setup(fm => fm.UKPRN()).Returns(ukprn);
             organisationsDataServiceMock.Setup(o => o.GetLegalOrgTypeForUkprn(ukprn)).Returns(legalOrgType);
@@ -476,6 +592,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
             learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_Code_001)).Returns(false);
             learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.RES)).Returns(true);
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(It.IsAny<ILearningDelivery>())).Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
@@ -484,7 +601,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                     fileDataServiceMock.Object,
                     postcodeDataServiceMock.Object,
                     organisationsDataServiceMock.Object,
-                    learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+                    learningDeliveryFamQueryServiceMock.Object,
+                    dd35Mock.Object).Validate(learner);
                 validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<object>()), Times.Exactly(0));
             }
         }
@@ -516,9 +634,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             IFileDataService fileDataService = null,
             IPostcodesDataService postcodesDataService = null,
             IOrganisationDataService organisationDataService = null,
-            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null)
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
+            IDerivedData_35Rule dd35 = null)
         {
-            return new LSDPostcode_02Rule(validationErrorHandler, fileDataService, postcodesDataService, organisationDataService, learningDeliveryFAMQueryService);
+            return new LSDPostcode_02Rule(
+                validationErrorHandler,
+                fileDataService,
+                postcodesDataService,
+                organisationDataService,
+                learningDeliveryFAMQueryService,
+                dd35);
         }
     }
 }
