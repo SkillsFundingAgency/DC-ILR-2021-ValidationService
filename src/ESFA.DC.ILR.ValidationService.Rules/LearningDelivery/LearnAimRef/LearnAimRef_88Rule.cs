@@ -54,7 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             var larsValidity = _larsDataService?.GetValiditiesFor(learnAimRef)
                 .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)) ?? Enumerable.Empty<ILARSLearningDeliveryValidity>();
 
-            return larsValidity.Any(l => learnStartDate < l.StartDate || learnStartDate > l.EndDate || learnStartDate > l.LastNewStartDate);
+            return !larsValidity.Any() || larsValidity.Any(l => learnStartDate < l.StartDate || learnStartDate > l.EndDate || learnStartDate > l.LastNewStartDate);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, string learnAimRef)

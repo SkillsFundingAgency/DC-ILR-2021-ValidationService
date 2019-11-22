@@ -46,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Fact]
-        public void LarsConditionMet_False_NoValiditiesMatch()
+        public void LarsConditionMet_True_NoValiditiesMatch()
         {
             var learnAimRef = "learnAimRef";
 
@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
 
-            NewRule(larsDataServiceMock.Object).LarsConditionMet("ANY", learnAimRef, new DateTime(2019, 7, 31)).Should().BeFalse();
+            NewRule(larsDataServiceMock.Object).LarsConditionMet("ANY", learnAimRef, new DateTime(2019, 7, 31)).Should().BeTrue();
         }
 
         [Fact]
@@ -137,6 +137,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Fact]
+        public void LarsConditionMet_True_NoMatchingValidityCategory()
+        {
+            var learnAimRef = "learnAimRef";
+            var validities = new List<LARSValidity>();
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+
+            larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
+
+            NewRule(larsDataServiceMock.Object).LarsConditionMet("ADULT_SKILLS", learnAimRef, new DateTime(2019, 12, 31)).Should().BeTrue();
+        }
+
+        [Fact]
         public void ConditionMet_True()
         {
             var learnAimRef = "learnAimRef";
@@ -168,7 +181,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Fact]
-        public void ConditionMet_False_NoMatchingCategory()
+        public void ConditionMet_True_NoMatchingCategory()
         {
             var learnAimRef = "learnAimRef";
             var learningDelivery = new TestLearningDelivery
@@ -195,7 +208,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
             ddMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ANY");
 
-            NewRule(larsDataServiceMock.Object, ddMock.Object).ConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeFalse();
+            NewRule(larsDataServiceMock.Object, ddMock.Object).ConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
         }
 
         [Fact]
