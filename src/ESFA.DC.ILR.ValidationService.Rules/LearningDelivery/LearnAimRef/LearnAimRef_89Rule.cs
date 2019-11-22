@@ -57,10 +57,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool LarsConditionMet(string category, string learnAimRef, DateTime previousYearEnd)
         {
-            var larsValidity = _larsDataService?.GetValiditiesFor(learnAimRef)
+            var larsValidities = _larsDataService?.GetValiditiesFor(learnAimRef)
+                .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)) ?? Enumerable.Empty<ILARSLearningDeliveryValidity>();
+
+            if (!larsValidities.Any())
+            {
+                return true;
+            }
+            var latestValidity = _larsDataService?.GetValiditiesFor(learnAimRef)
                 .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)).OrderByDescending(s => s.StartDate).FirstOrDefault();
 
-            return larsValidity == null ? false : larsValidity.EndDate.HasValue && larsValidity.EndDate <= previousYearEnd;
+            return latestValidity == null ? false : latestValidity.EndDate.HasValue && latestValidity.EndDate <= previousYearEnd;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string learnAimRef)
