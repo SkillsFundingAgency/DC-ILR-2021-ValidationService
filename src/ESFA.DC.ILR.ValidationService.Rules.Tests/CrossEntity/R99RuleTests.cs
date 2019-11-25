@@ -231,7 +231,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 AchDateNullable = new DateTime(2020, 1, 1),
             };
 
-            NewRule(null, learningDeliveryFamQueryServiceMock.Object).Excluded(learningDelivery, comparisonLearningDelivery).Should().BeFalse();
+            NewRule(null, learningDeliveryFamQueryServiceMock.Object).Excluded(learningDelivery).Should().BeFalse();
         }
 
         [Fact]
@@ -253,21 +253,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            var comparisonLearningDelivery = new TestLearningDelivery()
-            {
-                FundModel = 36,
-                ProgTypeNullable = 25,
-                LearnStartDate = new DateTime(2018, 1, 1),
-                LearnActEndDateNullable = new DateTime(2019, 1, 1),
-                AchDateNullable = new DateTime(2020, 1, 1)
-            };
-
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
                 .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
                 .Returns(true);
 
-            NewRule(null, learningDeliveryFamQueryServiceMock.Object).Excluded(learningDelivery, comparisonLearningDelivery).Should().BeTrue();
+            NewRule(null, learningDeliveryFamQueryServiceMock.Object).Excluded(learningDelivery).Should().BeTrue();
         }
 
         [Fact]
@@ -278,15 +269,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 FundModel = 36,
                 ProgTypeNullable = 25,
                 LearnStartDate = new DateTime(2019, 2, 2),
-            };
-
-            var comparisonLearningDelivery = new TestLearningDelivery()
-            {
-                FundModel = 36,
-                ProgTypeNullable = 25,
-                LearnStartDate = new DateTime(2018, 1, 1),
-                LearnActEndDateNullable = new DateTime(2019, 1, 1),
-                CompStatus = 3,
                 WithdrawReasonNullable = 97
             };
 
@@ -295,7 +277,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
                 .Returns(false);
 
-            NewRule(null, learningDeliveryFamQueryServiceMock.Object).Excluded(learningDelivery, comparisonLearningDelivery).Should().BeTrue();
+            NewRule(null, learningDeliveryFamQueryServiceMock.Object).Excluded(learningDelivery).Should().BeTrue();
         }
 
         [Fact]
@@ -614,7 +596,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         FundModel = 36,
                         ProgTypeNullable = 25,
                         LearnStartDate = new DateTime(2018, 1, 1),
-                        LearnActEndDateNullable = new DateTime(2020, 1, 1)
                     },
                 }
             };
@@ -624,9 +605,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
                 .Returns(true);
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
                 NewRule(validationErrorHandlerMock.Object, learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+                VerifyErrorHandlerMock(validationErrorHandlerMock, 1);
             }
         }
 
@@ -648,15 +630,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         FundModel = 36,
                         ProgTypeNullable = 25,
                         LearnStartDate = new DateTime(2018, 1, 1),
-                        LearnActEndDateNullable = new DateTime(2020, 1, 1),
-                        CompStatus = 3
+                        WithdrawReasonNullable = 3
                     }
                 }
             };
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
                 NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                VerifyErrorHandlerMock(validationErrorHandlerMock, 1);
             }
         }
 
