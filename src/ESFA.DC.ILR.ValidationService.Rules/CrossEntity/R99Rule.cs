@@ -44,8 +44,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery)
         {
-            return OverlappingAimEndDatesConditionMet(learningDelivery, comparisonLearningDelivery)
-                   || ApprenticeshipStandardConditionMet(learningDelivery, comparisonLearningDelivery);
+            return !Excluded(learningDelivery)
+                && (OverlappingAimEndDatesConditionMet(learningDelivery, comparisonLearningDelivery)
+                   || ApprenticeshipStandardConditionMet(learningDelivery, comparisonLearningDelivery));
         }
 
         public IEnumerable<ILearningDelivery> GetProgrammeAims(IEnumerable<ILearningDelivery> learningDeliveries) =>
@@ -59,16 +60,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ApprenticeshipStandardConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery)
         {
-            return (!Excluded(learningDelivery, comparisonLearningDelivery))
-                && comparisonLearningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+            return comparisonLearningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
                 && comparisonLearningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
                 && It.IsBetween(learningDelivery.LearnStartDate, comparisonLearningDelivery.LearnStartDate, comparisonLearningDelivery.AchDateNullable ?? DateTime.MaxValue);
         }
 
-        public bool Excluded(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery) =>
-                comparisonLearningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
-            &&  comparisonLearningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
-            &&  (comparisonLearningDelivery.CompStatus == 3 
+        public bool Excluded(ILearningDelivery learningDelivery) =>
+                learningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+            && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
+            && !learningDelivery.AchDateNullable.HasValue
+            && (learningDelivery.WithdrawReasonNullable.HasValue
             || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDelivery.LearningDeliveryFAMs, Monitoring.Delivery.Types.Restart));
 
         public IEnumerable<ILearningDelivery> CompareAgainstOtherDeliveries(IEnumerable<ILearningDelivery> learningDeliveries, Func<ILearningDelivery, ILearningDelivery, bool> predicate)
