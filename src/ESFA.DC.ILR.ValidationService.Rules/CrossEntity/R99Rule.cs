@@ -42,11 +42,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             }
         }
 
-        public bool ConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery)
+        public bool ConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery, IEnumerable<ILearningDelivery> standardProgAims)
         {
             return !Excluded(learningDelivery)
                 && (OverlappingAimEndDatesConditionMet(learningDelivery, comparisonLearningDelivery)
-                   || ApprenticeshipStandardConditionMet(learningDelivery, comparisonLearningDelivery));
+                || MultipleUnknownLearnActEndDateConditionMet(learningDelivery, comparisonLearningDelivery)
+                || ProgAimLearnActEndDateConditionMet(learningDelivery, comparisonLearningDelivery, standardProgAims)
+                || ApprenticeshipStandardAchDateConditionMet(learningDelivery, comparisonLearningDelivery)
+                || AchDateConditionMet(learningDelivery, comparisonLearningDelivery));
         }
 
         public IEnumerable<ILearningDelivery> GetProgrammeAims(IEnumerable<ILearningDelivery> learningDeliveries) =>
@@ -58,11 +61,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public bool OverlappingAimEndDatesConditionMet(ILearningDelivery theDelivery, ILearningDelivery comparisonLearningDelivery) =>
             It.IsBetween(theDelivery.LearnStartDate, comparisonLearningDelivery.LearnStartDate, comparisonLearningDelivery.LearnActEndDateNullable ?? DateTime.MaxValue);
 
-        public bool ApprenticeshipStandardConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery)
+        public bool MultipleUnknownLearnActEndDateConditionMet(ILearningDelivery theDelivery, ILearningDelivery comparisonLearningDelivery) =>
+            !theDelivery.LearnActEndDateNullable.HasValue && !comparisonLearningDelivery.LearnActEndDateNullable.HasValue;
+        
+        public bool ProgAimLearnActEndDateConditionMet(ILearningDelivery theDelivery, ILearningDelivery comparisonLearningDelivery, IEnumerable<ILearningDelivery> standardProgAims)
         {
-            return comparisonLearningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
-                && comparisonLearningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
-                && It.IsBetween(learningDelivery.LearnStartDate, comparisonLearningDelivery.LearnStartDate, comparisonLearningDelivery.AchDateNullable ?? DateTime.MaxValue);
+            if (standardProgAims == null || !standardProgAims.Any())
+            {
+                return false;
+            }
+
+            return theDelivery.LearnActEndDateNullable.HasValue
+                && standardProgAims.Any(standardAim => 
+                comparisonLearningDelivery.AimSeqNumber != standardAim.AimSeqNumber
+                && It.IsBetween(comparisonLearningDelivery.LearnStartDate, standardAim.LearnStartDate, standardAim.AchDateNullable ?? DateTime.MaxValue));
+        }
+
+        public bool ApprenticeshipStandardAchDateConditionMet(ILearningDelivery theDelivery, ILearningDelivery comparisonLearningDelivery)
+        {
+            return theDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+                && theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
+                && theDelivery.AchDateNullable.HasValue
+                && It.IsBetween(comparisonLearningDelivery.LearnStartDate, theDelivery.LearnStartDate, theDelivery.LearnActEndDateNullable ?? DateTime.MaxValue);
+        }
+
+        public bool AchDateConditionMet(ILearningDelivery theDelivery, ILearningDelivery comparisonLearningDelivery)
+        {
+            return theDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+                && theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
+                && !theDelivery.AchDateNullable.HasValue
+                && comparisonLearningDelivery.LearnStartDate >= theDelivery.LearnStartDate;
         }
 
         public bool Excluded(ILearningDelivery learningDelivery) =>
@@ -72,9 +100,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             && (learningDelivery.WithdrawReasonNullable.HasValue
             || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDelivery.LearningDeliveryFAMs, Monitoring.Delivery.Types.Restart));
 
-        public IEnumerable<ILearningDelivery> CompareAgainstOtherDeliveries(IEnumerable<ILearningDelivery> learningDeliveries, Func<ILearningDelivery, ILearningDelivery, bool> predicate)
+        public IEnumerable<ILearningDelivery> CompareAgainstOtherDeliveries(IEnumerable<ILearningDelivery> learningDeliveries, Func<ILearningDelivery, ILearningDelivery, IEnumerable<ILearningDelivery>, bool> predicate)
         {
             var learningDeliveriesList = learningDeliveries.ToList();
+            var standardProgrammeAims = learningDeliveries.Where(ld =>
+               ld.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+               && ld.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard).ToList();
 
             var collectionSize = learningDeliveriesList.Count;
 
@@ -87,7 +118,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                         var learningDeliveryOne = learningDeliveriesList[i];
                         var learningDeliveryTwo = learningDeliveriesList[j];
 
-                        if (predicate(learningDeliveryOne, learningDeliveryTwo))
+                        if (predicate(learningDeliveryOne, learningDeliveryTwo, standardProgrammeAims))
                         {
                             yield return learningDeliveryOne;
                             break;

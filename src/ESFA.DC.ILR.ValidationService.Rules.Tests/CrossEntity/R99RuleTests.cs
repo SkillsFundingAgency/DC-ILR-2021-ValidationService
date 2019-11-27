@@ -4,7 +4,6 @@ using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
@@ -17,21 +16,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
     public class R99RuleTests : AbstractRuleTests<R99Rule>
     {
         [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             NewRule().RuleName.Should().Be("R99");
-        }
-
-        [Fact]
-        public void RuleName2()
-        {
-            NewRule().RuleName.Should().Be(RuleNameConstants.R99);
-        }
-
-        [Fact]
-        public void RuleName3()
-        {
-            NewRule().RuleName.Should().Should().NotBe("SomeOtherRuleName_07");
         }
 
         [Fact]
@@ -43,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery(),
             };
 
-            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => false).Should().BeEmpty();
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b, c) => false).Should().BeEmpty();
         }
 
         [Fact]
@@ -58,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 learningDeliveryTwo,
             };
 
-            var matches = NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => true).ToList();
+            var matches = NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b, c) => true).ToList();
 
             matches.Should().HaveCount(2);
             matches[0].Should().BeSameAs(learningDeliveryOne);
@@ -74,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery() { ProgTypeNullable = 2 },
             };
 
-            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => a.ProgTypeNullable > b.ProgTypeNullable).Should().HaveCount(1);
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b, c) => a.ProgTypeNullable > b.ProgTypeNullable).Should().HaveCount(1);
         }
 
         [Fact]
@@ -85,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery()
             };
 
-            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => true).Should().BeEmpty();
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b, c) => true).Should().BeEmpty();
         }
 
         [Fact]
@@ -93,7 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var learningDeliveries = new List<ILearningDelivery>();
 
-            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => false).Should().BeEmpty();
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b, c) => false).Should().BeEmpty();
         }
 
         [Fact]
@@ -110,7 +97,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 nonMatch
             };
 
-            var matches = NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => a.ProgTypeNullable < b.ProgTypeNullable).ToList();
+            var matches = NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b, c) => a.ProgTypeNullable < b.ProgTypeNullable).ToList();
 
             matches.Should().HaveCount(2);
             matches[0].Should().BeSameAs(matchOne);
@@ -281,33 +268,277 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
+        public void MultipleUnknownLearnActEndDateConditionMet_True()
+        {
+            var learningDeliveryOne = new TestLearningDelivery();
+            var learningDeliveryTwo = new TestLearningDelivery();
+
+            NewRule().MultipleUnknownLearnActEndDateConditionMet(learningDeliveryOne, learningDeliveryTwo).Should().BeTrue();
+        }
+
+        [Fact]
+        public void MultipleUnknownLearnActEndDateConditionMet_False_BothSupplied()
+        {
+            var learningDeliveryOne = new TestLearningDelivery()
+            {
+                LearnActEndDateNullable = new DateTime(2019, 2, 2)
+            };
+
+            var learningDeliveryTwo = new TestLearningDelivery()
+            {
+                LearnActEndDateNullable = new DateTime(2019, 2, 2)
+            };
+
+            NewRule().MultipleUnknownLearnActEndDateConditionMet(learningDeliveryOne, learningDeliveryTwo).Should().BeFalse();
+        }
+
+        [Fact]
+        public void MultipleUnknownLearnActEndDateConditionMet_False_OneSupplied()
+        {
+            var learningDeliveryOne = new TestLearningDelivery()
+            {
+                LearnActEndDateNullable = new DateTime(2019, 2, 2)
+            };
+
+            var learningDeliveryTwo = new TestLearningDelivery();
+
+            NewRule().MultipleUnknownLearnActEndDateConditionMet(learningDeliveryOne, learningDeliveryTwo).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ProgAimLearnActEndDateConditionMet_True()
+        {
+            var learningDeliveryOne = new TestLearningDelivery()
+            {
+                AimSeqNumber = 1,
+                LearnActEndDateNullable = new DateTime(2020, 2, 2)
+            };
+
+            var learningDeliveryTwo = new TestLearningDelivery
+            {
+                AimSeqNumber = 2,
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 8, 1)
+            };
+
+            var learningDeliveryThree = new TestLearningDelivery
+            {
+                AimSeqNumber = 3,
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 8, 1)
+            };
+
+            IEnumerable<ILearningDelivery> standardProgAims = new List<TestLearningDelivery>
+            {
+                learningDeliveryTwo,
+                learningDeliveryThree
+            };
+
+            NewRule().ProgAimLearnActEndDateConditionMet(learningDeliveryOne, learningDeliveryTwo, standardProgAims).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ProgAimLearnActEndDateConditionMet_False()
+        {
+            var learningDeliveryOne = new TestLearningDelivery()
+            {
+                AimSeqNumber = 1,
+                LearnActEndDateNullable = new DateTime(2020, 2, 2)
+            };
+
+            var learningDeliveryTwo = new TestLearningDelivery
+            {
+                AimSeqNumber = 2,
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2020, 8, 1)
+            };
+
+            var learningDeliveryThree = new TestLearningDelivery
+            {
+                AimSeqNumber = 3,
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 8, 1),
+                AchDateNullable = new DateTime(2020, 7, 31)
+            };
+
+            IEnumerable<ILearningDelivery> standardProgAims = new List<TestLearningDelivery>
+            {
+                learningDeliveryTwo,
+                learningDeliveryThree
+            };
+
+            NewRule().ProgAimLearnActEndDateConditionMet(learningDeliveryOne, learningDeliveryTwo, standardProgAims).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ProgAimLearnActEndDateConditionMet_False_NoLearnActEndDate()
+        {
+            var learningDeliveryOne = new TestLearningDelivery
+            {
+                AimSeqNumber = 1,
+            };
+
+            var learningDeliveryTwo = new TestLearningDelivery
+            {
+                AimSeqNumber = 2,
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 8, 1)
+            };
+
+            var learningDeliveryThree = new TestLearningDelivery
+            {
+                AimSeqNumber = 3,
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 8, 1)
+            };
+
+            IEnumerable<ILearningDelivery> standardProgAims = new List<TestLearningDelivery>
+            {
+                learningDeliveryTwo,
+                learningDeliveryThree
+            };
+
+            NewRule().ProgAimLearnActEndDateConditionMet(learningDeliveryOne, learningDeliveryTwo, standardProgAims).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ProgAimLearnActEndDateConditionMet_False_NoStandardAims()
+        {
+            var learningDeliveryOne = new TestLearningDelivery()
+            {
+                AimSeqNumber = 1,
+                LearnActEndDateNullable = new DateTime(2020, 2, 2)
+            };
+
+            var learningDeliveryTwo = new TestLearningDelivery
+            {
+                AimSeqNumber = 2,
+                FundModel = 36,
+                LearnStartDate = new DateTime(2020, 8, 1)
+            };
+
+            var learningDeliveryThree = new TestLearningDelivery
+            {
+                AimSeqNumber = 3,
+                FundModel = 36,
+                LearnStartDate = new DateTime(2019, 8, 1),
+                AchDateNullable = new DateTime(2020, 7, 31)
+            };
+
+            NewRule().ProgAimLearnActEndDateConditionMet(learningDeliveryOne, learningDeliveryTwo, null).Should().BeFalse();
+        }
+
+        [Fact]
         public void ApprenticeshipStandardConditionMet_True()
         {
             var learningDelivery = new TestLearningDelivery()
             {
                 FundModel = 36,
                 ProgTypeNullable = 25,
-                LearnStartDate = new DateTime(2020, 2, 2)
+                LearnStartDate = new DateTime(2018, 2, 2),
+                AchDateNullable = new DateTime(2020, 2, 2)
             };
 
             var comparison = new TestLearningDelivery()
             {
                 FundModel = 36,
                 ProgTypeNullable = 25,
-                LearnStartDate = new DateTime(2018, 1, 1),
+                LearnStartDate = new DateTime(2019, 1, 1),
                 LearnActEndDateNullable = new DateTime(2020, 1, 1),
             };
 
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
-                .Returns(false);
-
-            NewRule(null, learningDeliveryFamQueryServiceMock.Object).ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeTrue();
+            NewRule().ApprenticeshipStandardAchDateConditionMet(learningDelivery, comparison).Should().BeTrue();
         }
 
         [Fact]
         public void ApprenticeshipStandardsConditionMet_False_LearningDeliveryFundModel()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 35,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2018, 1, 2)
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 35,
+                LearnStartDate = new DateTime(2019, 1, 1),
+                LearnActEndDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().ApprenticeshipStandardAchDateConditionMet(learningDelivery, comparison).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ApprenticeshipStandardsConditionMet_False_DateMisMatch()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2020, 1, 2),
+                AchDateNullable = new DateTime(2020, 1, 1)
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 35,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                LearnActEndDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().ApprenticeshipStandardAchDateConditionMet(learningDelivery, comparison).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ApprenticeshipStandardsConditionMet_False_NoAchDate()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 1, 2)
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 35,
+                LearnStartDate = new DateTime(2020, 1, 1),
+                LearnActEndDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().ApprenticeshipStandardAchDateConditionMet(learningDelivery, comparison).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AchDateConditionMet_True()
+        {
+            var learningDelivery = new TestLearningDelivery()
+            {
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2019, 1, 2)
+            };
+
+            var comparison = new TestLearningDelivery()
+            {
+                FundModel = 35,
+                LearnStartDate = new DateTime(2020, 1, 1),
+                LearnActEndDateNullable = new DateTime(2020, 1, 1),
+            };
+
+            NewRule().AchDateConditionMet(learningDelivery, comparison).Should().BeTrue();
+        }
+
+        [Fact]
+        public void AchDateConditionMet_False_DateMisMatch()
         {
             var learningDelivery = new TestLearningDelivery()
             {
@@ -319,82 +550,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var comparison = new TestLearningDelivery()
             {
                 FundModel = 35,
-                LearnStartDate = new DateTime(2018, 1, 1),
+                LearnStartDate = new DateTime(2020, 1, 1),
                 LearnActEndDateNullable = new DateTime(2020, 1, 1),
             };
 
-            NewRule().ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeFalse();
+            NewRule().AchDateConditionMet(learningDelivery, comparison).Should().BeFalse();
         }
 
         [Fact]
-        public void ApprenticeshipStandardsConditionMet_False_LearningDeliveryAchDate()
+        public void AchDateConditionMet_False_AchDateReturned()
         {
             var learningDelivery = new TestLearningDelivery()
             {
                 FundModel = 36,
                 ProgTypeNullable = 25,
-                LearnStartDate = new DateTime(2020, 1, 2)
+                LearnStartDate = new DateTime(2019, 1, 2),
+                AchDateNullable = new DateTime(2020, 1, 2)
             };
 
             var comparison = new TestLearningDelivery()
             {
-                FundModel = 36,
-                ProgTypeNullable = 25,
-                LearnStartDate = new DateTime(2018, 1, 1),
-                AchDateNullable = new DateTime(2020, 1, 1),
-            };
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
-                .Returns(false);
-
-            NewRule(null, learningDeliveryFamQueryServiceMock.Object).ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeFalse();
-        }
-
-        [Fact]
-        public void ApprenticeshipStandardsConditionMet_False_ComparisonProgType()
-        {
-            var learningDelivery = new TestLearningDelivery()
-            {
-                FundModel = 36,
-                LearnStartDate = new DateTime(2020, 1, 2)
-            };
-
-            var comparison = new TestLearningDelivery()
-            {
-                FundModel = 36,
-                ProgTypeNullable = 2,
-                LearnStartDate = new DateTime(2018, 1, 1),
+                FundModel = 35,
+                LearnStartDate = new DateTime(2020, 1, 1),
                 LearnActEndDateNullable = new DateTime(2020, 1, 1),
             };
 
-            NewRule().ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeFalse();
-        }
-
-        [Fact]
-        public void ApprenticeshipStandardsConditionMet_False_Dates()
-        {
-            var learningDelivery = new TestLearningDelivery()
-            {
-                FundModel = 36,
-                LearnStartDate = new DateTime(2018, 1, 2),
-            };
-
-            var comparison = new TestLearningDelivery()
-            {
-                FundModel = 36,
-                ProgTypeNullable = 25,
-                LearnStartDate = new DateTime(2017, 1, 1),
-                AchDateNullable = new DateTime(2018, 1, 1)
-            };
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFamQueryServiceMock
-                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
-                .Returns(false);
-
-            NewRule(null, learningDeliveryFamQueryServiceMock.Object).ApprenticeshipStandardConditionMet(learningDelivery, comparison).Should().BeFalse();
+            NewRule().AchDateConditionMet(learningDelivery, comparison).Should().BeFalse();
         }
 
         [Fact]
@@ -497,7 +678,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void Validate_Invalid_StandardRule()
+        public void Validate_Invalid_AppStandardCondition()
         {
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFamQueryServiceMock
@@ -511,7 +692,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimType = 1,
-                        LearnStartDate = new DateTime(2020, 1, 1)
+                        LearnStartDate = new DateTime(2019, 1, 1)
                     },
                     new TestLearningDelivery()
                     {
@@ -519,7 +700,91 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         FundModel = 36,
                         ProgTypeNullable = 25,
                         LearnStartDate = new DateTime(2017, 1, 1),
-                        LearnActEndDateNullable = new DateTime(2019, 1, 1),
+                        AchDateNullable = new DateTime(2020, 1, 1),
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Invalid_AchDateCondition()
+        {
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(false);
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        AimSeqNumber = 1,
+                        LearnStartDate = new DateTime(2017, 1, 1),
+                        LearnActEndDateNullable = new DateTime(2018, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        AimSeqNumber = 2,
+                        FundModel = 36,
+                        ProgTypeNullable = 25,
+                        LearnStartDate = new DateTime(2019, 1, 1),
+                        LearnActEndDateNullable = new DateTime(2020, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        AimSeqNumber = 3,
+                        LearnStartDate = new DateTime(2020, 2, 1)
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Invalid_ProgAimCondition()
+        {
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(false);
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2017, 1, 1),
+                        LearnActEndDateNullable = new DateTime(2018, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        FundModel = 36,
+                        ProgTypeNullable = 25,
+                        LearnStartDate = new DateTime(2019, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        FundModel = 36,
+                        ProgTypeNullable = 25,
+                        LearnStartDate = new DateTime(2019, 1, 1)
                     }
                 }
             };
@@ -575,6 +840,43 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
                 NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Valid_StandardAimHasAchDate()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        AimSeqNumber = 1,
+                        LearnStartDate = new DateTime(2021, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        AimSeqNumber = 2,
+                        ProgTypeNullable = 25,
+                        FundModel = 36,
+                        LearnStartDate = new DateTime(2018, 1, 2),
+                        LearnActEndDateNullable = new DateTime(2020, 1, 1),
+                        AchDateNullable = new DateTime(2020, 1, 1)
+                    },
+                }
+            };
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(false);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object, learningDeliveryFamQueryServiceMock.Object).Validate(learner);
             }
         }
 
