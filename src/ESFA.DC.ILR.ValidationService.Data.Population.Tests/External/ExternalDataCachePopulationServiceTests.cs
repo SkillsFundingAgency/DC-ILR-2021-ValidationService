@@ -66,7 +66,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
                 postcodesDataMapperMock.Object,
                 ulnDataMapperMock.Object,
                 validationErrorsDataMapperMock.Object,
-                validationRulesDataMapperMock.Object).Populate(referenceDataRoot);
+                validationRulesDataMapperMock.Object).Populate(referenceDataRoot, validationContextMock.Object);
 
             employersDataMapperMock.VerifyAll();
             epaOrgDataMapperMock.VerifyAll();

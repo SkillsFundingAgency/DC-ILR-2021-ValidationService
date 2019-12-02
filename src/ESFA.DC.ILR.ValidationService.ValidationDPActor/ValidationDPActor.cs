@@ -99,7 +99,8 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor
                 {
                     ULNs = externalDataCacheGet.ULNs,
                     ValidationErrors = externalDataCacheGet.ValidationErrors.ToCaseInsensitiveDictionary(),
-                    ValidationRules = externalDataCacheGet.ValidationRules
+                    ValidationRules = externalDataCacheGet.ValidationRules,
+                    ReturnPeriod = externalDataCacheGet.ReturnPeriod
                 };
 
                 logger.LogDebug($"{nameof(ValidationDPActor)} {_actorId} {GC.GetGeneration(actorModel)} finished getting input data");

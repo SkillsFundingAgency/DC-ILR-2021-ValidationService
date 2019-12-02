@@ -31,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
             _messageCachePopulationService.Populate(message);
             _internalDataCachePopulationService.Populate(referenceDataRoot);
             _fileDataCachePopulationService.Populate(validationContext, message);
-            _externalDataCachePopulationService.Populate(referenceDataRoot);
+            _externalDataCachePopulationService.Populate(referenceDataRoot, validationContext);
         }
     }
 }

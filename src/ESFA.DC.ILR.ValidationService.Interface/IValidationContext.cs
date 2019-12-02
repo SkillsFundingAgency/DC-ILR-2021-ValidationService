@@ -27,5 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Interface
         int ValidationTotalErrorCount { set; }
 
         int ValidationTotalWarningCount { set; }
+
+        int ReturnPeriod { get; }
     }
 }

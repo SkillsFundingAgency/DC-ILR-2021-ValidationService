@@ -134,9 +134,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
             result.Should().Be(expectedResult);
         }
 
-        private AcademicYearDataService NewService(IInternalDataCache internalDataCache = null)
+        private AcademicYearDataService NewService(IInternalDataCache internalDataCache = null, IExternalDataCache externalDataCache = null)
         {
-            return new AcademicYearDataService(internalDataCache);
+            return new AcademicYearDataService(internalDataCache, externalDataCache);
         }
     }
 }

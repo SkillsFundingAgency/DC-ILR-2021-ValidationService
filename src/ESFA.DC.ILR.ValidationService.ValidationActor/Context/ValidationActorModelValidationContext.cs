@@ -50,5 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor.Context
         {
             set => throw new NotImplementedException();
         }
+
+        public int ReturnPeriod => throw new NotImplementedException();
     }
 }
