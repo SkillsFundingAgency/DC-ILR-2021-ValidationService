@@ -41,5 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface
         DateTime Start();
 
         DateTime PreviousYearEnd();
+
+        int ReturnPeriod();
     }
 }

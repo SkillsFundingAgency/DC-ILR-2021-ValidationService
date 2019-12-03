@@ -41,5 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External
         public IReadOnlyCollection<ICampusIdentifier> CampusIdentifiers { get; set; }
 
         public IReadOnlyCollection<ValidationRule> ValidationRules { get; set; }
+
+        public int ReturnPeriod { get; set; }
     }
 }

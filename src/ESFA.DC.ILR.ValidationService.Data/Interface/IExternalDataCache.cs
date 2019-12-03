@@ -67,5 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Interface
         /// Gets the Validation Rules
         /// </summary>
         IReadOnlyCollection<ValidationRule> ValidationRules { get; }
+
+        int ReturnPeriod { get; }
     }
 }

@@ -34,7 +34,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
             messageCachePopulationServiceMock.Verify(ps => ps.Populate(messageMock));
             fileDataCachePopulationServiceMock.Verify(ps => ps.Populate(validationContextMock, messageMock));
             internalDataCachePopulationServiceMock.Verify(ps => ps.Populate(referenceDataRootMock));
-            externalDataCachePopulationServiceMock.Verify(ps => ps.Populate(referenceDataRootMock));
+            externalDataCachePopulationServiceMock.Verify(ps => ps.Populate(referenceDataRootMock, validationContextMock));
         }
 
         private PreValidationPopulationService NewService(

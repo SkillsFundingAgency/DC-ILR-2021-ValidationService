@@ -54,5 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Context
         {
             set => _jobContextMessage.KeyValuePairs[ILRContextKeys.ValidationTotalWarningCount] = value;
         }
+
+        public int ReturnPeriod => int.Parse(_jobContextMessage.KeyValuePairs[ILRContextKeys.ReturnPeriod].ToString());
     }
 }
