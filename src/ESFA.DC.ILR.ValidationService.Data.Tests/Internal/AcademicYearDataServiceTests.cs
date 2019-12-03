@@ -134,6 +134,18 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
             result.Should().Be(expectedResult);
         }
 
+        [Theory]
+        [InlineData(1)]
+        [InlineData(12)]
+        public void GetReturnPeriod(int returnPeriod)
+        {
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(c => c.ReturnPeriod).Returns(returnPeriod);
+
+            NewService(externalDataCache: externalDataCacheMock.Object).ReturnPeriod().Should().Be(returnPeriod);
+        }
+
         private AcademicYearDataService NewService(IInternalDataCache internalDataCache = null, IExternalDataCache externalDataCache = null)
         {
             return new AcademicYearDataService(internalDataCache, externalDataCache);

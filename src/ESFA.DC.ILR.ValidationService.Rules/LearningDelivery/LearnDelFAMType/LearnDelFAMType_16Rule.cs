@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     public class LearnDelFAMType_16Rule : AbstractRule, IRule<ILearner>
     {
         private readonly string _famCode = "118";
-        private HashSet<int> _returPeriods = new HashSet<int> { 12, 13, 14 };
+        private HashSet<int> _returnPeriods = new HashSet<int> { 12, 13, 14 };
 
         private readonly IAcademicYearDataService _academicYearDataService;
 
@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 {
                     if (deliveryFam.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.LDM)
                         && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(_famCode)
-                        && _returPeriods.Contains(returnPeriod))
+                        && _returnPeriods.Contains(returnPeriod))
                     {
                         RaiseValidationMessage(learner.LearnRefNumber, learningDelivery, deliveryFam);
                     }
