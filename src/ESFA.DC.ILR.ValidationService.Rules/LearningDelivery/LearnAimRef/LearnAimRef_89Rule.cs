@@ -45,27 +45,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime previousYearEnd)
         {
-            var category = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
+            var categoryFromAim = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
 
-            if (category == null)
+            if (categoryFromAim == null)
             {
                 return false;
             }
 
-            return LarsConditionMet(category, learningDelivery.LearnAimRef, previousYearEnd);
+            return LarsConditionMet(categoryFromAim, learningDelivery.LearnAimRef, previousYearEnd);
         }
 
-        public bool LarsConditionMet(string category, string learnAimRef, DateTime previousYearEnd)
+        public bool LarsConditionMet(string categoryFromAim, string learnAimRef, DateTime previousYearEnd)
         {
+            var categories = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                TypeOfLARSValidity.Any,
+                categoryFromAim
+            };
+
             var larsValidities = _larsDataService?.GetValiditiesFor(learnAimRef)
-                .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)) ?? Enumerable.Empty<ILARSLearningDeliveryValidity>();
+                .Where(v => categories.Contains(v.ValidityCategory)) ?? Enumerable.Empty<ILARSLearningDeliveryValidity>();
 
             if (!larsValidities.Any())
             {
                 return true;
             }
-            var latestValidity = _larsDataService?.GetValiditiesFor(learnAimRef)
-                .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)).OrderByDescending(s => s.StartDate).FirstOrDefault();
+            var latestValidity = larsValidities.OrderByDescending(s => s.StartDate).FirstOrDefault();
 
             return latestValidity == null ? false : latestValidity.EndDate.HasValue && latestValidity.EndDate <= previousYearEnd;
         }
