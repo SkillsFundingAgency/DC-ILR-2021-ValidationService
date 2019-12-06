@@ -55,6 +55,6 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Context
             set => _desktopContext.KeyValuePairs[ILRContextKeys.ValidationTotalWarningCount] = value;
         }
 
-        public int ReturnPeriod => throw new NotImplementedException();
+        public int ReturnPeriod => int.Parse(_desktopContext.KeyValuePairs[ILRContextKeys.ReturnPeriod].ToString());
     }
 }
