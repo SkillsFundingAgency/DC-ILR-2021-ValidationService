@@ -44,5 +44,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         {
             return YearsBetween(dateOfBirth, givenDate);
         }
+
+        public DateTime AddYearsToDate(DateTime date, int yearsToAdd)
+        {
+            DateTime dateResult;
+            try
+            {
+                dateResult = date.AddYears(yearsToAdd);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                dateResult = yearsToAdd < 0 ? DateTime.MinValue.Date : DateTime.MaxValue.Date;
+            }
+
+            return dateResult;
+        }
     }
 }

@@ -4,6 +4,7 @@ using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
@@ -60,7 +61,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                 AFinCode = 1,
                 AFinDate = new DateTime(2019, 9, 1)
             };
-            NewRule().AFinRecordWithDateGreaterThanLearnActEndDate(learnActEndDate, appFinRecord).Should().Be(appFinRecord);
+
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(learnActEndDate, 2)).Returns(new DateTime(2019, 08, 01));
+
+            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).AFinRecordWithDateGreaterThanLearnActEndDate(learnActEndDate, appFinRecord).Should().Be(appFinRecord);
         }
 
         [Theory]
@@ -78,7 +83,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                 AFinDate = DateTime.Parse(aFinDateString)
             };
 
-            NewRule().AFinRecordWithDateGreaterThanLearnActEndDate(learnActEndDate, appFinRecord).Should().BeNull();
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(learnActEndDate, 2)).Returns(new DateTime(2020, 08, 01));
+
+            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).AFinRecordWithDateGreaterThanLearnActEndDate(learnActEndDate, appFinRecord).Should().BeNull();
         }
 
         [Fact]
@@ -151,9 +159,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
 
             dd07Mock.Setup(d => d.IsApprenticeship(progType)).Returns(true);
 
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(It.IsAny<DateTime>(), 2)).Returns(new DateTime(2019, 08, 01));
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(dd07Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(dd07Mock.Object, dateTimeQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -227,9 +238,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
 
             dd07Mock.Setup(d => d.IsApprenticeship(progType)).Returns(true);
 
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(It.IsAny<DateTime>(), 2)).Returns(new DateTime(2019, 08, 01));
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(dd07Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(dd07Mock.Object, dateTimeQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -303,9 +317,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
 
             dd07Mock.Setup(d => d.IsApprenticeship(progType)).Returns(true);
 
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(It.IsAny<DateTime>(), 2)).Returns(new DateTime(2019, 08, 01));
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(dd07Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(dd07Mock.Object, dateTimeQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -488,9 +505,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
 
             dd07Mock.Setup(d => d.IsApprenticeship(progType)).Returns(true);
 
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(It.IsAny<DateTime>(), 2)).Returns(new DateTime(2020, 08, 01));
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(dd07Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(dd07Mock.Object, dateTimeQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -564,9 +584,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
 
             dd07Mock.Setup(d => d.IsApprenticeship(progType)).Returns(true);
 
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(It.IsAny<DateTime>(), 2)).Returns(new DateTime(2020, 08, 01));
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(dd07Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(dd07Mock.Object, dateTimeQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -640,15 +663,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
 
             dd07Mock.Setup(d => d.IsApprenticeship(progType)).Returns(false);
 
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(It.IsAny<DateTime>(), 2)).Returns(new DateTime(2020, 08, 01));
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(dd07Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(dd07Mock.Object, dateTimeQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
-        private AFinDate_12Rule NewRule(IDerivedData_07Rule dd07 = null, IValidationErrorHandler validationErrorHandler = null)
+        private AFinDate_12Rule NewRule(
+            IDerivedData_07Rule dd07 = null,
+            IDateTimeQueryService dateTimeQueryService = null,
+            IValidationErrorHandler validationErrorHandler = null)
         {
-            return new AFinDate_12Rule(dd07, validationErrorHandler);
+            return new AFinDate_12Rule(dd07, dateTimeQueryService, validationErrorHandler);
         }
     }
 }

@@ -1,51 +1,20 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
 {
-    public class LearnStartDate_02RuleTests
+    public class LearnStartDate_02RuleTests : AbstractRuleTests<LearnStartDate_02Rule>
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_02Rule(null, service.Object));
-        }
-
-        /// <summary>
-        /// New rule with null data service throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullDataServiceThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_02Rule(handler.Object, null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             // arrange
             var sut = NewRule();
@@ -57,41 +26,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             Assert.Equal("LearnStartDate_02", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(LearnStartDate_02Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
         [Fact]
         public void ValidateWithNullLearnerThrows()
         {
@@ -102,69 +36,82 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
-        /// <summary>
-        /// Has exceed registration period meets expectation
-        /// </summary>
-        /// <param name="startDate">The start date.</param>
-        /// <param name="operationDate">The operation date.</param>
-        /// <param name="commencementDate">The commencement date.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        [Theory]
-        [InlineData("2004-07-31", "2015-02-13", "2014-08-01", true)] // 2014-08-01 => 2004-08-01
-        [InlineData("2004-04-14", "2015-04-14", "2014-08-01", true)] // 2014-08-01 => 2004-08-01
-        [InlineData("2004-07-31", "2015-06-15", "2014-08-01", true)] // 2014-08-01 => 2004-08-01
-        [InlineData("2004-08-01", "2015-06-15", "2014-08-01", false)] // 2014-08-01 => 2004-08-01
-        [InlineData("2005-07-31", "2015-08-15", "2015-08-01", true)] // 2015-08-01 => 2005-08-01
-        [InlineData("2005-08-01", "2015-08-15", "2015-08-01", false)] // 2015-08-01 => 2005-08-01
-        [InlineData("2006-07-31", "2016-08-15", "2016-08-01", true)] // 2016-08-01 => 2006-08-01
-        [InlineData("2006-08-01", "2016-08-15", "2016-08-01", false)] // 2016-08-01 => 2006-08-01
-        public void IsOutsideValidSubmissionPeriod(string startDate, string operationDate, string commencementDate, bool expectation)
+        [Fact]
+        public void IsOutsideValidSubmissionPeriod_True()
         {
+            var startDate = new DateTime(2000, 8, 1);
+            var yearStartDate = new DateTime(2019, 8, 1);
+
             // arrange
-            var testDate = DateTime.Parse(operationDate);
             var mockItem = new Mock<ILearningDelivery>();
             mockItem
                 .SetupGet(x => x.LearnStartDate)
-                .Returns(DateTime.Parse(startDate));
+                .Returns(startDate);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
-            service
+            var academicYearService = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYearService
                 .Setup(x => x.Start())
-                .Returns(DateTime.Parse(commencementDate));
+                .Returns(yearStartDate);
 
-            var sut = new LearnStartDate_02Rule(handler.Object, service.Object);
+            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQueryService
+                .Setup(ds => ds.AddYearsToDate(yearStartDate, -10))
+                .Returns(new DateTime(2009, 8, 1));
+
+            var sut = new LearnStartDate_02Rule(handler.Object, academicYearService.Object, dateTimeQueryService.Object);
 
             // act
             var result = sut.IsOutsideValidSubmissionPeriod(mockItem.Object);
 
             // assert
-            Assert.Equal(expectation, result);
+            Assert.True(result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="startDate">The start date.</param>
-        /// <param name="operationDate">The operation date.</param>
-        /// <param name="commencementDate">The commencement date.</param>
-        [Theory]
-        [InlineData("2004-07-31", "2015-02-13", "2014-08-01")] // 2014-08-01 => 2004-08-01
-        [InlineData("2004-04-14", "2015-04-14", "2014-08-01")] // 2014-08-01 => 2004-08-01
-        [InlineData("2004-07-31", "2015-06-15", "2014-08-01")] // 2014-08-01 => 2004-08-01
-        [InlineData("2005-07-31", "2015-08-15", "2015-08-01")] // 2015-08-01 => 2005-08-01
-        [InlineData("2006-07-31", "2016-08-15", "2016-08-01")] // 2016-08-01 => 2006-08-01
-        public void InvalidItemRaisesValidationMessage(string startDate, string operationDate, string commencementDate)
+        [Fact]
+        public void IsOutsideValidSubmissionPeriod_False()
         {
-            // arrange
-            const string LearnRefNumber = "123456789X";
+            var startDate = new DateTime(2018, 8, 1);
+            var yearStartDate = new DateTime(2019, 8, 1);
 
-            var testdate = DateTime.Parse(startDate);
-            var opDate = DateTime.Parse(operationDate);
+            // arrange
+            var mockItem = new Mock<ILearningDelivery>();
+            mockItem
+                .SetupGet(x => x.LearnStartDate)
+                .Returns(startDate);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var academicYearService = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYearService
+                .Setup(x => x.Start())
+                .Returns(yearStartDate);
+
+            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQueryService
+                .Setup(ds => ds.AddYearsToDate(yearStartDate, -10))
+                .Returns(new DateTime(2009, 8, 1));
+
+            var sut = new LearnStartDate_02Rule(handler.Object, academicYearService.Object, dateTimeQueryService.Object);
+
+            // act
+            var result = sut.IsOutsideValidSubmissionPeriod(mockItem.Object);
+
+            // assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void Validate_Error()
+        {
+            var learnRefNumber = "123456789X";
+            var startDate = new DateTime(2000, 8, 1);
+            var yearStartDate = new DateTime(2019, 8, 1);
+
+            // arrange
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.LearnStartDate)
-                .Returns(testdate);
+                .Returns(startDate);
 
             var deliveries = Collection.Empty<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -172,54 +119,44 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var mockLearner = new Mock<ILearner>();
             mockLearner
                 .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
+                .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
                 .Returns(deliveries.AsSafeReadOnlyList());
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            handler
-                .Setup(x => x.Handle(LearnStartDate_02Rule.Name, LearnRefNumber, 0, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", testdate.ToString("d", AbstractRule.RequiredCulture)))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-
-            var service = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
-            service
+            var academicYearService = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYearService
                 .Setup(x => x.Start())
-                .Returns(DateTime.Parse(commencementDate));
+                .Returns(yearStartDate);
 
-            var sut = new LearnStartDate_02Rule(handler.Object, service.Object);
+            var dateTimeQueryService = new Mock<IDateTimeQueryService>();
+            dateTimeQueryService
+                .Setup(ds => ds.AddYearsToDate(yearStartDate, -10))
+                .Returns(new DateTime(2009, 8, 1));
 
             // act
-            sut.Validate(mockLearner.Object);
+            using (var handlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(handlerMock.Object, academicYearService.Object, dateTimeQueryService.Object).Validate(mockLearner.Object);
+            }
 
             // assert
-            handler.VerifyAll();
-            service.VerifyAll();
+            academicYearService.VerifyAll();
+            dateTimeQueryService.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise a validation message.
-        /// </summary>
-        /// <param name="startDate">The start date.</param>
-        /// <param name="operationDate">The operation date.</param>
-        /// <param name="commencementDate">The commencement date.</param>
-        [Theory]
-        [InlineData("2004-08-01", "2015-06-15", "2014-08-01")] // 2014-08-01 => 2004-08-01
-        [InlineData("2005-08-01", "2015-08-15", "2015-08-01")] // 2015-08-01 => 2005-08-01
-        [InlineData("2006-08-01", "2016-08-15", "2016-08-01")] // 2016-08-01 => 2006-08-01
-        public void ValidItemDoesNotRaiseAValidationMessage(string startDate, string operationDate, string commencementDate)
+        [Fact]
+        public void Validate_NoError()
         {
-            // arrange
-            const string LearnRefNumber = "123456789X";
+            var learnRefNumber = "123456789X";
+            var startDate = new DateTime(2019, 8, 1);
+            var yearStartDate = new DateTime(2019, 8, 1);
 
-            var testdate = DateTime.Parse(startDate);
-            var opDate = DateTime.Parse(operationDate);
+            // arrange
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.LearnStartDate)
-                .Returns(testdate);
+                .Returns(startDate);
 
             var deliveries = Collection.Empty<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -227,37 +164,38 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var mockLearner = new Mock<ILearner>();
             mockLearner
                 .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
+                .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
                 .Returns(deliveries.AsSafeReadOnlyList());
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
-            service
+            var academicYearService = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYearService
                 .Setup(x => x.Start())
-                .Returns(DateTime.Parse(commencementDate));
+                .Returns(yearStartDate);
 
-            var sut = new LearnStartDate_02Rule(handler.Object, service.Object);
+            var dateTimeQueryService = new Mock<IDateTimeQueryService>();
+            dateTimeQueryService
+                .Setup(ds => ds.AddYearsToDate(yearStartDate, -10))
+                .Returns(new DateTime(2009, 8, 1));
 
             // act
-            sut.Validate(mockLearner.Object);
+            using (var handlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(handlerMock.Object, academicYearService.Object, dateTimeQueryService.Object).Validate(mockLearner.Object);
+            }
 
             // assert
-            handler.VerifyAll();
-            service.VerifyAll();
+            academicYearService.VerifyAll();
+            dateTimeQueryService.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
-        public LearnStartDate_02Rule NewRule()
+        public LearnStartDate_02Rule NewRule(
+            IValidationErrorHandler handler = null,
+            IAcademicYearDataService academicYearDataService = null,
+            IDateTimeQueryService dateTimeQueryService = null)
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
-
-            return new LearnStartDate_02Rule(handler.Object, service.Object);
+            return new LearnStartDate_02Rule(handler, academicYearDataService, dateTimeQueryService);
         }
     }
 }
