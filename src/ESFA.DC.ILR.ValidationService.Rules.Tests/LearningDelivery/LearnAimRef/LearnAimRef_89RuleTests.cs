@@ -104,6 +104,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Fact]
+        public void LarsConditionMet_True_AnyMatch()
+        {
+            var learnAimRef = "learnAimRef";
+
+            var validities = new List<LARSValidity>
+            {
+                new LARSValidity
+                {
+                    LearnAimRef = learnAimRef,
+                    ValidityCategory = "ADULT_SKILLS",
+                    StartDate = new DateTime(2018, 7, 1),
+                    EndDate = new DateTime(2019, 7, 31),
+                },
+                new LARSValidity
+                {
+                    LearnAimRef = learnAimRef,
+                    ValidityCategory = "ANY",
+                    StartDate = new DateTime(2018, 8, 1),
+                    EndDate = new DateTime(2019, 7, 31),
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+
+            larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
+
+            NewRule(larsDataServiceMock.Object).LarsConditionMet("ESF", learnAimRef, new DateTime(2019, 7, 31)).Should().BeTrue();
+        }
+
+        [Fact]
         public void ConditionMet_True()
         {
             var learnAimRef = "learnAimRef";
