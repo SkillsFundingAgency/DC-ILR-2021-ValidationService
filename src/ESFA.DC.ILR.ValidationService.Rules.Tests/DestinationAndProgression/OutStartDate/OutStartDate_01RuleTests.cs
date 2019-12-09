@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutStartDate;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
@@ -57,9 +55,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
             academicYearDataServiceMock.Setup(ds => ds.Start()).Returns(new DateTime(2018, 08, 01));
 
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(academicYearDataServiceMock.Object.Start(), -10)).Returns(new DateTime(2008, 08, 01));
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(academicYearDataServiceMock.Object, validationErrorHandlerMock.Object).Validate(learnerDP);
+                NewRule(academicYearDataServiceMock.Object, dateTimeQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learnerDP);
             }
         }
 
@@ -80,9 +81,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
             academicYearDataServiceMock.Setup(ds => ds.Start()).Returns(new DateTime(2018, 08, 01));
 
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(academicYearDataServiceMock.Object.Start(), -10)).Returns(new DateTime(2008, 08, 01));
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(academicYearDataServiceMock.Object, validationErrorHandlerMock.Object).Validate(learnerDP);
+                NewRule(academicYearDataServiceMock.Object, dateTimeQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learnerDP);
             }
         }
 
@@ -94,9 +98,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
             academicYearDataServiceMock.Setup(ds => ds.Start()).Returns(new DateTime(2018, 08, 01));
 
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(academicYearDataServiceMock.Object.Start(), -10)).Returns(new DateTime(2008, 08, 01));
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(academicYearDataServiceMock.Object, validationErrorHandlerMock.Object).Validate(learnerDP);
+                NewRule(academicYearDataServiceMock.Object, dateTimeQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learnerDP);
             }
         }
 
@@ -114,9 +121,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
 
         private OutStartDate_01Rule NewRule(
             IAcademicYearDataService academicYearDataService = null,
+            IDateTimeQueryService dateTimeQueryService = null,
             IValidationErrorHandler validationErrorHandler = null)
         {
-            return new OutStartDate_01Rule(academicYearDataService, validationErrorHandler);
+            return new OutStartDate_01Rule(academicYearDataService, dateTimeQueryService, validationErrorHandler);
         }
     }
 }

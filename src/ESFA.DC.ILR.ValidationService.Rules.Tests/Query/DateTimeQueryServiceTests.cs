@@ -79,5 +79,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         {
             new DateTimeQueryService().AgeAtGivenDate(DateTime.Parse(start), DateTime.Parse(end)).Should().Be(years);
         }
+
+        [Theory]
+        [InlineData("2019-3-10", "2020-3-10", 1)]
+        [InlineData("2019-3-10", "2049-3-10", 30)]
+        [InlineData("2019-3-10", "2019-3-10", 0)]
+        [InlineData("2019-3-10", "2018-3-10", -1)]
+        [InlineData("2019-3-10", "2009-3-10", -10)]
+        [InlineData("0001-1-1", "0001-1-1", -1)]
+        [InlineData("0001-1-1", "0001-1-1", -10)]
+        [InlineData("9999-12-31", "9999-12-31", 1)]
+        [InlineData("9999-12-31", "9999-12-31", 10)]
+        public void AddYearsToDate(string date, string result, int years)
+        {
+            new DateTimeQueryService().AddYearsToDate(DateTime.Parse(date), years).Should().Be(DateTime.Parse(result));
+        }
     }
 }

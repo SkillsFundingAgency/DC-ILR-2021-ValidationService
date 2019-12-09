@@ -5,6 +5,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
 {
@@ -14,11 +15,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
         private const int _numberOfYears = 2;
 
         private readonly IDerivedData_07Rule _dd07;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
-        public AFinDate_12Rule(IDerivedData_07Rule dd07, IValidationErrorHandler validationErrorHandler)
+        public AFinDate_12Rule(IDerivedData_07Rule dd07, IDateTimeQueryService dateTimeQueryService, IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.AFinDate_12)
         {
             _dd07 = dd07;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -53,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
         }
 
         public IAppFinRecord AFinRecordWithDateGreaterThanLearnActEndDate(DateTime learnActEndDate, IAppFinRecord appFinRecord)
-            => appFinRecord.AFinDate > learnActEndDate.AddYears(_numberOfYears) ? appFinRecord : null;
+            => appFinRecord.AFinDate > _dateTimeQueryService.AddYearsToDate(learnActEndDate, _numberOfYears) ? appFinRecord : null;
 
         public bool IsAppsStandardOrFramework(int aimType, int? progType) => aimType == _aimType
                 && _dd07.IsApprenticeship(progType);

@@ -17,11 +17,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
         private const int _numberOfYears = -1;
 
         private readonly IDerivedData_07Rule _dd07;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
-        public AFinDate_09Rule(IDerivedData_07Rule dd07, IValidationErrorHandler validationErrorHandler)
+        public AFinDate_09Rule(IDerivedData_07Rule dd07, IDateTimeQueryService dateTimeQueryService, IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.AFinDate_09)
         {
             _dd07 = dd07;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -56,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
 
         public IAppFinRecord AFinRecordWithDateLessThanLearnStartDate(DateTime learnStartDate, IAppFinRecord appFinRecord)
         {
-            return appFinRecord.AFinDate < learnStartDate.AddYears(_numberOfYears) ? appFinRecord : null;
+            return appFinRecord.AFinDate < _dateTimeQueryService.AddYearsToDate(learnStartDate, _numberOfYears) ? appFinRecord : null;
         }
 
         public bool IsAppsStandardOrFramework(int aimType, int? progType)
