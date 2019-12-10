@@ -39,28 +39,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            var categoryFromAim = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
+            var category = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
 
-            if (categoryFromAim == null)
+            if (category == null)
             {
                 return false;
             }
 
-            return LarsConditionMet(categoryFromAim, learningDelivery.LearnAimRef, learningDelivery.LearnStartDate);
+            return LarsConditionMet(category, learningDelivery.LearnAimRef, learningDelivery.LearnStartDate);
         }
 
-        public bool LarsConditionMet(string categoryFromAim, string learnAimRef, DateTime learnStartDate)
+        public bool LarsConditionMet(string category, string learnAimRef, DateTime learnStartDate)
         {
-            var categories = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-            {
-                TypeOfLARSValidity.Any,
-                categoryFromAim
-            };
+            var larsValidity = _larsDataService?.GetValiditiesFor(learnAimRef)
+                .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)) ?? Enumerable.Empty<ILARSLearningDeliveryValidity>();
 
-            var larsValidities = _larsDataService?.GetValiditiesFor(learnAimRef)
-                .Where(v => categories.Contains(v.ValidityCategory)) ?? Enumerable.Empty<ILARSLearningDeliveryValidity>();
-
-            return !larsValidities.Any() || larsValidities.Any(l => learnStartDate < l.StartDate || learnStartDate > l.EndDate || learnStartDate > l.LastNewStartDate);
+            return !larsValidity.Any() || larsValidity.Any(l => learnStartDate < l.StartDate || learnStartDate > l.EndDate || learnStartDate > l.LastNewStartDate);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, string learnAimRef)
