@@ -9,6 +9,7 @@ using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Interface.Enum;
+using ESFA.DC.ILR.ValidationService.Providers.Utils;
 using ESFA.DC.Logging.Interfaces;
 
 namespace ESFA.DC.ILR.ValidationService.Providers
@@ -78,7 +79,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
                     _logger.LogDebug($"File schema catastrophic error, so will not execute learner validation actors, error count: {_validationErrorCache.ValidationErrors.Count}");
                     await _validationOutputService.ProcessAsync(validationContext, message, _validationErrorCache.ValidationErrors, cancellationToken).ConfigureAwait(false);
 
-                    return;
+                    throw new ValidationSeverityFailException("File level errors (Severity F) caught. Handing back to Message Handler.");
                 }
 
                 await _validationExecutionProvider.ExecuteAsync(validationContext, message, cancellationToken).ConfigureAwait(false);
