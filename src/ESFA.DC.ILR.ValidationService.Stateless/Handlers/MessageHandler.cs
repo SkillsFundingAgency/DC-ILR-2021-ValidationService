@@ -5,9 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Providers.Utils;
 using ESFA.DC.ILR.ValidationService.Stateless.Configuration;
-using ESFA.DC.ILR.ValidationService.Stateless.Context;
-using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobContextManager.Model.Interface;
@@ -48,7 +47,14 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
 
                     var preValidationOrchestrationService = childLifeTimeScope.Resolve<IPreValidationOrchestrationService>();
 
-                    await preValidationOrchestrationService.ExecuteAsync(validationContext, cancellationToken);
+                    try
+                    {
+                        await preValidationOrchestrationService.ExecuteAsync(validationContext, cancellationToken);
+                    }
+                    catch (ValidationSeverityFailException ex)
+                    {
+                        logger.LogDebug(ex.Message);
+                    }
 
                     logger.LogDebug("Validation complete");
                     ServiceEventSource.Current.ServiceMessage(_context, "Validation complete");
