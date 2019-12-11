@@ -29,6 +29,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Theory]
+        [InlineData(36, 35)]
+        [InlineData(25, 25)]
+        [InlineData(25, 36)]
+        public void Exclusion_False(int fundModel, int? progType)
+        {
+            NewRule().Exclusion(fundModel, progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Exclusion_True()
+        {
+            NewRule().Exclusion(36, 25).Should().BeTrue();
+        }
+
+        [Theory]
         [InlineData(35)]
         [InlineData(36)]
         public void FundModelFilter_True(int fundModel)
@@ -339,6 +354,58 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         FundModel = 36,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 1,
+                        FworkCodeNullable = 2,
+                        PwayCodeNullable = 3,
+                    },
+                }
+            };
+
+            var frameworkAims = new FrameworkAim[]
+            {
+                new FrameworkAim()
+                {
+                    FrameworkComponentType = 1
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+
+            larsDataServiceMock.Setup(s => s.GetFrameworkAimsFor(learnAimRef)).Returns(frameworkAims);
+
+            using (var validationErrorHandler = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(larsDataServiceMock.Object, validationErrorHandler.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_Exclusion()
+        {
+            var learnAimRef = "learnAimRef";
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 36,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 25,
+                        FworkCodeNullable = 2,
+                        PwayCodeNullable = 3,
+                    },
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 35,
                         AimType = 3,
                         LearnAimRef = learnAimRef,
                         CompStatus = 2,
