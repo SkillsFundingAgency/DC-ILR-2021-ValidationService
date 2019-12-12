@@ -50,6 +50,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                 .FirstOrDefault();
         }
 
+        public IEnumerable<IAppFinRecord> GetAppFinRecordsForType(IEnumerable<IAppFinRecord> appFinRecords, string aFinType)
+        {
+            return appFinRecords?.Where(afr => afr.AFinType.CaseInsensitiveEquals(aFinType)) ?? Enumerable.Empty<IAppFinRecord>();
+        }
+
         public int GetTotalTNPPriceForLatestAppFinRecordsForLearning(IEnumerable<ILearningDelivery> learningDeliveries)
         {
             var total = 0;
