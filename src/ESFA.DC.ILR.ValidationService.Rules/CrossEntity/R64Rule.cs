@@ -44,7 +44,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         }
 
         public bool Filter(ILearningDelivery learningDelivery) =>
-            CompStatusFilter(learningDelivery.CompStatus)
+                  !Exclusion(learningDelivery.FundModel, learningDelivery.ProgTypeNullable)
+                && CompStatusFilter(learningDelivery.CompStatus)
                 && OutcomeFilter(learningDelivery.OutcomeNullable)
                 && AimTypeFilter(learningDelivery.AimType)
                 && FundModelFilter(learningDelivery.FundModel)
@@ -63,6 +64,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                     })
                 .Where(g => g.Count() > 1);
         }
+
+        public bool Exclusion(int fundModel, int? progType) => fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017 && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool FundModelFilter(int fundModel) => fundModel == TypeOfFunding.AdultSkills || fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
 
