@@ -211,6 +211,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(AFinDate_08Rule),
                 typeof(AFinDate_09Rule),
                 typeof(AFinDate_12Rule),
+                typeof(AFinDate_13Rule),
                 typeof(AFinType_01Rule),
                 typeof(AFinType_02Rule),
                 typeof(AFinType_04Rule),
