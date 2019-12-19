@@ -44,16 +44,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery, IEnumerable<ILearningDelivery> standardProgAims)
         {
-            return !Excluded(learningDelivery)
-                && (OverlappingAimEndDatesConditionMet(learningDelivery, comparisonLearningDelivery)
+            return
+                OverlappingAimEndDatesConditionMet(learningDelivery, comparisonLearningDelivery)
                 || MultipleUnknownLearnActEndDateConditionMet(learningDelivery, comparisonLearningDelivery)
                 || ProgAimLearnActEndDateConditionMet(learningDelivery, comparisonLearningDelivery, standardProgAims)
                 || ApprenticeshipStandardAchDateConditionMet(learningDelivery, comparisonLearningDelivery)
-                || AchDateConditionMet(learningDelivery, comparisonLearningDelivery));
+                || AchDateConditionMet(learningDelivery, comparisonLearningDelivery);
         }
 
         public IEnumerable<ILearningDelivery> GetProgrammeAims(IEnumerable<ILearningDelivery> learningDeliveries) =>
-            learningDeliveries.Where(ld => ld.AimType == TypeOfAim.ProgrammeAim);
+            learningDeliveries.Where(ld => ld.AimType == TypeOfAim.ProgrammeAim && !Excluded(ld));
 
         public bool HasMoreThanOneProgrammeAim(IEnumerable<ILearningDelivery> candidates) =>
             candidates.Count() > 1;
