@@ -146,6 +146,44 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
+        public void GetProgrammeAims_FilteringExclusions()
+        {
+            var match = new TestLearningDelivery()
+            {
+                AimType = 1,
+                AimSeqNumber = 1,
+                FundModel = 36,
+                ProgTypeNullable = 25,
+                LearnStartDate = new DateTime(2018, 5, 11),
+                LearnActEndDateNullable = new DateTime(2019, 8, 20),
+            };
+
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                match,
+                new TestLearningDelivery()
+                {
+                    AimType = 1,
+                    AimSeqNumber = 2,
+                    FundModel = 36,
+                    ProgTypeNullable = 25,
+                    LearnStartDate = new DateTime(2019, 11, 19),
+                    LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
+                }
+            };
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock
+                .SetupSequence(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(false).Returns(true);
+
+            var matches = NewRule(learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object).GetProgrammeAims(learningDeliveries).ToList();
+
+            matches.Should().HaveCount(1);
+            matches.First().Should().BeSameAs(match);
+        }
+
+        [Fact]
         public void LearningDeliveryCountConditionMet_True()
         {
             var learningDeliveries = new List<ILearningDelivery>()
