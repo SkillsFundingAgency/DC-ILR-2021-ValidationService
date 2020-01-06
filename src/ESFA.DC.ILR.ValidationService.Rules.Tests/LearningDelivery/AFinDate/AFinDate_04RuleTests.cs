@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
@@ -22,18 +20,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
         }
 
         [Theory]
-        [InlineData(36, 35)]
-        [InlineData(25, 25)]
-        [InlineData(25, 36)]
-        public void Exclusion_False(int fundModel, int? progType)
+        [InlineData(35)]
+        [InlineData(null)]
+        public void Exclusion_False(int? progType)
         {
-            NewRule().Exclusion(fundModel, progType).Should().BeFalse();
+            NewRule().Exclusion(progType).Should().BeFalse();
         }
 
         [Fact]
         public void Exclusion_True()
         {
-            NewRule().Exclusion(36, 25).Should().BeTrue();
+            NewRule().Exclusion(25).Should().BeTrue();
         }
 
         [Theory]
@@ -156,7 +153,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                     {
                         LearnActEndDateNullable = new DateTime(2018, 8, 1),
                         FundModel = 35,
-                        ProgTypeNullable = 25,
+                        ProgTypeNullable = 26,
                         AimType = 1,
                         AppFinRecords = new List<TestAppFinRecord>
                         {

@@ -48,11 +48,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
         }
 
         public bool Filter(ILearningDelivery learningDelivery) =>
-               !Exclusion(learningDelivery.FundModel, learningDelivery.ProgTypeNullable)
+               !Exclusion(learningDelivery.ProgTypeNullable)
             && ApprenticeshipFrameworkProgrammeFilter(learningDelivery.ProgTypeNullable, learningDelivery.AimType)
             && LearnActEndDateIsKnown(learningDelivery.LearnActEndDateNullable);
 
-        public bool Exclusion(int fundModel, int? progType) => fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017 && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        public bool Exclusion(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool ApprenticeshipFrameworkProgrammeFilter(int? progType, int aimType) => _dd07.IsApprenticeship(progType) && aimType == TypeOfAim.ProgrammeAim;
 
