@@ -1,13 +1,10 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
@@ -44,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         }
 
         public bool Filter(ILearningDelivery learningDelivery) =>
-                  !Exclusion(learningDelivery.FundModel, learningDelivery.ProgTypeNullable)
+                  !Exclusion(learningDelivery.ProgTypeNullable)
                 && CompStatusFilter(learningDelivery.CompStatus)
                 && OutcomeFilter(learningDelivery.OutcomeNullable)
                 && AimTypeFilter(learningDelivery.AimType)
@@ -65,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 .Where(g => g.Count() > 1);
         }
 
-        public bool Exclusion(int fundModel, int? progType) => fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017 && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        public bool Exclusion(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool FundModelFilter(int fundModel) => fundModel == TypeOfFunding.AdultSkills || fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
 

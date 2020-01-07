@@ -29,18 +29,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Theory]
-        [InlineData(36, 35)]
-        [InlineData(25, 25)]
-        [InlineData(25, 36)]
-        public void Exclusion_False(int fundModel, int? progType)
+        [InlineData(36)]
+        [InlineData(null)]
+        public void Exclusion_False(int? progType)
         {
-            NewRule().Exclusion(fundModel, progType).Should().BeFalse();
+            NewRule().Exclusion(progType).Should().BeFalse();
         }
 
         [Fact]
         public void Exclusion_True()
         {
-            NewRule().Exclusion(36, 25).Should().BeTrue();
+            NewRule().Exclusion(25).Should().BeTrue();
         }
 
         [Theory]
@@ -318,6 +317,62 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new FrameworkAim()
                 {
                     FrameworkComponentType = 1
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+
+            larsDataServiceMock.Setup(s => s.GetFrameworkAimsFor(learnAimRef)).Returns(frameworkAims);
+
+            using (var validationErrorHandler = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(larsDataServiceMock.Object, validationErrorHandler.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Error_bug()
+        {
+            var learnAimRef = "learnAimRef";
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimSeqNumber = 1,
+                        FundModel = 35,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 2,
+                        FworkCodeNullable = 420,
+                        PwayCodeNullable = 1,
+                        PriorLearnFundAdjNullable = 25
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimSeqNumber = 2,
+                        FundModel = 35,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 2,
+                        FworkCodeNullable = 420,
+                        PwayCodeNullable = 1,
+                        PriorLearnFundAdjNullable = 7
+                    },
+                }
+            };
+
+            var frameworkAims = new FrameworkAim[]
+            {
+                new FrameworkAim()
+                {
+                    FrameworkComponentType = 3
                 }
             };
 
