@@ -33,8 +33,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 return;
             }
 
-            var standardProgrammeAimsToValidate = GetStandardAppFinRecordsToValidate(learner.LearningDeliveries);
-            var frameworkProgrammeAimsToValidate = GetFrameworkAppFinRecordsToValidate(learner.LearningDeliveries);
+            var apprenticeshipLearningDeliveries = learner.LearningDeliveries.Where(IsApprenticeshipProgrammeAim).ToList();
+            
+            if (!apprenticeshipLearningDeliveries.Any())
+            {
+                return;
+            }
+
+            var standardProgrammeAimsToValidate = GetGroupedAppFinRecordsToValidate(apprenticeshipLearningDeliveries, ld => ld.StdCodeNullable);
+            var frameworkProgrammeAimsToValidate = GetGroupedAppFinRecordsToValidate(apprenticeshipLearningDeliveries, ld => ld.FworkCodeNullable);
 
             if (!standardProgrammeAimsToValidate.Any() && !frameworkProgrammeAimsToValidate.Any())
             {
@@ -124,19 +131,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             }
         }
 
-        private IDictionary<int?, IEnumerable<ILearningDelivery>> GetStandardAppFinRecordsToValidate(IEnumerable<ILearningDelivery> learningDeliveries)
+        private IDictionary<int?, IEnumerable<ILearningDelivery>> GetGroupedAppFinRecordsToValidate(IEnumerable<ILearningDelivery> apprenticeshipLearningDeliveries, Func<ILearningDelivery, int?> groupBy)
         {
-            return learningDeliveries.Where(IsApprenticeshipProgrammeAim)
-                .GroupBy(ld => ld.StdCodeNullable)
-                .Where(x => x.Any(s => s.StdCodeNullable.HasValue))
-                .ToDictionary(x => x.Key, v => v.Select(ld => ld));
-        }
-
-        private IDictionary<int?, IEnumerable<ILearningDelivery>> GetFrameworkAppFinRecordsToValidate(IEnumerable<ILearningDelivery> learningDeliveries)
-        {
-            return learningDeliveries.Where(IsApprenticeshipProgrammeAim)
-              .GroupBy(ld => ld.FworkCodeNullable)
-              .Where(x => x.Any(f => f.FworkCodeNullable.HasValue))
+            return apprenticeshipLearningDeliveries
+              .GroupBy(groupBy)
+              .Where(x => x.Any(f => groupBy(f).HasValue))
               .ToDictionary(x => x.Key, v => v.Select(ld => ld));
         }
     }
