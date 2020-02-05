@@ -33,30 +33,53 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 return;
             }
 
-            var programDeliveries = learner.LearningDeliveries
-                .Where(IsApprenticeshipProgrammeAim)
-                .GroupBy(ld => new { ld.ProgTypeNullable, ld.StdCodeNullable, ld.FworkCodeNullable })
-                .SelectMany(x => x).ToList();
-
-            if (!programDeliveries.Any() || !programDeliveries.GroupBy(ld => ld.StdCodeNullable).Any(c => c.Count() > 1))
+            var apprenticeshipLearningDeliveries = learner.LearningDeliveries.Where(IsApprenticeshipProgrammeAim).ToList();
+            
+            if (!apprenticeshipLearningDeliveries.Any())
             {
                 return;
             }
 
-            foreach (var appFinRecords in programDeliveries
-                .Where(ld => ld.AppFinRecords != null)
-                .SelectMany(ld => ld.AppFinRecords)
-                .GroupBy(afr => new { AFinType = afr.AFinType?.ToUpper(), afr.AFinCode, afr.AFinDate })
-                .Where(apf => apf.Count() > 1))
+            var standardProgrammeAimsToValidate = GetGroupedAppFinRecordsToValidate(apprenticeshipLearningDeliveries, ld => ld.StdCodeNullable);
+            var frameworkProgrammeAimsToValidate = GetGroupedAppFinRecordsToValidate(apprenticeshipLearningDeliveries, ld => ld.FworkCodeNullable);
+
+            if (!standardProgrammeAimsToValidate.Any() && !frameworkProgrammeAimsToValidate.Any())
             {
-                HandleValidationError(
-                    learnRefNumber: learner.LearnRefNumber,
-                    errorMessageParameters: BuildErrorMessageParameters(
-                        appFinRecords.Key.AFinType,
-                        appFinRecords.Key.AFinCode,
-                        appFinRecords.Key.AFinDate));
+                return;
+            }
+
+            foreach (var standard in standardProgrammeAimsToValidate)           
+            {
+                var appFinRecords = standard.Value.SelectMany(ld => ld.AppFinRecords).ToList();
+
+                var matchingAppFinRecords = CompareAgainstOtherAppFinRecords(appFinRecords, ConditionMet);
+
+                foreach (var appFinRecord in matchingAppFinRecords)
+                {
+                    RaiseValidationMessage(learner.LearnRefNumber, null, standard.Key.Value, appFinRecord);
+                }
+            }
+
+            foreach (var framework in frameworkProgrammeAimsToValidate)
+            {
+                var appFinRecords = framework.Value.SelectMany(ld => ld.AppFinRecords).ToList();
+
+                var matchingAppFinRecords = CompareAgainstOtherAppFinRecords(appFinRecords, ConditionMet);
+
+                foreach (var appFinRecord in matchingAppFinRecords)
+                {
+                    RaiseValidationMessage(learner.LearnRefNumber, framework.Key.Value, null, appFinRecord);
+                }
             }
         }
+
+        public bool ConditionMet(IAppFinRecord appFinRecord, IAppFinRecord comparisonAppFinRecord)
+        {
+            return appFinRecord.AFinType == comparisonAppFinRecord.AFinType
+                && appFinRecord.AFinCode == comparisonAppFinRecord.AFinCode
+                && appFinRecord.AFinDate == comparisonAppFinRecord.AFinDate;
+        }
+
 
         public bool IsApprenticeshipProgrammeAim(ILearningDelivery learningDelivery)
         {
@@ -65,17 +88,55 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                    && _apprenticeshipProgTypes.Contains(learningDelivery.ProgTypeNullable);
         }
 
+        public void RaiseValidationMessage(string learnRefNumber, int? fworkCode, int? stdCode, IAppFinRecord appFinRecord) =>
+            HandleValidationError(learnRefNumber, null, BuildErrorMessageParameters(fworkCode, stdCode, appFinRecord));
+
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(
-            string aFinType,
-            int aFinCode,
-            DateTime aFinDate)
+            int? fworkCode,
+            int? stdCode,
+            IAppFinRecord appFinRecord)
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.AFinType, aFinType),
-                BuildErrorMessageParameter(PropertyNameConstants.AFinCode, aFinCode),
-                BuildErrorMessageParameter(PropertyNameConstants.AFinDate, aFinDate)
+                BuildErrorMessageParameter(PropertyNameConstants.FworkCode, fworkCode),
+                BuildErrorMessageParameter(PropertyNameConstants.StdCode, stdCode),
+                BuildErrorMessageParameter(PropertyNameConstants.AFinType, appFinRecord.AFinType),
+                BuildErrorMessageParameter(PropertyNameConstants.AFinCode, appFinRecord.AFinCode),
+                BuildErrorMessageParameter(PropertyNameConstants.AFinDate, appFinRecord.AFinDate)
             };
+        }
+
+        private IEnumerable<IAppFinRecord> CompareAgainstOtherAppFinRecords(IEnumerable<IAppFinRecord> appfinRecords, Func<IAppFinRecord, IAppFinRecord, bool> predicate)
+        {
+            var appFinRecordsList = appfinRecords.ToList();
+          
+            var collectionSize = appFinRecordsList.Count;
+
+            for (var i = 0; i < collectionSize; i++)
+            {
+                for (var j = 0; j < collectionSize; j++)
+                {
+                    if (i != j)
+                    {
+                        var appFinRecordOne = appFinRecordsList[i];
+                        var appFinRecordTwo = appFinRecordsList[j];
+
+                        if (predicate(appFinRecordOne, appFinRecordTwo))
+                        {
+                            yield return appFinRecordOne;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private IDictionary<int?, IEnumerable<ILearningDelivery>> GetGroupedAppFinRecordsToValidate(IEnumerable<ILearningDelivery> apprenticeshipLearningDeliveries, Func<ILearningDelivery, int?> groupBy)
+        {
+            return apprenticeshipLearningDeliveries
+              .GroupBy(groupBy)
+              .Where(x => x.Any(f => groupBy(f).HasValue))
+              .ToDictionary(x => x.Key, v => v.Select(ld => ld));
         }
     }
 }
