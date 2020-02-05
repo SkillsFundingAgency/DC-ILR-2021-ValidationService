@@ -239,15 +239,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Fact]
         public void BuildErrorMessageParameters()
         {
+            IAppFinRecord appFinRecord = new TestAppFinRecord
+            {
+                AFinType = "TNP",
+                AFinCode = 2,
+                AFinDate = new DateTime(2017, 7, 1)
+            };
+
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("FworkCode", 1)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("StdCode", 1)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("AFinType", "TNP")).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("AFinCode", 2)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("AFinDate", "01/07/2017")).Verifiable();
 
             NewRule(
                 validationErrorHandler: validationErrorHandlerMock.Object)
-                .BuildErrorMessageParameters("TNP", 2, new DateTime(2017, 7, 1));
+                .BuildErrorMessageParameters(1, 1, appFinRecord);
             validationErrorHandlerMock.Verify();
         }
 
