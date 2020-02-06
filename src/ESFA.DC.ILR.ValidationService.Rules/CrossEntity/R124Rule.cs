@@ -45,8 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public bool ConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery)
         {
             var effectiveEndDate = _dd36.DeriveEffectiveEndDate(comparisonLearningDelivery);
-            var t = (learningDelivery.LearnStartDate >= comparisonLearningDelivery.LearnStartDate
-                && learningDelivery.LearnStartDate <= effectiveEndDate);
+
             return effectiveEndDate.HasValue ?
                 (learningDelivery.LearnStartDate >= comparisonLearningDelivery.LearnStartDate
                 && learningDelivery.LearnStartDate <= effectiveEndDate) : false;
