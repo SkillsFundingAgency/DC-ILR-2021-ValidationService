@@ -33,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 return;
             }
 
-            var apprenticeshipLearningDeliveries = learner.LearningDeliveries.Where(IsApprenticeshipProgrammeAim).ToList();
+       var apprenticeshipLearningDeliveries = learner.LearningDeliveries.Where(IsApprenticeshipProgrammeAim).ToList();
             
             if (!apprenticeshipLearningDeliveries.Any())
             {
@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var standard in standardProgrammeAimsToValidate)           
             {
-                var appFinRecords = standard.Value.SelectMany(ld => ld.AppFinRecords).ToList();
+                var appFinRecords = GetAppFinRecords(standard.Value);
 
                 var matchingAppFinRecords = CompareAgainstOtherAppFinRecords(appFinRecords, ConditionMet);
 
@@ -62,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var framework in frameworkProgrammeAimsToValidate)
             {
-                var appFinRecords = framework.Value.SelectMany(ld => ld.AppFinRecords).ToList();
+                var appFinRecords = GetAppFinRecords(framework.Value);
 
                 var matchingAppFinRecords = CompareAgainstOtherAppFinRecords(appFinRecords, ConditionMet);
 
@@ -137,6 +137,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
               .GroupBy(groupBy)
               .Where(x => x.Any(f => groupBy(f).HasValue))
               .ToDictionary(x => x.Key, v => v.Select(ld => ld));
+        }
+
+        private List<IAppFinRecord> GetAppFinRecords(IEnumerable<ILearningDelivery> learningDeliveries)
+        {
+            var appFinRecords = learningDeliveries.Where(ld => ld.AppFinRecords != null).SelectMany(ld => ld.AppFinRecords) ?? Enumerable.Empty<IAppFinRecord>();
+
+            return appFinRecords.ToList();
         }
     }
 }

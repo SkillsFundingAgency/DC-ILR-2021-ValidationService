@@ -513,6 +513,40 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             validationErrorHandlerMock.Verify();
         }
 
+        [Fact]
+        public void Validate_NoError_Complex()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = TypeOfAim.ProgrammeAim,
+                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                        StdCodeNullable = 12,
+                        AppFinRecords = new List<IAppFinRecord>()
+                        {
+                            new TestAppFinRecord() { AFinType = "ACT", AFinCode = 1, AFinDate = new DateTime(2019, 10, 14) },
+                        }
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = TypeOfAim.ProgrammeAim,
+                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                        StdCodeNullable = 12,
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
         private R68Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
         {
             return new R68Rule(validationErrorHandler);
