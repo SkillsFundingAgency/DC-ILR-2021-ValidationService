@@ -33,13 +33,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                bool hasDam = _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM);
-                if (!_fundingModels.Contains(learningDelivery.FundModel) && hasDam)
+                if (ConditionMet(learningDelivery))
                 {
                     RaiseValidationMessage(learner.LearnRefNumber, learningDelivery);
                 }
             }
         }
+
+        public bool ConditionMet(ILearningDelivery learningDelivery) => !_fundingModels.Contains(learningDelivery.FundModel)
+            && _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM);
 
         private void RaiseValidationMessage(string learnRefNum, ILearningDelivery learningDelivery)
         {

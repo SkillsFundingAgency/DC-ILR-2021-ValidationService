@@ -22,6 +22,60 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
+        [InlineData(TypeOfFunding.AdultSkills, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(TypeOfFunding.CommunityLearning, LearningDeliveryFAMTypeConstants.DAM)]
+        public void ConditionMet_False(int fundingModel, string famType)
+        {
+            var testLearningDelivery = new TestLearningDelivery()
+            {
+                FundModel = fundingModel,
+                LearningDeliveryFAMs = new List<ILearningDeliveryFAM>()
+                {
+                    new TestLearningDeliveryFAM()
+                    {
+                        LearnDelFAMType = famType
+                    }
+                }
+            };
+
+            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFAMQueryServiceMock
+                .Setup(s => s.HasLearningDeliveryFAMType(It.IsAny<List<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM))
+                .Returns(true);
+
+            NewRule(learningDeliveryFAMQueryService: learningDeliveryFAMQueryServiceMock.Object).ConditionMet(testLearningDelivery).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(TypeOfFunding.EuropeanSocialFund, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(TypeOfFunding.Other16To19, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(TypeOfFunding.OtherAdult, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(TypeOfFunding.NotFundedByESFA, LearningDeliveryFAMTypeConstants.DAM)]
+        public void ConditionMet_True(int fundingModel, string famType)
+        {
+            var testLearningDelivery = new TestLearningDelivery()
+            {
+                FundModel = fundingModel,
+                LearningDeliveryFAMs = new List<ILearningDeliveryFAM>()
+                {
+                    new TestLearningDeliveryFAM()
+                    {
+                        LearnDelFAMType = famType
+                    }
+                }
+            };
+
+            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFAMQueryServiceMock
+                .Setup(s => s.HasLearningDeliveryFAMType(It.IsAny<List<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM))
+                .Returns(true);
+
+            NewRule(learningDeliveryFAMQueryService: learningDeliveryFAMQueryServiceMock.Object).ConditionMet(testLearningDelivery).Should().BeTrue();
+        }
+
+        [Theory]
         [InlineData(TypeOfFunding.AdultSkills)]
         [InlineData(TypeOfFunding.CommunityLearning)]
         public void ValidationPasses(int fundingModel)
