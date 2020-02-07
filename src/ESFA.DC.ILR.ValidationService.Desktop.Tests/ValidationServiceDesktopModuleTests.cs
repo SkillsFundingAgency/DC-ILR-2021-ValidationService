@@ -616,6 +616,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(R121Rule),
                 typeof(R122Rule),
                 typeof(R123Rule),
+                typeof(R124Rule),
                 typeof(Sex_01Rule),
                 typeof(SEC_01Rule),
                 typeof(SEC_02Rule),
