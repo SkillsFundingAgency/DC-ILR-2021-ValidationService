@@ -1,0 +1,54 @@
+﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
+{
+    public class LearnDelFAMType_78Rule : AbstractRule, IRule<ILearner>
+    {
+        private readonly int[] _fundingModels = { TypeOfFunding.AdultSkills, TypeOfFunding.CommunityLearning };
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
+
+        public LearnDelFAMType_78Rule(
+            IValidationErrorHandler validationErrorHandler, ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
+            : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_78)
+        {
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
+        }
+
+        /// <summary>
+        /// Validates the specified object.
+        /// </summary>
+        /// <param name="learner">The object to validate.</param>
+        public void Validate(ILearner learner)
+        {
+            if (learner?.LearningDeliveries == null)
+            {
+                return;
+            }
+
+            foreach (var learningDelivery in learner.LearningDeliveries)
+            {
+                bool hasDam = _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM);
+                if (!_fundingModels.Contains(learningDelivery.FundModel) && hasDam)
+                {
+                    RaiseValidationMessage(learner.LearnRefNumber, learningDelivery);
+                }
+            }
+        }
+
+        private void RaiseValidationMessage(string learnRefNum, ILearningDelivery learningDelivery)
+        {
+            var parameters = new List<IErrorMessageParameter>
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.DAM)
+            };
+
+            HandleValidationError(learnRefNum, learningDelivery.AimSeqNumber, parameters);
+        }
+    }
+}
