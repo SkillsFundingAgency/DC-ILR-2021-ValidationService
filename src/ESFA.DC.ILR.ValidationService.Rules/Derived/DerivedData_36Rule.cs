@@ -36,6 +36,5 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         private bool ProgTypeCondition(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
         private bool AchDateKNown(DateTime? achDate) => achDate.HasValue;
         private bool LearnActEndDateKnown(DateTime? learnActEndDate) => learnActEndDate.HasValue;
-        private DateTime? DeriveDate(DateTime? dateValue) => dateValue ?? DateTime.MaxValue;
     }
 }
