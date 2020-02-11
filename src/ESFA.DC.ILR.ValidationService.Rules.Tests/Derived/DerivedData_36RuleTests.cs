@@ -20,6 +20,35 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             DD().DeriveEffectiveEndDate(new TestLearningDelivery { AimType = 2 }).Should().BeNull();
         }
 
+        [Fact]
+        public void DeriveEffectiveEndDate_ReturnsMaxDate_NoDates()
+        {
+            DD().DeriveEffectiveEndDate(new TestLearningDelivery { AimType = 1 }).Should().Be(DateTime.MaxValue);
+        }
+
+        [Fact]
+        public void DeriveEffectiveEndDate_ReturnsMaxDate_ProgTypeNot25()
+        {
+            DD().DeriveEffectiveEndDate(new TestLearningDelivery
+            {
+                AimType = 1,
+                AchDateNullable = new DateTime(2018, 8, 1),
+                ProgTypeNullable = 30
+            })
+            .Should().Be(DateTime.MaxValue);
+        }
+
+        [Fact]
+        public void DeriveEffectiveEndDate_ReturnsMaxDate_ProgType25()
+        {
+            DD().DeriveEffectiveEndDate(new TestLearningDelivery
+            {
+                AimType = 1,
+                ProgTypeNullable = 25
+            })
+            .Should().Be(DateTime.MaxValue);
+        }
+
         [Theory]
         [InlineData(20)]
         [InlineData(null)]

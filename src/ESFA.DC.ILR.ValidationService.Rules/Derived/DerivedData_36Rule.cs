@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
@@ -12,12 +11,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         {
             if (ProgAimCondition(learningDelivery.AimType))
             {
-                if (!ProgTypeCondition(learningDelivery.ProgTypeNullable))
+                if (!ProgTypeCondition(learningDelivery.ProgTypeNullable) && LearnActEndDateKnown(learningDelivery.LearnActEndDateNullable))
                 {
                     return learningDelivery.LearnActEndDateNullable;
                 }
 
-                if (ProgTypeCondition(learningDelivery.ProgTypeNullable) && !AchDateKNown(learningDelivery.AchDateNullable))
+                if (ProgTypeCondition(learningDelivery.ProgTypeNullable) && !AchDateKNown(learningDelivery.AchDateNullable) && LearnActEndDateKnown(learningDelivery.LearnActEndDateNullable))
                 {
                     return learningDelivery.LearnActEndDateNullable;
                 }
@@ -26,6 +25,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 {
                     return learningDelivery.AchDateNullable;
                 }
+
+                return DateTime.MaxValue;
             }
 
             return null;
@@ -34,5 +35,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         private bool ProgAimCondition(int aimType) => aimType == TypeOfAim.ProgrammeAim;
         private bool ProgTypeCondition(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
         private bool AchDateKNown(DateTime? achDate) => achDate.HasValue;
+        private bool LearnActEndDateKnown(DateTime? learnActEndDate) => learnActEndDate.HasValue;
     }
 }
