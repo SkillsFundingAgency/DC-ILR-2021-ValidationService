@@ -339,6 +339,38 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
+        public void Validate_InValid_NoEndDate()
+        {
+            var maxEffectiveEndDate = DateTime.MaxValue;
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2016, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2018, 1, 1),
+                        LearnActEndDateNullable = new DateTime(2020, 1, 1),
+                    },
+                }
+            };
+
+            var dd36Mock = new Mock<IDerivedData_36Rule>();
+            dd36Mock.SetupSequence(d => d.DeriveEffectiveEndDate(It.IsAny<ILearningDelivery>())).Returns(maxEffectiveEndDate).Returns(new DateTime(2020, 1, 1));
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, dd36Mock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void Validate_InValid_MultipleOverlapping()
         {
             var effectiveEndDate = new DateTime(2019, 8, 1);
