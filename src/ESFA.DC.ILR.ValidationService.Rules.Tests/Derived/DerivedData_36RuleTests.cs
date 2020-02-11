@@ -23,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         [Fact]
         public void DeriveEffectiveEndDate_ReturnsMaxDate_NoDates()
         {
-            DD().DeriveEffectiveEndDate(new TestLearningDelivery { AimType = 1 }).Should().Be(DateTime.MaxValue);
+            DD().DeriveEffectiveEndDate(new TestLearningDelivery { AimType = 1 }).Should().Be(new DateTime(2099, 12, 31, 23, 59, 59));
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 AchDateNullable = new DateTime(2018, 8, 1),
                 ProgTypeNullable = 30
             })
-            .Should().Be(DateTime.MaxValue);
+            .Should().Be(new DateTime(2099, 12, 31, 23, 59, 59));
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 AimType = 1,
                 ProgTypeNullable = 25
             })
-            .Should().Be(DateTime.MaxValue);
+            .Should().Be(new DateTime(2099, 12, 31, 23, 59, 59));
         }
 
         [Theory]
