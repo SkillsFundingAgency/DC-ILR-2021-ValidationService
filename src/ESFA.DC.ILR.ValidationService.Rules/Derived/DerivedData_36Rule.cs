@@ -7,6 +7,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
     public class DerivedData_36Rule : IDerivedData_36Rule
     {
+        private readonly DateTime DefaultDate = new DateTime(2099, 12, 31, 23, 59, 59);
+
         public DateTime? DeriveEffectiveEndDate(ILearningDelivery learningDelivery)
         {
             if (ProgAimCondition(learningDelivery.AimType))
@@ -26,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                     return learningDelivery.AchDateNullable;
                 }
 
-                return DateTime.MaxValue;
+                return DefaultDate;
             }
 
             return null;

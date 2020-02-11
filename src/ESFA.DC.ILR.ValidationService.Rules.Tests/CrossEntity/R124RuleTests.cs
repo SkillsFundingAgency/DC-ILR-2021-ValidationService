@@ -310,7 +310,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Fact]
         public void Validate_InValid_Overlapping()
         {
-            var effectiveEndDate = new DateTime(2019, 8, 1);
+            var effectiveEndDate = new DateTime(2099, 12, 31, 23, 59, 59);
 
             var learner = new TestLearner()
             {
