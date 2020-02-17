@@ -53,13 +53,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
                     break;
                 }
 
-                var onsPostCode = _postcodeService.GetONSPostcodes(learningDelivery.DelLocPostCode);
+                var allOnsPostCodes = _postcodeService.GetONSPostcodes(learningDelivery.DelLocPostCode);
+                var onsPostcodesMatchinglocalAuthorities = allOnsPostCodes.Where(pc => localAuthorities.Any(la => la.Code.Equals(pc.LocalAuthority, StringComparison.OrdinalIgnoreCase)));
 
                 if (ConditionMetDD22Exists(latestLearningStart)
                     && ConditionMetStartDate(learningDelivery.LearnStartDate)
                     && ConditionMetFundModel(learningDelivery.FundModel)
-                    && (ConditionMetONSPostcode(latestLearningStart, onsPostCode)
-                        || ConditionMetLocalAuthority(localAuthorities, onsPostCode)
+                    && (ConditionMetONSPostcode(latestLearningStart, onsPostcodesMatchinglocalAuthorities)
+                        || ConditionMetLocalAuthority(localAuthorities, allOnsPostCodes)
                     ))
                 {
                     HandleValidationError(
