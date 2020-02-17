@@ -267,6 +267,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
                         {
                             LocalAuthority = "ABC",
                             EffectiveFrom = new DateTime(2019, 1, 1)
+                        },
+                        new ONSPostcode()
+                        { // This one should not cause the check to pass, because the LocalAuthority code does not match the entry ABC
+                            LocalAuthority = "NotMatching",
+                            EffectiveFrom = new DateTime(2017, 1, 1)
                         }
                 });
 
