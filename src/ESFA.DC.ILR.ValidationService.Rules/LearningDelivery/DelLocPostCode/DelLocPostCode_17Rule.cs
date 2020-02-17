@@ -54,7 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
                 }
 
                 var allOnsPostCodes = _postcodeService.GetONSPostcodes(learningDelivery.DelLocPostCode);
-                var onsPostcodesMatchinglocalAuthorities = allOnsPostCodes.Where(pc => localAuthorities.Any(la => la.Code.Equals(pc.LocalAuthority, StringComparison.OrdinalIgnoreCase)));
+                var onsPostcodesMatchinglocalAuthorities = allOnsPostCodes.Where(pc => localAuthorities.Any(la => la.Code.CaseInsensitiveEquals(pc.LocalAuthority)));
 
                 if (ConditionMetDD22Exists(latestLearningStart)
                     && ConditionMetStartDate(learningDelivery.LearnStartDate)
