@@ -19,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "EmpStat_17";
+        public const string Name = RuleNameConstants.EmpStat_17;
 
         /// <summary>
         /// The message handler

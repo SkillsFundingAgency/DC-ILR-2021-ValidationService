@@ -17,7 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.StdCode
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "StdCode_01";
+        public const string Name = RuleNameConstants.StdCode_01;
 
         /// <summary>
         /// The message handler

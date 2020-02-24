@@ -19,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "ULN_11";
+        public const string Name = RuleNameConstants.ULN_11;
 
         /// <summary>
         /// The message handler

@@ -19,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "ESMType_12";
+        public const string Name = RuleNameConstants.ESMType_12;
 
         /// <summary>
         /// The message handler

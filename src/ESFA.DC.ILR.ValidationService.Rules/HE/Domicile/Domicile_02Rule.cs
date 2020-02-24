@@ -18,7 +18,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "DOMICILE_02";
+        public const string Name = RuleNameConstants.Domicile_02;
 
         /// <summary>
         /// The message handler

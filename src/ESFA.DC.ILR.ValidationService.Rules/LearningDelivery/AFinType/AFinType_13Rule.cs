@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "AFinType_13";
+        public const string Name = RuleNameConstants.AFinType_13;
 
         /// <summary>
         /// The message handler
