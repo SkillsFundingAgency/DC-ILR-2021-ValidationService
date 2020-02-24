@@ -2,6 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
@@ -11,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
     public class LearnStartDate_02Rule : AbstractRule, IRule<ILearner>
     {
-        public const string Name = "LearnStartDate_02";
+        public const string Name = RuleNameConstants.LearnStartDate_02;
 
         public const int OldestLearningSubmissionOffset = -10;
 

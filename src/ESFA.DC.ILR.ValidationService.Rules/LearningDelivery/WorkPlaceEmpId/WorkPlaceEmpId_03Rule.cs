@@ -21,7 +21,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceEmpId
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "WorkPlaceEmpId_03";
+        public const string Name = RuleNameConstants.WorkPlaceEmpId_03;
 
         /// <summary>
         /// The file data service

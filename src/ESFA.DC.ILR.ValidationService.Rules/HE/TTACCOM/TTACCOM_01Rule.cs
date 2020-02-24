@@ -1,6 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 
@@ -22,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "TTACCOM_01";
+        public const string Name = RuleNameConstants.TTACCOM_01;
 
         /// <summary>
         /// The message handler

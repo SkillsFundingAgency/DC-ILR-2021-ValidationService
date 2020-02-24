@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// <summary>
         /// The (rule) name
         /// </summary>
-        public const string Name = "LearnAimRef_86";
+        public const string Name = RuleNameConstants.LearnAimRef_86;
 
         /// <summary>
         /// the message handler

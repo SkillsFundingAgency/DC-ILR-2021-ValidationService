@@ -22,7 +22,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "ProgType_14";
+        public const string Name = RuleNameConstants.ProgType_14;
 
         /// <summary>
         /// The message handler

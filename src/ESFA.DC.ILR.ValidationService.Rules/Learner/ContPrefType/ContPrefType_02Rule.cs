@@ -12,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
         /// <summary>
         /// The (rule) name
         /// </summary>
-        public const string Name = "ContPrefType_02";
+        public const string Name = RuleNameConstants.ContPrefType_02;
 
         /// <summary>
         /// the message handler

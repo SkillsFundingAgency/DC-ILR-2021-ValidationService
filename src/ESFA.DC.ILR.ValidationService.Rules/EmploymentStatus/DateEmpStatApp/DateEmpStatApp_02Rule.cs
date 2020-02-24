@@ -1,5 +1,6 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 
@@ -11,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.DateEmpStatApp
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "DateEmpStatApp_02";
+        public const string Name = RuleNameConstants.DateEmpStatApp_02;
 
         /// <summary>
         /// The message handler
