@@ -7,7 +7,7 @@
         public const string AchDate_02 = "AchDate_02";
         public const string AchDate_03 = "AchDate_03";
         public const string AchDate_04 = "AchDate_04";
-        public const string  AchDate_05 = "AchDate_05";
+        public const string AchDate_05 = "AchDate_05";
         public const string AchDate_07 = "AchDate_07";
         public const string AchDate_08 = "AchDate_08";
         public const string AchDate_09 = "AchDate_09";
