@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         public bool ConditionMet(DateTime learnStartDate, IEnumerable<IFcsContractAllocation> contractAllocations)
         {
-            return contractAllocations.Any(ca => (ca.StopNewStartsFromDate ?? DateTime.MaxValue) > learnStartDate);
+            return contractAllocations.Any(ca => (ca.StopNewStartsFromDate ?? DateTime.MaxValue) <= learnStartDate);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int learningDeliveryFundModel, int learningProviderUKPRN, DateTime learningDeliveryStartDate)

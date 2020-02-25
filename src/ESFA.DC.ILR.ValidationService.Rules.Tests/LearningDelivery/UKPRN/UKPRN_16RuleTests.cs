@@ -56,33 +56,45 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.LEVY1799);
         }
 
-        [Fact]
-        public void Validate_NoContractAllocations_NoViolation()
+        public static IEnumerable<object[]> ConditionMet_TestData()
         {
-            // Arrange
-            var fileDataServiceMock = new Mock<IFileDataService>();
-            fileDataServiceMock.Setup(s => s.UKPRN()).Returns(42);
-
-            var contractAllocationsForUkprn = new List<IFcsContractAllocation> { };
-
-            var fcsDataServiceMock = new Mock<IFCSDataService>();
-            fcsDataServiceMock.Setup(s => s.GetContractAllocationsFor(42)).Returns(contractAllocationsForUkprn);
-
-            var learner = new TestLearner
-            {
-                LearningDeliveries = new TestLearningDelivery[]
-                {
-                    new TestLearningDelivery()
-                    {
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
-                        LearnStartDate = new DateTime(2019, 01, 01)
-                    }
-                }
-            };
+            yield return new object[] { null, false };
+            yield return new object[] { new DateTime(2019, 12, 31), false };
+            yield return new object[] { new DateTime(2019, 01, 01), true };
+            yield return new object[] { new DateTime(2018, 12, 31), true };
         }
 
-        [Fact]
-        public void Validate_ValidContractAllocation_NoViolation()
+        [Theory]
+        [MemberData(nameof(ConditionMet_TestData))]
+        public void ConditionMet(DateTime? stopNewStartsFromDate, bool expectedResult)
+        {
+            // Arrange
+            var learnStartDate = new DateTime(2019, 01, 01);
+            var contractAllocations = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation { StopNewStartsFromDate = stopNewStartsFromDate }
+            };
+
+            // Act
+            var result = NewRule().ConditionMet(learnStartDate, contractAllocations);
+
+            // Assert
+            result.Should().Equals(expectedResult);
+        }
+
+        public static IEnumerable<object[]> Validate_TestData()
+        {
+            yield return new object[] { FundingStreamPeriodCodeConstants.C1618_NLAP2018, null, false };
+            yield return new object[] { FundingStreamPeriodCodeConstants.AEBTO_TOL1920, new DateTime(2018, 12, 31), false };
+            yield return new object[] { FundingStreamPeriodCodeConstants.C1618_NLAP2018, new DateTime(2019, 12, 31), false };
+            yield return new object[] { FundingStreamPeriodCodeConstants.C1618_NLAP2018, new DateTime(2019, 01, 02), false };
+            yield return new object[] { FundingStreamPeriodCodeConstants.C1618_NLAP2018, new DateTime(2019, 01, 01), true };
+            yield return new object[] { FundingStreamPeriodCodeConstants.C1618_NLAP2018, new DateTime(2018, 12, 31), true };
+        }
+
+        [Theory]
+        [MemberData(nameof(Validate_TestData))]
+        public void Validate(string fundingStreamPeriodCode, DateTime? stopNewStartsFromDate, bool expectViolation)
         {
             // Arrange
             var fileDataServiceMock = new Mock<IFileDataService>();
@@ -93,8 +105,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 new FcsContractAllocation
                 {
                     DeliveryUKPRN = 42,
-                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
-                    StopNewStartsFromDate = new DateTime(2018, 12, 31)
+                    FundingStreamPeriodCode = fundingStreamPeriodCode,
+                    StopNewStartsFromDate = stopNewStartsFromDate
                 }
             };
 
@@ -107,56 +119,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 {
                     new TestLearningDelivery()
                     {
+                        ConRefNumber = "ConRef1",
                         FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }
             };
 
-            // Act
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(
-                    fileDataServiceMock.Object,
-                    fcsDataServiceMock.Object,
-                    validationErrorHandlerMock.Object).Validate(learner);
-            }
-        }
-
-        [Fact]
-        public void Validate_InvalidContractAllocation_RaisesViolation()
-        {
-            // Arrange
-            var fileDataServiceMock = new Mock<IFileDataService>();
-            fileDataServiceMock.Setup(s => s.UKPRN()).Returns(42);
-
-            var contractAllocationsForUkprn = new List<IFcsContractAllocation>
-            {
-                new FcsContractAllocation
-                {
-                    DeliveryUKPRN = 42,
-                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
-                    StopNewStartsFromDate = new DateTime(2019, 12, 31)
-                }
-            };
-
-            var fcsDataServiceMock = new Mock<IFCSDataService>();
-            fcsDataServiceMock.Setup(s => s.GetContractAllocationsFor(42)).Returns(contractAllocationsForUkprn);
-
-            var learner = new TestLearner
-            {
-                LearningDeliveries = new TestLearningDelivery[]
-                {
-                    new TestLearningDelivery()
-                    {
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
-                        LearnStartDate = new DateTime(2019, 01, 01)
-                    }
-                }
-            };
-
-            // Act
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            // Act & Assert
+            using (var validationErrorHandlerMock = expectViolation ? BuildValidationErrorHandlerMockForError() : BuildValidationErrorHandlerMockForNoError())
             {
                 NewRule(
                     fileDataServiceMock.Object,
