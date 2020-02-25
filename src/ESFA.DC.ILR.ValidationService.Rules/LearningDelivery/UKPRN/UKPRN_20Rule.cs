@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         {
             return contractAllocations.Any(ca =>
                 learnConRef.Equals(ca.ContractAllocationNumber, StringComparison.OrdinalIgnoreCase) &&
-                (ca.StopNewStartsFromDate ?? DateTime.MaxValue) < learnStartDate);
+                (ca.StopNewStartsFromDate ?? DateTime.MaxValue) <= learnStartDate);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int learningDeliveryFundModel, string learningDeliveryConRefNumber, int learningProviderUKPRN, DateTime learningDeliveryStartDate)
