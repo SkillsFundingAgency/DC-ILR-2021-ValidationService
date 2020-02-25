@@ -648,6 +648,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(UKPRN_13Rule),
                 typeof(UKPRN_14Rule),
                 typeof(UKPRN_15Rule),
+                typeof(UKPRN_16Rule),
                 typeof(UKPRN_17Rule),
                 typeof(UKPRN_18Rule),
                 typeof(UKPRN_19Rule),

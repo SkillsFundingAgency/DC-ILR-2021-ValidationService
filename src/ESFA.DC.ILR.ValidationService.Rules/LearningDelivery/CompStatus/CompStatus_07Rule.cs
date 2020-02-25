@@ -3,7 +3,6 @@ using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System.Linq;
 using System;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus

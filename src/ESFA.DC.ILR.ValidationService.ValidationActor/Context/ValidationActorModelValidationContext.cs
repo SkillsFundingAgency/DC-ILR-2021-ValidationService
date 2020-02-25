@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces.Models;
-using ESFA.DC.Serialization.Json;
 
 namespace ESFA.DC.ILR.ValidationService.ValidationActor.Context
 {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ESFA.DC.ILR.Constants;
+﻿using ESFA.DC.ILR.Constants;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.JobContextManager.Model.Interface;
 

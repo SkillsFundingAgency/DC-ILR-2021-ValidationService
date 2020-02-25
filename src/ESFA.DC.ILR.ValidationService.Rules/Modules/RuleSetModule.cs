@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+﻿using System.Reflection;
 using Autofac;
 using ESFA.DC.ILR.ValidationService.Interface;
 using Module = Autofac.Module;
