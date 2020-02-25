@@ -12,6 +12,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
     public class UKPRN_20Rule : AbstractRule, IRule<ILearner>
     {
+        private readonly int _learnDelFundModel = TypeOfFunding.EuropeanSocialFund;
+        private readonly string _fundingStreamPeriodCode = FundingStreamPeriodCodeConstants.ESF1420;
+
         private readonly IFileDataService _fileDataService;
         private readonly IFCSDataService _fcsDataService;
 
@@ -32,7 +35,44 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         public void Validate(ILearner objectToValidate)
         {
-            throw new NotImplementedException();
+            var ukprn = _fileDataService.UKPRN();
+
+            // prepare contract allocations list before iterating the learning deliveries 
+            var filteredContractAllocations = ContractAllocationsForUkprnAndFundingStreamPeriodCodes(ukprn);
+
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries.Where(d => d.FundModel == _learnDelFundModel))
+            {
+                if (ConditionMet(learningDelivery.ConRefNumber, learningDelivery.LearnStartDate, filteredContractAllocations))
+                {
+                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.FundModel, learningDelivery.ConRefNumber, ukprn, learningDelivery.LearnStartDate));
+                }
+            }
+        }
+
+        public IEnumerable<IFcsContractAllocation> ContractAllocationsForUkprnAndFundingStreamPeriodCodes(int ukprn)
+        {
+            var contractAllocations = _fcsDataService.GetContractAllocationsFor(ukprn);
+
+            return contractAllocations.Where(ca => _fundingStreamPeriodCode.Equals(ca.FundingStreamPeriodCode, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+
+        public bool ConditionMet(string learnConRef, DateTime learnStartDate, IEnumerable<IFcsContractAllocation> contractAllocations)
+        {
+            return contractAllocations.Any(ca =>
+                learnConRef.Equals(ca.ContractAllocationNumber, StringComparison.OrdinalIgnoreCase) &&
+                (ca.StopNewStartsFromDate ?? DateTime.MaxValue) < learnStartDate);
+        }
+
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int learningDeliveryFundModel, string learningDeliveryConRefNumber, int learningProviderUKPRN, DateTime learningDeliveryStartDate)
+        {
+            return new[]
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, learningDeliveryFundModel),
+                BuildErrorMessageParameter(PropertyNameConstants.ConRefNumber, learningDeliveryConRefNumber),
+                BuildErrorMessageParameter(PropertyNameConstants.UKPRN, learningProviderUKPRN),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learningDeliveryStartDate)
+            };
         }
     }
 }
