@@ -126,25 +126,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             };
 
             // Act & Assert
-            if (expectViolation)
+            using (var validationErrorHandlerMock = expectViolation ? BuildValidationErrorHandlerMockForError() : BuildValidationErrorHandlerMockForNoError())
             {
-                using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-                {
-                    NewRule(
-                        fileDataServiceMock.Object,
-                        fcsDataServiceMock.Object,
-                        validationErrorHandlerMock.Object).Validate(learner);
-                }
-            }
-            else
-            {
-                using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-                {
-                    NewRule(
-                        fileDataServiceMock.Object,
-                        fcsDataServiceMock.Object,
-                        validationErrorHandlerMock.Object).Validate(learner);
-                }
+                NewRule(
+                    fileDataServiceMock.Object,
+                    fcsDataServiceMock.Object,
+                    validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
