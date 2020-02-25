@@ -94,7 +94,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 {
                     DeliveryUKPRN = 42,
                     FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
-                    StopNewStartsFromDate = new DateTime(2018, 12, 31)
+                    StopNewStartsFromDate = new DateTime(2019, 12, 31)
                 }
             };
 
@@ -136,7 +136,49 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 {
                     DeliveryUKPRN = 42,
                     FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
-                    StopNewStartsFromDate = new DateTime(2019, 12, 31)
+                    StopNewStartsFromDate = new DateTime(2018, 12, 31)
+                }
+            };
+
+            var fcsDataServiceMock = new Mock<IFCSDataService>();
+            fcsDataServiceMock.Setup(s => s.GetContractAllocationsFor(42)).Returns(contractAllocationsForUkprn);
+
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        LearnStartDate = new DateTime(2019, 01, 01)
+                    }
+                }
+            };
+
+            // Act
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(
+                    fileDataServiceMock.Object,
+                    fcsDataServiceMock.Object,
+                    validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_InvalidContractAllocationSameDay_RaisesViolation()
+        {
+            // Arrange
+            var fileDataServiceMock = new Mock<IFileDataService>();
+            fileDataServiceMock.Setup(s => s.UKPRN()).Returns(42);
+
+            var contractAllocationsForUkprn = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2019, 01, 01)
                 }
             };
 
