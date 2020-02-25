@@ -1,6 +1,5 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.FCS.Model
 {

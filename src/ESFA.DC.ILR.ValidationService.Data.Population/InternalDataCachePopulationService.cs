@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Model;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
-using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population
 {

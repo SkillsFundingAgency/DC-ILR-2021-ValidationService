@@ -1,10 +1,8 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
 using ESFA.DC.ILR.ValidationService.Data.Internal.Model;
-using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
 using FluentAssertions;
-using Moq;
 using System;
 using System.Collections.Generic;
 using Xunit;

@@ -6,7 +6,6 @@ using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OutGrade;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
-using ESFA.DC.ILR.ValidationService.Rules.Tests.Mocks;
 using FluentAssertions;
 using Moq;
 using Xunit;

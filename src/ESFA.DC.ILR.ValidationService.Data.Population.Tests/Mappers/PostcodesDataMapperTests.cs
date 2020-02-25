@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using ESFA.DC.ILR.ReferenceDataService.Model.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
-using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Mappers;
 using FluentAssertions;
 using Xunit;

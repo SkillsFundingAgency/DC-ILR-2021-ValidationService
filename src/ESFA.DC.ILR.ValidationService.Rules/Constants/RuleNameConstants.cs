@@ -584,6 +584,7 @@
         public const string UKPRN_13 = "UKPRN_13";
         public const string UKPRN_14 = "UKPRN_14";
         public const string UKPRN_15 = "UKPRN_15";
+        public const string UKPRN_16 = "UKPRN_16";
         public const string UKPRN_17 = "UKPRN_17";
         public const string UKPRN_18 = "UKPRN_18";
         public const string UKPRN_19 = "UKPRN_19";

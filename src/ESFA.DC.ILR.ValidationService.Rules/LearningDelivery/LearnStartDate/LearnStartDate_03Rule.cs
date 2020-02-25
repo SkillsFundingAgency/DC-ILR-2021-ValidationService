@@ -6,7 +6,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {

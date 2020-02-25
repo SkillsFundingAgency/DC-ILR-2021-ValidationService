@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ESFA.DC.ILR.ValidationService.Interface;
+﻿using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces.Models;
 using ESFA.DC.Serialization.Interfaces;
 

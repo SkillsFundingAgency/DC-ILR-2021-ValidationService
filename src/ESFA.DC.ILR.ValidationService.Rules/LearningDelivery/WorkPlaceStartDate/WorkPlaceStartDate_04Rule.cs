@@ -1,6 +1,5 @@
 ﻿namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDate
 {
-    using System;
     using System.Collections.Generic;
     using ESFA.DC.ILR.Model.Interface;
     using ESFA.DC.ILR.ValidationService.Data.Extensions;

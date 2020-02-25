@@ -1,7 +1,6 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation

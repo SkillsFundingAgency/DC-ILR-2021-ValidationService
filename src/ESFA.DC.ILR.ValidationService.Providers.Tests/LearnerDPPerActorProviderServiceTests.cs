@@ -3,10 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ESFA.DC.ILR.Model;
 using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.Tests.Model;
-using ESFA.DC.ILR.ValidationService.Data.Interface;
 using FluentAssertions;
-using Moq;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Providers.Tests

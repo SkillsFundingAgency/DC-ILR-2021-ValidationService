@@ -8,7 +8,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth;
 using ESFA.DC.ILR.ValidationService.Rules.Query;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
-using ESFA.DC.ILR.ValidationService.Rules.Tests.Mocks;
 using FluentAssertions;
 using Moq;
 using Xunit;
