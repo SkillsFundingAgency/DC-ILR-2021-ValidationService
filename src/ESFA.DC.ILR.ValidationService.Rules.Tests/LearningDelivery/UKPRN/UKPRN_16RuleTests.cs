@@ -172,11 +172,5 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         {
             return new UKPRN_16Rule(fileDataService, fcsDataService, validationErrorHandler);
         }
-
-        //Test with no matching contract allocations
-        //Test with passing CA
-        // Test with failing CA (stop date to early)
-        // Test with failing CA (stop date null)
-        // Test with passing and failing (what should happen ??)
     }
 }
