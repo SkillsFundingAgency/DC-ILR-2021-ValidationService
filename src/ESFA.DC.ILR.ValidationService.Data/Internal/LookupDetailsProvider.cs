@@ -149,7 +149,7 @@ namespace ESFA.DC.ILR.ValidationService.Data
         }
 
         /// <summary>
-        /// Determines whether [is vaguely cuurrent] [the specified lookup key].
+        /// Determines whether [is vaguely current] [the specified lookup key].
         /// a loose check for things with a bottomless beginning
         /// </summary>
         /// <param name="lookupKey">The lookup key.</param>

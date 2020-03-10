@@ -97,9 +97,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
         /// </returns>
         public bool ConditionMet(int? tTAccom, DateTime referenceDate)
         {
-            return It.Has(tTAccom)
-                ? _lookupDetails.IsCurrent(TypeOfLimitedLifeLookup.TTAccom, tTAccom.Value, referenceDate)
-                : true;
+            if (!It.Has(tTAccom))
+            { // No value is supplied, pass, only fail is this ia a valid tTAccom with invalid date
+                return true;
+            }
+
+            if (!_lookupDetails.Contains(TypeOfLimitedLifeLookup.TTAccom, tTAccom.Value))
+            { // Not a valid value, pass, only fail is this is a valid tTAccom with invalid date
+                return true;
+            }
+
+            // Check if the existing tTAccom is valid date wise.
+            return _lookupDetails.IsCurrent(TypeOfLimitedLifeLookup.TTAccom, tTAccom.Value, referenceDate);
         }
 
         /// <summary>
