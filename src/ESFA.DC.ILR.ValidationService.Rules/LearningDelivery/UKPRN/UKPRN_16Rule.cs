@@ -17,7 +17,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         {
             FundingStreamPeriodCodeConstants.C1618_NLAP2018,
             FundingStreamPeriodCodeConstants.ANLAP2018,
-            FundingStreamPeriodCodeConstants.LEVY1799
+            FundingStreamPeriodCodeConstants.LEVY1799,
+            FundingStreamPeriodCodeConstants.NONLEVY2019
         };
 
         private readonly IFileDataService _fileDataService;
