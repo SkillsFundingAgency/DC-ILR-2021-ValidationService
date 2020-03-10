@@ -35,6 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 new FcsContractAllocation { DeliveryUKPRN = 42, FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018 },
                 new FcsContractAllocation { DeliveryUKPRN = 42, FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.ANLAP2018 },
                 new FcsContractAllocation { DeliveryUKPRN = 42, FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.LEVY1799 },
+                new FcsContractAllocation { DeliveryUKPRN = 42, FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.NONLEVY2019 },
                 new FcsContractAllocation { DeliveryUKPRN = 42, FundingStreamPeriodCode = "ZZZZZ" },
             };
 
@@ -49,11 +50,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             // Assert
             filtered.Should().NotBeNull();
             filtered.Should().NotBeEmpty();
-            filtered.Should().HaveCount(3);
+            filtered.Should().HaveCount(4);
             filtered.Should().OnlyContain(ca =>
                 ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.C1618_NLAP2018 ||
                 ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.ANLAP2018 ||
-                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.LEVY1799);
+                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.LEVY1799 ||
+                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.NONLEVY2019);
         }
 
         public static IEnumerable<object[]> ConditionMet_TestData()
