@@ -246,6 +246,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
                         {
                             Lep1 = "ABC",
                             EffectiveFrom = new DateTime(2019, 1, 1)
+                        },
+                        new ONSPostcode()
+                        {
+                            Lep1 = "notmatched",
+                            EffectiveFrom = new DateTime(2017, 1, 1)
                         }
                 });
 

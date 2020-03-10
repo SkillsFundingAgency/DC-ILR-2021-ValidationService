@@ -54,11 +54,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
                 }
 
                 var onsPostCode = _postcodeService.GetONSPostcodes(learningDelivery.DelLocPostCode);
+                var onsPostcodesMatchinglocalEnterprisePartnerships = onsPostCode
+                    .Where(pc => partnerships.Any(lep => lep.Code.CaseInsensitiveEquals(pc.Lep1) || lep.Code.CaseInsensitiveEquals(pc.Lep2)));
 
                 if (ConditionMetDD22Exists(latestLearningStart)
                     && ConditionMetStartDate(learningDelivery.LearnStartDate)
                     && ConditionMetFundModel(learningDelivery.FundModel)
-                    && (ConditionMetONSPostcode(latestLearningStart, onsPostCode)
+                    && (ConditionMetONSPostcode(latestLearningStart, onsPostcodesMatchinglocalEnterprisePartnerships)
                         || ConditionMetPartnership(partnerships, onsPostCode)
                     ))
                 {
