@@ -40,6 +40,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             // prepare contract allocations list before iterating the learning deliveries 
             var filteredContractAllocations = ContractAllocationsForUkprnAndFundingStreamPeriodCodes(ukprn);
 
+            if (filteredContractAllocations == null || objectToValidate.LearningDeliveries == null)
+            { // If there are no Contract Allocations or Learning deliveries then do not progress. No Error
+                return;
+            }
+
             foreach (var learningDelivery in objectToValidate.LearningDeliveries.Where(d => d.FundModel == _learnDelFundModel))
             {
                 if (ConditionMet(learningDelivery.ConRefNumber, learningDelivery.LearnStartDate, filteredContractAllocations))
@@ -53,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         {
             var contractAllocations = _fcsDataService.GetContractAllocationsFor(ukprn);
 
-            return contractAllocations.Where(ca => _fundingStreamPeriodCode.Equals(ca.FundingStreamPeriodCode, StringComparison.OrdinalIgnoreCase)).ToList();
+            return contractAllocations?.Where(ca => _fundingStreamPeriodCode.Equals(ca.FundingStreamPeriodCode, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
 

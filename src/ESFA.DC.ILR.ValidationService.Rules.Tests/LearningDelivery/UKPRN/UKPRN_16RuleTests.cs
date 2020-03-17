@@ -23,6 +23,71 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Fact]
+        public void ContractAllocationsForUkprnAndFundingStreamPeriodCodes_NullFcsContractAllocations()
+        {
+            // Arrange
+            var fileDataServiceMock = new Mock<IFileDataService>();
+            fileDataServiceMock.Setup(s => s.UKPRN()).Returns(42);
+
+            List<IFcsContractAllocation> contractAllocationsForUkprn = null;
+
+            var fcsDataServiceMock = new Mock<IFCSDataService>();
+            fcsDataServiceMock.Setup(s => s.GetContractAllocationsFor(42)).Returns(contractAllocationsForUkprn);
+
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        ConRefNumber = "ConRef1",
+                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        LearnStartDate = new DateTime(2019, 01, 01)
+                    }
+                }
+            };
+
+            // Act & Assert
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(
+                    fileDataServiceMock.Object,
+                    fcsDataServiceMock.Object,
+                    validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void ContractAllocationsForUkprnAndFundingStreamPeriodCodes_NullLearningDeliveries()
+        {
+            // Arrange
+            var fileDataServiceMock = new Mock<IFileDataService>();
+            fileDataServiceMock.Setup(s => s.UKPRN()).Returns(42);
+
+            var contractAllocationsForUkprn = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation { DeliveryUKPRN = 42, FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018 },
+            };
+
+            var fcsDataServiceMock = new Mock<IFCSDataService>();
+            fcsDataServiceMock.Setup(s => s.GetContractAllocationsFor(42)).Returns(contractAllocationsForUkprn);
+
+            var learner = new TestLearner
+            {
+                LearningDeliveries = null
+            };
+
+            // Act & Assert
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(
+                    fileDataServiceMock.Object,
+                    fcsDataServiceMock.Object,
+                    validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void ContractAllocationsForUkprnAndFundingStreamPeriodCodes_FiltersOutNonMatchingPeriodCodes()
         {
             // Arrange
