@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -58,14 +59,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         {
             var contractAllocations = _fcsDataService.GetContractAllocationsFor(ukprn);
 
-            return contractAllocations?.Where(ca => _fundingStreamPeriodCode.Equals(ca.FundingStreamPeriodCode, StringComparison.OrdinalIgnoreCase)).ToList();
+            return contractAllocations?.Where(ca => ca != null &&_fundingStreamPeriodCode.Equals(ca.FundingStreamPeriodCode, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
 
         public bool ConditionMet(string learnConRef, DateTime learnStartDate, IEnumerable<IFcsContractAllocation> contractAllocations)
         {
             return contractAllocations.Any(ca =>
-                learnConRef.Equals(ca.ContractAllocationNumber, StringComparison.OrdinalIgnoreCase) &&
+                learnConRef.CaseInsensitiveEquals(ca.ContractAllocationNumber) &&
                 (ca.StopNewStartsFromDate ?? DateTime.MaxValue) <= learnStartDate);
         }
 

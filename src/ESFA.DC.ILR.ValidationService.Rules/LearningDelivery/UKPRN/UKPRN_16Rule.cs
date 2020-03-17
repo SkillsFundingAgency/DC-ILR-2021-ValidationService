@@ -68,7 +68,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         {
             var contractAllocations = _fcsDataService.GetContractAllocationsFor(ukprn);
 
-            return contractAllocations?.Where(ca => _fundingStreamPeriodCodes.Contains(ca.FundingStreamPeriodCode)).ToList();
+            return contractAllocations?.Where(ca => ca != null && _fundingStreamPeriodCodes.Contains(ca.FundingStreamPeriodCode)).ToList();
         }
 
         public bool ConditionMet(DateTime learnStartDate, IEnumerable<IFcsContractAllocation> contractAllocations)

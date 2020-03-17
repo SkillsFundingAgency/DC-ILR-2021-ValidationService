@@ -58,6 +58,79 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Fact]
+        public void ContractAllocationsForUkprnAndFundingStreamPeriodCodes_FcsContractAllocationsContainsNulls()
+        {
+            // Arrange
+            var fileDataServiceMock = new Mock<IFileDataService>();
+            fileDataServiceMock.Setup(s => s.UKPRN()).Returns(42);
+
+            var contractAllocationsForUkprn = new List<IFcsContractAllocation> { null };
+
+            var fcsDataServiceMock = new Mock<IFCSDataService>();
+            fcsDataServiceMock.Setup(s => s.GetContractAllocationsFor(42)).Returns(contractAllocationsForUkprn);
+
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        ConRefNumber = "ConRef1",
+                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        LearnStartDate = new DateTime(2019, 01, 01)
+                    }
+                }
+            };
+
+            // Act & Assert
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(
+                    fileDataServiceMock.Object,
+                    fcsDataServiceMock.Object,
+                    validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void ContractAllocationsForUkprnAndFundingStreamPeriodCodes_LearningDeliveryWithNullConRef()
+        {
+            // Arrange
+            var fileDataServiceMock = new Mock<IFileDataService>();
+            fileDataServiceMock.Setup(s => s.UKPRN()).Returns(42);
+
+            var contractAllocationsForUkprn = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation { DeliveryUKPRN = 42, FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.ESF1420 },
+            };
+
+            var fcsDataServiceMock = new Mock<IFCSDataService>();
+            fcsDataServiceMock.Setup(s => s.GetContractAllocationsFor(42)).Returns(contractAllocationsForUkprn);
+
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        ConRefNumber = null,
+                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        LearnStartDate = new DateTime(2019, 01, 01)
+                    }
+                }
+            };
+
+            // Act & Assert
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(
+                    fileDataServiceMock.Object,
+                    fcsDataServiceMock.Object,
+                    validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void ContractAllocationsForUkprnAndFundingStreamPeriodCodes_NullLearningDeliveries()
         {
             // Arrange
