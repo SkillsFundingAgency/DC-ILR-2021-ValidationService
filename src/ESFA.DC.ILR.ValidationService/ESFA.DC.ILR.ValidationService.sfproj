@@ -3,7 +3,7 @@
   <Import Project="..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.7\build\Microsoft.VisualStudio.Azure.Fabric.Application.props" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.7\build\Microsoft.VisualStudio.Azure.Fabric.Application.props')" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>c41cfc22-b667-4497-960c-f67adfe39b1b</ProjectGuid>
-    <ProjectVersion>2.0</ProjectVersion>
+    <ProjectVersion>2.3</ProjectVersion>
     <MinToolsVersion>1.5</MinToolsVersion>
     <SupportedMSBuildNuGetPackageVersion>1.6.7</SupportedMSBuildNuGetPackageVersion>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -35,7 +35,6 @@
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.ValidationDPActor\ESFA.DC.ILR.ValidationService.ValidationDPActor.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ApplicationParameters\Local.1Node.xml" />
     <Content Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
