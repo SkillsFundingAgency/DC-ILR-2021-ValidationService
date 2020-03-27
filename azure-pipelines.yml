@@ -7,7 +7,7 @@ resources:
 
 variables:
   VersionNumberMajor: '0'
-  VersionNumberMinor: '1'
+  VersionNumberMinor: '0'
   Build.Configuration: 'Release'
   Build.Platform: 'Any CPU'
   Build.PlatformX64: 'x64'  
@@ -190,17 +190,24 @@ stages:
     - script: |
         dotnet tool install -g dotnet-reportgenerator-globaltool --version 4.3.6  
         reportgenerator -reports:$(Build.SourcesDirectory)/**/*Tests/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:Cobertura
+
       displayName: Create Code coverage report
+      enabled: false
   
     # Publish the code coverage result (summary and web site)
     # The summary allows to view the coverage percentage in the summary tab
     # The web site allows to view which lines are covered directly in Azure Pipeline
     - task: PublishCodeCoverageResults@1
-      displayName: 'Publish code coverage'
+      displayName: 'Publish Code Coverage'
+      enabled: false
       inputs:
         codeCoverageTool: Cobertura
         summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
         reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
+
+    #********************************************************************************
+    # Publish Artifacts
+    #********************************************************************************
     
     - task: PublishSymbols@2
       enabled: false
