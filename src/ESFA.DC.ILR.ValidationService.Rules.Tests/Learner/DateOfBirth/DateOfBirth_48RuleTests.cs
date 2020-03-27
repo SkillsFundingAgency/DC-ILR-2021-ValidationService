@@ -37,25 +37,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void DD07ConditionMet_True()
         {
-            var progType = 23;
-
             var dd07Mock = new Mock<IDerivedData_07Rule>();
 
-            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(true);
+            dd07Mock.Setup(dd => dd.IsApprenticeship(It.IsAny<int>())).Returns(true);
 
-            NewRule(dd07: dd07Mock.Object).DD07ConditionMet(progType).Should().BeTrue();
+            NewRule(dd07: dd07Mock.Object).DD07ConditionMet(It.IsAny<int>()).Should().BeTrue();
         }
 
         [Fact]
         public void DD07ConditionMet_False()
         {
-            var progType = 25;
-
             var dd07Mock = new Mock<IDerivedData_07Rule>();
 
-            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
+            dd07Mock.Setup(dd => dd.IsApprenticeship(It.IsAny<int>())).Returns(false);
 
-            NewRule(dd07: dd07Mock.Object).DD07ConditionMet(progType).Should().BeFalse();
+            NewRule(dd07: dd07Mock.Object).DD07ConditionMet(It.IsAny<int>()).Should().BeFalse();
         }
 
         [Fact]
@@ -89,25 +85,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void ConditionMet_True()
         {
-            int? progType = 23;
             var dd07Mock = new Mock<IDerivedData_07Rule>();
 
-            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(true);
+            dd07Mock.Setup(dd => dd.IsApprenticeship(It.IsAny<int>())).Returns(true);
 
-            NewRule(dd07: dd07Mock.Object).ConditionMet(progType, new DateTime(2016, 9, 1), new DateTime(2016, 9, 2)).Should().BeTrue();
+            NewRule(dd07: dd07Mock.Object).ConditionMet(It.IsAny<int>(), new DateTime(2016, 9, 1), new DateTime(2016, 9, 2)).Should().BeTrue();
         }
 
         [Fact]
         public void ConditionMet_False()
         {
-            int? progType = 25;
-            NewRule().ConditionMet(progType, new DateTime(2016, 7, 1), new DateTime(2016, 9, 2)).Should().BeFalse();
+            var dd07Mock = new Mock<IDerivedData_07Rule>();
+            dd07Mock.Setup(dd => dd.IsApprenticeship(It.IsAny<int>())).Returns(false);
+            NewRule(dd07: dd07Mock.Object).ConditionMet(It.IsAny<int>(), new DateTime(2016, 7, 1), new DateTime(2016, 9, 2)).Should().BeFalse();
         }
 
         [Fact]
         public void ConditionMet_Null()
         {
-            NewRule().ConditionMet(null, null, new DateTime(2016, 9, 2)).Should().BeFalse();
+            var dd07Mock = new Mock<IDerivedData_07Rule>();
+            dd07Mock.Setup(dd => dd.IsApprenticeship(It.IsAny<int>())).Returns(false);
+            NewRule(dd07: dd07Mock.Object).ConditionMet(null, null, new DateTime(2016, 9, 2)).Should().BeFalse();
         }
 
         [Fact]

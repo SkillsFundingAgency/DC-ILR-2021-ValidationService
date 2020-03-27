@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
@@ -61,6 +58,38 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ConditionMet_False_NullCheck()
         {
             NewRule().ConditionMet(null).Should().BeFalse();
+        }
+
+        [Fact]
+        public void FCTFundingConditionMet_Pass()
+        {
+            var fundingStreamPeriodCodes = new List<string>()
+            {
+                 FundingStreamPeriodCodeConstants.ALLBC1920
+            };
+
+            var mockFCSDataService = new Mock<IFCSDataService>();
+            mockFCSDataService.Setup(x => x.FundingRelationshipFCTExists(fundingStreamPeriodCodes)).Returns(true);
+
+            NewRule(fcsDataService: mockFCSDataService.Object).FCTFundingConditionMet().Should().BeTrue();
+
+            mockFCSDataService.Verify(x => x.FundingRelationshipFCTExists(fundingStreamPeriodCodes), Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public void FCTFundingConditionMet_Fails()
+        {
+            var fundingStreamPeriodCodes = new List<string>()
+            {
+                 FundingStreamPeriodCodeConstants.ALLBC1920
+            };
+
+            var mockFCSDataService = new Mock<IFCSDataService>();
+            mockFCSDataService.Setup(x => x.FundingRelationshipFCTExists(fundingStreamPeriodCodes)).Returns(false);
+
+            NewRule(fcsDataService: mockFCSDataService.Object).FCTFundingConditionMet().Should().BeFalse();
+
+            mockFCSDataService.Verify(x => x.FundingRelationshipFCTExists(fundingStreamPeriodCodes), Times.AtLeastOnce);
         }
 
         [Fact]

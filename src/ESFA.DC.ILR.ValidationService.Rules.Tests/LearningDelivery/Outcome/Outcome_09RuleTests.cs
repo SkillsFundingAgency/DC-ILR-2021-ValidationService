@@ -53,9 +53,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
         public void ConditionMet_True()
         {
             var outcome = 8;
-            var compStatus = 1;
+            var compStatus = 3;
+            var fundModel = 35;
+            var progType = 20;
 
-            NewRule().ConditionMet(outcome, compStatus).Should().BeTrue();
+            NewRule().ConditionMet(outcome, compStatus, fundModel, progType).Should().BeTrue();
         }
 
         [Fact]
@@ -63,8 +65,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
         {
             int? outcome = null;
             var compStatus = 1;
+            var fundModel = 81;
+            var progType = 24;
 
-            NewRule().ConditionMet(outcome, compStatus).Should().BeFalse();
+            NewRule().ConditionMet(outcome, compStatus, fundModel, progType).Should().BeFalse();
         }
 
         [Fact]
@@ -72,8 +76,56 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
         {
             var outcome = 8;
             var compStatus = 2;
+            var fundModel = 35;
+            var progType = 25;
 
-            NewRule().ConditionMet(outcome, compStatus).Should().BeFalse();
+            NewRule().ConditionMet(outcome, compStatus, fundModel, progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_FalseFundModel()
+        {
+            var outcome = 8;
+            var compStatus = 1;
+            var fundModel = 36;
+            var progType = 24;
+
+            NewRule().ConditionMet(outcome, compStatus, fundModel, progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_FalseFundModelProgType()
+        {
+            var outcome = 8;
+            var compStatus = 1;
+            var fundModel = 35;
+            var progType = 25;
+
+            NewRule().ConditionMet(outcome, compStatus, fundModel, progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ExceptionConditionMet_Pass()
+        {
+            var fundModel = 81;
+            var progType = 24;
+            NewRule().ExceptionConditionMet(fundModel, progType).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ExceptionConditionMet_Fails()
+        {
+            var fundModel = 35;
+            var progType = 25;
+            NewRule().ExceptionConditionMet(fundModel, progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ExceptionConditionMet_Fails_DuetoNullProgType()
+        {
+            var fundModel = 35;
+            int? progType = null;
+            NewRule().ExceptionConditionMet(fundModel, progType).Should().BeTrue();
         }
 
         [Fact]
@@ -86,7 +138,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                     new TestLearningDelivery()
                     {
                         OutcomeNullable = 8,
-                        CompStatus = 1
+                        CompStatus = 1,
+                        ProgTypeNullable = 24,
+                        FundModel = 81
                     }
                 }
             };
@@ -107,7 +161,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                     new TestLearningDelivery()
                     {
                         OutcomeNullable = 8,
-                        CompStatus = 2
+                        CompStatus = 3,
+                        ProgTypeNullable = 25,
+                        FundModel = 36
                     }
                 }
             };

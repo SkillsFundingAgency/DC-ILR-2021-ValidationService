@@ -13,6 +13,9 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
 {
+    /// <summary>
+    /// learn start date rule 16 tests
+    /// </summary>
     public class LearnStartDate_16RuleTests
     {
         /// <summary>
@@ -119,31 +122,66 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         }
 
         /// <summary>
-        /// Get start for, meets expectation.
+        /// Has qualifying model meets expectation
         /// </summary>
-        [Fact]
-        public void GetAllocationsForMeetsExpectation()
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void HasQualifyingModelMeetsExpectation(bool expectation)
         {
             // arrange
+            var mockItem = new Mock<ILearningDelivery>();
+
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            fcsData
-                .Setup(x => x.GetContractAllocationFor(null))
-                .Returns((IFcsContractAllocation)null);
-
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(mockItem.Object, 70))
+                .Returns(expectation);
 
             var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, commonOps.Object);
 
             // act
-            var result = sut.GetAllocationFor(null);
+            var result = sut.HasQualifyingModel(mockItem.Object);
 
             // assert
-            Assert.Null(result);
+            Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            fcsData.VerifyAll();
             commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Has qualifying aim meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("ZESF0001", true)] // TypeOfAim.References.ESFLearnerStartandAssessment
+        [InlineData("Z0002347", false)] // TypeOfAim.References.SupportedInternship16To19
+        [InlineData("Z0007834", false)] // TypeOfAim.References.WorkPlacement0To49Hours
+        [InlineData("Z0007835", false)] // TypeOfAim.References.WorkPlacement50To99Hours
+        [InlineData("Z0007836", false)] // TypeOfAim.References.WorkPlacement100To199Hours
+        [InlineData("Z0007837", false)] // TypeOfAim.References.WorkPlacement200To499Hours
+        [InlineData("Z0007838", false)] // TypeOfAim.References.WorkPlacement500PlusHours
+        [InlineData("ZWRKX001", false)] // TypeOfAim.References.WorkExperience
+        [InlineData("ZWRKX002", false)] // TypeOfAim.References.IndustryPlacement
+        public void HasQualifyingAimMeetsExpectation(string candidate, bool expectation)
+        {
+            // arrange
+            var sut = NewRule();
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(y => y.LearnAimRef)
+                .Returns(candidate);
+
+            // act
+            var result = sut.HasQualifyingAim(mockDelivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
         }
 
         /// <summary>
@@ -192,6 +230,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             handler.VerifyAll();
             fcsData.VerifyAll();
             commonOps.VerifyAll();
+
+            allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
         }
 
         /// <summary>
@@ -306,6 +346,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             handler.VerifyAll();
             fcsData.VerifyAll();
             commonOps.VerifyAll();
+
+            allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
         }
 
         /// <summary>
@@ -382,6 +424,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             handler.VerifyAll();
             fcsData.VerifyAll();
             commonOps.VerifyAll();
+
+            allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
         }
 
         /// <summary>

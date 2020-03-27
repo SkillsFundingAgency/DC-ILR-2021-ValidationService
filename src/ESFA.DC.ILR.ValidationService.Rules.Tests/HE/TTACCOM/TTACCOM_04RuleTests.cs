@@ -87,7 +87,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
                 },
                 new TestLearningDelivery()
                 {
-                    LearnStartDate = new DateTime(2011, 11, 10)
+                    LearnStartDate = new DateTime(2014, 11, 10)
                 },
            };
             NewRule(NewDD06()).LearnStartDateConditionMet(learningDeliveries).Should().BeFalse();
@@ -142,6 +142,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
             }
         }
 
+        [Fact]
+        public void Validate_Errors_When_LearnerHE_IsNUll()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnStartDate = new DateTime(2013, 08, 1),
+                        LearningDeliveryHEEntity = new TestLearningDeliveryHE() { MODESTUD = 1 }
+                    }
+                }
+            };
+
+            var dd06Mock = new Mock<IDerivedData_06Rule>();
+
+            dd06Mock.Setup(dd => dd.Derive(learner.LearningDeliveries)).Returns(new DateTime(2013, 08, 01));
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(dd06Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
         [Theory]
         [InlineData(1, 2, "2013-8-1")]
         [InlineData(null, 2, "2013-8-1")]
@@ -166,30 +190,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
                 NewRule(NewDD06(), validationErrorHandlerMock.Object).Validate(learner);
-            }
-        }
-
-        [Fact]
-        public void Validate_NoErrors_NoLearnerHE()
-        {
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = new List<TestLearningDelivery>()
-                {
-                    new TestLearningDelivery()
-                    {
-                        LearnStartDate = new DateTime(2013, 08, 1),
-                        LearningDeliveryHEEntity = new TestLearningDeliveryHE() { MODESTUD = 1 }
-                    }
-                }
-            };
-
-            var dd06Mock = new Mock<IDerivedData_06Rule>();
-
-            dd06Mock.Setup(dd => dd.Derive(learner.LearningDeliveries)).Returns(new DateTime(2013, 08, 01));
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(dd06Mock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 

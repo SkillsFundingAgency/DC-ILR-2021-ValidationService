@@ -35,17 +35,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.FCS
         /// <returns>
         /// a contract allocation (if found)
         /// </returns>
-        public IFcsContractAllocation GetContractAllocationFor(string thisContractReference)
-        {
-            if (thisContractReference == null)
-            {
-                return null;
-            }
-
-            _contractAllocations.TryGetValue(thisContractReference, out IFcsContractAllocation fcsContractAllocation);
-
-            return fcsContractAllocation;
-        }
+        public IFcsContractAllocation GetContractAllocationFor(string thisContractReference) =>
+            _contractAllocations.GetValueOrDefault(thisContractReference, null);
 
         /// <summary>
         /// Gets the contract allocations for.

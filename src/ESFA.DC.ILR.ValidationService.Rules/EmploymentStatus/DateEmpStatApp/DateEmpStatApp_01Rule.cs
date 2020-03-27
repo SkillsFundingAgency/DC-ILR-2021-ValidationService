@@ -1,29 +1,23 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
+using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.DateEmpStatApp
 {
+    /// <summary>
+    /// date employment status applied rule 01
+    /// </summary>
+    /// <seealso cref="AbstractRule" />
+    /// <seealso cref="Interface.IRule{ILearner}" />
     public class DateEmpStatApp_01Rule :
+        AbstractRule,
         IRule<ILearner>
     {
-        /// <summary>
-        /// Gets the name of the rule.
-        /// </summary>
-        public const string Name = "DateEmpStatApp_01";
-
-        /// <summary>
-        /// The message handler
-        /// </summary>
-        private readonly IValidationErrorHandler _messageHandler;
-
-        /// <summary>
-        /// The (academic) year data (service)
-        /// </summary>
-        private readonly IAcademicYearDataService _yearData;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="DateEmpStatApp_01Rule" /> class.
         /// </summary>
@@ -32,72 +26,72 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.DateEmpStatApp
         public DateEmpStatApp_01Rule(
             IValidationErrorHandler validationErrorHandler,
             IAcademicYearDataService yearData)
+            : base(validationErrorHandler, RuleNameConstants.DateEmpStatApp_01)
         {
             It.IsNull(validationErrorHandler)
                 .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
             It.IsNull(yearData)
                 .AsGuard<ArgumentNullException>(nameof(yearData));
 
-            _messageHandler = validationErrorHandler;
-            _yearData = yearData;
+            ThresholdDate = yearData.End();
         }
 
         /// <summary>
-        /// Gets the name of the rule.
+        /// Gets the threshold date.
         /// </summary>
-        public string RuleName => Name;
+        public DateTime ThresholdDate { get; }
 
         /// <summary>
-        /// Gets an academic year date.
+        /// Validates the specified the learner.
         /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>a date time representing the start of the comming year</returns>
-        public DateTime GetNextAcademicYearDate(DateTime candidate) =>
-            _yearData.GetAcademicYearOfLearningDate(candidate, AcademicYearDates.NextYearCommencement);
-
-        /// <summary>
-        /// Determines whether [has qualifying employment status] [the specified employment status].
-        /// </summary>
-        /// <param name="eStatus">The employment status.</param>
-        /// <param name="thresholdDate">The threshold date.</param>
-        /// <returns>
-        ///   <c>true</c> if [has qualifying employment status] [the specified employment status]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus eStatus, DateTime thresholdDate) =>
-            eStatus.DateEmpStatApp.Year <= thresholdDate.Year;
-
-        /// <summary>
-        /// Validates the specified object.
-        /// </summary>
-        /// <param name="objectToValidate">The object to validate.</param>
-        public void Validate(ILearner objectToValidate)
+        /// <param name="theLearner">The learner.</param>
+        public void Validate(ILearner theLearner)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            It.IsNull(theLearner)
+                .AsGuard<ArgumentNullException>(nameof(theLearner));
 
-            var learnRefNumber = objectToValidate.LearnRefNumber;
+            var learnRefNumber = theLearner.LearnRefNumber;
 
-            // the educational year covers two actual years, in order to determine if
-            // an employment status is inside the 'current educational year' we need next
-            // years start date
-            var thresholdDate = GetNextAcademicYearDate(_yearData.Today);
-
-            objectToValidate.LearnerEmploymentStatuses
-                 .SafeWhere(x => !HasQualifyingEmploymentStatus(x, thresholdDate))
-                 .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
+            theLearner.LearnerEmploymentStatuses
+                .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));
         }
+
+        /// <summary>
+        /// Determines whether [is not valid] [the specified e status].
+        /// </summary>
+        /// <param name="eStatus">The e status.</param>
+        /// <returns>
+        ///   <c>true</c> if [is not valid] [the specified e status]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsNotValid(ILearnerEmploymentStatus eStatus) =>
+            HasDisqualifyingEmploymentStatusDate(eStatus);
+
+        /// <summary>
+        /// Determines whether [has disqualifying employment status date] [the specified e status].
+        /// </summary>
+        /// <param name="eStatus">The e status.</param>
+        /// <returns>
+        ///   <c>true</c> if [has disqualifying employment status date] [the specified e status]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasDisqualifyingEmploymentStatusDate(ILearnerEmploymentStatus eStatus) =>
+            eStatus.DateEmpStatApp > ThresholdDate;
 
         /// <summary>
         /// Raises the validation message.
         /// </summary>
         /// <param name="learnRefNumber">The learn reference number.</param>
-        /// <param name="thisEmployment">this employment.</param>
-        public void RaiseValidationMessage(string learnRefNumber, ILearnerEmploymentStatus thisEmployment)
-        {
-            var parameters = Collection.Empty<IErrorMessageParameter>();
-            parameters.Add(_messageHandler.BuildErrorMessageParameter(nameof(thisEmployment.DateEmpStatApp), thisEmployment.DateEmpStatApp));
+        /// <param name="theDelivery">The delivery.</param>
+        public void RaiseValidationMessage(string learnRefNumber, ILearnerEmploymentStatus theEmployment) =>
+            HandleValidationError(learnRefNumber, null, BuildMessageParametersFor(theEmployment));
 
-            _messageHandler.Handle(RuleName, learnRefNumber, null, parameters);
-        }
+        /// <summary>
+        /// Builds the message parameters for.
+        /// </summary>
+        /// <param name="theDelivery">The delivery.</param>
+        /// <returns>a collection of message paramters</returns>
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearnerEmploymentStatus theEmployment) => new[]
+        {
+            BuildErrorMessageParameter(PropertyNameConstants.DateEmpStatApp, theEmployment.DateEmpStatApp)
+        };
     }
 }

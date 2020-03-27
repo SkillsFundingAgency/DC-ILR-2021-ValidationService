@@ -19,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "LearnStartDate_12";
+        public const string Name = RuleNameConstants.LearnStartDate_12;
 
         /// <summary>
         /// The message handler

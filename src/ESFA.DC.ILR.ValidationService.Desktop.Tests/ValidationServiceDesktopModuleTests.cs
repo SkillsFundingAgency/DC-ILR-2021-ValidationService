@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using Autofac;
+﻿using Autofac;
 using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Modules;
 using ESFA.DC.ILR.ValidationService.Desktop.Modules;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
@@ -93,6 +91,7 @@ using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OtherFundAdj;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OutGrade;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PartnerUKPRN;
+using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PriorLearnFundAdj;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProvSpecDelMonOccur;
@@ -108,8 +107,8 @@ using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDate;
 using ESFA.DC.ILR.ValidationService.Rules.Message.FileLevel.Entity;
 using ESFA.DC.ILR.ValidationService.Rules.Message.FileLevel.Header;
 using ESFA.DC.ILR.ValidationService.Rules.Message.UKPRN;
-using ESFA.DC.ILR.ValidationService.Rules.Modules;
 using FluentAssertions;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
@@ -196,6 +195,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(AchDate_08Rule),
                 typeof(AchDate_09Rule),
                 typeof(AchDate_10Rule),
+                typeof(AchDate_11Rule),
                 typeof(AddHours_01Rule),
                 typeof(AddHours_02Rule),
                 typeof(AddHours_03Rule),
@@ -211,6 +211,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(AFinDate_08Rule),
                 typeof(AFinDate_09Rule),
                 typeof(AFinDate_12Rule),
+                typeof(AFinDate_13Rule),
                 typeof(AFinType_01Rule),
                 typeof(AFinType_02Rule),
                 typeof(AFinType_04Rule),
@@ -235,6 +236,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(CompStatus_04Rule),
                 typeof(CompStatus_05Rule),
                 typeof(CompStatus_06Rule),
+                typeof(CompStatus_07Rule),
                 typeof(ConRefNumber_01Rule),
                 typeof(ConRefNumber_03Rule),
                 typeof(ContPrefType_01Rule),
@@ -268,7 +270,6 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(DateOfBirth_36Rule),
                 typeof(DateOfBirth_37Rule),
                 typeof(DateOfBirth_38Rule),
-                typeof(DateOfBirth_39Rule),
                 typeof(DateOfBirth_40Rule),
                 typeof(DateOfBirth_41Rule),
                 typeof(DateOfBirth_43Rule),
@@ -281,7 +282,6 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(DateOfBirth_51Rule),
                 typeof(DateOfBirth_52Rule),
                 typeof(DateOfBirth_53Rule),
-                typeof(DateOfBirth_54Rule),
                 typeof(DateOfBirth_55Rule),
                 typeof(DelLocPostCode_03Rule),
                 typeof(DelLocPostCode_11Rule),
@@ -355,6 +355,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(FundModel_07Rule),
                 typeof(FundModel_08Rule),
                 typeof(FundModel_09Rule),
+                typeof(FundModel_10Rule),
                 typeof(FworkCode_01Rule),
                 typeof(FworkCode_02Rule),
                 typeof(FworkCode_05Rule),
@@ -374,7 +375,6 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnAimRef_55Rule),
                 typeof(LearnAimRef_56Rule),
                 typeof(LearnAimRef_57Rule),
-                typeof(LearnAimRef_59Rule),
                 typeof(LearnAimRef_71Rule),
                 typeof(LearnAimRef_72Rule),
                 typeof(LearnAimRef_73Rule),
@@ -396,6 +396,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnDelFAMDateTo_02Rule),
                 typeof(LearnDelFAMDateTo_03Rule),
                 typeof(LearnDelFAMDateTo_04Rule),
+                typeof(LearnDelFAMDateTo_05Rule),
                 typeof(LearnDelFAMType_01Rule),
                 typeof(LearnDelFAMType_02Rule),
                 typeof(LearnDelFAMType_03Rule),
@@ -428,11 +429,9 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnDelFAMType_54Rule),
                 typeof(LearnDelFAMType_56Rule),
                 typeof(LearnDelFAMType_57Rule),
-                typeof(LearnDelFAMType_58Rule),
                 typeof(LearnDelFAMType_59Rule),
                 typeof(LearnDelFAMType_60Rule),
                 typeof(LearnDelFAMType_61Rule),
-                typeof(LearnDelFAMType_62Rule),
                 typeof(LearnDelFAMType_63Rule),
                 typeof(LearnDelFAMType_64Rule),
                 typeof(LearnDelFAMType_65Rule),
@@ -444,6 +443,11 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnDelFAMType_71Rule),
                 typeof(LearnDelFAMType_72Rule),
                 typeof(LearnDelFAMType_73Rule),
+                typeof(LearnDelFAMType_74Rule),
+                typeof(LearnDelFAMType_75Rule),
+                typeof(LearnDelFAMType_76Rule),
+                typeof(LearnDelFAMType_77Rule),
+                typeof(LearnDelFAMType_78Rule),
                 typeof(LearningDeliveryHE_02Rule),
                 typeof(LearningDeliveryHE_03Rule),
                 typeof(LearningDeliveryHE_06Rule),
@@ -472,6 +476,8 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnPlanEndDate_02Rule),
                 typeof(LearnPlanEndDate_03Rule),
                 typeof(LSDPostcode_01Rule),
+                typeof(LSDPostcode_02Rule),
+                typeof(LSDPostcode_03Rule),
                 typeof(LLDDCat_01Rule),
                 typeof(LLDDCat_02Rule),
                 typeof(LLDDHealthProb_01Rule),
@@ -527,6 +533,8 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(PCTLDCS_01Rule),
                 typeof(PCTLDCS_02Rule),
                 typeof(PCOLAB_01Rule),
+                typeof(PHours_01Rule),
+                typeof(PHours_02Rule),
                 typeof(PlanEEPHours_01Rule),
                 typeof(PlanLearnHours_01Rule),
                 typeof(PlanLearnHours_02Rule),
@@ -546,6 +554,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(PriorAttain_01Rule),
                 typeof(PriorAttain_03Rule),
                 typeof(PriorAttain_04Rule),
+                typeof(PriorAttain_06Rule),
                 typeof(PriorAttain_07Rule),
                 typeof(PriorLearnFundAdj_01Rule),
                 typeof(ProgType_01Rule),
@@ -605,6 +614,10 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(R117Rule),
                 typeof(R118Rule),
                 typeof(R119Rule),
+                typeof(R121Rule),
+                typeof(R122Rule),
+                typeof(R123Rule),
+                typeof(R124Rule),
                 typeof(Sex_01Rule),
                 typeof(SEC_01Rule),
                 typeof(SEC_02Rule),
@@ -635,9 +648,11 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(UKPRN_13Rule),
                 typeof(UKPRN_14Rule),
                 typeof(UKPRN_15Rule),
+                typeof(UKPRN_16Rule),
                 typeof(UKPRN_17Rule),
                 typeof(UKPRN_18Rule),
                 typeof(UKPRN_19Rule),
+                typeof(UKPRN_20Rule),
                 typeof(ULN_02Rule),
                 typeof(ULN_03Rule),
                 typeof(ULN_04Rule),
@@ -652,6 +667,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(WithdrawReason_03Rule),
                 typeof(WithdrawReason_04Rule),
                 typeof(WithdrawReason_05Rule),
+                typeof(WithdrawReason_06Rule),
                 typeof(WorkPlaceEndDate_01Rule),
                 typeof(WorkPlaceEndDate_02Rule),
                 typeof(WorkPlaceStartDate_01Rule),

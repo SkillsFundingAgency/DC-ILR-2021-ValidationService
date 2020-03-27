@@ -17,7 +17,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                 {
                     UKPRN = o.UKPRN,
                     LegalOrgType = o.LegalOrgType,
-                    PartnerUKPRN = o.PartnerUKPRN
+                    PartnerUKPRN = o.PartnerUKPRN,
+                    LongTermResid = o.LongTermResid
                 });
         }
 
@@ -29,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
             {
                 campusIdentifiers.AddRange(organisation.CampusIdentifers.Select(campusId => new CampusIdentifier
                 {
-                    CampusIdentifer = campusId,
+                    CampusIdentifer = campusId.CampusIdentifier,
                     MasterUKPRN = organisation.UKPRN
                 }));
             }

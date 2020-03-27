@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ESFA.DC.ILR.Model.Interface;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
+using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
+using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -19,410 +17,484 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
     public class R64RuleTests : AbstractRuleTests<R64Rule>
     {
         [Fact]
-        public void RuleName()
+        public void RuleName1()
         {
             NewRule().RuleName.Should().Be("R64");
         }
 
-        [Theory]
-        [InlineData(88)]
-        [InlineData(99)]
-        [InlineData(10)]
-        [InlineData(25)]
-        public void FundModelConditionMet_False(int fundModel)
+        [Fact]
+        public void RuleName2()
         {
-            NewRule().FundModelsConditionMet(fundModel).Should().BeFalse();
+            NewRule().RuleName.Should().Be(RuleNameConstants.R64);
+        }
+
+        [Theory]
+        [InlineData(36)]
+        [InlineData(null)]
+        public void Exclusion_False(int? progType)
+        {
+            NewRule().Exclusion(progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Exclusion_True()
+        {
+            NewRule().Exclusion(25).Should().BeTrue();
         }
 
         [Theory]
         [InlineData(35)]
         [InlineData(36)]
-        public void FundModelConditionMet_True(int fundModel)
+        public void FundModelFilter_True(int fundModel)
         {
-            NewRule().FundModelsConditionMet(fundModel).Should().BeTrue();
+            NewRule().FundModelFilter(fundModel).Should().BeTrue();
+        }
+
+        [Fact]
+        public void FundModelFilter_False()
+        {
+            NewRule().FundModelFilter(25).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AimTypeFilter_True()
+        {
+            NewRule().AimTypeFilter(3).Should().BeTrue();
+        }
+
+        [Fact]
+        public void AimTypeFilter_False()
+        {
+            NewRule().AimTypeFilter(2).Should().BeFalse();
+        }
+
+        [Fact]
+        public void CompletionStatusFilter_True()
+        {
+            NewRule().CompStatusFilter(2).Should().BeTrue();
+        }
+
+        [Fact]
+        public void CompletionStatusFilter_False()
+        {
+            NewRule().CompStatusFilter(1).Should().BeFalse();
+        }
+
+        [Fact]
+        public void OutcomeFilter_True()
+        {
+            NewRule().OutcomeFilter(1).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(2)]
+        [InlineData(null)]
+        public void OutcomeFilter_False(int? outcome)
+        {
+            NewRule().OutcomeFilter(outcome).Should().BeFalse();
         }
 
         [Theory]
         [InlineData(1)]
-        [InlineData(5)]
-        [InlineData(4)]
-        public void AimTypeConditionMet_False(int aimType)
+        [InlineData(3)]
+        public void FrameworkComponentTypeFilter_True(int componentType)
         {
-            NewRule().AimTypeConditionMet(aimType).Should().BeFalse();
-        }
-
-        [Fact]
-        public void AimTypeConditionMet_True()
-        {
-            NewRule().AimTypeConditionMet(3).Should().BeTrue();
-        }
-
-        [Fact]
-        public void CompletedLearningDeliveryConditionMet_True()
-        {
-            NewRule().CompletedLearningDeliveryConditionMet(2, 1).Should().BeTrue();
-        }
-
-        [Theory]
-        [InlineData(2, null)]
-        [InlineData(1, 1)]
-        public void CompletedLearningDeliveryConditionMet_False(int compStatus, int? outCome)
-        {
-            NewRule().CompletedLearningDeliveryConditionMet(compStatus, outCome).Should().BeFalse();
-        }
-
-        [Fact]
-        public void LarsComponentTypeConditionMet_True()
-        {
-            string learnAimRef = "ZESF98765";
-            var progType = 3;
-            var fworkCode = 445;
-            var pwayCode = 1;
-            var learnStartDate = new DateTime(2019, 01, 01);
-            HashSet<int?> frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
+            var learnAimRef = "learnAimRef";
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate))
-                .Returns(true);
 
-            NewRule(larsDataService: larsDataServiceMock.Object).LarsComponentTypeConditionMet(learnAimRef, progType, fworkCode, pwayCode, learnStartDate).Should().BeTrue();
+            larsDataServiceMock.Setup(s => s.GetFrameworkAimsFor(learnAimRef))
+                .Returns(new List<ILARSFrameworkAim>()
+                {
+                    new FrameworkAim()
+                    {
+                        FrameworkComponentType = componentType
+                    }
+                });
+
+            NewRule(larsDataServiceMock.Object).FrameworkComponentTypeFilter(learnAimRef).Should().BeTrue();
         }
 
         [Fact]
-        public void LarsComponentTypeConditionMet_False()
+        public void FrameworkComponentTypeFilter_False()
         {
-            string learnAimRef = "ZESF98765";
-            var progType = 3;
-            var fworkCode = 445;
-            var pwayCode = 1;
-            var learnStartDate = new DateTime(2019, 01, 01);
-            HashSet<int?> frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
+            var learnAimRef = "learnAimRef";
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate))
-                .Returns(false);
 
-            NewRule(larsDataService: larsDataServiceMock.Object).LarsComponentTypeConditionMet(learnAimRef, progType, fworkCode, pwayCode, learnStartDate).Should().BeFalse();
+            larsDataServiceMock.Setup(s => s.GetFrameworkAimsFor(learnAimRef))
+                .Returns(new List<ILARSFrameworkAim>()
+                {
+                    new FrameworkAim()
+                    {
+                        FrameworkComponentType = 2
+                    }
+                });
+
+            NewRule(larsDataServiceMock.Object).FrameworkComponentTypeFilter(learnAimRef).Should().BeFalse();
         }
 
         [Fact]
-        public void ConditionMet_True()
+        public void FrameworkComponentTypeFilter_False_Null()
         {
-            var learningDeliveries = new[]
-            {
-                new TestLearningDelivery()
-                {
-                    LearnAimRef = "101",
-                    AimType = 3,
-                    FworkCodeNullable = 1,
-                    PwayCodeNullable = 2,
-                    StdCodeNullable = 3,
-                    LearnStartDate = new DateTime(2018, 10, 10)
-                },
-                new TestLearningDelivery()
-                {
-                    LearnAimRef = "101",
-                    AimType = 3,
-                    FworkCodeNullable = 1,
-                    PwayCodeNullable = 5,
-                    StdCodeNullable = 3,
-                    LearnStartDate = new DateTime(2017, 10, 10)
-                }
-            };
+            var learnAimRef = "learnAimRef";
 
-            var completedLearningDelivery = new TestLearningDelivery()
-            {
-                LearnAimRef = "101",
-                AimType = 3,
-                FworkCodeNullable = 1,
-                PwayCodeNullable = 2,
-                StdCodeNullable = 3,
-                LearnStartDate = new DateTime(2018, 10, 09)
-            };
+            var larsDataServiceMock = new Mock<ILARSDataService>();
 
-            NewRule().ConditionMet(learningDeliveries, completedLearningDelivery).Should().BeTrue();
-        }
+            larsDataServiceMock.Setup(s => s.GetFrameworkAimsFor(learnAimRef)).Returns(null as IReadOnlyCollection<ILARSFrameworkAim>);
 
-        [Theory]
-        [InlineData(1, null, null, null, null)]
-        [InlineData(3, 99, null, null, null)]
-        [InlineData(3, 99, 100, 200, null)]
-        [InlineData(3, 80, 0, 0, 100)]
-        [InlineData(3, 0, 0, 0, 0)]
-        [InlineData(3, 1, null, 20, null)]
-        [InlineData(3, 1, null, 2, 9999)]
-        [InlineData(3, 1, 2, 2, 9999)]
-        [InlineData(3, 2, null, 3, 3)]
-        public void ConditionMet_False(int aimType, int? frameworkCode, int? standardCode, int?pwayCode, int? progType)
-        {
-            var learningDeliveries = new[]
-            {
-                new TestLearningDelivery()
-                {
-                    LearnAimRef = "101",
-                    AimType = aimType,
-                    FworkCodeNullable = frameworkCode,
-                    PwayCodeNullable = pwayCode,
-                    StdCodeNullable = standardCode,
-                    ProgTypeNullable = progType,
-                    LearnStartDate = new DateTime(2018, 10, 10)
-                },
-                new TestLearningDelivery()
-                {
-                    LearnAimRef = "101",
-                    AimType = aimType,
-                    FworkCodeNullable = 1,
-                    PwayCodeNullable = 5,
-                    StdCodeNullable = 3,
-                    ProgTypeNullable = progType,
-                    LearnStartDate = new DateTime(2017, 10, 10)
-                }
-            };
-
-            var completedLearningDelivery = new TestLearningDelivery()
-            {
-                LearnAimRef = "101",
-                AimType = aimType,
-                FworkCodeNullable = 1,
-                PwayCodeNullable = 2,
-                StdCodeNullable = null,
-                ProgTypeNullable = 3,
-                LearnStartDate = new DateTime(2018, 10, 09)
-            };
-
-            NewRule().ConditionMet(learningDeliveries, completedLearningDelivery).Should().BeFalse();
+            NewRule(larsDataServiceMock.Object).FrameworkComponentTypeFilter(learnAimRef).Should().BeFalse();
         }
 
         [Fact]
-        public void ConditionMet_LearnStartDate_False()
+        public void GroupingConditionMet_True()
         {
-            var learningDeliveries = new[]
+            var learningDeliveryOne = new TestLearningDelivery()
             {
-                new TestLearningDelivery()
-                {
-                    LearnAimRef = "101",
-                    AimType = 3,
-                    FworkCodeNullable = 1,
-                    PwayCodeNullable = 2,
-                    StdCodeNullable = null,
-                    ProgTypeNullable = 3,
-                    LearnStartDate = new DateTime(2018, 10, 10)
-                },
-                new TestLearningDelivery()
-                {
-                    LearnAimRef = "101",
-                    AimType = 3,
-                    FworkCodeNullable = null,
-                    PwayCodeNullable = null,
-                    StdCodeNullable = null,
-                    ProgTypeNullable = 3,
-                    LearnStartDate = new DateTime(2017, 10, 10)
-                }
+                ProgTypeNullable = 1,
+                FworkCodeNullable = 2,
+                PwayCodeNullable = 3,
+                FundModel = 4,
             };
 
-            var completedLearningDelivery = new TestLearningDelivery()
+            var learningDeliveryTwo = new TestLearningDelivery()
             {
-                LearnAimRef = "101",
-                AimType = 3,
-                FworkCodeNullable = 1,
-                PwayCodeNullable = 2,
-                StdCodeNullable = null,
-                ProgTypeNullable = 3,
-                LearnStartDate = new DateTime(2018, 10, 10)
+                ProgTypeNullable = 1,
+                FworkCodeNullable = 2,
+                PwayCodeNullable = 3,
+                FundModel = 4,
             };
 
-            NewRule().ConditionMet(learningDeliveries, completedLearningDelivery).Should().BeFalse();
-        }
+            var learningDeliveryThree = new TestLearningDelivery()
+            {
+                ProgTypeNullable = 5,
+                FworkCodeNullable = 6,
+                PwayCodeNullable = 7,
+                FundModel = 8,
+            };
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData(100)]
-        [InlineData(99)]
-        public void ExcludeConditionMet_False(int? progType)
-        {
-            NewRule().ExcludeConditionMet(progType).Should().BeFalse();
+            var learningDeliveries = new TestLearningDelivery[]
+            {
+                learningDeliveryOne,
+                learningDeliveryTwo,
+                learningDeliveryThree,
+            };
+
+            var groups = NewRule().ApplyGroupingCondition(learningDeliveries).ToList();
+
+            groups.Should().HaveCount(1);
+
+            var group = groups.First().ToList();
+
+            group.Should().HaveCount(2);
+            group.Should().Contain(new List<ILearningDelivery>() { learningDeliveryOne, learningDeliveryTwo });
         }
 
         [Fact]
-        public void ExcludeConditionMet_True()
+        public void GroupingConditionMet_True_Multiple()
         {
-            NewRule().ExcludeConditionMet(25).Should().BeTrue();
+            var learningDeliveryOne = new TestLearningDelivery()
+            {
+                ProgTypeNullable = 1,
+                FworkCodeNullable = 2,
+                PwayCodeNullable = 3,
+                FundModel = 4,
+            };
+
+            var learningDeliveryTwo = new TestLearningDelivery()
+            {
+                ProgTypeNullable = 1,
+                FworkCodeNullable = 2,
+                PwayCodeNullable = 3,
+                FundModel = 4,
+            };
+
+            var learningDeliveryThree = new TestLearningDelivery()
+            {
+                ProgTypeNullable = 5,
+                FworkCodeNullable = 6,
+                PwayCodeNullable = 7,
+                FundModel = 8,
+            };
+
+            var learningDeliveryFour = new TestLearningDelivery()
+            {
+                ProgTypeNullable = 5,
+                FworkCodeNullable = 6,
+                PwayCodeNullable = 7,
+                FundModel = 8,
+            };
+
+            var learningDeliveries = new TestLearningDelivery[]
+            {
+                learningDeliveryOne,
+                learningDeliveryTwo,
+                learningDeliveryThree,
+                learningDeliveryFour,
+            };
+
+            var groups = NewRule().ApplyGroupingCondition(learningDeliveries).ToList();
+
+            groups.Should().HaveCount(2);
+
+            var groupOne = groups[0].ToList();
+
+            groupOne.Should().HaveCount(2);
+            groupOne.Should().Contain(new List<ILearningDelivery>() { learningDeliveryOne, learningDeliveryTwo });
+
+            var groupTwo = groups[1].ToList();
+
+            groupTwo.Should().HaveCount(2);
+            groupTwo.Should().Contain(new List<ILearningDelivery>() { learningDeliveryThree, learningDeliveryFour });
         }
 
-        [Theory]
-        [InlineData(35)]
-        [InlineData(36)]
-        public void Validate_Error(int fundModel)
+        [Fact]
+        public void GroupingConditionMet_False()
         {
-            var learningDeliveries = new[]
+            var learningDeliveryOne = new TestLearningDelivery()
             {
-                new TestLearningDelivery() // this will cause the condition to be met
+                ProgTypeNullable = 1,
+                FworkCodeNullable = 2,
+                PwayCodeNullable = 3,
+                FundModel = 4,
+            };
+
+            var learningDeliveryThree = new TestLearningDelivery()
+            {
+                ProgTypeNullable = 5,
+                FworkCodeNullable = 6,
+                PwayCodeNullable = 7,
+                FundModel = 8,
+            };
+
+            var learningDeliveries = new TestLearningDelivery[]
+            {
+                learningDeliveryOne,
+                learningDeliveryThree,
+            };
+
+            var groups = NewRule().ApplyGroupingCondition(learningDeliveries).ToList();
+
+            groups.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Validate_Error()
+        {
+            var learnAimRef = "learnAimRef";
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new TestLearningDelivery[]
                 {
-                    LearnAimRef = "101",
-                    AimType = 3,
-                    ProgTypeNullable = 2,
-                    FworkCodeNullable = 2,
-                    PwayCodeNullable = 3,
-                    StdCodeNullable = null,
-                    FundModel = fundModel,
-                    LearnStartDate = new DateTime(2017, 10, 11)
-                },
-                new TestLearningDelivery()
-                {
-                    LearnAimRef = "101",
-                    AimType = 3,
-                    ProgTypeNullable = 2,
-                    FworkCodeNullable = 2,
-                    PwayCodeNullable = 3,
-                    StdCodeNullable = null,
-                    FundModel = fundModel,
-                    OutcomeNullable = 1,
-                    CompStatus = 2,
-                    LearnStartDate = new DateTime(2017, 10, 10)
-                },
-                new TestLearningDelivery() // this will be excluded as fund model is 25
-                {
-                    LearnAimRef = "101",
-                    AimType = 3,
-                    ProgTypeNullable = 2,
-                    FworkCodeNullable = 2,
-                    PwayCodeNullable = 3,
-                    StdCodeNullable = null,
-                    FundModel = 25,
-                    LearnStartDate = new DateTime(2017, 10, 11)
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 35,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 1,
+                        FworkCodeNullable = 2,
+                        PwayCodeNullable = 3,
+                    },
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 35,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 1,
+                        FworkCodeNullable = 2,
+                        PwayCodeNullable = 3,
+                    },
                 }
             };
 
-            var testLearner = new TestLearner()
+            var frameworkAims = new FrameworkAim[]
             {
-                LearnRefNumber = "101Learner",
-                LearningDeliveries = learningDeliveries
+                new FrameworkAim()
+                {
+                    FrameworkComponentType = 1
+                }
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<HashSet<int?>>(), It.IsAny<DateTime>()))
-                .Returns(true);
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            larsDataServiceMock.Setup(s => s.GetFrameworkAimsFor(learnAimRef)).Returns(frameworkAims);
+
+            using (var validationErrorHandler = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(testLearner);
+                NewRule(larsDataServiceMock.Object, validationErrorHandler.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Error_bug()
+        {
+            var learnAimRef = "learnAimRef";
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimSeqNumber = 1,
+                        FundModel = 35,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 2,
+                        FworkCodeNullable = 420,
+                        PwayCodeNullable = 1,
+                        PriorLearnFundAdjNullable = 25
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimSeqNumber = 2,
+                        FundModel = 35,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 2,
+                        FworkCodeNullable = 420,
+                        PwayCodeNullable = 1,
+                        PriorLearnFundAdjNullable = 7
+                    },
+                }
+            };
+
+            var frameworkAims = new FrameworkAim[]
+            {
+                new FrameworkAim()
+                {
+                    FrameworkComponentType = 3
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+
+            larsDataServiceMock.Setup(s => s.GetFrameworkAimsFor(learnAimRef)).Returns(frameworkAims);
+
+            using (var validationErrorHandler = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(larsDataServiceMock.Object, validationErrorHandler.Object).Validate(learner);
             }
         }
 
         [Fact]
         public void Validate_NoError()
         {
-            var learningDeliveries = new[]
-           {
-                new TestLearningDelivery() // this will cause the condition to be met
+            var learnAimRef = "learnAimRef";
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new TestLearningDelivery[]
                 {
-                    LearnAimRef = "101",
-                    AimType = TypeOfAim.ComponentAimInAProgramme,
-                    ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
-                    FworkCodeNullable = 2,
-                    PwayCodeNullable = 3,
-                    StdCodeNullable = null,
-                    FundModel = 26,
-                    LearnStartDate = new DateTime(2017, 10, 10)
-                },
-                new TestLearningDelivery()
-                {
-                    LearnAimRef = "101",
-                    AimType = TypeOfAim.ComponentAimInAProgramme,
-                    ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
-                    FworkCodeNullable = 2,
-                    PwayCodeNullable = 3,
-                    StdCodeNullable = null,
-                    FundModel = 26,
-                    OutcomeNullable = 1,
-                    CompStatus = 2,
-                    LearnStartDate = new DateTime(2017, 10, 10)
-                },
-                new TestLearningDelivery()
-                {
-                    LearnAimRef = "101",
-                    AimType = TypeOfAim.ComponentAimInAProgramme,
-                    ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
-                    FworkCodeNullable = 2,
-                    PwayCodeNullable = 3,
-                    StdCodeNullable = null,
-                    FundModel = 26,
-                    LearnStartDate = new DateTime(2017, 10, 09)
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 35,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 1,
+                        FworkCodeNullable = 2,
+                        PwayCodeNullable = 3,
+                    },
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 36,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 1,
+                        FworkCodeNullable = 2,
+                        PwayCodeNullable = 3,
+                    },
                 }
             };
 
-            var testLearner = new TestLearner()
+            var frameworkAims = new FrameworkAim[]
             {
-                LearnRefNumber = "101Learner",
-                LearningDeliveries = learningDeliveries
+                new FrameworkAim()
+                {
+                    FrameworkComponentType = 1
+                }
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock
-                .Setup(ldsm => ldsm.FrameWorkComponentTypeExistsInFrameworkAims(It.IsAny<string>(), It.IsAny<HashSet<int?>>()))
-                .Returns(true);
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            larsDataServiceMock.Setup(s => s.GetFrameworkAimsFor(learnAimRef)).Returns(frameworkAims);
+
+            using (var validationErrorHandler = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+                NewRule(larsDataServiceMock.Object, validationErrorHandler.Object).Validate(learner);
             }
         }
 
         [Fact]
-        public void Validate_NullLearningDeliveries_NoError()
+        public void Validate_NoError_Exclusion()
         {
-            var testLearner = new TestLearner()
+            var learnAimRef = "learnAimRef";
+
+            var learner = new TestLearner()
             {
-                LearnRefNumber = "101Learner",
-                LearningDeliveries = null
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 36,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 25,
+                        FworkCodeNullable = 2,
+                        PwayCodeNullable = 3,
+                    },
+                    new TestLearningDelivery()
+                    {
+                        FundModel = 35,
+                        AimType = 3,
+                        LearnAimRef = learnAimRef,
+                        CompStatus = 2,
+                        OutcomeNullable = 1,
+                        ProgTypeNullable = 1,
+                        FworkCodeNullable = 2,
+                        PwayCodeNullable = 3,
+                    },
+                }
             };
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            var frameworkAims = new FrameworkAim[]
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
+                new FrameworkAim()
+                {
+                    FrameworkComponentType = 1
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+
+            larsDataServiceMock.Setup(s => s.GetFrameworkAimsFor(learnAimRef)).Returns(frameworkAims);
+
+            using (var validationErrorHandler = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(larsDataServiceMock.Object, validationErrorHandler.Object).Validate(learner);
             }
         }
 
-        [Fact]
-        public void BuildErrorMessageParameters()
+        private R64Rule NewRule(ILARSDataService larsDataService = null, IValidationErrorHandler validationErrorHandler = null)
         {
-            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
-
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("AimType", 3)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("FundModel", 36)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("ProgType", 2)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("FworkCode", 2)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("PwayCode", 3)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("StdCode", null)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("Outcome", 1)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("CompStatus", 2)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter("LearnStartDate", "10/10/2017")).Verifiable();
-
-            var learningDelivery = new TestLearningDelivery()
-            {
-                LearnAimRef = "101",
-                AimType = 3,
-                ProgTypeNullable = 2,
-                FworkCodeNullable = 2,
-                PwayCodeNullable = 3,
-                StdCodeNullable = null,
-                FundModel = 36,
-                OutcomeNullable = 1,
-                CompStatus = 2,
-                LearnStartDate = new DateTime(2017, 10, 10)
-            };
-
-            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters(learningDelivery);
-
-            validationErrorHandlerMock.Verify();
-        }
-
-        private R64Rule NewRule(IValidationErrorHandler validationErrorHandler = null, ILARSDataService larsDataService = null)
-        {
-            return new R64Rule(larsDataService, validationErrorHandler);
+            return new R64Rule(
+                validationErrorHandler ?? Mock.Of<IValidationErrorHandler>(),
+                larsDataService ?? Mock.Of<ILARSDataService>());
         }
     }
 }

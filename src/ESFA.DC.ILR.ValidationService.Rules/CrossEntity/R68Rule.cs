@@ -33,31 +33,43 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 return;
             }
 
-            var programDeliveries = learner.LearningDeliveries
-                .Where(IsApprenticeshipProgrammeAim)
-                .GroupBy(ld => new { ld.ProgTypeNullable, ld.StdCodeNullable, ld.FworkCodeNullable })
-                .SelectMany(x => x.ToList());
+            var apprenticeshipLearningDeliveries = learner.LearningDeliveries.Where(IsApprenticeshipProgrammeAim).ToList();
 
-            if ((programDeliveries?.Count() ?? 0) == 0)
+            if (!apprenticeshipLearningDeliveries.Any())
             {
                 return;
             }
 
-            foreach (var appFinRecords in programDeliveries
-                .Where(ld => ld.AppFinRecords != null)
-                .SelectMany(ld => ld.AppFinRecords)
-                .GroupBy(afr => new { AFinType = afr.AFinType?.ToUpper(), afr.AFinCode, afr.AFinDate })
-                .Where(apf => apf.Count() > 1)
-                .ToList())
+            var standardProgrammeAimsToValidate = GetGroupedAppFinRecordsToValidate(apprenticeshipLearningDeliveries, ld => ld.StdCodeNullable);
+            var frameworkProgrammeAimsToValidate = GetGroupedAppFinRecordsToValidate(apprenticeshipLearningDeliveries, ld => ld.FworkCodeNullable);
+
+            ValidateAims(learner.LearnRefNumber, standardProgrammeAimsToValidate);
+            ValidateAims(learner.LearnRefNumber, frameworkProgrammeAimsToValidate);
+        }
+
+        public void ValidateAims(string learnRefNumber, IDictionary<int?, IEnumerable<R68AppFinRecord>> aims)
+        {
+            if (aims != null)
             {
-                HandleValidationError(
-                    learnRefNumber: learner.LearnRefNumber,
-                    errorMessageParameters: BuildErrorMessageParameters(
-                        appFinRecords.Key.AFinType,
-                        appFinRecords.Key.AFinCode,
-                        appFinRecords.Key.AFinDate));
+                foreach (var key in aims)
+                {
+                    var matchingAppFinRecords = CompareAgainstOtherAppFinRecords(key.Value, ConditionMet).Distinct();
+
+                    foreach (var appFinRecord in matchingAppFinRecords)
+                    {
+                        RaiseValidationMessage(learnRefNumber, appFinRecord.AimSeqNumber, appFinRecord);
+                    }
+                }
             }
         }
+
+        public bool ConditionMet(R68AppFinRecord appFinRecord, R68AppFinRecord comparisonAppFinRecord)
+        {
+            return appFinRecord.AFinType == comparisonAppFinRecord.AFinType
+                && appFinRecord.AFinCode == comparisonAppFinRecord.AFinCode
+                && appFinRecord.AFinDate == comparisonAppFinRecord.AFinDate;
+        }
+
 
         public bool IsApprenticeshipProgrammeAim(ILearningDelivery learningDelivery)
         {
@@ -66,17 +78,78 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                    && _apprenticeshipProgTypes.Contains(learningDelivery.ProgTypeNullable);
         }
 
+        public void RaiseValidationMessage(string learnRefNumber, int aimSeqNumber, R68AppFinRecord appFinRecord) =>
+         HandleValidationError(learnRefNumber, aimSeqNumber, BuildErrorMessageParameters(appFinRecord.FworkCode, appFinRecord.StdCode, appFinRecord.AFinType, appFinRecord.AFinCode, appFinRecord.AFinDate));
+
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(
-            string aFinType,
-            int aFinCode,
-            DateTime aFinDate)
+            int? fworkCode,
+            int? stdCode,
+            string aFinType, int aFinCode, DateTime aFinDate)
         {
             return new[]
             {
+                BuildErrorMessageParameter(PropertyNameConstants.FworkCode, fworkCode),
+                BuildErrorMessageParameter(PropertyNameConstants.StdCode, stdCode),
                 BuildErrorMessageParameter(PropertyNameConstants.AFinType, aFinType),
                 BuildErrorMessageParameter(PropertyNameConstants.AFinCode, aFinCode),
                 BuildErrorMessageParameter(PropertyNameConstants.AFinDate, aFinDate)
             };
         }
+
+        private IEnumerable<R68AppFinRecord> CompareAgainstOtherAppFinRecords(IEnumerable<R68AppFinRecord> appfinRecords, Func<R68AppFinRecord, R68AppFinRecord, bool> predicate)
+        {
+            var appFinRecordsList = appfinRecords.ToList();
+
+            var collectionSize = appFinRecordsList.Count;
+
+            for (var i = 0; i < collectionSize; i++)
+            {
+                for (var j = 0; j < collectionSize; j++)
+                {
+                    if (i != j)
+                    {
+                        var appFinRecordOne = appFinRecordsList[i];
+                        var appFinRecordTwo = appFinRecordsList[j];
+
+                        if (predicate(appFinRecordOne, appFinRecordTwo))
+                        {
+                            yield return appFinRecordOne;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private IDictionary<int?, IEnumerable<R68AppFinRecord>> GetGroupedAppFinRecordsToValidate(IEnumerable<ILearningDelivery> apprenticeshipLearningDeliveries, Func<ILearningDelivery, int?> groupBy)
+        {
+            return apprenticeshipLearningDeliveries
+              .GroupBy(groupBy)
+              .Where(x => x.Any(f => groupBy(f).HasValue))
+              .ToDictionary(x => 
+                    x.Key,
+                    v => v.Where(af => af.AppFinRecords != null).SelectMany(ld => ld.AppFinRecords?
+                    .Select(af => new R68AppFinRecord(ld.AimSeqNumber, ld.FworkCodeNullable, ld.StdCodeNullable, af.AFinType, af.AFinCode, af.AFinDate))));
+        }
+    }
+
+    public struct R68AppFinRecord
+    {
+        public R68AppFinRecord(int aimSeqNumber, int? fworkCode, int? stdCode, string aFinType, int aFinCode, DateTime aFinDate)
+        {
+            AimSeqNumber = aimSeqNumber;
+            FworkCode = fworkCode;
+            StdCode = stdCode;
+            AFinType = aFinType;
+            AFinCode = aFinCode;
+            AFinDate = aFinDate;
+        }
+
+        public int AimSeqNumber { get; set; }
+        public int? FworkCode { get; set; }
+        public int? StdCode { get; set; }
+        public string AFinType { get; set; }
+        public int AFinCode { get; set; }
+        public DateTime AFinDate { get; set; }
     }
 }

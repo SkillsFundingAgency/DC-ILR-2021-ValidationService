@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace ESFA.DC.ILR.ValidationService.Interface
+﻿namespace ESFA.DC.ILR.ValidationService.Interface
 {
     public interface IValidationContext
     {
-        string Filename { get; }
+        string Filename { get; set; }
 
         string Container { get; }
 
@@ -27,5 +25,7 @@ namespace ESFA.DC.ILR.ValidationService.Interface
         int ValidationTotalErrorCount { set; }
 
         int ValidationTotalWarningCount { set; }
+
+        int ReturnPeriod { get; }
     }
 }

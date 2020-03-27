@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Autofac;
+﻿using Autofac;
 using Moq;
 
 namespace ESFA.DC.ILR.ValidationService.Modules

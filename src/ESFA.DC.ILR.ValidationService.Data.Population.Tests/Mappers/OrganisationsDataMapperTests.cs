@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using ESFA.DC.ILR.ReferenceDataService.Model.Organisations;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Model;
 using ESFA.DC.ILR.ValidationService.Data.Population.Mappers;
 using FluentAssertions;
 using Xunit;
+using Organisation = ESFA.DC.ILR.ValidationService.Data.External.Organisation.Model.Organisation;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
 {
@@ -21,6 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         UKPRN = 1,
                         PartnerUKPRN = true,
                         LegalOrgType = "LegalOrgType",
+                        LongTermResid = true
                     }
                 },
                 {
@@ -29,6 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         UKPRN = 2,
                         PartnerUKPRN = false,
                         LegalOrgType = "LegalOrgType",
+                        LongTermResid = false
                     }
                 }
             };
@@ -37,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
         }
 
         [Fact]
-        public void MapONSPostcodes()
+        public void MapCampusIdentifiers()
         {
             var organisations = TestOrganisations();
 
@@ -61,11 +65,20 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                     UKPRN = 1,
                     PartnerUKPRN = true,
                     LegalOrgType = "LegalOrgType",
-                    OrganisationFundings = new List<ReferenceDataService.Model.Organisations.OrganisationFunding>(),
-                    CampusIdentifers = new List<string>
+                    LongTermResid = true,
+                    OrganisationFundings = new List<OrganisationFunding>(),
+                    CampusIdentifers = new List<OrganisationCampusIdentifier>
                     {
-                        "Id1",
-                        "Id2"
+                        new OrganisationCampusIdentifier
+                        {
+                            CampusIdentifier = "Id1",
+                            EffectiveFrom = new System.DateTime(2019, 8, 1)
+                        },
+                        new OrganisationCampusIdentifier
+                        {
+                            CampusIdentifier = "Id2",
+                            EffectiveFrom = new System.DateTime(2019, 8, 1)
+                        }
                     }
                 },
                 new ReferenceDataService.Model.Organisations.Organisation
@@ -73,11 +86,20 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                     UKPRN = 2,
                     PartnerUKPRN = false,
                     LegalOrgType = "LegalOrgType",
-                    OrganisationFundings = new List<ReferenceDataService.Model.Organisations.OrganisationFunding>(),
-                    CampusIdentifers = new List<string>
+                    LongTermResid = false,
+                    OrganisationFundings = new List<OrganisationFunding>(),
+                    CampusIdentifers = new List<OrganisationCampusIdentifier>
                     {
-                        "Id1",
-                        "Id2"
+                        new OrganisationCampusIdentifier
+                        {
+                            CampusIdentifier = "Id1",
+                            EffectiveFrom = new System.DateTime(2019, 8, 1)
+                        },
+                        new OrganisationCampusIdentifier
+                        {
+                            CampusIdentifier = "Id2",
+                            EffectiveFrom = new System.DateTime(2019, 8, 1)
+                        }
                     }
                 }
             };

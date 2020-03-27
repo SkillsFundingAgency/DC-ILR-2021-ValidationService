@@ -5,10 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ReferenceDataService.Model;
-using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Interface.Enum;
+using ESFA.DC.ILR.ValidationService.Providers.Utils;
 using ESFA.DC.Logging.Interfaces;
 
 namespace ESFA.DC.ILR.ValidationService.Providers
@@ -20,6 +20,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
         private readonly IProvider<ReferenceDataRoot> _referenceDataRootProvider;
         private readonly IValidationErrorCache _validationErrorCache;
         private readonly IValidationOutputService _validationOutputService;
+        private readonly IValidIlrFileOutputService _validIlrFileOutputService;
         private readonly IRuleSetOrchestrationService<IMessage> _ruleSetOrchestrationService;
         private readonly IValidationExecutionProvider _validationExecutionProvider;
         private readonly ILogger _logger;
@@ -30,6 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             IProvider<ReferenceDataRoot> referenceDataRootProvider,
             IValidationErrorCache validationErrorCache,
             IValidationOutputService validationOutputService,
+            IValidIlrFileOutputService validIlrFileOutputService,
             IRuleSetOrchestrationService<IMessage> ruleSetOrchestrationService,
             IValidationExecutionProvider validationExecutionProvider,
             ILogger logger)
@@ -39,6 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             _referenceDataRootProvider = referenceDataRootProvider;
             _validationErrorCache = validationErrorCache;
             _validationOutputService = validationOutputService;
+            _validIlrFileOutputService = validIlrFileOutputService;
             _ruleSetOrchestrationService = ruleSetOrchestrationService;
             _validationExecutionProvider = validationExecutionProvider;
             _logger = logger;
@@ -73,7 +76,9 @@ namespace ESFA.DC.ILR.ValidationService.Providers
                 if (_validationErrorCache.ValidationErrors.Any(IsFail))
                 {
                     _logger.LogDebug($"File schema catastrophic error, so will not execute learner validation actors, error count: {_validationErrorCache.ValidationErrors.Count}");
-                    return;
+                    await _validationOutputService.ProcessAsync(validationContext, message, _validationErrorCache.ValidationErrors, cancellationToken).ConfigureAwait(false);
+
+                    throw new ValidationSeverityFailException("File level errors (Severity F) caught. Handing back to Message Handler.");
                 }
 
                 await _validationExecutionProvider.ExecuteAsync(validationContext, message, cancellationToken).ConfigureAwait(false);
@@ -83,6 +88,8 @@ namespace ESFA.DC.ILR.ValidationService.Providers
                 cancellationToken.ThrowIfCancellationRequested();
 
                 await _validationOutputService.ProcessAsync(validationContext, message, _validationErrorCache.ValidationErrors, cancellationToken).ConfigureAwait(false);
+
+                await _validIlrFileOutputService.ProcessAsync(validationContext, message, cancellationToken).ConfigureAwait(false);
 
                 _logger.LogDebug($"Validation final results persisted in {stopWatch.ElapsedMilliseconds}");
             }

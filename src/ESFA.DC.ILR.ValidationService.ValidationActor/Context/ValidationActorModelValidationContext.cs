@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.ValidationActor.Interfaces.Models;
-using ESFA.DC.Serialization.Json;
 
 namespace ESFA.DC.ILR.ValidationService.ValidationActor.Context
 {
     public class ValidationActorModelValidationContext : IValidationContext
     {
-        public string Filename => throw new NotImplementedException();
+        public string Filename
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
         public string Container => throw new NotImplementedException();
 
@@ -46,5 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor.Context
         {
             set => throw new NotImplementedException();
         }
+
+        public int ReturnPeriod => throw new NotImplementedException();
     }
 }

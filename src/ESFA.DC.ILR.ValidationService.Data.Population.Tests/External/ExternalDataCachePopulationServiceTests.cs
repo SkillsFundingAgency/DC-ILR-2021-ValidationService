@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.External.EPAOrganisation.Model;
@@ -9,6 +8,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
+using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationRules.Model;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
@@ -49,6 +49,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
             organisationsDataMapperMock.Setup(m => m.MapCampusIdentifiers(It.IsAny<List<ReferenceDataService.Model.Organisations.Organisation>>())).Returns(new List<ICampusIdentifier>()).Verifiable();
             postcodesDataMapperMock.Setup(m => m.MapONSPostcodes(It.IsAny<List<ReferenceDataService.Model.Postcodes.Postcode>>())).Returns(new List<ONSPostcode>()).Verifiable();
             postcodesDataMapperMock.Setup(m => m.MapPostcodes(It.IsAny<List<ReferenceDataService.Model.Postcodes.Postcode>>())).Returns(new List<string>()).Verifiable();
+            postcodesDataMapperMock.Setup(m => m.MapDevolvedPostcodes(It.IsAny<List<ReferenceDataService.Model.PostcodesDevolution.DevolvedPostcode>>())).Returns(new Dictionary<string, IReadOnlyCollection<IDevolvedPostcode>>()).Verifiable();
+
             ulnDataMapperMock.Setup(m => m.MapUlns(It.IsAny<List<long>>())).Returns(new List<long>()).Verifiable();
             validationErrorsDataMapperMock.Setup(m => m.MapValidationErrors(It.IsAny<List<ReferenceDataService.Model.MetaData.ValidationError>>())).Returns(new Dictionary<string, ValidationError>()).Verifiable();
             validationRulesDataMapperMock.Setup(m => m.MapValidationRules(It.IsAny<List<ReferenceDataService.Model.MetaData.ValidationRule>>())).Returns(new List<ValidationRule>()).Verifiable();
@@ -63,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
                 postcodesDataMapperMock.Object,
                 ulnDataMapperMock.Object,
                 validationErrorsDataMapperMock.Object,
-                validationRulesDataMapperMock.Object).Populate(referenceDataRoot);
+                validationRulesDataMapperMock.Object).Populate(referenceDataRoot, validationContextMock.Object);
 
             employersDataMapperMock.VerifyAll();
             epaOrgDataMapperMock.VerifyAll();

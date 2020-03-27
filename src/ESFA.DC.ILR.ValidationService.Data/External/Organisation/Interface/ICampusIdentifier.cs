@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface
+﻿namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface
 {
     public interface ICampusIdentifier
     {

@@ -1,75 +1,69 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System.Linq;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
-    /// <summary>
-    /// learn aim ref rule 88
-    /// </summary>
-    /// <seealso cref="LearnAimRefRuleBase" />
-    public class LearnAimRef_88Rule :
-        LearnAimRefRuleBase
+    public class LearnAimRef_88Rule : AbstractRule, IRule<ILearner>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LearnAimRef_88Rule" /> class.
-        /// </summary>
-        /// <param name="validationErrorHandler">The validation error handler.</param>
-        /// <param name="provider">The provider.</param>
-        /// <param name="larsData">The lars data.</param>
+        private readonly ILARSDataService _larsDataService;
+        private readonly IDerivedData_ValidityCategory _ddValidityCategory;
+
         public LearnAimRef_88Rule(
-            IValidationErrorHandler validationErrorHandler,
-            IProvideLearnAimRefRuleActions provider,
-            ILARSDataService larsData)
-                : base(validationErrorHandler, provider, larsData, RuleNameConstants.LearnAimRef_88)
+            ILARSDataService larsDataService,
+            IDerivedData_ValidityCategory ddValidityCategory,
+            IValidationErrorHandler validationErrorHandler)
+            : base(validationErrorHandler, RuleNameConstants.LearnAimRef_88)
         {
+            _larsDataService = larsDataService;
+            _ddValidityCategory = ddValidityCategory;
         }
 
-        /// <summary>
-        /// Determines whether [has valid start range] [the specified validity].
-        /// caters for the custom and practice of setting the end date to before
-        /// the start date as a means of withdrawing funding
-        /// </summary>
-        /// <param name="validity">The validity.</param>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [in valid start range] [the specified validity]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasValidStartRange(ILARSLearningDeliveryValidity validity, ILearningDelivery delivery) =>
-            validity.IsCurrent(delivery.LearnStartDate, validity.LastNewStartDate);
-
-        /// <summary>
-        /// Determines whether [has valid learning aim] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="branchCategory">The branch category.</param>
-        /// <returns>
-        ///   <c>true</c> if [has valid learning aim] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasValidLearningAim(ILearningDelivery delivery, string branchCategory)
+        public void Validate(ILearner objectToValidate)
         {
-            var validities = LarsData.GetValiditiesFor(delivery.LearnAimRef)
-                .Where(x => x.ValidityCategory.ComparesWith(branchCategory));
-
-            return validities
-                .SafeAny(x => HasValidStartRange(x, delivery));
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
+            {
+                if (ConditionMet(learningDelivery, objectToValidate.LearnerEmploymentStatuses))
+                {
+                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.LearnStartDate, learningDelivery.LearnAimRef));
+                }
+            }
         }
 
-        /// <summary>
-        /// Passes the (rule) conditions.
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="branch">The branch result.</param>
-        /// <returns>
-        /// true if it does...
-        /// </returns>
-        public override bool PassesConditions(ILearningDelivery delivery, IBranchResult branch)
+        public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            return branch.OutOfScope || HasValidLearningAim(delivery, branch.Category);
+            var category = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
+
+            if (category == null)
+            {
+                return false;
+            }
+
+            return LarsConditionMet(category, learningDelivery.LearnAimRef, learningDelivery.LearnStartDate);
+        }
+
+        public bool LarsConditionMet(string category, string learnAimRef, DateTime learnStartDate)
+        {
+            var larsValidity = _larsDataService?.GetValiditiesFor(learnAimRef)
+                .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)) ?? Enumerable.Empty<ILARSLearningDeliveryValidity>();
+
+            return !larsValidity.Any() || larsValidity.Any(l => learnStartDate < l.StartDate || learnStartDate > l.EndDate || learnStartDate > l.LastNewStartDate);
+        }
+
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, string learnAimRef)
+        {
+            return new[]
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learnStartDate),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, learnAimRef)
+            };
         }
     }
 }

@@ -145,16 +145,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
         /// Condition met with valid TTAccom code returns true.
         /// </summary>
         /// <param name="candidate">The candidate.</param>
+        /// <param name="present">Does the lookup contain the candidate.</param>
         /// <param name="testCaseDate">The test case date.</param>
         /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(1, "2013-06-14", true)]
-        [InlineData(2, "2015-09-03", true)]
-        [InlineData(3, "2012-06-18", true)]
-        [InlineData(1, "2013-06-14", false)]
-        [InlineData(2, "2015-09-03", false)]
-        [InlineData(3, "2012-06-18", false)]
-        public void ConditionMetWithCandidateMatchesExpectation(int candidate, string testCaseDate, bool expectation)
+        [InlineData(1, true, "2013-06-14", true)]
+        [InlineData(2, true, "2015-09-03", true)]
+        [InlineData(3, true, "2012-06-18", true)]
+        [InlineData(1, true, "2013-06-14", false)]
+        [InlineData(2, true, "2015-09-03", false)]
+        [InlineData(3, true, "2012-06-18", false)]
+        [InlineData(1, false, "2013-06-14", true)]
+        [InlineData(2, false, "2015-09-03", true)]
+        [InlineData(3, false, "2012-06-18", true)]
+        public void ConditionMetWithPossibleCandidateExpectation(int candidate, bool present, string testCaseDate, bool expectation)
         {
             // arrange
             var testDate = DateTime.Parse(testCaseDate);
@@ -162,8 +166,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var mockService = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             mockService
-                .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.TTAccom, candidate, testDate))
-                .Returns(expectation);
+                .Setup(x => x.Contains(TypeOfLimitedLifeLookup.TTAccom, candidate))
+                .Returns(present);
+            if (present)
+            { // IsCurrent only gets called if Contains returns true.
+                mockService
+                    .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.TTAccom, candidate, testDate))
+                    .Returns(expectation);
+            }
 
             var mockDerived = new Mock<IDerivedData_06Rule>(MockBehavior.Strict);
 
@@ -228,6 +238,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
 
             var mockService = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
             mockService
+                .Setup(x => x.Contains(TypeOfLimitedLifeLookup.TTAccom, candidate))
+                .Returns(true);
+            mockService
                 .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.TTAccom, candidate, testDate))
                 .Returns(false);
 
@@ -286,6 +299,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TTACCOM
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var mockService = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
+            mockService
+                .Setup(x => x.Contains(TypeOfLimitedLifeLookup.TTAccom, candidate))
+                .Returns(true);
             mockService
                 .Setup(x => x.IsCurrent(TypeOfLimitedLifeLookup.TTAccom, candidate, testDate))
                 .Returns(true);

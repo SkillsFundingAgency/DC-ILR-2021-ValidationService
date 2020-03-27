@@ -23,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "AFinType_12";
+        public const string Name = RuleNameConstants.AFinType_12;
 
         /// <summary>
         /// The message handler
@@ -48,11 +48,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
         public string RuleName => Name;
 
         /// <summary>
-        /// Determines whether the specified delivery is apprencticeship.
+        /// Determines whether the specified delivery is Apprenticeship.
         /// </summary>
         /// <param name="delivery">The delivery.</param>
         /// <returns>
-        ///   <c>true</c> if the specified delivery is apprencticeship; otherwise, <c>false</c>.
+        ///   <c>true</c> if the specified delivery is Apprenticeship; otherwise, <c>false</c>.
         /// </returns>
         public bool IsApprenticeship(ILearningDelivery delivery) =>
             delivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;

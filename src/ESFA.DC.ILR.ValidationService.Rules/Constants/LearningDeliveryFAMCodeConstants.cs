@@ -6,13 +6,13 @@
         public const string SOF_ESFA_Adult = "105";
         public const string SOF_ESFA_1619 = "107";
         public const string SOF_LA = "108";
-        public const string SOF_Unassigned_110 = "110";
-        public const string SOF_Unassigned_111 = "111";
-        public const string SOF_Unassigned_112 = "112";
-        public const string SOF_Unassigned_113 = "113";
-        public const string SOF_Unassigned_114 = "114";
-        public const string SOF_Unassigned_115 = "115";
-        public const string SOF_Unassigned_116 = "116";
+        public const string SOF_MCAGLA_GMCA = "110";
+        public const string SOF_MCAGLA_LCRCA = "111";
+        public const string SOF_MCAGLA_WMCA = "112";
+        public const string SOF_MCAGLA_WECA = "113";
+        public const string SOF_MCAGLA_TVCA = "114";
+        public const string SOF_MCAGLA_CPCA = "115";
+        public const string SOF_MCAGLA_London = "116";
         public const string SOF_Unassigned_117 = "117";
         public const string SOF_Unassigned_118 = "118";
         public const string SOF_Unassigned_119 = "119";
@@ -31,6 +31,8 @@
         public const string LSF_Code = "1";
 
         public const string ADL_Code = "1";
+
+        public const string DAM_Code_001 = "001";
 
         public const string ALB_Rate_1 = "1";
         public const string ALB_Rate_2 = "2";

@@ -71,6 +71,11 @@
         public const int TransferredDueToMerger = 47;
 
         /// <summary>
+        /// industrial placement learner withdrew
+        /// </summary>
+        public const int IndustrialPlacementLearnerWithdrew = 48;
+
+        /// <summary>
         /// other
         /// </summary>
         public const int Other = 97;

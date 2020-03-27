@@ -1,6 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "LearnDelFAMType_04";
+        public const string Name = RuleNameConstants.LearnDelFAMType_04;
 
         /// <summary>
         /// The message handler

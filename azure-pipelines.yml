@@ -1,5 +1,5 @@
 
-name: $(VersionNumberMajor).$(VersionNumberMinor)$(Rev:.rrrr)
+name: $(VersionNumberMajor).$(VersionNumberMinor)$(Rev:.r)
 
 resources:
 - repo: self
@@ -7,198 +7,232 @@ resources:
 
 variables:
   VersionNumberMajor: '0'
-  VersionNumberMinor: '0'
-  BuildConfiguration: 'Release'
-  BuildPlatform: 'Any CPU'
-  BuildPlatformX64: 'x64'  
-  ServiceFabricApplicationParametersFolder: 'src\ESFA.DC.ILR.ValidationService\ApplicationParameters'
+  VersionNumberMinor: '1'
+  Build.Configuration: 'Release'
+  Build.Platform: 'Any CPU'
+  Build.PlatformX64: 'x64'  
+  DotNet>Core.Version: '2.2.207'  
+  Parameters.solution: '**\*.sln'
+  Parameters.feedRestore: 'dct-pkg'
 
-pool:
-  name: DCT
-  demands:
-  - msbuild
-  - visualstudio
-  - vstest
-  - IsBuildServer
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      name: DCT
+      demands:
+      - IsBuildServer
+      - ServiceFabricSDK
+      #- ServiceFabricSDKVersion -equals 65
 
-steps:
-- powershell: |
-   Copy-Item "Cloud.xml" "Local.1Node.xml" -Force
-   Copy-Item "Cloud.xml" "Local.5Node.xml" -Force
-   
-  workingDirectory: '$(ServiceFabricApplicationParametersFolder)'
-  displayName: 'Generate Fake Config Files'
+    steps:
+    - powershell: |
+           $Filter = "ApplicationParameters";
+           $ApplicationParametersFolder = Get-ChildItem -Directory -recurse   | Where {$_.Name.ToLower() -eq $Filter.ToLower() };
+           Copy-Item "$($ApplicationParametersFolder.FullName)\Cloud.xml" "$($ApplicationParametersFolder.FullName)\Local.1Node.xml" -Force;
+           Copy-Item "$($ApplicationParametersFolder.FullName)\Cloud.xml" "$($ApplicationParametersFolder.FullName)\Local.5Node.xml" -Force;
+ 
+      workingDirectory: '$(build.sourcesdirectory)\src'
+      displayName: 'Generate Fake Application Parameters Node Config Files'
 
-- task: DotNetCoreInstaller@0
-  displayName: 'Use .NET Core sdk 2.2.203'
-  inputs:
-    version: 2.2.203
-
-- task: VisualStudioTestPlatformInstaller@1
-  displayName: 'Visual Studio Test Platform Installer'
-  inputs:
-    versionSelector: latestStable
-
-- task: NuGetToolInstaller@0
-  displayName: 'Use NuGet < 4.8.0'
-  inputs:
-    versionSpec: '< 4.8.0'
-    checkLatest: true
-
-- task: DotNetCoreCLI@2
-  enabled: true
-  displayName: 'dotnet restore'
-  inputs:
-    command: restore
-    projects: '**\*.csproj'
-    vstsFeed: 'dct-pkg'
-#    includeNuGetOrg: false
-#    noCache: true
-
-- task: NuGetCommand@2
-  displayName: 'NuGet restore'
-  inputs:
-    restoreSolution: '**/*.sln'
-    vstsFeed: 'dct-pkg'
-    noCache: true
-
-- task: MSBuild@1
-  displayName: 'Build solution **/*.sln'
-  inputs:
-    msbuildVersion: 16.0
-    msbuildArchitecture: x64
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
-    msbuildArguments: '-p:version=$(Build.BuildNumber) -p:FileVersion=$(Build.BuildNumber) -p:SkipInvalidConfigurations=true'
-    clean: true
-    maximumCpuCount: true
-    restoreNugetPackages: true
-    logProjectEvents: true
-    createLogFile: true
-
-- task: MSBuild@1
-  displayName: 'Build and Package - Service Fabric Config'
-  inputs:
-    solution: '**\*.sfproj'
-    msbuildArchitecture: x64
-    platform: '$(BuildPlatformX64)'
-    configuration: '$(BuildConfiguration)'
-    msbuildArguments: '/t:Package /p:PackageLocation=$(build.artifactstagingdirectory)\ServiceFabric\ApplicationPackage  /p:version=$(Build.BuildNumber) /p:FileVersion=$(Build.BuildNumber) -p:SkipInvalidConfigurations=true'
-    clean: false
-    maximumCpuCount: true
-    logProjectEvents: true
-    createLogFile: true
-        
-- task: DeleteFiles@1
-  displayName: 'Delete Symbols files from $(build.artifactstagingdirectory)\ServiceFabric\ApplicationPackage '
-  inputs:
-    SourceFolder: '$(build.artifactstagingdirectory)\ServiceFabric\ApplicationPackage'
-    Contents: '**\*.pdb'
-
-- task: CopyFiles@2
-  displayName: 'Copy Nuget Interface Packages Files - Artifact NugetInterface Directory'
-  inputs:
-    SourceFolder: '$(build.sourcesdirectory)\src'
-    Contents: |
-     **\*$(BuildConfiguration)*\*Interface.nupkg
-     !**\packages\**
-     !**\bin\x64\**
-    TargetFolder: '$(build.artifactstagingdirectory)\Nuget\Interface'
-    CleanTargetFolder: true
-    flattenFolders: true
-
-- task: CopyFiles@2
-  displayName: 'Copy NugetPackages Files - Artifact NugetPackages Directory'
-  inputs:
-    SourceFolder: '$(build.sourcesdirectory)\src'
-    Contents: |
-     **\*$(BuildConfiguration)*\*.nupkg
-     !**\packages\**
-     !**\bin\x64\**
-    TargetFolder: '$(build.artifactstagingdirectory)\Nuget\Packages'
-    CleanTargetFolder: true
-    flattenFolders: true
-        
-- task: CopyFiles@2
-  displayName: 'Copy Database Files - Artifact Databases Directory'
-  inputs:
-    SourceFolder: '$(build.sourcesdirectory)'
-    Contents: |
-     **\*.Database\**\*.dacpac
-    TargetFolder: '$(build.artifactstagingdirectory)\Databases'
-    CleanTargetFolder: true
-    flattenFolders: true
+    - task: DotNetCoreInstaller@0
+      displayName: 'Use .NET Core sdk $(DotNet>Core.Version)'
+      inputs:
+        version: $(DotNet>Core.Version)
     
-
-- task: CopyFiles@2
-  displayName: 'Copy Files - $(build.artifactstagingdirectory)\ServiceFabric\PublishProfiles'
-  inputs:
-    SourceFolder: '$(build.sourcesdirectory)\src'
-    Contents: '**\PublishProfiles\Cloud.xml'
-    TargetFolder: '$(build.artifactstagingdirectory)\ServiceFabric\PublishProfiles'
-    CleanTargetFolder: true
-    flattenFolders: true
-
-- task: CopyFiles@2
-  displayName: 'Copy Files - $(build.artifactstagingdirectory)\ServiceFabric\ApplicationParameters'
-  inputs:
-    SourceFolder: '$(build.sourcesdirectory)\src'
-    Contents: '**\ApplicationParameters\*.xml'
-    TargetFolder: '$(build.artifactstagingdirectory)\ServiceFabric\ApplicationParameters'
-    CleanTargetFolder: true
-    flattenFolders: true
-
-- task: ServiceFabricUpdateManifests@2
-  displayName: 'Update Service Fabric Manifests (Manifest versions)'
-  enabled: true
-  inputs:
-    applicationPackagePath: '$(build.artifactstagingdirectory)\ServiceFabric\ApplicationPackage '
-    versionBehavior: Replace
-   
-- task: DotNetCoreCLI@2
-  displayName: 'Run xUnit Test - Core Framework'
-  enabled: true
-  inputs:
-    command: test
-    projects: 'src/*Tests/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+    - task: VisualStudioTestPlatformInstaller@1
+      displayName: 'Visual Studio Test Platform Installer'
+      inputs:
+        versionSelector: latestStable
     
-- task: VSTest@2
-  displayName: 'VsTest - testAssemblies'
-  enabled: false
-  inputs:
-    testAssemblyVer2: |
-     **\*tests.dll
-     !**\*Database.Tests*\**
-     !**\packages\**
-     !**\obj\**
-    configuration: '$(BuildConfiguration)'
+    - task: NuGetToolInstaller@0
+      displayName: 'Use NuGet >=5.3.1'
+      enabled: true
+      inputs:
+        versionSpec: '>=5.3.1'
 
-- task: PublishSymbols@2
-  displayName: 'Publish symbols path'
-  enabled: false
-  inputs:
-    SearchPattern: '**\bin\**\*.pdb'
-    PublishSymbols: false
-  continueOnError: true
+    - task: DotNetCoreCLI@2
+      enabled: true
+      displayName: 'dotnet restore'
+      inputs:
+        command: restore
+        projects: '**\*.csproj'
+        vstsFeed: 'dct-pkg'
+    #    noCache: true
+    
+    - task: NuGetCommand@2
+      displayName: 'NuGet restore'
+      inputs:
+        restoreSolution: '**/*.sln'
+        vstsFeed: 'dct-pkg'
+    #    noCache: true
+    
+    - task: MSBuild@1
+      enabled: true
+      displayName: 'Build solution **/*.sln'
+      inputs:
+        msbuildVersion: 16.0
+        msbuildArchitecture: x64
+        platform: '$(Build.Platform)'
+        configuration: '$(Build.Configuration)'
+        msbuildArguments: '-p:version=$(Build.BuildNumber) -p:FileVersion=$(Build.BuildNumber) -p:SkipInvalidConfigurations=true'
+        clean: true
+        maximumCpuCount: true
+        logProjectEvents: true
+        createLogFile: true
+    
+    - task: MSBuild@1
+      enabled: true
+      displayName: 'Build and Package - Service Fabric Config'
+      inputs:
+        solution: '**\*.sfproj'
+        msbuildArchitecture: x64
+        platform: '$(Build.PlatformX64)'
+        configuration: '$(Build.Configuration)'
+        msbuildArguments: '/t:Package /p:PackageLocation=$(build.artifactstagingdirectory)\ServiceFabric\ApplicationPackage  /p:version=$(Build.BuildNumber) /p:FileVersion=$(Build.BuildNumber) -p:SkipInvalidConfigurations=true'
+        clean: false
+        maximumCpuCount: true
+        logProjectEvents: true
+        createLogFile: true
+            
+    - task: DeleteFiles@1
+      displayName: 'Delete Symbols files from $(build.artifactstagingdirectory)\ServiceFabric\ApplicationPackage '
+      inputs:
+        SourceFolder: '$(build.artifactstagingdirectory)\ServiceFabric\ApplicationPackage'
+        Contents: '**\*.pdb'
+    
+    - task: CopyFiles@2
+      displayName: 'Copy Nuget Interface Packages Files - Artifact NugetInterface Directory'
+      inputs:
+        SourceFolder: '$(build.sourcesdirectory)\src'
+        Contents: |
+         **\*$(Build.Configuration)*\*Interface.nupkg
+         !**\packages\**
+         !**\bin\x64\**
+        TargetFolder: '$(build.artifactstagingdirectory)\Nuget\Interface'
+        CleanTargetFolder: true
+        flattenFolders: true
+    
+    - task: CopyFiles@2
+      displayName: 'Copy NugetPackages Files - Artifact NugetPackages Directory'
+      inputs:
+        SourceFolder: '$(build.sourcesdirectory)\src'
+        Contents: |
+         **\*$(Build.Configuration)*\*.nupkg
+         !**\packages\**
+         !**\bin\x64\**
+        TargetFolder: '$(build.artifactstagingdirectory)\Nuget\Packages'
+        CleanTargetFolder: true
+        flattenFolders: true
+            
+    - task: CopyFiles@2
+      displayName: 'Copy Database Files - Artifact Databases Directory'
+      inputs:
+        SourceFolder: '$(build.sourcesdirectory)'
+        Contents: '**\*.dacpac'
+        TargetFolder: '$(build.artifactstagingdirectory)\Databases'
+        CleanTargetFolder: true
+        flattenFolders: true
+    
+    - task: CopyFiles@2
+      displayName: 'Copy Files - $(build.artifactstagingdirectory)\ServiceFabric\PublishProfiles'
+      inputs:
+        SourceFolder: '$(build.sourcesdirectory)\src'
+        Contents: '**\PublishProfiles\Cloud.xml'
+        TargetFolder: '$(build.artifactstagingdirectory)\ServiceFabric\PublishProfiles'
+        CleanTargetFolder: true
+        flattenFolders: true
+    
+    - task: CopyFiles@2
+      displayName: 'Copy Files - $(build.artifactstagingdirectory)\ServiceFabric\ApplicationParameters'
+      inputs:
+        SourceFolder: '$(build.sourcesdirectory)\src'
+        Contents: '**\ApplicationParameters\*.xml'
+        TargetFolder: '$(build.artifactstagingdirectory)\ServiceFabric\ApplicationParameters'
+        CleanTargetFolder: true
+        flattenFolders: true
+    
+    - task: ServiceFabricUpdateManifests@2
+      displayName: 'Update Service Fabric Manifests (Manifest versions)'
+      inputs:
+        applicationPackagePath: '$(build.artifactstagingdirectory)\ServiceFabric\ApplicationPackage '
+        versionBehavior: Replace
+      enabled: true
+       
+    - task: DotNetCoreCLI@2
+      enabled: true
+      displayName: 'Run xUnit Test - Core Framework'
+      inputs:
+        command: test
+        projects: 'src/*Tests/*.csproj'
+        arguments: '--configuration $(Build.Configuration) --collect "Code coverage"'
+        
+    - task: VSTest@2
+      enabled: false
+      displayName: 'VsTest - testAssemblies'
+      inputs:
+        testAssemblyVer2: |
+         **\ESFA.DC.ESF.R2.*tests.dll
+         !**\*Database.Tests*\**
+         !**\packages\**
+         !**\obj\**
+        configuration: '$(Build.Configuration)'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: ServiceFabric'
-  enabled: true
-  inputs:
-    ArtifactName: ServiceFabric
-    PathtoPublish: '$(build.artifactstagingdirectory)\ServiceFabric'
+    #********************************************************************************
+    # Generate Code Coverage Report and Publish
+    #********************************************************************************
+ 
+    ## Generate the report using ReportGenerator (https://github.com/danielpalme/ReportGenerator)
+    # First install the tool on the machine, then run it
+    - script: |
+        dotnet tool install -g dotnet-reportgenerator-globaltool --version 4.3.6  
+        reportgenerator -reports:$(Build.SourcesDirectory)/**/*Tests/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:Cobertura
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: NugetPackages'
-  enabled: true
-  inputs:
-    ArtifactName: NugetPackages
-    PathtoPublish: '$(build.artifactstagingdirectory)\Nuget'
+      displayName: Create Code coverage report
+      enabled: false
+  
+    # Publish the code coverage result (summary and web site)
+    # The summary allows to view the coverage percentage in the summary tab
+    # The web site allows to view which lines are covered directly in Azure Pipeline
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish Code Coverage'
+      enabled: false
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
+        reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: Databases'
-  enabled: False
-  inputs:
-    ArtifactName: Databases
-    PathtoPublish: '$(build.artifactstagingdirectory)\Databases'
+    #********************************************************************************
+    # Publish Artifacts
+    #********************************************************************************
+    
+    - task: PublishSymbols@2
+      enabled: false
+      displayName: 'Publish symbols path'
+      inputs:
+        SearchPattern: '**\bin\**\*.pdb'
+        PublishSymbols: false
+      continueOnError: true
+    
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: ServiceFabric'
+      inputs:
+        ArtifactName: ServiceFabric
+        PathtoPublish: '$(build.artifactstagingdirectory)\ServiceFabric'
+    
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: NugetPackages'
+      inputs:
+        ArtifactName: NugetPackages
+        PathtoPublish: '$(build.artifactstagingdirectory)\Nuget'
+    
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: Databases'
+      enabled: false
+      inputs:
+        ArtifactName: Databases
+        PathtoPublish: '$(build.artifactstagingdirectory)\Databases'
+    

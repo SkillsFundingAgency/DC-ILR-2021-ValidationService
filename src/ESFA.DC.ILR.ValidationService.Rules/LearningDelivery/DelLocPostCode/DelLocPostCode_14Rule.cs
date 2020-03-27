@@ -43,53 +43,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if (learningDelivery.LearnStartDate > _ruleEndDate)
-                {
-                    continue;
-                }
 
-                if (learningDelivery.FundModel != FundModel
-                    || learningDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment)
-                    || learningDelivery.DelLocPostCode.CaseInsensitiveEquals(ValidationConstants.TemporaryPostCode))
-                {
-                    continue;
-                }
+                var latestLearningStart = _derivedData22.GetLatestLearningStartForESFContract(learningDelivery, learner.LearningDeliveries);
 
                 var localAuthorities = _fcsDataService.GetEligibilityRuleLocalAuthoritiesFor(learningDelivery.ConRefNumber);
-                if (localAuthorities == null || localAuthorities.All(la => string.IsNullOrEmpty(la.Code?.Trim())))
+
+                if (!localAuthorities.Any())
                 {
-                    continue;
+                    break;
                 }
 
                 var onsPostCode = _postcodeService.GetONSPostcodes(learningDelivery.DelLocPostCode);
-                if ((onsPostCode?.Count ?? 0) == 0)
-                {
-                    continue;
-                }
 
-                DateTime? latestLearningStart =
-                    _derivedData22.GetLatestLearningStartForESFContract(learningDelivery, learner.LearningDeliveries);
-                if (!latestLearningStart.HasValue)
-                {
-                    continue;
-                }
-
-                var validPostcodes = localAuthorities
-                    .Join(onsPostCode, eli => eli.Code.ToUpper(), pc => pc.LocalAuthority.ToUpper(), (eli, pc) => pc);
-
-                if (!validPostcodes.Any())
-                {
-                    continue;
-                }
-
-                if (PostcodesContainValidPostcode(latestLearningStart, validPostcodes))
-                {
-                    continue;
-                }
-
-                if (localAuthorities
-                    .Join(onsPostCode, eli => eli.Code.ToUpper(), pc => pc.LocalAuthority.ToUpper(), (eli, pc) => pc)?
-                    .Any(p => CheckQualifyingPeriod(latestLearningStart, p)) ?? false)
+                if (ConditionMetDD22Exists(latestLearningStart)
+                    && ConditionMetStartDate(learningDelivery.LearnStartDate)
+                    && ConditionMetFundModel(learningDelivery.FundModel)
+                    && ConditionMetLearnAimRef(learningDelivery.LearnAimRef)
+                    && ConditionMetTemporaryPostcode(learningDelivery.DelLocPostCode)
+                    && (ConditionMetONSPostcode(latestLearningStart, onsPostCode)
+                        || ConditionMetLocalAuthority(localAuthorities, onsPostCode)
+                    ))
                 {
                     HandleValidationError(
                         learner.LearnRefNumber,
@@ -99,24 +72,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
             }
         }
 
-        public bool PostcodesContainValidPostcode(DateTime? latestLearningStart, IEnumerable<IONSPostcode> onsPostcodes)
-        {
-            return onsPostcodes.Count() > 1
-                   && onsPostcodes.Any(vp => latestLearningStart >= vp.EffectiveFrom
-                                             && latestLearningStart < (vp.EffectiveTo ?? DateTime.MaxValue)
-                                             && latestLearningStart < (vp.Termination ?? DateTime.MaxValue));
-        }
+        public bool ConditionMetDD22Exists(DateTime? latestLearningStart) =>
+            latestLearningStart.HasValue;
 
-        public bool CheckQualifyingPeriod(DateTime? latestLearningStart, IONSPostcode onsPostCode) =>
-            latestLearningStart < onsPostCode.EffectiveFrom
-            || latestLearningStart > (onsPostCode.EffectiveTo ?? DateTime.MaxValue)
-            || latestLearningStart >= (onsPostCode.Termination ?? DateTime.MaxValue);
+        public bool ConditionMetStartDate(DateTime learnStartDate) =>
+            learnStartDate <= _ruleEndDate;
+
+        public bool ConditionMetFundModel(int fundModel) =>
+            fundModel == FundModel;
+
+        public bool ConditionMetLearnAimRef(string learnAimRef) =>
+            !learnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment);
+
+        public bool ConditionMetTemporaryPostcode(string postcode) =>
+            !postcode.CaseInsensitiveEquals(ValidationConstants.TemporaryPostCode);
+
+        public bool ConditionMetONSPostcode(DateTime? latestLearningStart, IEnumerable<IONSPostcode> onsPostcodes) =>
+            onsPostcodes != null 
+                   && !onsPostcodes.Any(vp => latestLearningStart >= vp.EffectiveFrom
+                                             && latestLearningStart <= (vp.EffectiveTo ?? DateTime.MaxValue)
+                                             && latestLearningStart < (vp.Termination ?? DateTime.MaxValue));
+
+        public bool ConditionMetLocalAuthority(IEnumerable<IEsfEligibilityRuleLocalAuthority> eligibilityRulesLocalAuthorities, IEnumerable<IONSPostcode> onsPostcodes) =>
+            eligibilityRulesLocalAuthorities != null
+                && (onsPostcodes == null
+                    || !eligibilityRulesLocalAuthorities.Join(onsPostcodes, eli => eli.Code.ToUpper(), pc => pc.LocalAuthority.ToUpper(), (eli, pc) => pc).Any());
 
         private IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(ILearningDelivery learningDelivery)
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.DelLocPostCode, learningDelivery.DelLocPostCode),
                 BuildErrorMessageParameter(PropertyNameConstants.ConRefNumber, learningDelivery.ConRefNumber)
             };
         }

@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "R107";
+        public const string Name = RuleNameConstants.R107;
 
         /// <summary>
         /// The message handler

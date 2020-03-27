@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
+﻿namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
 {
     /// <summary>
     /// the lars framework aim

@@ -128,6 +128,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Fact]
+        public void DD35ConditionMet_True()
+        {
+            var learnDelivery = new TestLearningDelivery();
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learnDelivery)).Returns(false);
+
+            NewRule(dd35: dd35Mock.Object).DD35ConditionMet(learnDelivery).Should().BeTrue();
+        }
+
+        [Fact]
+        public void DD35ConditionMet_False()
+        {
+            var learnDelivery = new TestLearningDelivery();
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learnDelivery)).Returns(true);
+
+            NewRule(dd35: dd35Mock.Object).DD35ConditionMet(learnDelivery).Should().BeFalse();
+        }
+
+        [Fact]
         public void FCTFundingConditionMet_True()
         {
             IEnumerable<string> fundingStreamPeriodCodes = new HashSet<string>() { "ABC" };
@@ -201,6 +225,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 }
             };
 
+            var learnDelivery = new TestLearningDelivery
+            {
+                LearningDeliveryFAMs = learningDeliveryFAMs
+            };
+
             var rule = NewRuleMock();
 
             rule.Setup(r => r.FundModelConditionMet(fundModel)).Returns(true);
@@ -208,8 +237,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             rule.Setup(r => r.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(true);
             rule.Setup(r => r.FCTFundingConditionMet()).Returns(true);
             rule.Setup(r => r.DD07ConditionMet(24)).Returns(true);
+            rule.Setup(r => r.DD35ConditionMet(learnDelivery)).Returns(true);
 
-            rule.Object.ConditionMet(fundModel, progType, academicYear, learnActEndDate, learningDeliveryFAMs).Should().BeTrue();
+            rule.Object.ConditionMet(fundModel, progType, academicYear, learnActEndDate, learnDelivery).Should().BeTrue();
         }
 
         [Theory]
@@ -245,7 +275,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 {
                     LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
                     LearnDelFAMCode = "357"
+                },
+                 new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF,
+                    LearnDelFAMCode = "110"
                 }
+            };
+
+            var learnDelivery = new TestLearningDelivery
+            {
+                LearningDeliveryFAMs = learningDeliveryFAMs
             };
 
             var rule = NewRuleMock();
@@ -255,8 +295,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             rule.Setup(r => r.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(condition3);
             rule.Setup(r => r.FCTFundingConditionMet()).Returns(condition4);
             rule.Setup(r => r.DD07ConditionMet(progType)).Returns(condition5);
+            rule.Setup(r => r.DD35ConditionMet(learnDelivery)).Returns(false);
 
-            rule.Object.ConditionMet(fundModel, progType, academicYear, learnActEndDate, learningDeliveryFAMs).Should().BeFalse();
+            rule.Object.ConditionMet(fundModel, progType, academicYear, learnActEndDate, learnDelivery).Should().BeFalse();
         }
 
         [Theory]
@@ -282,22 +323,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 }
             };
 
+            var learnDelivery = new TestLearningDelivery
+            {
+                LearningDeliveryFAMs = learningDeliveryFAMs
+            };
+
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
             var fcsDataServiceMock = new Mock<IFCSDataService>();
             var dd07Mock = new Mock<IDerivedData_07Rule>();
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
 
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, It.IsAny<string>(), It.IsAny<string>())).Returns(false);
             dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learnDelivery)).Returns(false);
             academicYearQueryServiceMock.Setup(qs => qs.DateIsInPrevAcademicYear(new DateTime(2018, 07, 01), academicYear)).Returns(false);
             fcsDataServiceMock.Setup(qs => qs.FundingRelationshipFCTExists(_fundingStreamPeriodCodes)).Returns(true);
 
             NewRule(
                 learningDeliveryFAMQueryService: learningDeliveryFAMQueryServiceMock.Object,
                 dd07: dd07Mock.Object,
+                dd35: dd35Mock.Object,
                 academicYearQueryService: academicYearQueryServiceMock.Object,
                 fCSDataService: fcsDataServiceMock.Object)
-                .ConditionMet(fundModel, progType, academicYear, learnActEndDate, learningDeliveryFAMs).Should().BeFalse();
+                .ConditionMet(fundModel, progType, academicYear, learnActEndDate, learnDelivery).Should().BeFalse();
         }
 
         [Fact]
@@ -337,6 +386,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             };
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             var fcsDataServiceMock = new Mock<IFCSDataService>();
@@ -355,6 +405,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     learningDeliveryFAMQueryServiceMock.Object,
                     fcsDataServiceMock.Object,
                     dd07Mock.Object,
+                    dd35Mock.Object,
                     academicYearDataServiceMock.Object,
                     academicYearQueryServiceMock.Object,
                     validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
@@ -396,6 +447,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             };
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             var fcsDataServiceMock = new Mock<IFCSDataService>();
@@ -414,6 +466,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     learningDeliveryFAMQueryServiceMock.Object,
                     fcsDataServiceMock.Object,
                     dd07Mock.Object,
+                    dd35Mock.Object,
                     academicYearDataServiceMock.Object,
                     academicYearQueryServiceMock.Object,
                     validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
@@ -436,11 +489,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
             IFCSDataService fCSDataService = null,
             IDerivedData_07Rule dd07 = null,
+            IDerivedData_35Rule dd35 = null,
             IAcademicYearDataService academicYearDataService = null,
             IAcademicYearQueryService academicYearQueryService = null,
             IValidationErrorHandler validationErrorHandler = null)
         {
-            return new UKPRN_06Rule(learningDeliveryFAMQueryService, fCSDataService, dd07, academicYearDataService, academicYearQueryService, validationErrorHandler);
+            return new UKPRN_06Rule(learningDeliveryFAMQueryService, fCSDataService, dd07, dd35, academicYearDataService, academicYearQueryService, validationErrorHandler);
         }
     }
 }

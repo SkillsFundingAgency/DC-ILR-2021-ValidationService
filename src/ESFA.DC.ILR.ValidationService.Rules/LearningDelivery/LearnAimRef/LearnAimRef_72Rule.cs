@@ -105,7 +105,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// </summary>
         /// <param name="larsDelivery">The lars delivery.</param>
         /// <returns>a value representing the notional level</returns>
-        public TypeOfNotionalNVQLevelV2 GetNotionalNVQLevelV2(ILARSLearningDelivery larsDelivery) =>
+        public double GetNotionalNVQLevelV2(ILARSLearningDelivery larsDelivery) =>
             larsDelivery.NotionalNVQLevelv2.AsNotionalNVQLevelV2();
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// <returns>
         ///   <c>true</c> if [is disqualifying subject area level] [the specified subject area level]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsDisqualifyingSubjectAreaLevel(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, TypeOfNotionalNVQLevelV2 notionalNVQLevel2) =>
+        public bool IsDisqualifyingSubjectAreaLevel(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, double notionalNVQLevel2) =>
             !IsOutOfScope(notionalNVQLevel2)
             && (HasDisqualifyingMinimumLevel(subjectAreaLevel, notionalNVQLevel2)
                 || HasDisqualifyingMaximumLevel(subjectAreaLevel, notionalNVQLevel2));
@@ -129,7 +129,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// <returns>
         ///   <c>true</c> if [has disqualifying notional level] [the specified notional NVQ level2]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsOutOfScope(TypeOfNotionalNVQLevelV2 notionalNVQLevel2) =>
+        public bool IsOutOfScope(double notionalNVQLevel2) =>
             notionalNVQLevel2 == TypeOfNotionalNVQLevelV2.OutOfScope;
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// <returns>
         ///   <c>true</c> if [has disqualifying minimum level] [the specified subject area level]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasDisqualifyingMinimumLevel(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, TypeOfNotionalNVQLevelV2 notionalNVQLevel2) =>
+        public bool HasDisqualifyingMinimumLevel(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, double notionalNVQLevel2) =>
             notionalNVQLevel2 < subjectAreaLevel.MinLevelCode.AsNotionalNVQLevelV2();
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// <returns>
         ///   <c>true</c> if [has disqualifying maximum level] [the specified subject area level]; otherwise, <c>false</c>.
         /// </returns>
-        public bool HasDisqualifyingMaximumLevel(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, TypeOfNotionalNVQLevelV2 notionalNVQLevel2) =>
+        public bool HasDisqualifyingMaximumLevel(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, double notionalNVQLevel2) =>
             notionalNVQLevel2 > subjectAreaLevel.MaxLevelCode.AsNotionalNVQLevelV2();
 
         /// <summary>

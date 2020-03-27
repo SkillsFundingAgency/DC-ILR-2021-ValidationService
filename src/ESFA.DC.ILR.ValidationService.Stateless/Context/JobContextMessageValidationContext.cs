@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ESFA.DC.ILR.Constants;
+﻿using ESFA.DC.ILR.Constants;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.JobContextManager.Model.Interface;
 
@@ -15,7 +13,11 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Context
             _jobContextMessage = jobContextMessage;
         }
 
-        public string Filename => _jobContextMessage.KeyValuePairs[ILRContextKeys.Filename].ToString();
+        public string Filename
+        {
+            get => _jobContextMessage.KeyValuePairs[ILRContextKeys.Filename].ToString();
+            set => _jobContextMessage.KeyValuePairs[ILRContextKeys.Filename] = value;
+        }
 
         public string Container => _jobContextMessage.KeyValuePairs[ILRContextKeys.Container].ToString();
 
@@ -50,5 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Context
         {
             set => _jobContextMessage.KeyValuePairs[ILRContextKeys.ValidationTotalWarningCount] = value;
         }
+
+        public int ReturnPeriod => int.Parse(_jobContextMessage.KeyValuePairs[ILRContextKeys.ReturnPeriod].ToString());
     }
 }

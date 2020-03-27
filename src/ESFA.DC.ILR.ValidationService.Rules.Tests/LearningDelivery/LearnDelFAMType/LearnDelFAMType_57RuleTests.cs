@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
@@ -275,7 +272,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData("034")]
         [InlineData("328")]
         [InlineData("347")]
-        [InlineData("346")]
         public void IsLearningDeliveryExcluded_FamCode_True(string famCode)
         {
             var learningDelivery = new TestLearningDelivery()

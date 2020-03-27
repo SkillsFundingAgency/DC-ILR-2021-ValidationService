@@ -18,32 +18,41 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 if (ConditionMet(
-                    learningDelivery.OutcomeNullable,
-                    learningDelivery.CompStatus))
+                             learningDelivery.OutcomeNullable,
+                             learningDelivery.CompStatus,
+                             learningDelivery.FundModel,
+                             learningDelivery.ProgTypeNullable))
                 {
                     HandleValidationError(
-                        objectToValidate.LearnRefNumber,
-                        learningDelivery.AimSeqNumber,
-                        BuildErrorMessageParameters(learningDelivery.OutcomeNullable, learningDelivery.CompStatus));
+                             objectToValidate.LearnRefNumber,
+                             learningDelivery.AimSeqNumber,
+                             BuildErrorMessageParameters(learningDelivery.OutcomeNullable, learningDelivery.CompStatus));
                 }
             }
         }
 
-        public bool ConditionMet(int? outcome, int compStatus)
+        public bool ConditionMet(int? outcome, int compStatus, int fundModel, int? progType)
         {
             return OutcomeConditionMet(outcome)
-                   && CompStatusConditionMet(compStatus);
+                   && CompStatusConditionMet(compStatus)
+                   && ExceptionConditionMet(fundModel, progType);
         }
 
         public bool OutcomeConditionMet(int? outcome)
         {
             return outcome.HasValue
-                   && outcome == 8;
+                   && outcome == OutcomeConstants.LearningActivitiesCompleteButOutcomeNotKnown;
         }
 
         public bool CompStatusConditionMet(int compStatus)
         {
-            return compStatus != 2;
+            return compStatus != CompletionState.HasCompleted;
+        }
+
+        public bool ExceptionConditionMet(int fundModel, int? progType)
+        {
+            return (!progType.HasValue || progType != TypeOfLearningProgramme.ApprenticeshipStandard)
+                && fundModel != TypeOfFunding.ApprenticeshipsFrom1May2017;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? outcome, int compStatus)

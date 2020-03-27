@@ -1,6 +1,5 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear
@@ -17,19 +16,17 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear
         /// </summary>
         private readonly IInternalDataCache _internalDataCache;
 
+        private readonly IExternalDataCache _externalDataCache;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AcademicYearDataService"/> class.
         /// </summary>
         /// <param name="internalDataCache">The internal data cache.</param>
-        public AcademicYearDataService(IInternalDataCache internalDataCache)
+        public AcademicYearDataService(IInternalDataCache internalDataCache, IExternalDataCache externalDataCache)
         {
             _internalDataCache = internalDataCache;
+            _externalDataCache = externalDataCache;
         }
-
-        /// <summary>
-        /// Gets the academic year date of today.
-        /// </summary>
-        public DateTime Today => DateTime.Today;
 
         /// <summary>
         /// Gets an academic year of learning date.
@@ -78,6 +75,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear
         public DateTime Start()
         {
             return _internalDataCache.AcademicYear.Start;
+        }
+
+        public DateTime PreviousYearEnd()
+        {
+            return _internalDataCache.AcademicYear.PreviousYearEnd;
+        }
+
+        public int ReturnPeriod()
+        {
+            return _externalDataCache.ReturnPeriod;
         }
     }
 }

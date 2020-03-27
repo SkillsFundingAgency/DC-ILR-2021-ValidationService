@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -14,98 +10,87 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
     public class R64Rule : AbstractRule, IRule<ILearner>
     {
-        private const int ValidOutcome = OutcomeConstants.Achieved;
-        private const int ExcludedProgType = TypeOfLearningProgramme.ApprenticeshipStandard;
-        private const int ValidCompStatus = CompletionState.HasCompleted;
-        private readonly ILARSDataService _larsDataService;
-        private readonly HashSet<int> validFundModels = new HashSet<int>() { TypeOfFunding.AdultSkills, TypeOfFunding.ApprenticeshipsFrom1May2017 };
-        private readonly HashSet<int?> validComponentTypes = new HashSet<int?>() { 1, 3 };
+        private readonly ILARSDataService _larsData;
 
         public R64Rule(
-            ILARSDataService larsDataService,
-            IValidationErrorHandler validationErrorHandler)
+            IValidationErrorHandler validationErrorHandler,
+            ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.R64)
         {
-            _larsDataService = larsDataService;
+            _larsData = larsDataService;
         }
 
-        public void Validate(ILearner objectToValidate)
+        public void Validate(ILearner learner)
         {
-            if (objectToValidate?.LearningDeliveries == null)
+            if (learner.LearningDeliveries == null)
             {
                 return;
             }
 
-            var filteredLearningDeliveries = objectToValidate.LearningDeliveries
-                .Where(x => AimTypeConditionMet(x.AimType) &&
-                            FundModelsConditionMet(x.FundModel) &&
-                            !ExcludeConditionMet(x.ProgTypeNullable) &&
-                            LarsComponentTypeConditionMet(x.LearnAimRef, x.ProgTypeNullable, x.FworkCodeNullable, x.PwayCodeNullable, x.LearnStartDate));
+            var learningDeliveries = learner.LearningDeliveries.Where(Filter);
 
-            var completedLearningDeliveries = filteredLearningDeliveries.
-                Where(x => CompletedLearningDeliveryConditionMet(x.CompStatus, x.OutcomeNullable));
+            var groupedLearningDeliveries = ApplyGroupingCondition(learningDeliveries);
 
-            if (completedLearningDeliveries.Any())
+            foreach (var group in groupedLearningDeliveries)
             {
-                foreach (var completedLearningDelivery in completedLearningDeliveries)
+                foreach (var learningDelivery in group)
                 {
-                    if (ConditionMet(filteredLearningDeliveries, completedLearningDelivery))
-                    {
-                        HandleValidationError(objectToValidate.LearnRefNumber, completedLearningDelivery.AimSeqNumber);
-                    }
+                    RaiseValidationMessage(learner.LearnRefNumber, learningDelivery);
                 }
             }
         }
 
-        public bool CompletedLearningDeliveryConditionMet(int compStatus, int? outCome)
+        public bool Filter(ILearningDelivery learningDelivery) =>
+                  !Exclusion(learningDelivery.ProgTypeNullable)
+                && CompStatusFilter(learningDelivery.CompStatus)
+                && OutcomeFilter(learningDelivery.OutcomeNullable)
+                && AimTypeFilter(learningDelivery.AimType)
+                && FundModelFilter(learningDelivery.FundModel)
+                && FrameworkComponentTypeFilter(learningDelivery.LearnAimRef);
+
+        public IEnumerable<IEnumerable<ILearningDelivery>> ApplyGroupingCondition(IEnumerable<ILearningDelivery> learningDeliveries)
         {
-            return compStatus == ValidCompStatus && outCome.HasValue && outCome == ValidOutcome;
+            return learningDeliveries
+                .GroupBy(ld =>
+                    new
+                    {
+                        ld.ProgTypeNullable,
+                        ld.FworkCodeNullable,
+                        ld.PwayCodeNullable,
+                        ld.FundModel,
+                    })
+                .Where(g => g.Count() > 1);
         }
 
-        public bool ConditionMet(IEnumerable<ILearningDelivery> learningDeliveries, ILearningDelivery completedLearningDelivery)
-        {
-            return learningDeliveries.Any(
-                x => x.ProgTypeNullable == completedLearningDelivery.ProgTypeNullable &&
-                     x.FworkCodeNullable == completedLearningDelivery.FworkCodeNullable &&
-                     x.PwayCodeNullable == completedLearningDelivery.PwayCodeNullable &&
-                     x.LearnStartDate > completedLearningDelivery.LearnStartDate);
-        }
+        public bool Exclusion(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
 
-        public bool FundModelsConditionMet(int fundModel)
-        {
-            return validFundModels.Contains(fundModel);
-        }
+        public bool FundModelFilter(int fundModel) => fundModel == TypeOfFunding.AdultSkills || fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
 
-        public bool AimTypeConditionMet(int aimType)
-        {
-            return aimType == TypeOfAim.ComponentAimInAProgramme;
-        }
+        public bool AimTypeFilter(int aimType) => aimType == TypeOfAim.ComponentAimInAProgramme;
 
-        public bool LarsComponentTypeConditionMet(string learnAimRef, int? progType, int? fworkCode, int? pwayCode, DateTime startDate)
-        {
-            return _larsDataService.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, validComponentTypes, startDate);
-        }
+        public bool CompStatusFilter(int compStatus) => compStatus == CompletionState.HasCompleted;
 
-        public bool ExcludeConditionMet(int? progType)
-        {
-            return progType.HasValue && progType == ExcludedProgType;
-        }
+        public bool OutcomeFilter(int? outcome) => outcome == OutcomeConstants.Achieved;
 
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(
-           ILearningDelivery learningDelivery)
+        public bool FrameworkComponentTypeFilter(string learnAimRef) =>
+             _larsData.GetFrameworkAimsFor(learnAimRef)?.Any(a =>
+                    a.FrameworkComponentType == TypeOfLARSCommonComponent.Apprenticeship.CompetencyElement
+                    || a.FrameworkComponentType == TypeOfLARSCommonComponent.Apprenticeship.MainAimOrTechnicalCertificate)
+                ?? false;
+
+        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
+            HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
+
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery theDelivery) => new[]
         {
-            return new[]
-            {
-                BuildErrorMessageParameter(PropertyNameConstants.AimType, learningDelivery.AimType),
-                BuildErrorMessageParameter(PropertyNameConstants.FundModel, learningDelivery.FundModel),
-                BuildErrorMessageParameter(PropertyNameConstants.ProgType, learningDelivery.ProgTypeNullable),
-                BuildErrorMessageParameter(PropertyNameConstants.FworkCode, learningDelivery.FworkCodeNullable),
-                BuildErrorMessageParameter(PropertyNameConstants.PwayCode, learningDelivery.PwayCodeNullable),
-                BuildErrorMessageParameter(PropertyNameConstants.StdCode, learningDelivery.StdCodeNullable),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learningDelivery.LearnStartDate),
-                BuildErrorMessageParameter(PropertyNameConstants.Outcome, learningDelivery.OutcomeNullable),
-                BuildErrorMessageParameter(PropertyNameConstants.CompStatus, learningDelivery.CompStatus)
-            };
-        }
+            BuildErrorMessageParameter(PropertyNameConstants.AimType, theDelivery.AimType),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, theDelivery.LearnStartDate),
+            BuildErrorMessageParameter(PropertyNameConstants.FundModel, theDelivery.FundModel),
+            BuildErrorMessageParameter(PropertyNameConstants.ProgType, theDelivery.ProgTypeNullable),
+            BuildErrorMessageParameter(PropertyNameConstants.FworkCode, theDelivery.FworkCodeNullable),
+            BuildErrorMessageParameter(PropertyNameConstants.PwayCode, theDelivery.PwayCodeNullable),
+            BuildErrorMessageParameter(PropertyNameConstants.CompStatus, theDelivery.CompStatus),
+            BuildErrorMessageParameter(PropertyNameConstants.Outcome, theDelivery.OutcomeNullable),
+        };
     }
 }

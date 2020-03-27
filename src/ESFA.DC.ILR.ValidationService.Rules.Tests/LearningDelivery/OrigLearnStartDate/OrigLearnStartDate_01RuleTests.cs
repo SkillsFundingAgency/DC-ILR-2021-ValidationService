@@ -1,8 +1,7 @@
 ﻿using ESFA.DC.ILR.Tests.Model;
-using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDate;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
@@ -43,23 +42,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
         [Fact]
         public void OrigLearnStartDateConditionMet_False_Null()
         {
-            NewRule().OriginalLearnStartDateConditionMet(DateTime.MaxValue, null).Should().BeFalse();
+            var learnStartDate = new DateTime(2019, 8, 1);
+
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(learnStartDate, -10)).Returns(new DateTime(2009, 08, 01));
+
+            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).OriginalLearnStartDateConditionMet(DateTime.MaxValue, null).Should().BeFalse();
         }
 
         [Fact]
         public void OrigLearnStartDateConditionMet_False()
         {
-            var startDate = new DateTime(2018, 10, 10);
-            var originalStartDate = new DateTime(2008, 10, 10);
-            NewRule().OriginalLearnStartDateConditionMet(startDate, originalStartDate).Should().BeFalse();
+            var originalStartDate = new DateTime(2009, 10, 10);
+            var learnStartDate = new DateTime(2019, 8, 1);
+
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(learnStartDate, -10)).Returns(new DateTime(2009, 08, 01));
+
+            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).OriginalLearnStartDateConditionMet(learnStartDate, originalStartDate).Should().BeFalse();
         }
 
         [Fact]
         public void OrigLearnStartDateConditionMet_True()
         {
-            var startDate = new DateTime(2018, 10, 10);
+            var startDate = new DateTime(2019, 08, 01);
             var originalStartDate = new DateTime(2008, 10, 09);
-            NewRule().OriginalLearnStartDateConditionMet(startDate, originalStartDate).Should().BeTrue();
+
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(startDate, -10)).Returns(new DateTime(2009, 08, 01));
+
+            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).OriginalLearnStartDateConditionMet(startDate, originalStartDate).Should().BeTrue();
         }
 
         [Theory]
@@ -69,10 +81,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
         [InlineData(99, "2000-10-10")]
         public void ConditionMet_True(int fundModel, string originalStartDateString)
         {
-            var learnStartDate = new DateTime(2018, 10, 10);
+            var learnStartDate = new DateTime(2019, 08, 1);
             var origLearnStartDate = DateTime.Parse(originalStartDateString);
 
-            NewRule().ConditionMet(learnStartDate, origLearnStartDate, fundModel).Should().BeTrue();
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(learnStartDate, -10)).Returns(new DateTime(2009, 08, 01));
+
+            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).ConditionMet(learnStartDate, origLearnStartDate, fundModel).Should().BeTrue();
         }
 
         [Theory]
@@ -80,28 +95,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
         [InlineData(88)]
         public void ConditionMet_FundModel_False(int fundModel)
         {
-            var learnStartDate = new DateTime(2018, 10, 10);
+            var learnStartDate = new DateTime(2019, 08, 1);
             var origLearnStartDate = new DateTime(2018, 10, 09);
 
-            NewRule().ConditionMet(learnStartDate, origLearnStartDate, fundModel).Should().BeFalse();
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(learnStartDate, -10)).Returns(new DateTime(2009, 08, 01));
+
+            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).ConditionMet(learnStartDate, origLearnStartDate, fundModel).Should().BeFalse();
         }
 
         [Theory]
-        [InlineData("2008-10-10")]
-        [InlineData("2008-11-10")]
-        [InlineData("2008-10-11")]
+        [InlineData("2009-10-10")]
+        [InlineData("2009-11-10")]
+        [InlineData("2009-10-11")]
         public void ConditionMet_Startdate_False(string originalStartDateString)
         {
-            var learnStartDate = new DateTime(2018, 10, 10);
+            var learnStartDate = new DateTime(2019, 08, 1);
             var origLearnStartDate = DateTime.Parse(originalStartDateString);
 
-            NewRule().ConditionMet(learnStartDate, origLearnStartDate, 35).Should().BeFalse();
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(learnStartDate, -10)).Returns(new DateTime(2009, 08, 01));
+
+            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).ConditionMet(learnStartDate, origLearnStartDate, 35).Should().BeFalse();
         }
 
         [Fact]
         public void ValidateError()
         {
-            var learnStartDate = new DateTime(2018, 10, 10);
+            var learnStartDate = new DateTime(2019, 8, 1);
             var origLearnStartDate = new DateTime(2008, 10, 01);
 
             var learner = new TestLearner()
@@ -117,17 +138,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
                 }
             };
 
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(learnStartDate, -10)).Returns(new DateTime(2009, 08, 01));
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, dateTimeQueryServiceMock.Object).Validate(learner);
             }
         }
 
         [Fact]
         public void ValidateNoError()
         {
-            var learnStartDate = new DateTime(2018, 10, 10);
-            var origLearnStartDate = new DateTime(2008, 10, 10);
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var origLearnStartDate = new DateTime(2009, 8, 1);
 
             var learner = new TestLearner()
             {
@@ -141,10 +165,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
                     }
                 }
             };
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(ds => ds.AddYearsToDate(learnStartDate, -10)).Returns(new DateTime(2009, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, dateTimeQueryServiceMock.Object).Validate(learner);
             }
         }
 
@@ -161,9 +187,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
             validationErrorHandlerMock.Verify();
         }
 
-        private OrigLearnStartDate_01Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
+        private OrigLearnStartDate_01Rule NewRule(IValidationErrorHandler validationErrorHandler = null, IDateTimeQueryService dateTimeQueryService = null)
         {
-            return new OrigLearnStartDate_01Rule(validationErrorHandler);
+            return new OrigLearnStartDate_01Rule(validationErrorHandler, dateTimeQueryService);
         }
     }
 }

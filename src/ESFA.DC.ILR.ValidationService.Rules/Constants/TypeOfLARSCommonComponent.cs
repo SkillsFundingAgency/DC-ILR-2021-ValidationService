@@ -110,7 +110,7 @@
         /// </summary>
         public const int AddUnitsForMicroBusiness = 40;
 
-        public static readonly int?[] CommonComponents =
+        public static readonly int[] CommonComponents =
         {
             KeySkillsInCommunication,
             KeySkillsInApplicationNumber,
@@ -132,5 +132,61 @@
             SteppingMaths,
             AddUnitsForMicroBusiness
         };
+
+        /// <summary>
+        /// the apprenticeship component types
+        /// </summary>
+        public static class Apprenticeship
+        {
+            /// <summary>
+            /// The competency element
+            /// </summary>
+            public const int CompetencyElement = 1;
+
+            /// <summary>
+            /// The knowledge element
+            /// </summary>
+            public const int KnowledgeElement = 2;
+
+            /// <summary>
+            /// The main aim or technical certificate
+            /// </summary>
+            public const int MainAimOrTechnicalCertificate = 3;
+
+            /// <summary>
+            /// The principal learning
+            /// </summary>
+            public const int PrincipalLearning = 101;
+
+            /// <summary>
+            /// The diploma qualification
+            /// </summary>
+            public const int DiplomaQualification = 102;
+
+            /// <summary>
+            /// personal and social
+            /// </summary>
+            public const int PersonalAndSocial = 201;
+
+            /// <summary>
+            /// vocational learning
+            /// </summary>
+            public const int VocationalLearning = 202;
+
+            /// <summary>
+            /// combination personal social and vocational
+            /// </summary>
+            public const int CombinationPersonalSocialAndVocational = 203;
+
+            /// <summary>
+            /// language
+            /// </summary>
+            public const int Language = 205;
+
+            /// <summary>
+            /// subject
+            /// </summary>
+            public const int Subject = 206;
+        }
     }
 }

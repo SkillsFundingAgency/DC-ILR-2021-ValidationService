@@ -12,15 +12,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
     {
         private readonly IExternalDataCache _externalDataCache;
 
-        /// <summary>
-        /// The case de-sensitised lars deliveries
-        /// </summary>
         private readonly IReadOnlyDictionary<string, Model.LearningDelivery> _larsDeliveries;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LARSDataService"/> class.
-        /// </summary>
-        /// <param name="externalDataCache">The external data cache.</param>
+        private readonly IReadOnlyDictionary<int, ILARSStandard> _larsStandards;
+
         public LARSDataService(IExternalDataCache externalDataCache)
         {
             It.IsNull(externalDataCache)
@@ -30,15 +25,13 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
 
             // de-sensitise the lars deliveries
             _larsDeliveries = externalDataCache.LearningDeliveries.ToCaseInsensitiveDictionary();
+
+            if (externalDataCache.Standards != null)
+            {
+                _larsStandards = externalDataCache.Standards.ToDictionary(k => k.StandardCode, v => v);
+            }
         }
 
-        /// <summary>
-        /// Gets the deliveries for.
-        /// this routine has been deprecated on the contract
-        /// so don't use it; use 'get delivery for' instead...
-        /// </summary>
-        /// <param name="thisAimRef">this aim reference.</param>
-        /// <returns>a collection of lars learning deliveries for this learning aim reference</returns>
         public IReadOnlyCollection<ILARSLearningDelivery> GetDeliveriesFor(string thisAimRef)
         {
             var delivery = GetDeliveryFor(thisAimRef);
@@ -48,28 +41,22 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
                 : Collection.EmptyAndReadOnly<ILARSLearningDelivery>();
         }
 
-        /// <summary>
-        /// Gets the (lars) delivery for (this aim reference).
-        /// </summary>
-        /// <param name="thisAimRef">this aim reference.</param>
-        /// <returns>
-        /// a lars learning delivery for this learning aim reference
-        /// </returns>
-        public ILARSLearningDelivery GetDeliveryFor(string thisAimRef)
-        {
-            _larsDeliveries.TryGetValue(thisAimRef, out var learningDelivery);
+        public ILARSLearningDelivery GetDeliveryFor(string thisAimRef) =>
+            _larsDeliveries.GetValueOrDefault(thisAimRef, null);
 
-            return learningDelivery;
+        public ILARSStandard GetStandardFor(int standardCode) =>
+            _larsStandards.GetValueOrDefault(standardCode, null);
+
+        public ILARSStandardFunding GetStandardFundingFor(int standardCode, DateTime startDate)
+        {
+            var standard = GetStandardFor(standardCode);
+
+            return standard?.StandardsFunding
+                .SafeWhere(sf => It.IsBetween(startDate, sf.EffectiveFrom, sf.EffectiveTo ?? DateTime.MaxValue))
+                .OrderBy(x => x.EffectiveTo) // get the earliest closure first
+                .FirstOrDefault();
         }
 
-        /// <summary>
-        /// Gets a collection of (lars) learning categories for (this aim reference).
-        ///  i should never return null
-        /// </summary>
-        /// <param name="thisAimRef">this aim reference.</param>
-        /// <returns>
-        /// a collection of lars learning categories for this learning aim reference
-        /// </returns>
         public IReadOnlyCollection<ILARSLearningCategory> GetCategoriesFor(string thisAimRef)
         {
             var delivery = GetDeliveryFor(thisAimRef);
@@ -78,14 +65,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
                 ?? Collection.EmptyAndReadOnly<ILARSLearningCategory>();
         }
 
-        /// <summary>
-        /// Gets a collection of (lars) learning delivery periods of validity for (this aim reference).
-        ///  i should never return null
-        /// </summary>
-        /// <param name="thisAimRef">this aim reference.</param>
-        /// <returns>
-        /// a collection of lars learing delivery periods of validity for this learning aim reference
-        /// </returns>
         public IReadOnlyCollection<ILARSLearningDeliveryValidity> GetValiditiesFor(string thisAimRef)
         {
             var delivery = GetDeliveryFor(thisAimRef);
@@ -94,14 +73,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
                 ?? Collection.EmptyAndReadOnly<ILARSLearningDeliveryValidity>();
         }
 
-        /// <summary>
-        /// Gets the (lars) annual values for (this aim reference).
-        ///  i should never return null
-        /// </summary>
-        /// <param name="thisAimRef">The this aim reference.</param>
-        /// <returns>
-        /// a collection of lars 'annual values' for this learning aim reference
-        /// </returns>
         public IReadOnlyCollection<ILARSAnnualValue> GetAnnualValuesFor(string thisAimRef)
         {
             var delivery = GetDeliveryFor(thisAimRef);
@@ -110,30 +81,17 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
                 ?? Collection.EmptyAndReadOnly<ILARSAnnualValue>();
         }
 
-        /// <summary>
-        /// Gets the (lars) framework aims for (this aim reference).
-        /// </summary>
-        /// <param name="thisAimRef">The this aim reference.</param>
-        /// <returns>
-        /// a collection of lars 'framework aims' for this learning aim reference
-        /// </returns>
         public IReadOnlyCollection<ILARSFrameworkAim> GetFrameworkAimsFor(string thisAimRef)
         {
             var delivery = GetDeliveryFor(thisAimRef);
 
-            return delivery?.Frameworks?.Where(f => f.FrameworkAim != null)
-                .Select(f => f.FrameworkAim).ToList()
-                ?? Collection.EmptyAndReadOnly<ILARSFrameworkAim>();
+            return delivery?.Frameworks
+                .SafeWhere(f => f.FrameworkAim != null)
+                .Select(f => f.FrameworkAim)
+                .AsSafeReadOnlyList()
+                    ?? Collection.EmptyAndReadOnly<ILARSFrameworkAim>();
         }
 
-        /// <summary>
-        /// Gets the collection of (lars) standard periods of validity for (this standard code).
-        ///  i should never return null
-        /// </summary>
-        /// <param name="thisStandardCode">this standard code.</param>
-        /// <returns>
-        /// a collection of lars standard periods of validity for this standard code
-        /// </returns>
         public IReadOnlyCollection<ILARSStandardValidity> GetStandardValiditiesFor(int thisStandardCode)
         {
             return _externalDataCache.StandardValidities
@@ -141,24 +99,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
                 .AsSafeReadOnlyList();
         }
 
-        /// <summary>
-        /// Contains the (lars) standard for (this standard code).
-        /// </summary>
-        /// <param name="thisStandardCode">The this standard code.</param>
-        /// <returns>
-        ///   <c>true</c> if [contains standard for] [the specified this standard code]; otherwise, <c>false</c>.
-        /// </returns>
         public bool ContainsStandardFor(int thisStandardCode)
         {
             return _externalDataCache.Standards
                 .Any(x => x.StandardCode == thisStandardCode);
         }
 
-        /// <summary>
-        /// Learn aim reference exists (but probably pointless as this should be done in the rule...)
-        /// </summary>
-        /// <param name="learnAimRef">The learn aim reference.</param>
-        /// <returns>true if it does</returns>
         public bool LearnAimRefExists(string learnAimRef)
         {
             return GetDeliveryFor(learnAimRef) != null;
@@ -410,20 +356,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
 
             return It.Has(learningDelivery)
                 && learnAimRefTypes.ToCaseInsensitiveHashSet().Contains(learningDelivery.LearnAimRefType);
-        }
-
-        public ILARSStandardFunding GetStandardFundingForCodeOnDate(int standardCode, DateTime startDate)
-        {
-            var standard = _externalDataCache.Standards?.FirstOrDefault(x => x.StandardCode == standardCode);
-
-            if (standard?.StandardsFunding != null)
-            {
-                return standard.StandardsFunding.FirstOrDefault(sf => startDate >= sf.EffectiveFrom &&
-                                                               (!sf.EffectiveTo.HasValue ||
-                                                                startDate <= sf.EffectiveTo));
-            }
-
-            return null;
         }
     }
 }

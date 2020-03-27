@@ -22,7 +22,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
         public void Validate(ILearner objectToValidate)
         {
             if (objectToValidate.LearningDeliveries != null
-                && objectToValidate.LearnerHEEntity != null
                 && LearnStartDateConditionMet(objectToValidate.LearningDeliveries)
                 && LearnerHEConditionMet(objectToValidate.LearnerHEEntity))
             {
@@ -45,7 +44,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
             LearningDeliveryHEConditionMet(learningDeliveryHE);
 
         public bool LearnerHEConditionMet(ILearnerHE learnerHE) =>
-            !learnerHE.TTACCOMNullable.HasValue;
+            learnerHE == null 
+            || !learnerHE.TTACCOMNullable.HasValue;
 
         public bool LearningDeliveryHEConditionMet(ILearningDeliveryHE learningDeliveryHE) =>
             learningDeliveryHE.MODESTUD == TypeOfMODESTUD.FullTimeAndSandwich;

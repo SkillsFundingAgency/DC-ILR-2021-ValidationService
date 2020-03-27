@@ -10,5 +10,8 @@
 
         // Org Partner UKPRN
         public bool? PartnerUKPRN { get; set; }
+
+        // Org Long Term Residence Indicator
+        public bool? LongTermResid { get; set; }
     }
 }

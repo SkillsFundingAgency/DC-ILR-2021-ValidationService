@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ESFA.DC.ILR.Constants;
 using ESFA.DC.ILR.Desktop.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -15,7 +14,11 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Context
             _desktopContext = desktopContext;
         }
 
-        public string Filename => _desktopContext.KeyValuePairs[ILRContextKeys.Filename].ToString();
+        public string Filename
+        {
+            get => _desktopContext.KeyValuePairs[ILRContextKeys.Filename].ToString();
+            set => _desktopContext.KeyValuePairs[ILRContextKeys.Filename] = value;
+        }
 
         public string Container => _desktopContext.KeyValuePairs[ILRContextKeys.Container].ToString();
 
@@ -50,5 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Context
         {
             set => _desktopContext.KeyValuePairs[ILRContextKeys.ValidationTotalWarningCount] = value;
         }
+
+        public int ReturnPeriod => int.Parse(_desktopContext.KeyValuePairs[ILRContextKeys.ReturnPeriod].ToString());
     }
 }

@@ -1,54 +1,102 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 {
-    public class DelLocPostCode_17Rule :
-        DelLocPostCode_EligibilityRule<IEsfEligibilityRuleLocalAuthority>
+    public class DelLocPostCode_17Rule : AbstractRule, IRule<ILearner>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DelLocPostCode_17Rule" /> class.
-        /// </summary>
-        /// <param name="validationErrorHandler">The validation error handler.</param>
-        /// <param name="commonChecks">The common checks.</param>
-        /// <param name="fcsData">The FCS data.</param>
-        /// <param name="postcodesData">The postcodes data.</param>
-        /// <param name="derivedData22">The derived data22.</param>
+        private const int FundModel = TypeOfFunding.EuropeanSocialFund;
+
+        private readonly IFCSDataService _fcsDataService;
+        private readonly IPostcodesDataService _postcodeService;
+        private readonly IDerivedData_22Rule _derivedData22;
+
+        private readonly DateTime _ruleEndDate = new DateTime(2017, 8, 1);
+
         public DelLocPostCode_17Rule(
-            IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonChecks,
-            IFCSDataService fcsData,
-            IPostcodesDataService postcodesData)
-            : base(validationErrorHandler, commonChecks, fcsData, postcodesData, RuleNameConstants.DelLocPostCode_17)
+            IFCSDataService fcsDataService,
+            IPostcodesDataService postcodeService,
+            IDerivedData_22Rule derivedData22,
+            IValidationErrorHandler validationErrorHandler)
+            : base(validationErrorHandler, RuleNameConstants.DelLocPostCode_17)
         {
+            _fcsDataService = fcsDataService;
+            _postcodeService = postcodeService;
+            _derivedData22 = derivedData22;
         }
 
-        /// <summary>
-        /// Gets the eligibility item.
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <returns>the enterprise partnership (if found)</returns>
-        public override IReadOnlyCollection<IEsfEligibilityRuleLocalAuthority> GetEligibilityItemsFor(ILearningDelivery delivery) =>
-            FcsData.GetEligibilityRuleLocalAuthoritiesFor(delivery.ConRefNumber).AsSafeReadOnlyList();
+        public void Validate(ILearner learner)
+        {
+            if (learner?.LearningDeliveries == null)
+            {
+                return;
+            }
 
-        /// <summary>
-        /// Determines whether [has any qualifying eligibility] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="postcodes">The postcodes.</param>
-        /// <param name="eligibilityCodes">The eligibility codes.</param>
-        /// <returns>
-        ///   <c>true</c> if [has any qualifying eligibility] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool HasAnyQualifyingEligibility(ILearningDelivery delivery, IReadOnlyCollection<IONSPostcode> postcodes, IContainThis<string> eligibilityCodes) =>
-            postcodes.Any(x => eligibilityCodes.Contains(x.LocalAuthority) && InQualifyingPeriod(delivery, x));
+            foreach (var learningDelivery in learner.LearningDeliveries)
+            {
+
+                var latestLearningStart = _derivedData22.GetLatestLearningStartForESFContract(learningDelivery, learner.LearningDeliveries);
+
+                var localAuthorities = _fcsDataService.GetEligibilityRuleLocalAuthoritiesFor(learningDelivery.ConRefNumber);
+
+                if (!localAuthorities.Any())
+                {
+                    break;
+                }
+
+                var allOnsPostCodes = _postcodeService.GetONSPostcodes(learningDelivery.DelLocPostCode);
+                var onsPostcodesMatchinglocalAuthorities = allOnsPostCodes.Where(pc => localAuthorities.Any(la => la.Code.CaseInsensitiveEquals(pc.LocalAuthority)));
+
+                if (ConditionMetDD22Exists(latestLearningStart)
+                    && ConditionMetStartDate(learningDelivery.LearnStartDate)
+                    && ConditionMetFundModel(learningDelivery.FundModel)
+                    && (ConditionMetONSPostcode(latestLearningStart, onsPostcodesMatchinglocalAuthorities)
+                        || ConditionMetLocalAuthority(localAuthorities, allOnsPostCodes)
+                    ))
+                {
+                    HandleValidationError(
+                        learner.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(learningDelivery));
+                }
+            }
+        }
+
+        public bool ConditionMetDD22Exists(DateTime? latestLearningStart) =>
+            latestLearningStart.HasValue;
+
+        public bool ConditionMetStartDate(DateTime learnStartDate) =>
+            learnStartDate >= _ruleEndDate;
+
+        public bool ConditionMetFundModel(int fundModel) =>
+            fundModel == FundModel;
+
+        public bool ConditionMetONSPostcode(DateTime? latestLearningStart, IEnumerable<IONSPostcode> onsPostcodes) =>
+            onsPostcodes != null
+                   && !onsPostcodes.Any(vp => latestLearningStart >= vp.EffectiveFrom
+                                             && latestLearningStart <= (vp.EffectiveTo ?? DateTime.MaxValue)
+                                             && latestLearningStart < (vp.Termination ?? DateTime.MaxValue));
+
+        public bool ConditionMetLocalAuthority(IEnumerable<IEsfEligibilityRuleLocalAuthority> eligibilityRulesLocalAuthorities, IEnumerable<IONSPostcode> onsPostcodes) =>
+            eligibilityRulesLocalAuthorities != null
+                && (onsPostcodes == null
+                    || !eligibilityRulesLocalAuthorities.Join(onsPostcodes, eli => eli.Code.ToUpper(), pc => pc.LocalAuthority.ToUpper(), (eli, pc) => pc).Any());
+
+        private IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(ILearningDelivery learningDelivery)
+        {
+            return new[]
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.ConRefNumber, learningDelivery.ConRefNumber)
+            };
+        }
     }
 }

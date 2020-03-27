@@ -277,6 +277,60 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             NewService().GetLatestAppFinRecord(null, "xyz", 1).Should().BeNull();
         }
 
+        [Fact]
+        public void GetAppFinRecordsForType_NullRecords()
+        {
+            NewService().GetAppFinRecordsForType(null, "TNP").Should().BeNullOrEmpty();
+        }
+
+        [Fact]
+        public void GetAppFinRecordsForType_AFinType_MisMatch()
+        {
+            var appFinRecords = new List<IAppFinRecord>()
+            {
+                new TestAppFinRecord
+                {
+                    AFinCode = 2,
+                    AFinType = "TNP",
+                    AFinAmount = 5,
+                    AFinDate = new DateTime(2017, 10, 10)
+                },
+                new TestAppFinRecord
+                {
+                    AFinCode = 2,
+                    AFinType = "tnp",
+                    AFinAmount = 10,
+                    AFinDate = new DateTime(2017, 10, 12)
+                },
+            };
+
+            NewService().GetAppFinRecordsForType(appFinRecords, "xxx").Should().BeNullOrEmpty();
+        }
+
+        [Fact]
+        public void GetAppFinRecordsForType()
+        {
+            var appFinRecords = new List<IAppFinRecord>()
+            {
+                new TestAppFinRecord
+                {
+                    AFinCode = 2,
+                    AFinType = "TNP",
+                    AFinAmount = 5,
+                    AFinDate = new DateTime(2017, 10, 10)
+                },
+                new TestAppFinRecord
+                {
+                    AFinCode = 2,
+                    AFinType = "tnp",
+                    AFinAmount = 10,
+                    AFinDate = new DateTime(2017, 10, 12)
+                },
+            };
+
+            NewService().GetAppFinRecordsForType(appFinRecords, "TNP").Should().HaveCount(2);
+        }
+
         private LearningDeliveryAppFinRecordQueryService NewService()
         {
             return new LearningDeliveryAppFinRecordQueryService();

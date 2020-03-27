@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
@@ -64,9 +63,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool DD07ConditionMet(int? progType)
         {
-            return progType.HasValue
-                && progType != TypeOfLearningProgramme.ApprenticeshipStandard
-                && _dd07.IsApprenticeship(progType);
+            return _dd07.IsApprenticeship(progType);
         }
 
         public bool DD04ConditionMet(DateTime? dd04, DateTime lastFridayJuneAcademicYearLearnerSixteen)

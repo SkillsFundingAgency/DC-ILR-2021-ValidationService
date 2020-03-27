@@ -26,7 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ALSCost
 
             if (ConditionMet(objectToValidate.ALSCostNullable, objectToValidate.LearnerFAMs))
             {
-                HandleValidationError(RuleNameConstants.ALSCost_02, null, BuildErrorMessageParameters(objectToValidate.ALSCostNullable));
+                HandleValidationError(objectToValidate.LearnRefNumber, null, BuildErrorMessageParameters(objectToValidate.ALSCostNullable));
             }
         }
 

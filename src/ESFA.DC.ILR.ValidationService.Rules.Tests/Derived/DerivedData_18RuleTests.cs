@@ -119,7 +119,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
             var service = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             service
-                .Setup(x => x.IsStandardApprencticeship(Moq.It.IsAny<ILearningDelivery>()))
+                .Setup(x => x.IsStandardApprenticeship(Moq.It.IsAny<ILearningDelivery>()))
                 .Returns(true);
             service
                 .Setup(x => x.InAProgramme(Moq.It.IsAny<ILearningDelivery>()))

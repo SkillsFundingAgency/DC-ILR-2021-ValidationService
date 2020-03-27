@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDate
 {
     public class OrigLearnStartDate_01Rule : AbstractRule, IRule<ILearner>
     {
+        private const int _yearsToAdd = -10;
         private readonly HashSet<int> _fundModels = new HashSet<int> { 35, 36, 81, 99 };
 
-        public OrigLearnStartDate_01Rule(IValidationErrorHandler validationErrorHandler)
+        private readonly IDateTimeQueryService _dateTimeQueryService;
+
+        public OrigLearnStartDate_01Rule(IValidationErrorHandler validationErrorHandler, IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.OrigLearnStartDate_01)
         {
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -50,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
         public bool OriginalLearnStartDateConditionMet(DateTime learnStartDate, DateTime? originalLearnStartDate)
         {
             return originalLearnStartDate.HasValue &&
-                   originalLearnStartDate < learnStartDate.AddYears(-10);
+                   originalLearnStartDate < _dateTimeQueryService.AddYearsToDate(learnStartDate, _yearsToAdd);
         }
 
         public bool FundModelConditionMet(int fundModel)

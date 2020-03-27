@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
-using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
@@ -14,17 +11,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     public class LearnDelFAMType_16Rule : AbstractRule, IRule<ILearner>
     {
         private readonly string _famCode = "118";
+        private HashSet<int> _returnPeriods = new HashSet<int> { 12, 13, 14 };
 
         private readonly IAcademicYearDataService _academicYearDataService;
-        private readonly IFileDataService _fileDataService;
 
         public LearnDelFAMType_16Rule(
             IAcademicYearDataService academicYearDataService,
-            IFileDataService fileDataService,
             IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_16)
         {
-            _fileDataService = fileDataService;
             _academicYearDataService = academicYearDataService;
         }
 
@@ -39,10 +34,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 return;
             }
 
+            int returnPeriod = _academicYearDataService.ReturnPeriod();
+
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if (learningDelivery.LearningDeliveryFAMs == null ||
-                    _fileDataService.FilePreparationDate() <= _academicYearDataService.End())
+                if (learningDelivery.LearningDeliveryFAMs == null)
                 {
                     continue;
                 }
@@ -50,7 +46,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 foreach (var deliveryFam in learningDelivery.LearningDeliveryFAMs)
                 {
                     if (deliveryFam.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.LDM)
-                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(_famCode))
+                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(_famCode)
+                        && _returnPeriods.Contains(returnPeriod))
                     {
                         RaiseValidationMessage(learner.LearnRefNumber, learningDelivery, deliveryFam);
                     }

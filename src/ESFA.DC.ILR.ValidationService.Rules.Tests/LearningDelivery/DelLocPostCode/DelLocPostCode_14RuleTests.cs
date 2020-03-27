@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Model;
@@ -25,465 +24,405 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
         }
 
         [Fact]
-        public void ValidationPasses_OutsideRuleDate()
+        public void ConditionMetDD22Exists_True()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+            NewRule().ConditionMetDD22Exists(new DateTime(2017, 8, 1)).Should().BeTrue();
+        }
 
-            var startDate = new DateTime(2017, 7, 31);
+        [Fact]
+        public void ConditionMetDD22Exists_False()
+        {
+            NewRule().ConditionMetDD22Exists(null).Should().BeFalse();
+        }
 
-            var testLearner = new TestLearner
-            {
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        LearnStartDate = startDate
-                    }
-                }
-            };
+        [Fact]
+        public void ConditionMetStartDate_True()
+        {
+            NewRule().ConditionMetStartDate(new DateTime(2017, 7, 31)).Should().BeTrue();
+        }
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
+        [Fact]
+        public void ConditionMetStartDate_False()
+        {
+            NewRule().ConditionMetStartDate(new DateTime(2019, 8, 1)).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMetFundModel_True()
+        {
+            NewRule().ConditionMetFundModel(70).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMetFundModel_False()
+        {
+            NewRule().ConditionMetFundModel(36).Should().BeFalse();
         }
 
         [Theory]
-        [InlineData(35, "WEREW001", "CV1 1AB")] // irrelevant fundmodel
-        [InlineData(70, "ZESF0001", "CV1 1AB")] // excluded aim ref
-        [InlineData(70, "WEREW001", "ZZ99 9ZZ")] // excluded postcode
-        public void ValidationPasses_IrrelevantLearningDeliveryProperties(int fundModel, string learnAimRef, string delLocPostCode)
+        [InlineData("ZESF0001")]
+        [InlineData("zesf0001")]
+        public void ConditionMetLearnAimRef_False(string learnAimRef)
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+            NewRule().ConditionMetLearnAimRef(learnAimRef).Should().BeFalse();
+        }
 
-            var startDate = new DateTime(2017, 7, 30);
+        [Theory]
+        [InlineData("60154354")]
+        [InlineData("ZPROG001")]
+        public void ConditionMetLearnAimRef_True(string learnAimRef)
+        {
+            NewRule().ConditionMetLearnAimRef(learnAimRef).Should().BeTrue();
+        }
 
-            var testLearner = new TestLearner
-            {
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        LearnStartDate = startDate,
-                        FundModel = fundModel,
-                        LearnAimRef = learnAimRef,
-                        DelLocPostCode = delLocPostCode
-                    }
-                }
-            };
+        [Theory]
+        [InlineData("CV1 2WT")]
+        [InlineData("cv1 2wt")]
+        public void ConditionMetTemporaryPostcode_True(string postcode)
+        {
+            NewRule().ConditionMetTemporaryPostcode(postcode).Should().BeTrue();
+        }
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
+        [Theory]
+        [InlineData("ZZ99 9ZZ")]
+        [InlineData("zz99 9ZZ")]
+        public void ConditionMetTemporaryPostcode_False(string postcode)
+        {
+            NewRule().ConditionMetTemporaryPostcode(postcode).Should().BeFalse();
         }
 
         [Fact]
-        public void ValidationPasses_NoLocalAuthority()
+        public void ConditionMetONSPostcode_False_Null()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+            NewRule().ConditionMetONSPostcode(null, null).Should().BeFalse();
+        }
 
-            var startDate = new DateTime(2017, 7, 30);
-            var conRefNum = "12345";
-            var testLearner = new TestLearner
-            {
-                LearningDeliveries = new List<TestLearningDelivery>
+        [Theory]
+        [InlineData("2017-01-01", "2017-08-01", null, null)]
+        [InlineData("2017-01-01", "2016-08-01", "2016-12-31", null)]
+        [InlineData("2017-01-01", "2017-08-01", "2020-01-01", "2017-01-01")]
+        public void ConditionMetONSPostcode_True(string dd22, string effectiveFrom, string effectiveTo, string termination)
+        {
+            DateTime? dateDD22 = string.IsNullOrEmpty(dd22) ? (DateTime?)null : DateTime.Parse(dd22);
+            DateTime effectiveFromDate = DateTime.Parse(effectiveFrom);
+            DateTime? effectiveToDate = string.IsNullOrEmpty(effectiveTo) ? (DateTime?)null : DateTime.Parse(effectiveTo);
+            DateTime? dateOfTermination = string.IsNullOrEmpty(termination) ? (DateTime?)null : DateTime.Parse(termination);
+
+            var onsPostCodes = new ONSPostcode[]
                 {
-                    new TestLearningDelivery
+                    new ONSPostcode()
                     {
-                        LearnStartDate = startDate,
-                        FundModel = 70,
-                        LearnAimRef = "foo",
-                        DelLocPostCode = "foo",
-                        ConRefNumber = conRefNum
+                        EffectiveFrom = effectiveFromDate,
+                        EffectiveTo = effectiveToDate,
+                        Termination = dateOfTermination
                     }
+                };
+
+            NewRule().ConditionMetONSPostcode(dateDD22, onsPostCodes).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("2017-01-01", "2016-08-01", null, null)]
+        [InlineData("2017-01-01", "2016-08-01", "2017-01-01", null)]
+        [InlineData("2017-01-01", "2017-01-01", null, "2017-01-02")]
+        public void ConditionMetONSPostcode_False(string dd22, string effectiveFrom, string effectiveTo, string termination)
+        {
+            DateTime? dateDD22 = string.IsNullOrEmpty(dd22) ? (DateTime?)null : DateTime.Parse(dd22);
+            DateTime effectiveFromDate = DateTime.Parse(effectiveFrom);
+            DateTime? effectiveToDate = string.IsNullOrEmpty(effectiveTo) ? (DateTime?)null : DateTime.Parse(effectiveTo);
+            DateTime? dateOfTermination = string.IsNullOrEmpty(termination) ? (DateTime?)null : DateTime.Parse(termination);
+
+            var onsPostCodes = new ONSPostcode[]
+            {
+                new ONSPostcode()
+                {
+                    EffectiveFrom = effectiveFromDate,
+                    EffectiveTo = effectiveToDate,
+                    Termination = dateOfTermination
                 }
             };
 
-            var fcsServiceMock = new Mock<IFCSDataService>();
-            fcsServiceMock
-                    .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(conRefNum))
-                    .Returns((IEnumerable<IEsfEligibilityRuleLocalAuthority>)null);
-
-            NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object).Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
+            NewRule().ConditionMetONSPostcode(dateDD22, onsPostCodes).Should().BeFalse();
         }
 
         [Fact]
-        public void ValidationPasses_AuthorityCodeMissing()
+        public void ConditionMetLocalAuthority_True()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var startDate = new DateTime(2017, 7, 30);
-            var conRefNum = "12345";
-            var testLearner = new TestLearner
+            var localAuthorityEligibility = new List<EsfEligibilityRuleLocalAuthority>
             {
-                LearningDeliveries = new List<TestLearningDelivery>
+                new EsfEligibilityRuleLocalAuthority
                 {
-                    new TestLearningDelivery
-                    {
-                        LearnStartDate = startDate,
-                        FundModel = 70,
-                        LearnAimRef = "foo",
-                        DelLocPostCode = "foo",
-                        ConRefNumber = conRefNum
-                    }
+                    Code = "123"
                 }
             };
 
+            var onsPostCodes = new ONSPostcode[]
+            {
+                new ONSPostcode()
+                {
+                     LocalAuthority = "XYZ"
+                }
+            };
+
+            NewRule().ConditionMetLocalAuthority(localAuthorityEligibility, onsPostCodes).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMetLocalAuthority_True_ONSNULL()
+        {
+            var localAuthorityEligibility = new List<EsfEligibilityRuleLocalAuthority>
+            {
+                new EsfEligibilityRuleLocalAuthority
+                {
+                    Code = "123"
+                }
+            };
+
+            NewRule().ConditionMetLocalAuthority(localAuthorityEligibility, null).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMetLocalAuthority_False()
+        {
+            var localAuthorityEligibility = new List<EsfEligibilityRuleLocalAuthority>
+            {
+                new EsfEligibilityRuleLocalAuthority
+                {
+                    Code = "123"
+                }
+            };
+
+            var onsPostCodes = new ONSPostcode[]
+            {
+                new ONSPostcode()
+                {
+                     LocalAuthority = "123"
+                }
+            };
+
+            NewRule().ConditionMetLocalAuthority(localAuthorityEligibility, onsPostCodes).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMetLocalAuthority_False_EligibilityNull()
+        {
+            var onsPostCodes = new ONSPostcode[]
+            {
+                new ONSPostcode()
+                {
+                     LocalAuthority = "123"
+                }
+            };
+
+            NewRule().ConditionMetLocalAuthority(null, onsPostCodes).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMetLocalAuthority_False_Null()
+        {
+            NewRule().ConditionMetLocalAuthority(null, null).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Validate_Error_NonMatchingLocalAuthority()
+        {
             var fcsServiceMock = new Mock<IFCSDataService>();
             fcsServiceMock
-                .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(conRefNum))
+                .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(It.IsAny<string>()))
                 .Returns(new List<EsfEligibilityRuleLocalAuthority>
                 {
-                    new EsfEligibilityRuleLocalAuthority
-                    {
-                        Code = null
-                    },
-                    new EsfEligibilityRuleLocalAuthority
-                    {
-                        Code = string.Empty
-                    }
-                });
-
-            NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object).Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Fact]
-        public void ValidationPasses_PostCodeIsValid()
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var startDate = new DateTime(2017, 7, 30);
-            var conRefNum = "12345";
-            var localAuthorityCode = "123";
-            var delLocPostCode = "CV1 1AB";
-
-            var testLearner = new TestLearner
-            {
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        LearnStartDate = startDate,
-                        FundModel = 70,
-                        LearnAimRef = "foo",
-                        DelLocPostCode = delLocPostCode,
-                        ConRefNumber = conRefNum
-                    }
-                }
-            };
-
-            var fcsServiceMock = new Mock<IFCSDataService>();
-            fcsServiceMock
-                    .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(conRefNum))
-                    .Returns(new List<EsfEligibilityRuleLocalAuthority>
-                    {
                         new EsfEligibilityRuleLocalAuthority
                         {
-                            Code = localAuthorityCode
-                        }
-                    });
+                            Code = "123"
+                        },
+                });
 
             var postcodeServiceMock = new Mock<IPostcodesDataService>();
             postcodeServiceMock
-                .Setup(m => m.GetONSPostcodes(delLocPostCode))
+                .Setup(m => m.GetONSPostcodes(It.IsAny<string>()))
                 .Returns(new ONSPostcode[]
                 {
-                    new ONSPostcode()
-                    {
-                        LocalAuthority = localAuthorityCode,
-                        Termination = null,
-                        EffectiveFrom = startDate.AddMonths(-1),
-                        EffectiveTo = startDate.AddYears(1)
-                    }
+                        new ONSPostcode()
+                        {
+                            LocalAuthority = "ABC",
+                            EffectiveFrom = new DateTime(2016, 1, 1)
+                        }
                 });
 
+            var learningDeliveries = new List<TestLearningDelivery> { };
             var dd22Mock = new Mock<IDerivedData_22Rule>();
             dd22Mock
-                .Setup(m => m.GetLatestLearningStartForESFContract(testLearner.LearningDeliveries.First(), testLearner.LearningDeliveries))
-                .Returns(startDate);
-
-            NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Fact]
-        public void ValidationPasses_NoLDs()
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var testLearner = new TestLearner();
-
-            NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Fact]
-        public void ValidationFails_NoPostcodeFound()
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
-
-            var startDate = new DateTime(2017, 7, 30);
-            var conRefNum = "12345";
-            var localAuthorityCode = "123";
-            var delLocPostCode = "CV1 1AB";
+                .Setup(m => m.GetLatestLearningStartForESFContract(It.IsAny<TestLearningDelivery>(), It.IsAny<List<TestLearningDelivery>>()))
+                        .Returns(new DateTime(2017, 07, 31));
 
             var testLearner = new TestLearner
             {
                 LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
                     {
-                        LearnStartDate = startDate,
-                        FundModel = 70,
-                        LearnAimRef = "foo",
-                        DelLocPostCode = delLocPostCode,
-                        ConRefNumber = conRefNum
+                        new TestLearningDelivery
+                        {
+                            LearnStartDate = new DateTime(2017, 1, 1),
+                            FundModel = 70,
+                            LearnAimRef = "12345678",
+                            DelLocPostCode = "CV1 2WT"
+                        },
                     }
-                }
             };
 
-            var fcsServiceMock = new Mock<IFCSDataService>();
-            fcsServiceMock
-                    .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(conRefNum))
-                    .Returns(new List<EsfEligibilityRuleLocalAuthority>
-                    {
-                        new EsfEligibilityRuleLocalAuthority
-                        {
-                            Code = localAuthorityCode
-                        }
-                    });
-
-            var postcodeServiceMock = new Mock<IPostcodesDataService>();
-            postcodeServiceMock
-                .Setup(m => m.GetONSPostcodes(delLocPostCode))
-                .Returns((IONSPostcode[])null);
-
-            var dd22Mock = new Mock<IDerivedData_22Rule>();
-            dd22Mock
-                .Setup(m => m.GetLatestLearningStartForESFContract(testLearner.LearningDeliveries.First(), testLearner.LearningDeliveries))
-                .Returns(startDate);
-
-            NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
+            }
         }
 
         [Fact]
-        public void ValidationFails_DD25ReturnsNull()
+        public void Validate_Error_LearnStartBeforeEffectiveDate()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
-
-            var startDate = new DateTime(2017, 7, 30);
-            var conRefNum = "12345";
-            var localAuthorityCode = "123";
-            var delLocPostCode = "CV1 1AB";
-
-            var testLearner = new TestLearner
-            {
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        LearnStartDate = startDate,
-                        FundModel = 70,
-                        LearnAimRef = "foo",
-                        DelLocPostCode = delLocPostCode,
-                        ConRefNumber = conRefNum
-                    }
-                }
-            };
-
             var fcsServiceMock = new Mock<IFCSDataService>();
             fcsServiceMock
-                    .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(conRefNum))
-                    .Returns(new List<EsfEligibilityRuleLocalAuthority>
-                    {
+                .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(It.IsAny<string>()))
+                .Returns(new List<EsfEligibilityRuleLocalAuthority>
+                {
                         new EsfEligibilityRuleLocalAuthority
                         {
-                            Code = localAuthorityCode
-                        }
-                    });
+                            Code = "ABC"
+                        },
+                });
 
             var postcodeServiceMock = new Mock<IPostcodesDataService>();
             postcodeServiceMock
-                .Setup(m => m.GetONSPostcodes(delLocPostCode))
+                .Setup(m => m.GetONSPostcodes(It.IsAny<string>()))
                 .Returns(new ONSPostcode[]
                 {
-                    new ONSPostcode()
-                    {
-                        LocalAuthority = localAuthorityCode,
-                        Termination = null,
-                        EffectiveFrom = startDate.AddMonths(-1),
-                        EffectiveTo = startDate.AddYears(1)
-                    }
+                        new ONSPostcode()
+                        {
+                            LocalAuthority = "ABC",
+                            EffectiveFrom = new DateTime(2019, 1, 1)
+                        }
                 });
 
+            var learningDeliveries = new List<TestLearningDelivery> { };
             var dd22Mock = new Mock<IDerivedData_22Rule>();
             dd22Mock
-                .Setup(m => m.GetLatestLearningStartForESFContract(testLearner.LearningDeliveries.First(), testLearner.LearningDeliveries))
-                .Returns((DateTime?)null);
-
-            NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock);
-        }
-
-        [Theory]
-        [InlineData("123", "2017-07-31", "2018-07-29", "2017-07-30")]
-        [InlineData("123", "2017-08-30", "2018-08-31", "2099-01-01")]
-        [InlineData("123", "2017-07-29", "2017-07-29", "2099-01-01")]
-        [InlineData("123", "2017-07-29", "2018-08-31", "2017-07-29")]
-        public void ValidationFails_ONSDataFails(string localAuthority, string effectiveFrom, string effectiveTo, string termination)
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
-
-            var startDate = new DateTime(2017, 7, 30);
-            var conRefNum = "12345";
-            var localAuthorityCode = "123";
-            var delLocPostCode = "CV1 1AB";
+                .Setup(m => m.GetLatestLearningStartForESFContract(It.IsAny<TestLearningDelivery>(), It.IsAny<List<TestLearningDelivery>>()))
+                        .Returns(new DateTime(2017, 07, 31));
 
             var testLearner = new TestLearner
             {
                 LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
                     {
-                        LearnStartDate = startDate,
-                        FundModel = 70,
-                        LearnAimRef = "foo",
-                        DelLocPostCode = delLocPostCode,
-                        ConRefNumber = conRefNum
+                        new TestLearningDelivery
+                        {
+                            LearnStartDate = new DateTime(2017, 1, 1),
+                            FundModel = 70,
+                            LearnAimRef = "12345678",
+                            DelLocPostCode = "CV1 2WT"
+                        },
                     }
-                }
             };
 
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
+            }
+        }
+
+        [Fact]
+        public void Validate_No_Error()
+        {
             var fcsServiceMock = new Mock<IFCSDataService>();
             fcsServiceMock
-                    .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(conRefNum))
-                    .Returns(new List<EsfEligibilityRuleLocalAuthority>
-                    {
+                .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(It.IsAny<string>()))
+                .Returns(new List<EsfEligibilityRuleLocalAuthority>
+                {
                         new EsfEligibilityRuleLocalAuthority
                         {
-                            Code = localAuthorityCode
-                        }
-                    });
+                            Code = "ABC"
+                        },
+                });
 
             var postcodeServiceMock = new Mock<IPostcodesDataService>();
             postcodeServiceMock
-                .Setup(m => m.GetONSPostcodes(delLocPostCode))
+                .Setup(m => m.GetONSPostcodes(It.IsAny<string>()))
                 .Returns(new ONSPostcode[]
                 {
-                    new ONSPostcode()
-                    {
-                        LocalAuthority = localAuthority,
-                        Termination = DateTime.Parse(termination),
-                        EffectiveFrom = DateTime.Parse(effectiveFrom),
-                        EffectiveTo = DateTime.Parse(effectiveTo)
-                    }
+                        new ONSPostcode()
+                        {
+                            LocalAuthority = "ABC",
+                            EffectiveFrom = new DateTime(2016, 1, 1)
+                        }
                 });
 
+            var learningDeliveries = new List<TestLearningDelivery> { };
             var dd22Mock = new Mock<IDerivedData_22Rule>();
             dd22Mock
-                .Setup(m => m.GetLatestLearningStartForESFContract(testLearner.LearningDeliveries.First(), testLearner.LearningDeliveries))
-                .Returns(startDate);
+                .Setup(m => m.GetLatestLearningStartForESFContract(It.IsAny<TestLearningDelivery>(), It.IsAny<List<TestLearningDelivery>>()))
+                        .Returns(new DateTime(2017, 07, 31));
 
-            NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
-            VerifyErrorHandlerMock(validationErrorHandlerMock, 1);
-        }
-
-        [Theory]
-        [InlineData("2018-09-01", "2018-08-01", "2018-10-01", "2018-10-01")]
-        [InlineData("2018-09-01", "2018-08-01", null, null)]
-        [InlineData("2018-09-01", "2018-08-01", "2018-10-01", null)]
-        [InlineData("2018-09-01", "2018-08-01", null, "2018-10-01")]
-        public void InQualifyingPeriod_False(string startDate, string effectiveFrom, string effectiveTo, string termination)
-        {
-            DateTime learnStartDate = DateTime.Parse(startDate);
-            DateTime effectivefromDate = DateTime.Parse(effectiveFrom);
-            DateTime? effectiveToDate = string.IsNullOrEmpty(effectiveTo) ? (DateTime?)null : DateTime.Parse(effectiveTo);
-            DateTime? terminationDate = string.IsNullOrEmpty(termination) ? (DateTime?)null : DateTime.Parse(termination);
-
-            var onsPostCode = new ONSPostcode()
+            var testLearner = new TestLearner
             {
-                EffectiveFrom = effectivefromDate,
-                EffectiveTo = effectiveToDate,
-                Termination = terminationDate
+                LearningDeliveries = new List<TestLearningDelivery>
+                    {
+                        new TestLearningDelivery
+                        {
+                            LearnStartDate = new DateTime(2017, 1, 1),
+                            FundModel = 70,
+                            LearnAimRef = "12345678",
+                            DelLocPostCode = "CV1 2WT"
+                        },
+                    }
             };
 
-            NewRule().CheckQualifyingPeriod(learnStartDate, onsPostCode).Should().BeFalse();
-        }
-
-        [Theory]
-        [InlineData("2018-09-01", "2018-10-01", "2018-10-01", "2018-10-01")]
-        [InlineData("2018-09-01", "2018-08-01", "2018-08-01", "2018-10-01")]
-        [InlineData("2018-09-01", "2018-08-01", "2018-10-01", "2018-08-01")]
-        [InlineData("2018-09-01", "2018-10-01", "2018-08-01", "2018-08-01")]
-        [InlineData("2018-09-01", "2018-10-01", "2018-08-01", null)]
-        [InlineData("2018-09-01", "2018-08-01", "2018-08-01", null)]
-        [InlineData("2018-09-01", "2018-10-01", null, "2018-08-01")]
-        [InlineData("2018-09-01", "2018-08-01", null, "2018-08-01")]
-        [InlineData("2018-09-01", "2018-10-01", null, "2018-10-01")]
-        [InlineData("2018-09-01", "2018-10-01", null, null)]
-        public void InQualifyingPeriod_True(string startDate, string effectiveFrom, string effectiveTo, string termination)
-        {
-            DateTime learnStartDate = DateTime.Parse(startDate);
-            DateTime effectivefromDate = DateTime.Parse(effectiveFrom);
-            DateTime? effectiveToDate = string.IsNullOrEmpty(effectiveTo) ? (DateTime?)null : DateTime.Parse(effectiveTo);
-            DateTime? terminationDate = string.IsNullOrEmpty(termination) ? (DateTime?)null : DateTime.Parse(termination);
-
-            var onsPostCode = new ONSPostcode()
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                EffectiveFrom = effectivefromDate,
-                EffectiveTo = effectiveToDate,
-                Termination = terminationDate
-            };
-
-            NewRule().CheckQualifyingPeriod(learnStartDate, onsPostCode).Should().BeTrue();
+                NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
+            }
         }
 
         [Fact]
-        public void PostcodesContainValidPostcode_False()
+        public void Validate_No_Error_NoEligibilityCriteria()
         {
-            DateTime learnStartDate = new DateTime(2018, 06, 01);
+            var fcsServiceMock = new Mock<IFCSDataService>();
+            fcsServiceMock
+                .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(It.IsAny<string>()))
+                .Returns(Utility.Collection.EmptyAndReadOnly<EsfEligibilityRuleLocalAuthority>());
 
-            var onsPostCodes = new List<ONSPostcode>()
+            var postcodeServiceMock = new Mock<IPostcodesDataService>();
+            postcodeServiceMock
+                .Setup(m => m.GetONSPostcodes(It.IsAny<string>()))
+                .Returns(new ONSPostcode[]
+                {
+                        new ONSPostcode()
+                        {
+                            LocalAuthority = "ABC",
+                            EffectiveFrom = new DateTime(2016, 1, 1)
+                        }
+                });
+
+            var learningDeliveries = new List<TestLearningDelivery> { };
+            var dd22Mock = new Mock<IDerivedData_22Rule>();
+            dd22Mock
+                .Setup(m => m.GetLatestLearningStartForESFContract(It.IsAny<TestLearningDelivery>(), It.IsAny<List<TestLearningDelivery>>()))
+                        .Returns(new DateTime(2017, 07, 31));
+
+            var testLearner = new TestLearner
             {
-                new ONSPostcode()
-                {
-                    EffectiveFrom = new DateTime(2018, 01, 01),
-                    EffectiveTo = new DateTime(2018, 05, 01),
-                    Termination = new DateTime(2018, 05, 01)
-                },
-                new ONSPostcode()
-                {
-                    EffectiveFrom = new DateTime(2017, 01, 01),
-                    EffectiveTo = new DateTime(2018, 01, 01),
-                    Termination = new DateTime(2018, 01, 01)
-                },
+                LearningDeliveries = new List<TestLearningDelivery>
+                    {
+                        new TestLearningDelivery
+                        {
+                            LearnStartDate = new DateTime(2017, 1, 1),
+                            FundModel = 70,
+                            LearnAimRef = "12345678",
+                            DelLocPostCode = "CV1 2WT"
+                        },
+                    }
             };
 
-            NewRule().PostcodesContainValidPostcode(learnStartDate, onsPostCodes).Should().BeFalse();
-        }
-
-        [Fact]
-        public void PostcodesContainValidPostcode_True()
-        {
-            DateTime learnStartDate = new DateTime(2018, 06, 01);
-
-            var onsPostCodes = new List<ONSPostcode>()
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                new ONSPostcode()
-                {
-                    EffectiveFrom = new DateTime(2018, 01, 01),
-                    EffectiveTo = new DateTime(2018, 07, 01),
-                    Termination = new DateTime(2018, 07, 01)
-                },
-                new ONSPostcode()
-                {
-                    EffectiveFrom = new DateTime(2017, 01, 01),
-                    EffectiveTo = new DateTime(2018, 01, 01),
-                    Termination = new DateTime(2018, 01, 01)
-                },
-            };
-
-            NewRule().PostcodesContainValidPostcode(learnStartDate, onsPostCodes).Should().BeTrue();
+                NewRule(validationErrorHandlerMock.Object, fcsServiceMock.Object, postcodeServiceMock.Object, dd22Mock.Object).Validate(testLearner);
+            }
         }
 
         private DelLocPostCode_14Rule NewRule(

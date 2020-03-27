@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -18,38 +15,70 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         {
         }
 
-        public void Validate(ILearner objectToValidate)
+        public void Validate(ILearner theLearner)
         {
-            if (objectToValidate?.LearningDeliveries == null)
+            if (theLearner.LearningDeliveries == null)
             {
                 return;
             }
 
-            var mainLearningDeliveries = objectToValidate.LearningDeliveries.Where(ld => ld.AimType == TypeOfAim.ProgrammeAim).ToList();
+            var learningDeliveries = GetProgrammeAims(theLearner.LearningDeliveries).ToList();
 
-            foreach (var mainLearningDelivery in mainLearningDeliveries)
+            if (HasMoreThanOneProgrammeAim(learningDeliveries))
             {
-                if (mainLearningDeliveries.Any(ld =>
-                    ld.AimSeqNumber != mainLearningDelivery.AimSeqNumber &&
-                    (
-                        (!ld.LearnActEndDateNullable.HasValue && !mainLearningDelivery.LearnActEndDateNullable.HasValue) ||
-                        (mainLearningDelivery.LearnStartDate >= ld.LearnStartDate &&
-                         ld.LearnActEndDateNullable.HasValue &&
-                         mainLearningDelivery.LearnStartDate <= ld.LearnActEndDateNullable))))
+                var learnRefNumber = theLearner.LearnRefNumber;
+
+                var errorLearningDeliveries = CompareAgainstOtherDeliveries(learningDeliveries, ConditionMet);
+                
+                foreach (var learningDelivery in errorLearningDeliveries)
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, mainLearningDelivery.AimSeqNumber, BuildErrorMessageParameters(mainLearningDelivery));
+                    RaiseValidationMessage(learnRefNumber, learningDelivery);
                 }
             }
         }
 
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(ILearningDelivery learningDelivery)
+        public bool ConditionMet(ILearningDelivery learningDelivery, ILearningDelivery comparisonLearningDelivery)
         {
-            return new[]
-            {
-                BuildErrorMessageParameter(PropertyNameConstants.AimType, learningDelivery.AimType),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learningDelivery.LearnStartDate),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, learningDelivery.LearnActEndDateNullable)
-            };
+            return !learningDelivery.LearnActEndDateNullable.HasValue && !comparisonLearningDelivery.LearnActEndDateNullable.HasValue;
         }
+
+        public IEnumerable<ILearningDelivery> GetProgrammeAims(IEnumerable<ILearningDelivery> learningDeliveries) => learningDeliveries.Where(ld => ld.AimType == TypeOfAim.ProgrammeAim);
+
+        public bool HasMoreThanOneProgrammeAim(IEnumerable<ILearningDelivery> candidates) => candidates.Count() > 1;
+
+        public IEnumerable<ILearningDelivery> CompareAgainstOtherDeliveries(IEnumerable<ILearningDelivery> learningDeliveries, Func<ILearningDelivery, ILearningDelivery, bool> predicate)
+        {
+            var learningDeliveriesList = learningDeliveries.ToList();
+
+            var collectionSize = learningDeliveriesList.Count;
+
+            for (var i = 0; i < collectionSize; i++)
+            {
+                for (var j = 0; j < collectionSize; j++)
+                {
+                    if (i != j)
+                    {
+                        var learningDeliveryOne = learningDeliveriesList[i];
+                        var learningDeliveryTwo = learningDeliveriesList[j];
+
+                        if (predicate(learningDeliveryOne, learningDeliveryTwo))
+                        {
+                            yield return learningDeliveryOne;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
+            HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
+
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery theDelivery) => new[]
+        {
+            BuildErrorMessageParameter(PropertyNameConstants.AimType, theDelivery.AimType),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, theDelivery.LearnStartDate),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, theDelivery.LearnActEndDateNullable),
+        };
     }
 }

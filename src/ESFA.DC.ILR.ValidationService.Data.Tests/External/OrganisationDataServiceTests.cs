@@ -168,6 +168,42 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
             NewService(externalDataCacheMock.Object).IsPartnerUkprn(ukprn).Should().BeFalse();
         }
 
+        [Fact]
+        public void IsLongTermResForUkprn_True()
+        {
+            var ukprn = 1;
+            var longtermresid = true;
+
+            var organisationDictionary = new Dictionary<long, Organisation>()
+            {
+                { ukprn, new Organisation() { UKPRN = ukprn, LongTermResid = longtermresid } },
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(rdc => rdc.Organisations).Returns(organisationDictionary);
+
+            NewService(externalDataCacheMock.Object).IsLongTermResForUkprn(ukprn).Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsLongTermResForUkprn_False()
+        {
+            var ukprn = 1;
+            var longtermresid = false;
+
+            var organisationDictionary = new Dictionary<long, Organisation>()
+            {
+                { ukprn, new Organisation() { UKPRN = ukprn, LongTermResid = longtermresid } },
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(rdc => rdc.Organisations).Returns(organisationDictionary);
+
+            NewService(externalDataCacheMock.Object).IsLongTermResForUkprn(ukprn).Should().BeFalse();
+        }
+
         private OrganisationDataService NewService(IExternalDataCache externalDataCache)
         {
             return new OrganisationDataService(externalDataCache);

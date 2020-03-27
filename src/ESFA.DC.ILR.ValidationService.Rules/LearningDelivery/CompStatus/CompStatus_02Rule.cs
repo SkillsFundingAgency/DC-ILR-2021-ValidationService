@@ -18,16 +18,38 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
         {
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (ConditionMet(learningDelivery.LearnActEndDateNullable, learningDelivery.CompStatus))
+                if (ConditionMet(
+                             learningDelivery.LearnActEndDateNullable, 
+                             learningDelivery.CompStatus,
+                             learningDelivery.FundModel, 
+                             learningDelivery.ProgTypeNullable))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.CompStatus, learningDelivery.LearnActEndDateNullable));
+                    HandleValidationError(
+                                        objectToValidate.LearnRefNumber, 
+                                        learningDelivery.AimSeqNumber, 
+                                        BuildErrorMessageParameters(
+                                                 learningDelivery.CompStatus, 
+                                                 learningDelivery.LearnActEndDateNullable));
                 }
             }
         }
 
-        public bool ConditionMet(DateTime? learnActEndDate, int compStatus)
+        public bool ConditionMet(DateTime? learnActEndDate, int compStatus, int fundModel, int? progType)
         {
-            return learnActEndDate.HasValue && compStatus == 1;
+            return learnActEndDate.HasValue
+                && compStatus == CompletionState.IsOngoing
+                && FundModelConditionMet(fundModel)
+                && ProgTypeConditionMet(progType);
+        }
+
+        public bool FundModelConditionMet(int fundModel)
+        {
+            return fundModel != TypeOfFunding.ApprenticeshipsFrom1May2017;
+        }
+
+        public bool ProgTypeConditionMet(int? progType)
+        {
+            return progType != TypeOfLearningProgramme.ApprenticeshipStandard;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int compStatus, DateTime? learnActEndDate)

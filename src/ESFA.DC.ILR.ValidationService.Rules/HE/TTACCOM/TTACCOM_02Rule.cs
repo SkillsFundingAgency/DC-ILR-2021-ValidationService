@@ -1,6 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
@@ -23,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "TTACCOM_02";
+        public const string Name = RuleNameConstants.TTACCOM_02;
 
         /// <summary>
         /// The message handler
@@ -96,9 +97,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
         /// </returns>
         public bool ConditionMet(int? tTAccom, DateTime referenceDate)
         {
-            return It.Has(tTAccom)
-                ? _lookupDetails.IsCurrent(TypeOfLimitedLifeLookup.TTAccom, tTAccom.Value, referenceDate)
-                : true;
+            if (!tTAccom.HasValue)
+            { // No value is supplied, pass, only fail is this is a valid tTAccom with invalid date
+                return true;
+            }
+
+            if (!_lookupDetails.Contains(TypeOfLimitedLifeLookup.TTAccom, tTAccom.Value))
+            { // Not a valid value, pass, only fail is this is a valid tTAccom with invalid date
+                return true;
+            }
+
+            // Check if the existing tTAccom is valid date wise.
+            return _lookupDetails.IsCurrent(TypeOfLimitedLifeLookup.TTAccom, tTAccom.Value, referenceDate);
         }
 
         /// <summary>

@@ -5,159 +5,103 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
-    public class LearnStartDate_14Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnStartDate_14Rule : AbstractRule, IRule<ILearner>
     {
-        /// <summary>
-        /// Gets the name of the rule.
-        /// </summary>
-        public const string Name = "LearnStartDate_14";
-
-        /// <summary>
-        /// The lars data (service)
-        /// </summary>
-        private readonly ILARSDataService _larsData;
-
-        /// <summary>
-        /// The derived date (rule) 18
-        /// </summary>
+        private readonly ILARSDataService _larsDataService;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFamQueryService;
         private readonly IDerivedData_18Rule _derivedData18;
 
-        /// <summary>
-        /// The check (rule common operations provider)
-        /// </summary>
-        private readonly IProvideRuleCommonOperations _check;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LearnStartDate_14Rule" /> class.
-        /// </summary>
-        /// <param name="validationErrorHandler">The validation error handler.</param>
-        /// <param name="larsData">The lars data.</param>
-        /// <param name="derivedData18">The derived date18.</param>
-        /// <param name="commonOperations">The common operations.</param>
         public LearnStartDate_14Rule(
-            IValidationErrorHandler validationErrorHandler,
-            ILARSDataService larsData,
+            ILARSDataService larsDataService,
+            ILearningDeliveryFAMQueryService learningDeliveryFamQueryService,
             IDerivedData_18Rule derivedData18,
-            IProvideRuleCommonOperations commonOperations)
-            : base(validationErrorHandler, Name)
+            IValidationErrorHandler validationErrorHandler)
+            : base(validationErrorHandler, RuleNameConstants.LearnStartDate_14)
         {
-            // this check should be in the base class
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(larsData)
-                .AsGuard<ArgumentNullException>(nameof(larsData));
-            It.IsNull(derivedData18)
-                .AsGuard<ArgumentNullException>(nameof(derivedData18));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
-            _larsData = larsData;
+            _larsDataService = larsDataService;
+            _learningDeliveryFamQueryService = learningDeliveryFamQueryService;
             _derivedData18 = derivedData18;
-            _check = commonOperations;
         }
 
-        /// <summary>
-        /// Gets the start for.
-        /// </summary>
-        /// <param name="thisDelivery">this delivery.</param>
-        /// <param name="usingSources">using sources.</param>
-        /// <returns>a start date for a standard apprecticehsip aim (or null for others)</returns>
-        public DateTime? GetStartFor(ILearningDelivery thisDelivery, IReadOnlyCollection<ILearningDelivery> usingSources) =>
-            _derivedData18.GetApprenticeshipStandardProgrammeStartDateFor(thisDelivery, usingSources);
-
-        /// <summary>
-        /// Gets the periods of validity for (this delivery).
-        /// </summary>
-        /// <param name="thisDelivery">this delivery.</param>
-        /// <returns>a collection of validity periods</returns>
-        public IReadOnlyCollection<ILARSStandardValidity> GetPeriodsOfValidityFor(ILearningDelivery thisDelivery) =>
-            _larsData.GetStandardValiditiesFor(thisDelivery.StdCodeNullable.Value);
-
-        /// <summary>
-        /// Determines whether [has standard code] [the specified this delivery].
-        /// </summary>
-        /// <param name="thisDelivery">The this delivery.</param>
-        /// <returns>
-        ///   <c>true</c> if [has standard code] [the specified this delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasStandardCode(ILearningDelivery thisDelivery) =>
-            It.Has(thisDelivery.StdCodeNullable);
-
-        /// <summary>
-        /// Determines whether [has qualifying period of validity] [the specified candidate].
-        /// </summary>
-        /// <param name="aim1StartDate">The candidate.</param>
-        /// <param name="periodsOfValidity">The periods of validity.</param>
-        /// <returns>
-        ///   <c>true</c> if [has qualifying period of validity] [the specified candidate]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasQualifyingPeriodOfValidity(DateTime? aim1StartDate, IReadOnlyCollection<ILARSStandardValidity> periodsOfValidity) =>
-            !It.Has(aim1StartDate) || periodsOfValidity.Any(x => x.IsCurrent(aim1StartDate.Value));
-
-        /// <summary>
-        /// Determines whether [is not valid] [the specified delivery].
-        /// </summary>
-        /// <param name="delivery">The delivery.</param>
-        /// <param name="deliveries">The using sources.</param>
-        /// <returns>
-        ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsNotValid(ILearningDelivery delivery, IReadOnlyCollection<ILearningDelivery> deliveries) =>
-            !_check.IsRestart(delivery) // <= a singular exclusion clause
-                && _check.IsStandardApprencticeship(delivery)
-                && delivery.AimType == TypeOfAim.ComponentAimInAProgramme
-                && HasStandardCode(delivery)
-                && !HasQualifyingPeriodOfValidity(GetStartFor(delivery, deliveries), GetPeriodsOfValidityFor(delivery));
-
-        /// <summary>
-        /// Validates the specified object.
-        /// </summary>
-        /// <param name="objectToValidate">The object to validate.</param>
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
+            {
+                var dd18Date = _derivedData18.GetApprenticeshipStandardProgrammeStartDateFor(learningDelivery, objectToValidate.LearningDeliveries);
 
-            var learnRefNumber = objectToValidate.LearnRefNumber;
-            var deliveries = objectToValidate.LearningDeliveries.AsSafeReadOnlyList();
+                if (dd18Date == null)
+                {
+                    continue;
+                }
 
-            objectToValidate.LearningDeliveries
-                .SafeWhere(x => IsNotValid(x, deliveries))
-                .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
+                if (ConditionMet(
+                    learningDelivery.ProgTypeNullable,
+                    learningDelivery.AimType,
+                    learningDelivery.StdCodeNullable,
+                    dd18Date.Value,
+                    learningDelivery.LearningDeliveryFAMs))
+                {
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(learningDelivery.StdCodeNullable));
+                }
+            }
         }
 
-        /// <summary>
-        /// Raises the validation message.
-        /// </summary>
-        /// <param name="learnRefNumber">The learn reference number.</param>
-        /// <param name="thisDelivery">this delivery.</param>
-        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)
+        public bool ConditionMet(int? progType, int aimType, int? stdCode, DateTime dd18Date, IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
-            HandleValidationError(learnRefNumber, thisDelivery.AimSeqNumber, BuildMessageParametersFor(thisDelivery));
+            return !Excluded(learningDeliveryFams)
+                && ProgTypeConditionMet(progType)
+                && AimTypeConditionMet(aimType)
+                && StandardCodeExists(stdCode)
+                && LARSConditionMet(stdCode.Value, dd18Date);
         }
 
-        /// <summary>
-        /// Builds the error message parameters.
-        /// </summary>
-        /// <param name="thisDelivery">The this delivery.</param>
-        /// <returns>
-        /// returns a list of message parameters
-        /// </returns>
-        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery thisDelivery)
+        public bool ProgTypeConditionMet(int? progType)
+        {
+            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        }
+
+        public bool AimTypeConditionMet(int aimType)
+        {
+            return aimType == TypeOfAim.ComponentAimInAProgramme;
+        }
+
+        public bool StandardCodeExists(int? stdCode)
+        {
+            return stdCode.HasValue;
+        }
+
+        public bool LARSConditionMet(int stdCode, DateTime dd18Date)
+        {
+            var larsStandard = _larsDataService.GetStandardFor(stdCode);
+
+            if (larsStandard != null)
+            {
+                return larsStandard.EffectiveTo.HasValue && dd18Date > larsStandard.EffectiveTo;
+            }
+
+            return false;
+        }
+
+        public bool Excluded(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
+        {
+            return _learningDeliveryFamQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, Monitoring.Delivery.Types.Restart);
+        }
+
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? stdCode)
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.StdCode, thisDelivery.StdCodeNullable)
+                BuildErrorMessageParameter(PropertyNameConstants.StdCode, stdCode)
             };
         }
     }
+
 }

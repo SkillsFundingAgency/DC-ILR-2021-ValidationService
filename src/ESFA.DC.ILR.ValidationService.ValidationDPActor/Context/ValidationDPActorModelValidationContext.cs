@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.ValidationDPActor.Context
 {
     public class ValidationDPActorModelValidationContext : IValidationContext
     {
-        public string Filename => throw new NotImplementedException();
+        public string Filename
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
         public string Container => throw new NotImplementedException();
 
@@ -41,5 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor.Context
         {
             set => throw new NotImplementedException();
         }
+
+        public int ReturnPeriod => throw new NotImplementedException();
     }
 }

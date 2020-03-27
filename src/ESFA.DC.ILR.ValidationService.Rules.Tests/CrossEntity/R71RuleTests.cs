@@ -5,7 +5,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
-using Moq;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
@@ -21,7 +20,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Fact]
         public void ValidationPasses()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
             var testMessage = new TestMessage()
             {
                 LearnerDestinationAndProgressions = new List<ILearnerDestinationAndProgression>
@@ -37,30 +35,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testMessage);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(testMessage);
+            }
         }
 
         [Fact]
         public void ValidationFails()
         {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
             var testMessage = new TestMessage()
             {
                 LearnerDestinationAndProgressions = new List<ILearnerDestinationAndProgression>
                 {
                     new TestLearnerDestinationAndProgression
                     {
-                        LearnRefNumber = "12345"
+                        LearnRefNumber = "0r71" // fails due to string i.e. 0r71 & 0R71
                     },
                     new TestLearnerDestinationAndProgression
                     {
-                        LearnRefNumber = "12345"
+                        LearnRefNumber = "0R71"
                     }
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object).Validate(testMessage);
-            validationErrorHandlerMock.Verify(h => h.Handle("R71", "12345", null, null));
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(testMessage);
+            }
         }
 
         private R71Rule NewRule(IValidationErrorHandler validationErrorHandler = null)

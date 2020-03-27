@@ -123,7 +123,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(candidate);
 
             // act
-            var result = sut.IsTargetApprencticeship(mockDelivery.Object);
+            var result = sut.IsTargetApprenticeship(mockDelivery.Object);
 
             // assert
             Assert.Equal(expectation, result);

@@ -53,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         ///   <c>true</c> if [has restrictions match] [the specified candidate]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasRestrictionsMatch(ILearningDelivery candidate, ILearningDelivery andDelivery) =>
-            _check.IsStandardApprencticeship(candidate)
+            _check.IsStandardApprenticeship(candidate)
                 && _check.InAProgramme(candidate)
                 && HasMatchingStandardCode(candidate, andDelivery);
 

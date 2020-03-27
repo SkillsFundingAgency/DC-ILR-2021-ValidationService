@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS;
-using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Model;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -1939,103 +1938,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                 .BeFalse();
         }
 
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void GetCoreGovContributionCapForStandard_NoStandardMatch(int standardCode)
-        {
-            var standards = new List<LARSStandard>()
-            {
-                new LARSStandard()
-                {
-                    StandardCode = 2,
-                },
-            };
-
-            var externalDataCacheMock = new Mock<IExternalDataCache>();
-
-            externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
-
-            NewService(externalDataCacheMock.Object).GetStandardFundingForCodeOnDate(standardCode, It.IsAny<DateTime>())
-                .Should().BeNull();
-        }
-
-        [Theory]
-        [InlineData("2017-10-10", null, "2017-10-10")]
-        [InlineData("2017-10-08", null, "2017-10-09")]
-        [InlineData("2017-10-09", "2017-10-10", "2017-10-10")]
-        [InlineData("2016-10-09", "2017-10-10", "2017-10-10")]
-        [InlineData("2016-10-09", null, "2018-08-11")]
-        public void GetCoreGovContributionCapForStandard_Match(string effectiveFrom, string effectiveTo, string learnStartDate)
-        {
-            var standards = new List<LARSStandard>()
-            {
-                new LARSStandard()
-                {
-                    StandardCode = 2,
-                    StandardsFunding = new ILARSStandardFunding[]
-                    {
-                        new LARSStandardFunding()
-                        {
-                            CoreGovContributionCap = 10,
-                            EffectiveFrom = DateTime.Parse(effectiveFrom),
-                            EffectiveTo = effectiveTo == null ? null : (DateTime?)DateTime.Parse(effectiveTo)
-                        },
-                        new LARSStandardFunding()
-                        {
-                            CoreGovContributionCap = null,
-                            EffectiveFrom = DateTime.Parse(learnStartDate).AddDays(1),
-                            EffectiveTo = effectiveTo == null ? null : (DateTime?)DateTime.Parse(effectiveTo)
-                        }
-                    }
-                },
-            };
-
-            var externalDataCacheMock = new Mock<IExternalDataCache>();
-
-            externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
-
-            NewService(externalDataCacheMock.Object).GetStandardFundingForCodeOnDate(2, DateTime.Parse(learnStartDate)).CoreGovContributionCap
-                .Should().Be(10);
-        }
-
-        [Theory]
-        [InlineData("2017-10-11", null, "2017-10-10")]
-        [InlineData("2016-10-09", "2017-10-09", "2017-10-10")]
-        [InlineData("2017-10-09", "2017-10-09", "2017-10-10")]
-        public void GetCoreGovContributionCapForStandard_NoDateMatch(string effectiveFrom, string effectiveTo, string learnStartDate)
-        {
-            var standards = new List<LARSStandard>()
-            {
-                new LARSStandard()
-                {
-                    StandardCode = 2,
-                    StandardsFunding = new ILARSStandardFunding[]
-                    {
-                        new LARSStandardFunding()
-                        {
-                            CoreGovContributionCap = 10,
-                            EffectiveFrom = DateTime.Parse(effectiveFrom),
-                            EffectiveTo = effectiveTo == null ? null : (DateTime?)DateTime.Parse(effectiveTo)
-                        },
-                        new LARSStandardFunding()
-                        {
-                            CoreGovContributionCap = null,
-                            EffectiveFrom = DateTime.Parse(learnStartDate).AddDays(1),
-                            EffectiveTo = effectiveTo == null ? null : (DateTime?)DateTime.Parse(effectiveTo)
-                        }
-                    }
-                },
-            };
-
-            var externalDataCacheMock = new Mock<IExternalDataCache>();
-
-            externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
-
-            NewService(externalDataCacheMock.Object).GetStandardFundingForCodeOnDate(2, DateTime.Parse(learnStartDate))
-                .Should().Be(null);
-        }
-
         [Fact]
         public void FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes_True()
         {
@@ -2214,6 +2116,53 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
             NewService(externalDataCacheMock.Object).FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, frameWorkComponentTypes, learnStartDate)
                 .Should()
                 .BeFalse();
+        }
+
+        [Fact]
+        public void GetStandardFundingForCode_Match()
+        {
+            var standardCode = 1;
+
+            var standards = new List<LARSStandard>()
+            {
+                new LARSStandard()
+                {
+                    StandardCode = standardCode,
+                    EffectiveTo = new DateTime(2019, 12, 01)
+                },
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
+
+            var result = NewService(externalDataCacheMock.Object).GetStandardFor(standardCode);
+
+            result.StandardCode.Should().Be(1);
+            result.EffectiveTo.Should().Be(new DateTime(2019, 12, 01));
+        }
+
+        [Fact]
+        public void GetStandardFundingForCode_NoMatch()
+        {
+            var standardCode = 1;
+
+            var standards = new List<LARSStandard>()
+            {
+                new LARSStandard()
+                {
+                    StandardCode = 2,
+                    EffectiveTo = new DateTime(2019, 12, 01)
+                },
+            };
+
+            var externalDataCacheMock = new Mock<IExternalDataCache>();
+
+            externalDataCacheMock.SetupGet(dc => dc.Standards).Returns(standards);
+
+            var result = NewService(externalDataCacheMock.Object).GetStandardFor(standardCode);
+
+            result.Should().BeNull();
         }
 
         private LARSDataService NewService(IExternalDataCache externalDataCache = null)

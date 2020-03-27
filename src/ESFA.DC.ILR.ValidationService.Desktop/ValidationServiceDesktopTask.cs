@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Autofac;
 using ESFA.DC.ILR.Desktop.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Providers.Utils;
 using ESFA.DC.Logging.Interfaces;
 
 namespace ESFA.DC.ILR.ValidationService.Desktop
@@ -32,7 +33,15 @@ namespace ESFA.DC.ILR.ValidationService.Desktop
                     logger.LogDebug("Validation start");
                     var orchestrationService = childLifeTimeScope.Resolve<IPreValidationOrchestrationService>();
 
-                    await orchestrationService.ExecuteAsync(context, cancellationToken);
+                    try
+                    {
+                        await orchestrationService.ExecuteAsync(context, cancellationToken);
+                    }
+                    catch (ValidationSeverityFailException ex)
+                    {
+                        logger.LogError(ex.Message);
+                        throw;
+                    }
 
                     logger.LogDebug("Validation complete");
 

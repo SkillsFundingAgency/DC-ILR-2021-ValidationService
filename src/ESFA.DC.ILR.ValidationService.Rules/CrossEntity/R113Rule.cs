@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
     public class R113Rule : AbstractRule, IRule<ILearner>
     {
-        public R113Rule(IValidationErrorHandler validationErrorHandler)
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
+
+        public R113Rule(
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
+            IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.R113)
         {
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -27,63 +31,62 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (learningDelivery.LearningDeliveryFAMs != null
-                    && ConditionMet(
-                    learningDelivery.LearnActEndDateNullable,
-                    learningDelivery.LearningDeliveryFAMs,
-                    out string learnDelFAMType,
-                    out DateTime? learnDelFAMDateTo))
+                // Excluding condition
+                if (FundModelConditionMet(learningDelivery.FundModel) && ProgTypeConditionMet(learningDelivery.ProgTypeNullable))
                 {
+                    continue;
+                }
+                
+                if (ConditionMet(
+                               learningDelivery.FundModel, 
+                               learningDelivery.LearnActEndDateNullable, 
+                               learningDelivery.LearningDeliveryFAMs))
+                {
+                    var learnDelFAMDateTo = GetLearnDelFAMDate(learningDelivery.LearningDeliveryFAMs)?.LearnDelFAMDateToNullable;
+
                     HandleValidationError(
-                        objectToValidate.LearnRefNumber,
-                        learningDelivery.AimSeqNumber,
-                        BuildErrorMessageParameters(
-                            learningDelivery.LearnActEndDateNullable,
-                            learnDelFAMType,
-                            learnDelFAMDateTo));
+                                    objectToValidate.LearnRefNumber,
+                                    learningDelivery.AimSeqNumber,
+                                    BuildErrorMessageParameters(
+                                                             learningDelivery.LearnActEndDateNullable,
+                                                             LearningDeliveryFAMTypeConstants.ACT,
+                                                             learnDelFAMDateTo));
                 }
             }
         }
 
-        public bool ConditionMet(
-            DateTime? learnActEndDateNullable,
-            IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs,
-            out string learnDelFAMType,
-            out DateTime? learnDelFAMDateTo)
+        public bool ConditionMet(int fundModel, DateTime? actEndDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            learnDelFAMType = string.Empty;
-            learnDelFAMDateTo = null;
-
-            return learnActEndDateNullable == null
-                && LearningDeliveryFAMsConditionMet(
-                    learningDeliveryFAMs,
-                    out learnDelFAMType,
-                    out learnDelFAMDateTo);
+            return FundModelConditionMet(fundModel)
+                && LearnActEndDateNotKnown(actEndDate)
+                && ContractTypeConditionMet(learningDeliveryFAMs)
+                && FAMDateConditionMet(learningDeliveryFAMs);
         }
 
-        public bool LearningDeliveryFAMsConditionMet(
-            IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs,
-            out string learnDelFAMType,
-            out DateTime? learnDelFAMDateTo)
+        public bool FundModelConditionMet(int fundModel)
         {
-            var latestLearnDelFAMDate = learningDeliveryFAMs?
-                .Where(f => f.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.ACT)
-                && f.LearnDelFAMDateFromNullable.HasValue)?
-                .OrderByDescending(o => o.LearnDelFAMDateFromNullable)
-                .FirstOrDefault();
+            return fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+        }
 
-            if (latestLearnDelFAMDate != null
-                && latestLearnDelFAMDate.LearnDelFAMDateToNullable.HasValue)
-            {
-                learnDelFAMType = latestLearnDelFAMDate.LearnDelFAMType;
-                learnDelFAMDateTo = latestLearnDelFAMDate.LearnDelFAMDateToNullable;
-                return true;
-            }
+        public bool ProgTypeConditionMet(int? progType)
+        {
+            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        }
 
-            learnDelFAMType = string.Empty;
-            learnDelFAMDateTo = null;
+        public bool LearnActEndDateNotKnown(DateTime? actEndDate)
+        {
+            return actEndDate == null;
+        }
 
-            return false;
+        public bool ContractTypeConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        {
+            return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT);
+        }
+
+        public bool FAMDateConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        {
+            var learnDelFAMDateTo = GetLearnDelFAMDate(learningDeliveryFAMs)?.LearnDelFAMDateToNullable;
+            return learnDelFAMDateTo.HasValue;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(
@@ -97,6 +100,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, learnDelFAMType),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMDateTo, learnDelFAMDateTo)
             };
+        }
+
+        private ILearningDeliveryFAM GetLearnDelFAMDate(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        {
+            return learningDeliveryFAMs?
+                        .Where(f => f.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.ACT)
+                        && f.LearnDelFAMDateFromNullable.HasValue)?
+                        .OrderByDescending(o => o.LearnDelFAMDateFromNullable)
+                        .FirstOrDefault();
         }
     }
 }

@@ -29,5 +29,10 @@
         /// The next year commencement
         /// </summary>
         NextYearCommencement,
+
+        /// <summary>
+        /// The August 1st Date for traineeships 
+        /// </summary>
+        TraineeshipsAugust1,
     }
 }

@@ -1,22 +1,21 @@
-﻿using ESFA.DC.ILR.Tests.Model;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Learner.Postcode;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
 {
     public class LSDPostcode_01RuleTests : AbstractRuleTests<LSDPostcode_01Rule>
     {
-        private DateTime _firstAugust2019 = new DateTime(2019, 08, 01);
-
         [Fact]
         public void RuleName()
         {
@@ -24,207 +23,255 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         [Fact]
-        public void LearnStartDate_Passes_AsStartDateisEqual()
+        public void LearnSartDateConditionMet_True()
         {
-            var startDate = new DateTime(2019, 08, 01);
-            NewRule().LearnStartDateConditionMet(startDate).Should().BeTrue();
+            NewRule().LearnStartDateConditionMet(new DateTime(2019, 8, 1)).Should().BeTrue();
         }
 
         [Fact]
-        public void LearnStartDate_True_AsStartIsGreater()
+        public void LearnSartDateConditionMet_False()
         {
-            var startDate = new DateTime(2019, 12, 01);
-            NewRule().LearnStartDateConditionMet(startDate).Should().BeTrue();
-        }
-
-        [Fact]
-        public void LearnStartDate_Fails_AsStartisLessThan()
-        {
-            var startDate = new DateTime(2019, 07, 01);
-            NewRule().LearnStartDateConditionMet(startDate).Should().BeFalse();
+            NewRule().LearnStartDateConditionMet(new DateTime(2018, 8, 1)).Should().BeFalse();
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, true)]
-        [InlineData(TypeOfFunding.OtherAdult, false)]
-        [InlineData(15, false)]
-        public void FundModelConditionMet(int fundModel, bool asExpected)
+        [InlineData(10)]
+        [InlineData(35)]
+        public void FundModelConditionMet_True(int fundModel)
         {
-            NewRule().FundModelConditionMet(fundModel).Should().Be(asExpected);
+            NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
         }
 
         [Fact]
-        public void PostcodeNullCondition_Passes()
+        public void FundModelConditionMet_False()
         {
-            NewRule().PostCodeNullConditionMet("postcode").Should().BeTrue();
+            NewRule().FundModelConditionMet(70).Should().BeFalse();
         }
 
         [Fact]
-        public void TemporaryPostcodeConditionMet_False()
+        public void PostcodeConditionMet_False()
         {
-            NewRule().TemporaryPostcodeConditionMet("ZZ99 9ZZ").Should().BeFalse();
+            var postcode = "Postcode";
+
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+
+            postcodeDataServiceMock.Setup(p => p.PostcodeExists(postcode)).Returns(true);
+
+            NewRule(postcodesDataService: postcodeDataServiceMock.Object).PostcodeConditionMet(postcode).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData("Postcode")]
+        [InlineData(null)]
+        public void PostcodeConditionMet_True(string postcode)
+        {
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+
+            postcodeDataServiceMock.Setup(p => p.PostcodeExists(postcode)).Returns(false);
+
+            NewRule(postcodesDataService: postcodeDataServiceMock.Object).PostcodeConditionMet(postcode).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("LDM", null, null, true)]
+        [InlineData("ACT", "ZZ99 9ZZ", null, false)]
+        [InlineData("ACT", null, 1, false)]
+        public void IsExcluded_True(string famType, string postcode, int? progType, bool mockResult)
+        {
+            var learningDeliveryFAMs = new List<ILearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = famType,
+                    LearnDelFAMCode = "034"
+                },
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMCode = "034"
+                }
+            };
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(mockResult);
+
+            NewRule(learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object).IsExcluded(progType, postcode, learningDeliveryFAMs).Should().BeTrue();
         }
 
         [Fact]
-        public void TemporaryPostcodeConditionMet_True()
+        public void IsExcluded_False()
         {
-            NewRule().TemporaryPostcodeConditionMet("Postcode").Should().BeTrue();
-        }
+            var learningDeliveryFAMs = new List<ILearningDeliveryFAM>
+            {
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMCode = "034"
+                },
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMCode = "034"
+                }
+            };
 
-        [Theory]
-        [InlineData("postcode", true)]
-        [InlineData("ZZ99 9ZZ", true)]
-        public void ValidPostcodeConditionMet(string postCode, bool asExpected)
-        {
-            var mockPostcodesService = new Mock<IPostcodesDataService>();
-            mockPostcodesService.Setup(x => x.PostcodeExists(postCode)).Returns(true);
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            var ruleLSDPostcode = NewRule(postcodesDataService: mockPostcodesService.Object).ValidPostcodeConditionMet(postCode);
-            ruleLSDPostcode.Should().Be(asExpected);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
 
-            mockPostcodesService.Verify(x => x.PostcodeExists(postCode), Times.AtLeastOnce);
-        }
-
-        [Theory]
-        [InlineData(null, false)]
-        [InlineData(23, true)]
-        [InlineData(TypeOfLearningProgramme.Traineeship, false)]
-        public void ProgtypeConditionMet(int? progType, bool asExpected)
-        {
-            NewRule().ProgTypeConditionMet(progType).Should().Be(asExpected);
-        }
-
-        [Theory]
-        [InlineData(null, false)]
-        [InlineData("", false)]
-        [InlineData(" ", false)]
-        public void PostcodeNullCondition_Fails(string postcode, bool asExpected)
-        {
-            NewRule().PostCodeNullConditionMet(postcode).Should().Be(asExpected);
+            NewRule(learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object).IsExcluded(null, null, learningDeliveryFAMs).Should().BeFalse();
         }
 
         [Fact]
         public void ConditionMet_True()
         {
-            var progType = 25;
-            var fundModel = TypeOfFunding.AdultSkills;
-            var lsdPostcode = "lsdPostcode";
-            var startDate = new DateTime(2019, 09, 01);
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var fundModel = 35;
+            var lsdPostcode = "Postcode";
 
-            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
-            mockPostcodesDataService.Setup(x => x.PostcodeExists(lsdPostcode)).Returns(true);
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            var lsdRule = NewRule(postcodesDataService: mockPostcodesDataService.Object).ConditionMet(progType, fundModel, lsdPostcode, startDate);
-            lsdRule.Should().BeTrue();
-            mockPostcodesDataService.Verify(x => x.PostcodeExists(lsdPostcode), Times.AtLeastOnce);
+            postcodeDataServiceMock.Setup(p => p.PostcodeExists(lsdPostcode)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
+
+            NewRule(postcodesDataService: postcodeDataServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(24, TypeOfFunding.AdultSkills, "lsdPostCode", "2018-09-11", true)] // progType condition Fails
-        [InlineData(25, TypeOfFunding.OtherAdult, "lsdPostcode", "2019-09-11", true)] // fundModel condition Fails
-        [InlineData(25, TypeOfFunding.AdultSkills, null, "2019-09-11", true)] // postcode nullable condition Fails
-        [InlineData(25, TypeOfFunding.AdultSkills, "ZZ99 9ZZ", "2019-09-11", true)] // temp postcode condition Fails
-        [InlineData(25, TypeOfFunding.AdultSkills, "wrongPostCode", "2019-09-11", false)] // valid postcode condition Fails
-        [InlineData(25, TypeOfFunding.AdultSkills, "lsdPostCode", "2018-09-11", true)] // startDate condition Fails
-        public void ConditionMet_False(int progType, int fundModel, string lsdPostcode, string startDate, bool mockPostcodeResult)
+        [InlineData(2018, 35, true, false)]
+        [InlineData(2019, 70, true, false)]
+        [InlineData(2019, 35, true, false)]
+        [InlineData(2019, 35, true, true)]
+        public void ConditionMet_False(int year, int fundModel, bool lsdPostcodeMock, bool ldFamMock)
         {
-            var learnStartDate = DateTime.Parse(startDate);
+            var learnStartDate = new DateTime(year, 8, 1);
+            var lsdPostcode = "Postcode";
 
-            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
-            mockPostcodesDataService.Setup(x => x.PostcodeExists(lsdPostcode)).Returns(mockPostcodeResult);
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            var lsdRule = NewRule(postcodesDataService: mockPostcodesDataService.Object).ConditionMet(progType, fundModel, lsdPostcode, learnStartDate);
-            lsdRule.Should().BeFalse();
+            postcodeDataServiceMock.Setup(p => p.PostcodeExists(lsdPostcode)).Returns(lsdPostcodeMock);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(ldFamMock);
+
+            NewRule(postcodesDataService: postcodeDataServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object)
+                .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeFalse();
         }
 
-        [Fact]
-        public void Validate_Error()
+       [Fact]
+        public void ValidateError()
         {
-            var lsdPostcode = "LSDPostcode";
-            var learnStartDate = new DateTime(2019, 09, 01);
-
-            var learningDeliveries = new List<TestLearningDelivery>()
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var fundModel = 35;
+            var lsdPostcode = "Postcode";
+            var learningDeliveryFams = new List<TestLearningDeliveryFAM>
             {
-                 new TestLearningDelivery
-                 {
-                     FundModel = 35,
-                     ProgTypeNullable = 25,
-                     AimType = 1,
-                     LearnStartDate = learnStartDate,
-                     LSDPostcode = lsdPostcode
-                 }
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMCode = "034"
+                },
+            };
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnStartDate = learnStartDate,
+                FundModel = fundModel,
+                LSDPostcode = lsdPostcode,
+                LearningDeliveryFAMs = learningDeliveryFams
             };
 
-            var learner = new TestLearner()
+            var learner = new TestLearner
             {
-                Postcode = lsdPostcode,
-                LearnRefNumber = "LearnRefNumber",
-                LearningDeliveries = learningDeliveries
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    learningDelivery,
+                    learningDelivery,
+                }
             };
 
-            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
-            mockPostcodesDataService.Setup(ds => ds.PostcodeExists(lsdPostcode)).Returns(true);
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+
+            postcodeDataServiceMock.Setup(p => p.PostcodeExists(lsdPostcode)).Returns(false);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(mockPostcodesDataService.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, postcodeDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<object>()), Times.Exactly(6));
             }
         }
 
         [Fact]
-        public void Validate_NoError()
+        public void ValidateNoError()
         {
-            var lsdPostcode = "LSDPostcode";
-            var learnStartDate = new DateTime(2019, 09, 01);
-
-            var learningDeliveries = new List<TestLearningDelivery>()
+            var learnStartDate = new DateTime(2019, 8, 1);
+            var fundModel = 35;
+            var lsdPostcode = "Postcode";
+            var learningDeliveryFams = new List<TestLearningDeliveryFAM>
             {
-                 new TestLearningDelivery
-                 {
-                     FundModel = 35,
-                     ProgTypeNullable = 24, // no error for ProgType = 24
-                     AimType = 1,
-                     LearnStartDate = learnStartDate,
-                     LSDPostcode = lsdPostcode
-                 }
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "ACT",
+                    LearnDelFAMCode = "034"
+                },
+            };
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnStartDate = learnStartDate,
+                FundModel = fundModel,
+                LSDPostcode = lsdPostcode,
+                LearningDeliveryFAMs = learningDeliveryFams
             };
 
-            var learner = new TestLearner()
+            var learner = new TestLearner
             {
-                Postcode = lsdPostcode,
-                LearnRefNumber = "LearnRefNumber",
-                LearningDeliveries = learningDeliveries
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    learningDelivery,
+                    learningDelivery,
+                }
             };
 
-            var mockPostcodesDataService = new Mock<IPostcodesDataService>();
-            mockPostcodesDataService.Setup(ds => ds.PostcodeExists(lsdPostcode)).Returns(true);
+            var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+
+            postcodeDataServiceMock.Setup(p => p.PostcodeExists(lsdPostcode)).Returns(true);
+            learningDeliveryFamQueryServiceMock.Setup(ldf => ldf.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS)).Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(mockPostcodesDataService.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, postcodeDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object).Validate(learner);
+                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<object>()), Times.Exactly(0));
             }
         }
 
         [Fact]
         public void BuildErrorMessageParameters()
         {
-            var learnStartDate = new DateTime(2018, 09, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
-            var lsdPostcode = "lsdPostCode";
+            var learsStartDate = new DateTime(2019, 8, 1);
+            var fundModel = 36;
+            var lsdPostcode = "Postcode";
+
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, "01/09/2018")).Verifiable();
-            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel)).Verifiable();
-            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.LSDPostcode, lsdPostcode)).Verifiable();
+            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, "01/08/2019")).Verifiable();
+            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.FundModel, 36)).Verifiable();
+            validationErrorHandlerMock.Setup(x => x.BuildErrorMessageParameter(PropertyNameConstants.LSDPostcode, "Postcode")).Verifiable();
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(learnStartDate, fundModel, lsdPostcode);
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(learsStartDate, fundModel, lsdPostcode);
 
             validationErrorHandlerMock.Verify();
         }
 
-        private LSDPostcode_01Rule NewRule(IPostcodesDataService postcodesDataService = null, IValidationErrorHandler validationErrorHandler = null)
+        private LSDPostcode_01Rule NewRule(
+            IValidationErrorHandler validationErrorHandler = null,
+            IPostcodesDataService postcodesDataService = null,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null)
         {
-            return new LSDPostcode_01Rule(postcodesDataService, validationErrorHandler);
+            return new LSDPostcode_01Rule(validationErrorHandler, postcodesDataService, learningDeliveryFAMQueryService);
         }
     }
 }

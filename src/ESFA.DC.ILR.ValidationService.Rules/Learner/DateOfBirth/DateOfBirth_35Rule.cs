@@ -42,8 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                         objectToValidate.DateOfBirthNullable,
                         learningDelivery.LearningDeliveryFAMs))
                     {
-                        HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(objectToValidate.DateOfBirthNullable, learningDelivery.ProgTypeNullable));
-                        return;
+                        HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(objectToValidate.DateOfBirthNullable, learningDelivery.ProgTypeNullable));                        
                     }
                 }
             }
@@ -89,7 +88,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool ApprenticeshipDurationConditionMet(DateTime learnStartDate, DateTime learnPlanEndDate)
         {
-            return _dateTimeQueryService.DaysBetween(learnStartDate, learnPlanEndDate) < 365;
+            return _dateTimeQueryService.WholeDaysBetween(learnStartDate, learnPlanEndDate) < 365;
         }
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)

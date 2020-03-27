@@ -116,11 +116,14 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                     Organisations = externalDataCacheGet.Organisations,
                     Postcodes = externalDataCacheGet.Postcodes.ToCaseInsensitiveHashSet(),
                     ONSPostcodes = externalDataCacheGet.ONSPostcodes,
+                    DevolvedPostcodes = externalDataCacheGet.DevolvedPostcodes,
                     Standards = externalDataCacheGet.Standards,
                     StandardValidities = externalDataCacheGet.StandardValidities,
                     ULNs = externalDataCacheGet.ULNs,
                     ValidationErrors = externalDataCacheGet.ValidationErrors.ToCaseInsensitiveDictionary(),
-                    CampusIdentifiers = externalDataCacheGet.CampusIdentifiers
+                    CampusIdentifiers = externalDataCacheGet.CampusIdentifiers,
+                    ValidationRules = externalDataCacheGet.ValidationRules,
+                    ReturnPeriod = externalDataCacheGet.ReturnPeriod
                 };
 
                 logger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} finished getting input data");

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ESFA.DC.ILR.ValidationService.Rules.Constants
+﻿namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 {
     public static class LegalOrgTypeConstants
     {
         public const string LAFB = "LAFB";
+
+        public const string LTR = "LTR";
 
         public const string SSPS = "SSPS";
 

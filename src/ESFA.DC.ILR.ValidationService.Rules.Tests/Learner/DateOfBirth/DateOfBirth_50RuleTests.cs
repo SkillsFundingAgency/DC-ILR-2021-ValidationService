@@ -3,7 +3,6 @@ using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
@@ -22,12 +21,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         }
 
         [Theory]
-        [InlineData("2018-01-01")]
-        [InlineData("2018-08-01")]
-        public void ConditionMet_True(string learnStartDateString)
+        [InlineData("2019-08-02", false)]
+        [InlineData("2019-07-31", true)]
+        public void ConditionMet(string learnStartDateString, bool expected)
         {
             DateTime learnStartDate = DateTime.Parse(learnStartDateString);
-            var firstAugustForAcademicYearOfLearnersSixteenthBirthDate = new DateTime(2018, 08, 01);
+            var firstAugustForAcademicYearOfLearnersSixteenthBirthDate = new DateTime(2019, 08, 01);
 
             var learningDelivery = new TestLearningDelivery
             {
@@ -36,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 LearnStartDate = learnStartDate
             };
 
-            NewRule().ConditionMet(learningDelivery, firstAugustForAcademicYearOfLearnersSixteenthBirthDate).Should().BeTrue();
+            NewRule().ConditionMet(learningDelivery, firstAugustForAcademicYearOfLearnersSixteenthBirthDate).Should().Be(expected);
         }
 
         [Fact]
@@ -63,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             {
                 ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
                 AimType = TypeOfAim.ComponentAimInAProgramme,
-                LearnStartDate = new DateTime(2018, 01, 01)
+                LearnStartDate = new DateTime(2018, 07, 01)
             };
 
             NewRule().ConditionMet(learningDelivery, firstAugustForAcademicYearOfLearnersSixteenthBirthDate).Should().BeFalse();
@@ -98,14 +97,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     {
                         ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
                         AimType = TypeOfAim.ProgrammeAim,
-                        LearnStartDate = new DateTime(2018, 01, 01)
+                        LearnStartDate = new DateTime(2018, 07, 31)
                     }
                 }
             };
 
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
             academicYearDataServiceMock
-                .Setup(ds => ds.GetAcademicYearOfLearningDate(It.IsAny<DateTime>(), AcademicYearDates.Commencement))
+                .Setup(ds => ds.GetAcademicYearOfLearningDate(It.IsAny<DateTime>(), AcademicYearDates.TraineeshipsAugust1))
                 .Returns(new DateTime(2018, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
@@ -151,17 +150,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     {
                         ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
                         AimType = TypeOfAim.ProgrammeAim,
-                        LearnStartDate = new DateTime(2017, 08, 01)
+                        LearnStartDate = new DateTime(2018, 08, 01)
                     }
                 }
             };
 
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
             academicYearDataServiceMock
-                .Setup(ds => ds.GetAcademicYearOfLearningDate(It.IsAny<DateTime>(), AcademicYearDates.Commencement))
+                .Setup(ds => ds.GetAcademicYearOfLearningDate(It.IsAny<DateTime>(), AcademicYearDates.TraineeshipsAugust1))
                 .Returns(new DateTime(2018, 08, 01));
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
                 NewRule(academicYearDataServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }

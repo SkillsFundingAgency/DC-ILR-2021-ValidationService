@@ -9,11 +9,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface
     public interface IAcademicYearDataService : IDataService
     {
         /// <summary>
-        /// Gets the academic year date of today.
-        /// </summary>
-        DateTime Today { get; }
-
-        /// <summary>
         /// Gets an academic year of learning date.
         /// </summary>
         /// <param name="candidate">
@@ -44,5 +39,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface
         /// </summary>
         /// <returns>an academic year start date</returns>
         DateTime Start();
+
+        DateTime PreviousYearEnd();
+
+        int ReturnPeriod();
     }
 }

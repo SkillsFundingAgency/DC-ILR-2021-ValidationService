@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using ESFA.DC.ILR.Model.Interface;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -31,7 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
             _messageCachePopulationService.Populate(message);
             _internalDataCachePopulationService.Populate(referenceDataRoot);
             _fileDataCachePopulationService.Populate(validationContext, message);
-            _externalDataCachePopulationService.Populate(referenceDataRoot);
+            _externalDataCachePopulationService.Populate(referenceDataRoot, validationContext);
         }
     }
 }

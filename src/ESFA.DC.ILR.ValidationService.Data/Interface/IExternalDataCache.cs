@@ -6,8 +6,8 @@ using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationErrors.Model;
-using System.Collections.Generic;
 using ESFA.DC.ILR.ValidationService.Data.External.ValidationRules.Model;
+using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Interface
 {
@@ -49,6 +49,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.Interface
         /// </summary>
         IReadOnlyCollection<IONSPostcode> ONSPostcodes { get; }
 
+        /// <summary>
+        /// Gets the Devolved postcodes.
+        /// </summary>
+        IReadOnlyDictionary<string, IReadOnlyCollection<IDevolvedPostcode>> DevolvedPostcodes { get; }
+
         IReadOnlyDictionary<string, ValidationError> ValidationErrors { get; }
 
         /// <summary>
@@ -62,5 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Interface
         /// Gets the Validation Rules
         /// </summary>
         IReadOnlyCollection<ValidationRule> ValidationRules { get; }
+
+        int ReturnPeriod { get; }
     }
 }

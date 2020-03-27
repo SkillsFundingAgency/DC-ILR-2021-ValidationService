@@ -136,6 +136,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AchDate
         }
 
         [Fact]
+        public void ApprenticeshipConditionMet_False_AsFundModelEquals36()
+        {
+            NewRule().ApprenticeshipConditionMet(1, 25, 36).Should().BeFalse();
+        }
+
+        [Fact]
         public void Validate_Error()
         {
             var learner = new TestLearner()

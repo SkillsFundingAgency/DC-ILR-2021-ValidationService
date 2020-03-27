@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
@@ -23,231 +21,330 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Fact]
-        public void Validate_Null_LearningDeliveries()
+        public void CompareAgainstOtherDeliveries_NoMatch()
         {
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                new TestLearningDelivery(),
+                new TestLearningDelivery(),
+            };
+
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => false).Should().BeEmpty();
+        }
+
+        [Fact]
+        public void CompareAgainstOtherDeliveries_AllMatch()
+        {
+            var learningDeliveryOne = new TestLearningDelivery();
+            var learningDeliveryTwo = new TestLearningDelivery();
+
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                learningDeliveryOne,
+                learningDeliveryTwo,
+            };
+
+            var matches = NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => true).ToList();
+
+            matches.Should().HaveCount(2);
+            matches[0].Should().BeSameAs(learningDeliveryOne);
+            matches[1].Should().BeSameAs(learningDeliveryTwo);
+        }
+
+        [Fact]
+        public void CompareAgainstOtherDeliveries_PartialMatch()
+        {
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                new TestLearningDelivery() { ProgTypeNullable = 1 },
+                new TestLearningDelivery() { ProgTypeNullable = 2 },
+            };
+
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => a.ProgTypeNullable > b.ProgTypeNullable).Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void CompareAgainstOtherDeliveries_SingleItem()
+        {
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                new TestLearningDelivery()
+            };
+
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => true).Should().BeEmpty();
+        }
+
+        [Fact]
+        public void CompareAgainstOtherDeliveries_Empty()
+        {
+            var learningDeliveries = new List<ILearningDelivery>();
+
+            NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => false).Should().BeEmpty();
+        }
+
+        [Fact]
+        public void CompareAgainstOtherDeliveries_Break()
+        {
+            var matchOne = new TestLearningDelivery() { ProgTypeNullable = 1 };
+            var matchTwo = new TestLearningDelivery() { ProgTypeNullable = 2 };
+            var nonMatch = new TestLearningDelivery() { ProgTypeNullable = 3 };
+
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                matchOne,
+                matchTwo,
+                nonMatch
+            };
+
+            var matches = NewRule().CompareAgainstOtherDeliveries(learningDeliveries, (a, b) => a.ProgTypeNullable < b.ProgTypeNullable).ToList();
+
+            matches.Should().HaveCount(2);
+            matches[0].Should().BeSameAs(matchOne);
+            matches[1].Should().BeSameAs(matchTwo);
+        }
+
+        [Fact]
+        public void GetProgrammeAims_NoMatch()
+        {
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                new TestLearningDelivery()
+                {
+                    AimType = 2,
+                },
+                new TestLearningDelivery()
+                {
+                    AimType = 3,
+                }
+            };
+
+            NewRule().GetProgrammeAims(learningDeliveries).Should().BeEmpty();
+        }
+
+        [Fact]
+        public void GetProgrammeAims_Match()
+        {
+            var match = new TestLearningDelivery()
+            {
+                AimType = 1,
+            };
+
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                match,
+                new TestLearningDelivery()
+                {
+                    AimType = 3,
+                }
+            };
+
+            var matches = NewRule().GetProgrammeAims(learningDeliveries).ToList();
+
+            matches.Should().HaveCount(1);
+            matches.First().Should().BeSameAs(match);
+        }
+
+        [Fact]
+        public void LearningDeliveryCountConditionMet_True()
+        {
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                new TestLearningDelivery(),
+                new TestLearningDelivery(),
+            };
+
+            NewRule().HasMoreThanOneProgrammeAim(learningDeliveries).Should().BeTrue();
+        }
+
+        [Fact]
+        public void LearningDeliveryCountConditionMet_False()
+        {
+            var learningDeliveries = new List<ILearningDelivery>()
+            {
+                new TestLearningDelivery()
+            };
+
+            NewRule().HasMoreThanOneProgrammeAim(learningDeliveries).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False()
+        {
+            var learningDeliveryOne = new TestLearningDelivery
+            {
+                AimType = 1,
+                LearnStartDate = new DateTime(2021, 1, 1)
+            };
+
+            var learningDeliveryTwo = new TestLearningDelivery
+            {
+                AimType = 1,
+                LearnStartDate = new DateTime(2018, 1, 1),
+                LearnActEndDateNullable = new DateTime(2020, 1, 1)
+            };
+
+            NewRule().ConditionMet(learningDeliveryOne, learningDeliveryTwo).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_True()
+        {
+            var learningDeliveryOne = new TestLearningDelivery
+            {
+                AimType = 1,
+                LearnStartDate = new DateTime(2021, 1, 1)
+            };
+
+            var learningDeliveryTwo = new TestLearningDelivery
+            {
+                AimType = 1,
+                LearnStartDate = new DateTime(2018, 1, 1)
+            };
+
+            NewRule().ConditionMet(learningDeliveryOne, learningDeliveryTwo).Should().BeTrue();
+        }
+
+        [Fact]
+        public void Validate_Valid_One_LearningDelivery()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 2,
+                        LearnStartDate = new DateTime(2018, 1, 1)
+                    },
+                }
+            };
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(new TestLearner());
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
         [Fact]
-        public void Validate_Fail_ClosedAimOverlapStartDate()
+        public void Validate_Valid_No_Overlapping()
         {
-            var testLearner = new TestLearner()
+            var learner = new TestLearner()
             {
-                LearnRefNumber = "123456789",
-                LearningDeliveries = new TestLearningDelivery[]
+                LearningDeliveries = new List<ILearningDelivery>()
                 {
                     new TestLearningDelivery()
                     {
-                        AimType = TypeOfAim.ProgrammeAim,
-                        AimSeqNumber = 1,
-                        LearnActEndDateNullable = new DateTime(2018, 10, 10),
-                        LearnStartDate = new DateTime(2017, 10, 10)
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2021, 1, 1)
                     },
                     new TestLearningDelivery()
                     {
-                        AimSeqNumber = 2,
-                        AimType = TypeOfAim.ProgrammeAim,
-                        LearnActEndDateNullable = new DateTime(2018, 10, 10),
-                        LearnStartDate = new DateTime(2017, 09, 10)
-                    }
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2018, 1, 1),
+                        LearnActEndDateNullable = new DateTime(2020, 1, 1)
+                    },
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Valid_SingleProgAim()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2021, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 2,
+                        LearnStartDate = new DateTime(2018, 1, 1),
+                    },
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_InValid_Overlapping()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<ILearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2021, 1, 1)
+                    },
+                    new TestLearningDelivery()
+                    {
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2018, 1, 1),
+                    },
                 }
             };
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
-                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<int>()), Times.Once);
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
         [Fact]
-        public void Validate_Pass_OpenAimAfterCloseDate()
+        public void Validate_InValid_MultipleOverlapping()
         {
-            var testLearner = new TestLearner()
+            var learner = new TestLearner()
             {
-                LearnRefNumber = "123456789",
-                LearningDeliveries = new TestLearningDelivery[]
+                LearningDeliveries = new List<ILearningDelivery>()
                 {
                     new TestLearningDelivery()
                     {
-                        AimType = TypeOfAim.ProgrammeAim,
-                        AimSeqNumber = 1,
-                        LearnStartDate = new DateTime(2017, 10, 10),
-                        LearnActEndDateNullable = new DateTime(2018, 10, 10),
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2021, 1, 1)
                     },
                     new TestLearningDelivery()
                     {
-                        AimSeqNumber = 2,
-                        AimType = TypeOfAim.ProgrammeAim,
-                        LearnStartDate = new DateTime(2018, 10, 11),
-                        LearnActEndDateNullable = new DateTime(2018, 12, 10),
-                    }
-                }
-            };
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
-            }
-        }
-
-        [Fact]
-        public void Validate_Pass_No_NoOpenMainAim()
-        {
-            var testLearner = new TestLearner()
-            {
-                LearnRefNumber = "123456789",
-                LearningDeliveries = new TestLearningDelivery[]
-                {
-                    new TestLearningDelivery()
-                    {
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
-                        AimSeqNumber = 1,
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2018, 1, 1),
                     },
                     new TestLearningDelivery()
                     {
-                        AimSeqNumber = 2,
-                        AimType = TypeOfAim.ProgrammeAim,
-                        LearnActEndDateNullable = new DateTime(2018, 10, 10)
-                    }
-                }
-            };
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
-                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
-            }
-        }
-
-        [Fact]
-        public void Validate_Fail_MultipleOpenAims()
-        {
-            var testLearner = new TestLearner()
-            {
-                LearnRefNumber = "123456789",
-                LearningDeliveries = new TestLearningDelivery[]
-                {
-                    new TestLearningDelivery()
-                    {
-                        AimType = TypeOfAim.ProgrammeAim,
-                        AimSeqNumber = 1,
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2018, 1, 1),
                     },
                     new TestLearningDelivery()
                     {
-                        AimSeqNumber = 2,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2018, 1, 1),
                     },
-                    new TestLearningDelivery()
-                    {
-                        AimSeqNumber = 3,
-                        AimType = TypeOfAim.ProgrammeAim,
-                    }
                 }
             };
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
-                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<int>()), Times.Exactly(3));
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+
+                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<object>()), Times.Exactly(12));
             }
-        }
-
-        [Fact]
-        public void Validate_Pass_OverlappingAimsOutsideEndDate()
-        {
-            var testLearner = new TestLearner()
-            {
-                LearnRefNumber = "123456789",
-                LearningDeliveries = new TestLearningDelivery[]
-                {
-                    new TestLearningDelivery()
-                    {
-                        AimType = TypeOfAim.ProgrammeAim,
-                        AimSeqNumber = 1,
-                        LearnStartDate = new DateTime(2018, 10, 10)
-                    },
-                    new TestLearningDelivery()
-                    {
-                        AimSeqNumber = 2,
-                        AimType = TypeOfAim.ProgrammeAim,
-                        LearnStartDate = new DateTime(2018, 09, 10),
-                        LearnActEndDateNullable = new DateTime(2018, 10, 09),
-                    }
-                }
-            };
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
-                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
-            }
-        }
-
-        [Fact]
-        public void Validate_Fail_OverlappingAims()
-        {
-            var testLearner = new TestLearner()
-            {
-                LearnRefNumber = "123456789",
-                LearningDeliveries = new TestLearningDelivery[]
-                {
-                    new TestLearningDelivery()
-                    {
-                        AimType = TypeOfAim.ProgrammeAim,
-                        AimSeqNumber = 1,
-                        LearnStartDate = new DateTime(2018, 10, 10)
-                    },
-                    new TestLearningDelivery()
-                    {
-                        AimSeqNumber = 2,
-                        AimType = TypeOfAim.ProgrammeAim,
-                        LearnStartDate = new DateTime(2018, 09, 10),
-                        LearnActEndDateNullable = new DateTime(2018, 11, 10),
-                    },
-                    new TestLearningDelivery()
-                    {
-                        AimSeqNumber = 3,
-                        AimType = TypeOfAim.ProgrammeAim,
-                        LearnStartDate = new DateTime(2018, 09, 11)
-                    }
-                }
-            };
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-            {
-                NewRule(validationErrorHandlerMock.Object).Validate(testLearner);
-                validationErrorHandlerMock.Verify(h => h.BuildErrorMessageParameter(It.IsAny<string>(), It.IsAny<int>()), Times.Exactly(2));
-            }
-        }
-
-        [Fact]
-        public void BuildErrorMessageParameters()
-        {
-            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
-
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.ProgrammeAim)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, "01/01/2017")).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, "10/10/2018")).Verifiable();
-
-            var learningDelivery = new TestLearningDelivery()
-            {
-                AimType = TypeOfAim.ProgrammeAim,
-                LearnStartDate = new DateTime(2017, 01, 01),
-                LearnActEndDateNullable = new DateTime(2018, 10, 10)
-            };
-
-            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters(learningDelivery);
-
-            validationErrorHandlerMock.Verify();
         }
 
         private R99Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
         {
-            return new R99Rule(validationErrorHandler);
+            return new R99Rule(validationErrorHandler ?? Mock.Of<IValidationErrorHandler>());
         }
     }
 }

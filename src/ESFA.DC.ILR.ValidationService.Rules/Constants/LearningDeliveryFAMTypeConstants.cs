@@ -19,5 +19,6 @@
         public const string POD = "POD";
         public const string FLN = "FLN";
         public const string HEM = "HEM";
+        public const string DAM = "DAM";
     }
 }

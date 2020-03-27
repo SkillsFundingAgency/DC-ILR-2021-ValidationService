@@ -310,7 +310,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(true);
             commonOps
                 .Setup(x => x.InAProgramme(delivery.Object))
@@ -396,7 +396,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
             commonOps
-                .Setup(x => x.IsStandardApprencticeship(delivery.Object))
+                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(true);
             commonOps
                 .Setup(x => x.InAProgramme(delivery.Object))

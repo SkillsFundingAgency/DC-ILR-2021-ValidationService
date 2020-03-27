@@ -1,5 +1,4 @@
-﻿using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface

@@ -1,382 +1,637 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.Tests.Model;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
-using FluentAssertions;
 using Moq;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 {
-    public class UKPRN_17RuleTests : AbstractRuleTests<UKPRN_17Rule>
+    /// <summary>
+    /// united kingdom provider number rule 17 tests
+    /// </summary>
+    public class UKPRN_17RuleTests
     {
-        private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>
-        {
-             FundingStreamPeriodCodeConstants.C16_18TRN1920
-        };
+        /// <summary>
+        /// The test provider identifier
+        /// </summary>
+        public const int TestProviderID = 123456789;
 
+        /// <summary>
+        /// New rule with null message handler throws.
+        /// </summary>
         [Fact]
-        public void RuleName()
+        public void NewRuleWithNullMessageHandlerThrows()
         {
-            NewRule().RuleName.Should().Be("UKPRN_17");
+            // arrange
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new UKPRN_17Rule(null, fileData.Object, commonOps.Object, fcsData.Object));
         }
 
+        /// <summary>
+        /// New rule with null file data throws.
+        /// </summary>
         [Fact]
-        public void FundModelCondition_ShouldMatch()
+        public void NewRuleWithNullFileDataThrows()
         {
-            var fundModel = 25;
-            NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new UKPRN_17Rule(handler.Object, null, commonOps.Object, fcsData.Object));
         }
 
+        /// <summary>
+        /// New rule with null common ops throws.
+        /// </summary>
         [Fact]
-        public void FundModelCondition_ShouldNotMatch()
+        public void NewRuleWithNullCommonOpsThrows()
         {
-            var fundModel = 21;
-            NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new UKPRN_17Rule(handler.Object, fileData.Object, null, fcsData.Object));
+        }
+
+        /// <summary>
+        /// New rule with null FCS data throws.
+        /// </summary>
+        [Fact]
+        public void NewRuleWithNullFCSDataThrows()
+        {
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new UKPRN_17Rule(handler.Object, fileData.Object, commonOps.Object, null));
+        }
+
+        /// <summary>
+        /// Rule name 1, matches a literal.
+        /// </summary>
+        [Fact]
+        public void RuleName1()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.Equal("UKPRN_17", result);
+        }
+
+        /// <summary>
+        /// Rule name 2, matches the constant.
+        /// </summary>
+        [Fact]
+        public void RuleName2()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.Equal(RuleNameConstants.UKPRN_17, result);
+        }
+
+        /// <summary>
+        /// Rule name 3 test, account for potential false positives.
+        /// </summary>
+        [Fact]
+        public void RuleName3()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.NotEqual("SomeOtherRuleName_07", result);
+        }
+
+        /// <summary>
+        /// Funding stream period code meets expectation.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">The expectation.</param>
+        [Theory]
+        [InlineData("16-18TRN1920", FundingStreamPeriodCodeConstants.C16_18TRN1920)]
+        public void FundingStreamPeriodCodeMeetsExpectation(string candidate, string expectation)
+        {
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
+        }
+
+        /// <summary>
+        /// Funding streams meet expectation.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN1920)]
+        public void FundingStreamsMeetsExpectation(string candidate)
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act / assert
+            Assert.Contains(candidate, sut.FundingStreams);
+        }
+
+        /// <summary>
+        /// Provider ukprn meets expectation.
+        /// </summary>
+        [Fact]
+        public void ProviderUKPRNMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act / assert
+            Assert.Equal(TestProviderID, sut.ProviderUKPRN);
+        }
+
+        /// <summary>
+        /// Validate with null learner throws.
+        /// </summary>
+        [Fact]
+        public void ValidateWithNullLearnerThrows()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act/assert
+            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
+        }
+
+        /// <summary>
+        /// Type of funding meets expectation.
+        /// </summary>
+        /// <param name="expectation">The expectation.</param>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData(25, TypeOfFunding.Age16To19ExcludingApprenticeships)]
+        public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
+        {
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
+        }
+
+        /// <summary>
+        /// Has qualifying (fund) model meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var mockItem = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(mockItem.Object, 25))
+                .Returns(expectation);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
+
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+
+            var sut = new UKPRN_17Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
+
+            // act
+            var result = sut.HasQualifyingModel(mockItem.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            fileData.VerifyAll();
+            fcsData.VerifyAll();
         }
 
         [Theory]
-        [InlineData(1, false)]
-        [InlineData(24, true)]
-        public void IsTraineeshipConditionMet(int? progType, bool expected)
+        [InlineData(24, TypeOfLearningProgramme.Traineeship)]
+        public void TypeOfProgrammeMeetsExpectation(int expectation, int candidate)
         {
-            NewRule().TraineeshipConditionMet(progType).Should().Be(expected);
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
         }
 
-        [Fact]
-        public void LearningDeliveryFAMsConditionMet()
+        /// <summary>
+        /// Determines whether [is traineeship meets expectation] [the specified expectation].
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void IsTraineeshipMeetsExpectation(bool expectation)
         {
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>();
-            var mockLearningDeliveryFAMQueryService = new Mock<ILearningDeliveryFAMQueryService>();
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
 
-            var result = true;
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
+                .Returns(expectation);
 
-            mockLearningDeliveryFAMQueryService
-                .Setup(x => x.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "SOF", "105"))
-                .Returns(result);
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
 
-            var rule17 = NewRule(learningDeliveryFAMQueryService: mockLearningDeliveryFAMQueryService.Object);
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
 
-            rule17.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs).Should().Be(result);
+            var sut = new UKPRN_17Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
+
+            // act
+            var result = sut.IsTraineeship(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            fileData.VerifyAll();
+            fcsData.VerifyAll();
         }
 
-        [Fact]
-        public void FCTFundingCondition_ShouldPass()
+        /// <summary>
+        /// Monitoring code meets expectation.
+        /// </summary>
+        /// <param name="expectation">The expectation.</param>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData("SOF105", Monitoring.Delivery.ESFAAdultFunding)]
+        public void MonitoringCodeMeetsExpectation(string expectation, string candidate)
         {
-            var mockfcsDataServices = new Mock<IFCSDataService>();
-            mockfcsDataServices
-                .Setup(x => x.FundingRelationshipFCTExists(_fundingStreamPeriodCodes))
-                .Returns(true);
-
-            var rule17 = NewRule(fcsDataService: mockfcsDataServices.Object).FCTFundingConditionMet();
-
-            rule17.Should().BeTrue();
-            mockfcsDataServices.Verify(fcs => fcs.FundingRelationshipFCTExists(_fundingStreamPeriodCodes), Times.Once);
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
         }
 
-        [Fact]
-        public void FCTFundingCondition_ShouldFail()
+        /// <summary>
+        /// Has qualifying monitor meets expectation
+        /// </summary>
+        /// <param name="famType">The Learning Delivery FAM Type.</param>
+        /// <param name="famCode">The Learning Delivery FAM Code.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData("ACT", "1", false)] // Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer
+        [InlineData("LDM", "034", false)] // Monitoring.Delivery.OLASSOffendersInCustody
+        [InlineData("FFI", "1", false)] // Monitoring.Delivery.FullyFundedLearningAim
+        [InlineData("FFI", "2", false)] // Monitoring.Delivery.CoFundedLearningAim
+        [InlineData("LDM", "363", false)] // Monitoring.Delivery.InReceiptOfLowWages
+        [InlineData("LDM", "318", false)] // Monitoring.Delivery.MandationToSkillsTraining
+        [InlineData("LDM", "328", false)] // Monitoring.Delivery.ReleasedOnTemporaryLicence
+        [InlineData("LDM", "347", false)] // Monitoring.Delivery.SteelIndustriesRedundancyTraining
+        [InlineData("SOF", "1", false)] // Monitoring.Delivery.HigherEducationFundingCouncilEngland
+        [InlineData("SOF", "107", false)] // Monitoring.Delivery.ESFA16To19Funding
+        [InlineData("SOF", "105", true)] // Monitoring.Delivery.ESFAAdultFunding
+        [InlineData("SOF", "110", false)] // Monitoring.Delivery.GreaterManchesterCombinedAuthority
+        [InlineData("SOF", "111", false)] // Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority
+        [InlineData("SOF", "112", false)] // Monitoring.Delivery.WestMidlandsCombinedAuthority
+        [InlineData("SOF", "113", false)] // Monitoring.Delivery.WestOfEnglandCombinedAuthority
+        [InlineData("SOF", "114", false)] // Monitoring.Delivery.TeesValleyCombinedAuthority
+        [InlineData("SOF", "115", false)] // Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority
+        [InlineData("SOF", "116", false)] // Monitoring.Delivery.GreaterLondonAuthority
+        public void HasQualifyingMonitorMeetsExpectation(string famType, string famCode, bool expectation)
         {
-            var mockFcsDataServices = new Mock<IFCSDataService>();
-            mockFcsDataServices
-                .Setup(x => x.FundingRelationshipFCTExists(_fundingStreamPeriodCodes))
+            // arrange
+            var sut = NewRule();
+            var fam = new Mock<ILearningDeliveryFAM>();
+            fam
+                .SetupGet(y => y.LearnDelFAMType)
+                .Returns(famType);
+            fam
+                .SetupGet(y => y.LearnDelFAMCode)
+                .Returns(famCode);
+
+            // act
+            var result = sut.HasQualifyingMonitor(fam.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        /// <summary>
+        /// Has qualifying monitor with null fams returns false
+        /// </summary>
+        [Fact]
+        public void HasQualifyingMonitorWithNullFAMsReturnsFalse()
+        {
+            // arrange
+            var mockItem = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(mockItem.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
                 .Returns(false);
 
-            var rule17 = NewRule(fcsDataService: mockFcsDataServices.Object).FCTFundingConditionMet();
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
 
-            rule17.Should().BeFalse();
-            mockFcsDataServices.Verify(fcs => fcs.FundingRelationshipFCTExists(_fundingStreamPeriodCodes), Times.Once);
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+
+            var sut = new UKPRN_17Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
+
+            // act
+            var result = sut.HasQualifyingMonitor(mockItem.Object);
+
+            // assert
+            Assert.False(result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            fileData.VerifyAll();
+            fcsData.VerifyAll();
         }
 
-        [Fact]
-        public void FromDateCondition_IsFalse_WithNullFromDate()
-        {
-            string contractRef = "123";
-            var startDate = DateTime.Now;
-            DateTime? stopNewStartsFromDate = null;
-
-            var mockContractAllocation = new Mock<IFcsContractAllocation>();
-            mockContractAllocation.SetupGet(x => x.StopNewStartsFromDate).Returns(stopNewStartsFromDate);
-
-            var mockFcsDataServices = new Mock<IFCSDataService>();
-            mockFcsDataServices.Setup(x => x.GetContractAllocationFor(contractRef)).Returns(mockContractAllocation.Object);
-
-            var rule17 = NewRule(fcsDataService: mockFcsDataServices.Object).StopNewStartsFromDateConditionMet(contractRef, startDate);
-
-            rule17.Should().BeFalse();
-
-            mockContractAllocation.VerifyGet(x => x.StopNewStartsFromDate, Times.Once);
-            mockFcsDataServices.Verify(x => x.GetContractAllocationFor(contractRef), Times.Once);
-        }
-
-        [Fact]
-        public void FromDateCondition_IsTrue_AsStartDateIsGreater()
-        {
-            string contractRef = "123";
-            var startDate = new DateTime(2019, 04, 15);
-            var stopNewStartsFromDate = new DateTime(2019, 01, 11);
-
-            var mockContractAllocation = new Mock<IFcsContractAllocation>();
-            mockContractAllocation.SetupGet(x => x.StopNewStartsFromDate).Returns(stopNewStartsFromDate);
-
-            var mockFcsDataServices = new Mock<IFCSDataService>();
-            mockFcsDataServices.Setup(x => x.GetContractAllocationFor(contractRef)).Returns(mockContractAllocation.Object);
-
-            var rule17 = NewRule(fcsDataService: mockFcsDataServices.Object);
-
-            rule17.StopNewStartsFromDateConditionMet(contractRef, startDate).Should().BeTrue();
-
-            mockContractAllocation.VerifyGet(x => x.StopNewStartsFromDate, Times.AtLeastOnce);
-            mockFcsDataServices.Verify(x => x.GetContractAllocationFor(contractRef), Times.Once);
-        }
-
-        [Fact]
-        public void FromDateCondition_IsTrue_AsStartDateIsEqualTo()
-        {
-            string contractRef = "123";
-            var startDate = new DateTime(2019, 01, 15);
-            var stopNewStartsFromDate = new DateTime(2019, 01, 15);
-
-            var mockContractAllocation = new Mock<IFcsContractAllocation>();
-            mockContractAllocation.SetupGet(x => x.StopNewStartsFromDate).Returns(stopNewStartsFromDate);
-
-            var mockFcsDataServices = new Mock<IFCSDataService>();
-            mockFcsDataServices.Setup(x => x.GetContractAllocationFor(contractRef)).Returns(mockContractAllocation.Object);
-
-            var rule17 = NewRule(fcsDataService: mockFcsDataServices.Object);
-
-            rule17.StopNewStartsFromDateConditionMet(contractRef, startDate).Should().BeTrue();
-
-            mockContractAllocation.VerifyGet(x => x.StopNewStartsFromDate, Times.AtLeastOnce);
-            mockFcsDataServices.Verify(x => x.GetContractAllocationFor(contractRef), Times.Once);
-        }
-
-        [Fact]
-        public void FromDateCondition_IsFalse_AsStartDateIsLess()
-        {
-            string contractRef = "123";
-            var startDate = new DateTime(2019, 01, 15);
-            var stopNewStartsFromDate = new DateTime(2019, 11, 11);
-
-            var mockContractAllocation = new Mock<IFcsContractAllocation>();
-            mockContractAllocation.SetupGet(x => x.StopNewStartsFromDate).Returns(stopNewStartsFromDate);
-
-            var mockFcsDataServices = new Mock<IFCSDataService>();
-            mockFcsDataServices.Setup(x => x.GetContractAllocationFor(contractRef)).Returns(mockContractAllocation.Object);
-
-            var rule17 = NewRule(fcsDataService: mockFcsDataServices.Object);
-
-            rule17.StopNewStartsFromDateConditionMet(contractRef, startDate).Should().BeFalse();
-
-            mockContractAllocation.VerifyGet(x => x.StopNewStartsFromDate, Times.AtLeastOnce);
-            mockFcsDataServices.Verify(x => x.GetContractAllocationFor(contractRef), Times.Once);
-        }
-
-        [Fact]
-        public void ConditionMet_Pass()
-        {
-            int fundModel = TypeOfFunding.Age16To19ExcludingApprenticeships;
-            var progType = 24;
-            var conRefNumber = "123";
-            DateTime startDate = new DateTime(2018, 8, 1);
-
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-            {
-                new TestLearningDeliveryFAM
-                {
-                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF,
-                    LearnDelFAMCode = "105"
-                }
-            };
-
-            var rule17 = NewRuleMock();
-            rule17.Setup(x => x.FundModelConditionMet(fundModel)).Returns(true);
-            rule17.Setup(x => x.TraineeshipConditionMet(progType)).Returns(true);
-            rule17.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(true);
-            rule17.Setup(x => x.FCTFundingConditionMet()).Returns(true);
-            rule17.Setup(x => x.StopNewStartsFromDateConditionMet(conRefNumber, startDate)).Returns(true);
-
-            rule17.Object.ConditionMet(fundModel, progType, learningDeliveryFAMs, conRefNumber, startDate).Should().BeTrue();
-        }
-
+        /// <summary>
+        /// Has funding relationship meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(true, false, false, false, false)]
-        [InlineData(false, true, false, false, false)]
-        [InlineData(false, false, true, false, false)]
-        [InlineData(false, false, false, true, false)]
-        [InlineData(false, false, false, false, true)]
-        public void ConditionMet_Fails(bool fundCondition, bool isTraineeCondition, bool delFAMSCondition, bool fctCondition, bool fromDateCondition)
+        [InlineData(FundingStreamPeriodCodeConstants.LEVY1799, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.NONLEVY2019, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC1819, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_19TRN1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_ASCL1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBTO_TOL1819, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBTO_TOL1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_19TRLS1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_19TRN1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_AS1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_ASLS1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_LS1819, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_LS1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_TOL1819, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEB_TOL1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.ALLB1819, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.ALLB1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN1920, true)]
+        public void HasFundingRelationshipMeetsExpectation(string candidate, bool expectation)
         {
-            int fundModel = TypeOfFunding.Age16To19ExcludingApprenticeships;
-            var progType = 24;
-            var conRefNumber = "123";
-            DateTime startDate = new DateTime(2019, 6, 18);
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-            {
-                new TestLearningDeliveryFAM
-                {
-                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF,
-                    LearnDelFAMCode = LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult
-                }
-            };
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
 
-            var rule17 = NewRuleMock();
-            rule17.Setup(x => x.FundModelConditionMet(fundModel)).Returns(fundCondition);
-            rule17.Setup(x => x.TraineeshipConditionMet(progType)).Returns(isTraineeCondition);
-            rule17.Setup(x => x.LearningDeliveryFAMsConditionMet(learningDeliveryFAMs)).Returns(delFAMSCondition);
-            rule17.Setup(x => x.FCTFundingConditionMet()).Returns(fctCondition);
-            rule17.Setup(x => x.StopNewStartsFromDateConditionMet(conRefNumber, startDate)).Returns(fromDateCondition);
+            var allocation = new Mock<IFcsContractAllocation>(MockBehavior.Strict);
+            allocation
+                .SetupGet(x => x.FundingStreamPeriodCode)
+                .Returns(candidate);
 
-            rule17.Object
-                .ConditionMet(fundModel, progType, learningDeliveryFAMs, conRefNumber, startDate).Should().BeFalse();
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+            fcsData
+                .Setup(x => x.GetContractAllocationsFor(TestProviderID))
+                .Returns(new IFcsContractAllocation[] { allocation.Object });
+
+            var sut = new UKPRN_17Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
+
+            // act
+            var result = sut.HasDisQualifyingFundingRelationship(x => true);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            fileData.VerifyAll();
+            fcsData.VerifyAll();
         }
 
-        [Fact]
-        public void ValidatWithNull()
+        /// <summary>
+        /// Invalid item raises validation message.
+        /// dates are deliberately out of sync to ensure the mock's are controlling the flow
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN1920)]
+        public void InvalidItemRaisesValidationMessage(string candidate)
         {
-            NewRule().Validate(null);
+            // arrange
+            const string LearnRefNumber = "123456789X";
+            var thresholdDate = DateTime.Parse("2017-05-01");
+
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(thresholdDate);
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(25);
+            delivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(24);
+
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            handler
+                .Setup(x => x.Handle(RuleNameConstants.UKPRN_17, LearnRefNumber, 0, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("UKPRN", TestProviderID))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("FundModel", 25))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("ProgType", 24))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(thresholdDate)))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMType", "SOF"))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMCode", "105"))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 25))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
+                .Returns(true);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
+
+            // this will induce the error
+            var allocation = new Mock<IFcsContractAllocation>(MockBehavior.Strict);
+            allocation
+                .SetupGet(x => x.FundingStreamPeriodCode)
+                .Returns(candidate);
+            allocation
+                .SetupGet(x => x.StopNewStartsFromDate)
+                .Returns(thresholdDate);
+
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+            fcsData
+                .Setup(x => x.GetContractAllocationsFor(TestProviderID))
+                .Returns(new IFcsContractAllocation[] { allocation.Object });
+
+            var sut = new UKPRN_17Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
+
+            // post construction setup
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.HasQualifyingMonitor))
+                .Returns(true);
+
+            // act
+            sut.Validate(learner.Object);
+
+            // assert
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            fileData.VerifyAll();
+            fcsData.VerifyAll();
         }
 
-        [Fact]
-        public void Validate_Error()
+        /// <summary>
+        /// Valid item does not raise validation message.
+        /// dates are deliberately out of sync to ensure the mock's are controlling the flow
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN1920)]
+        public void ValidItemDoesNotRaiseValidationMessage(string candidate)
         {
-            int ukprn = 12345678;
-            string conRefNumber = "123";
-            DateTime stopNewStartsFromDate = new DateTime(2018, 8, 1);
-            DateTime startDate = stopNewStartsFromDate.AddYears(1);
+            // arrange
+            const string LearnRefNumber = "123456789X";
+            var thresholdDate = DateTime.Parse("2017-05-01");
 
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = new TestLearningDelivery[]
-                {
-                    new TestLearningDelivery()
-                    {
-                        LearnStartDate = startDate,
-                        ProgTypeNullable = 24,
-                        FundModel = 25,
-                        ConRefNumber = conRefNumber,
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = "SOF",
-                                LearnDelFAMCode = "105"
-                            }
-                        }
-                    }
-                }
-            };
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(thresholdDate);
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(25);
+            delivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(24);
 
-            var mockContractAllocation = new Mock<IFcsContractAllocation>();
-            mockContractAllocation.SetupGet(x => x.ContractAllocationNumber).Returns(conRefNumber);
-            mockContractAllocation.SetupGet(x => x.StopNewStartsFromDate).Returns(stopNewStartsFromDate);
+            var deliveries = new ILearningDelivery[] { delivery.Object };
 
-            var fileDataServiceMock = new Mock<IFileDataService>();
-            fileDataServiceMock.Setup(ds => ds.UKPRN()).Returns(ukprn);
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
 
-            var mockAcademicYearQueryService = new Mock<IAcademicYearQueryService>();
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 25))
+                .Returns(true);
+            commonOps
+                .Setup(x => x.IsTraineeship(delivery.Object))
+                .Returns(true);
 
-            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
 
-            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFAMQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMCodeForType(learner.LearningDeliveries.FirstOrDefault().LearningDeliveryFAMs, "SOF", "105")).Returns(true);
+            // this will induce the error
+            var allocation = new Mock<IFcsContractAllocation>(MockBehavior.Strict);
+            allocation
+                .SetupGet(x => x.FundingStreamPeriodCode)
+                .Returns(candidate);
+            allocation
+                .SetupGet(x => x.StopNewStartsFromDate)
+                .Returns(thresholdDate.AddDays(1));
 
-            var fcsDataServiceMock = new Mock<IFCSDataService>();
-            fcsDataServiceMock.Setup(qs => qs.FundingRelationshipFCTExists(_fundingStreamPeriodCodes)).Returns(true);
-            fcsDataServiceMock.Setup(m => m.GetContractAllocationFor(conRefNumber)).Returns(mockContractAllocation.Object);
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+            fcsData
+                .Setup(x => x.GetContractAllocationsFor(TestProviderID))
+                .Returns(new IFcsContractAllocation[] { allocation.Object });
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-            {
-                NewRule(
-                    fileDataServiceMock.Object,
-                    mockAcademicYearDataService.Object,
-                    mockAcademicYearQueryService.Object,
-                    fcsDataServiceMock.Object,
-                    learningDeliveryFAMQueryService: learningDeliveryFAMQueryServiceMock.Object,
-                    validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
-            }
+            var sut = new UKPRN_17Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
+
+            // post construction setup
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.HasQualifyingMonitor))
+                .Returns(true);
+
+            // act
+            sut.Validate(learner.Object);
+
+            // assert
+            handler.VerifyAll();
+            commonOps.VerifyAll();
+            fileData.VerifyAll();
+            fcsData.VerifyAll();
         }
 
-        [Fact]
-        public void Validate_NoError()
+        /// <summary>
+        /// New rule.
+        /// </summary>
+        /// <returns>a constructed and mocked up validation rule</returns>
+        public UKPRN_17Rule NewRule()
         {
-            int ukprn = 12345678;
-            string conRefNumber = "123";
-            DateTime startDate = new DateTime(2018, 8, 1);
-            DateTime stopNewStartsFromDate = startDate.AddMonths(7);
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
 
-            var learner = new TestLearner()
-            {
-                LearningDeliveries = new TestLearningDelivery[]
-                {
-                    new TestLearningDelivery()
-                    {
-                        LearnStartDate = startDate,
-                        ProgTypeNullable = 24,
-                        FundModel = 25,
-                        ConRefNumber = conRefNumber,
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = "SOF",
-                                LearnDelFAMCode = "105"
-                            }
-                        }
-                    }
-                }
-            };
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
 
-            var mockContractAllocation = new Mock<IFcsContractAllocation>();
-            mockContractAllocation.SetupGet(x => x.ContractAllocationNumber).Returns(conRefNumber);
-            mockContractAllocation.SetupGet(x => x.StopNewStartsFromDate).Returns(stopNewStartsFromDate);
-
-            var fileDataServiceMock = new Mock<IFileDataService>();
-            fileDataServiceMock.Setup(ds => ds.UKPRN()).Returns(ukprn);
-
-            var mockAcademicYearQueryService = new Mock<IAcademicYearQueryService>();
-
-            var mockAcademicYearDataService = new Mock<IAcademicYearDataService>();
-
-            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            learningDeliveryFAMQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMCodeForType(learner.LearningDeliveries.FirstOrDefault().LearningDeliveryFAMs, "SOF", "105")).Returns(true);
-
-            var fcsDataServiceMock = new Mock<IFCSDataService>();
-            fcsDataServiceMock.Setup(qs => qs.FundingRelationshipFCTExists(_fundingStreamPeriodCodes)).Returns(true);
-            fcsDataServiceMock.Setup(m => m.GetContractAllocationFor(conRefNumber)).Returns(mockContractAllocation.Object);
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(
-                    fileDataServiceMock.Object,
-                    mockAcademicYearDataService.Object,
-                    mockAcademicYearQueryService.Object,
-                    fcsDataServiceMock.Object,
-                    learningDeliveryFAMQueryService: learningDeliveryFAMQueryServiceMock.Object,
-                    validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
-            }
-        }
-
-        private UKPRN_17Rule NewRule(
-             IFileDataService fileDataService = null,
-            IAcademicYearDataService academicYearDataService = null,
-            IAcademicYearQueryService academicYearQueryService = null,
-            IFCSDataService fcsDataService = null,
-            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
-            IValidationErrorHandler validationErrorHandler = null)
-        {
-            return new UKPRN_17Rule(fileDataService, academicYearDataService, academicYearQueryService, fcsDataService, learningDeliveryFAMQueryService, validationErrorHandler);
+            return new UKPRN_17Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
         }
     }
 }

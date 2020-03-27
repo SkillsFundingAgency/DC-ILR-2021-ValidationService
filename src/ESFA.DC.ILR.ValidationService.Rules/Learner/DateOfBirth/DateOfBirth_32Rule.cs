@@ -16,8 +16,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
     {
         private readonly DateTime _firstAugust2016 = new DateTime(2016, 8, 1);
         private readonly DateTime _firstAugust2015 = new DateTime(2015, 8, 1);
-        private readonly HashSet<string> _nvqLevel2s = new HashSet<string> { "3", "4", "5", "6", "7", "8", "H" };
-        private readonly HashSet<string> _ldmCodes = new HashSet<string> { "034", "346", "347", "339" };
+
+        private readonly HashSet<string> _nvqLevel2s = new HashSet<string>()
+        {
+            LARSNotionalNVQLevelV2.Level3,
+            LARSNotionalNVQLevelV2.Level4,
+            LARSNotionalNVQLevelV2.Level5,
+            LARSNotionalNVQLevelV2.Level6,
+            LARSNotionalNVQLevelV2.Level7,
+            LARSNotionalNVQLevelV2.Level8,
+            LARSNotionalNVQLevelV2.HigherLevel
+        };
+
+        private readonly HashSet<string> _ldmCodes = new HashSet<string>()
+        {
+            LearningDeliveryFAMCodeConstants.LDM_OLASS,
+            LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy,
+            LearningDeliveryFAMCodeConstants.LDM_SolentCity            
+        };
 
         private readonly IDerivedData_07Rule _dd07;
         private readonly IDateTimeQueryService _dateTimeQueryService;
@@ -59,8 +75,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                     learningDelivery.LearningDeliveryFAMs,
                     ukprn))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(objectToValidate.DateOfBirthNullable, learningDelivery.FundModel));
-                    return;
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber, 
+                        learningDelivery.AimSeqNumber, 
+                        BuildErrorMessageParameters(objectToValidate.DateOfBirthNullable, learningDelivery.FundModel));
                 }
             }
         }
@@ -105,8 +123,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return !(_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")
-                || _learningDeliveryFAMQueryService.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", _ldmCodes));
+            return  !(_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")
+                || _learningDeliveryFAMQueryService.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", _ldmCodes));      
         }
 
         public bool LARSCategoryConditionMet(string learnAimRef)

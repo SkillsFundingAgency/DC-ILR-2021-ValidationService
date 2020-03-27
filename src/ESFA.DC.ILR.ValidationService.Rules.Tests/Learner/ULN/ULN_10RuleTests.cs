@@ -1,349 +1,920 @@
-﻿using System;
-using System.Collections.Generic;
-using ESFA.DC.ILR.Tests.Model;
+﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Learner.ULN;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
-using FluentAssertions;
 using Moq;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
 {
-    public class ULN_10RuleTests : AbstractRuleTests<ULN_10Rule>
+    /// <summary>
+    /// learning delivery funding and monitoring rule 74 tests
+    /// </summary>
+    public class ULN_10RuleTests
     {
+        /// <summary>
+        /// The test provider identifier
+        /// </summary>
+        public const int TestProviderID = 123456789;
+
+        /// <summary>
+        /// The test preparation date
+        /// </summary>
+        public static readonly DateTime TestPreparationDate = DateTime.Parse("2018-04-02");
+
+        /// <summary>
+        /// The test new year date
+        /// </summary>
+        public static readonly DateTime TestNewYearDate = DateTime.Parse("2018-04-01");
+
+        /// <summary>
+        /// New rule with null message handler throws.
+        /// </summary>
         [Fact]
-        public void RuleName()
+        public void NewRuleWithNullMessageHandlerThrows()
         {
-            NewRule().RuleName.Should().Be("ULN_10");
+            // arrange
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new ULN_10Rule(null, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object));
+        }
+
+        /// <summary>
+        /// New rule with null academic year throws.
+        /// </summary>
+        [Fact]
+        public void NewRuleWithNullAcademicYearThrows()
+        {
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new ULN_10Rule(handler.Object, null, dateTime.Object, fileData.Object, commonOps.Object));
         }
 
         [Fact]
-        public void UlnConditionMet_True()
+        public void NewRuleWithNullFCSDataThrows()
         {
-            NewRule().UlnConditionMet(9999999999).Should().BeTrue();
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new ULN_10Rule(handler.Object, academicYear.Object, null, fileData.Object, commonOps.Object));
         }
 
+        /// <summary>
+        /// New rule with null file data throws.
+        /// </summary>
         [Fact]
-        public void UlnConditionMet_False()
+        public void NewRuleWithNullFileDataThrows()
         {
-            NewRule().UlnConditionMet(1111111111).Should().BeFalse();
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, null, commonOps.Object));
         }
 
+        /// <summary>
+        /// New rule with null common ops throws.
+        /// </summary>
         [Fact]
-        public void FundModelConditionMet_True()
+        public void NewRuleWithNullCommonOpsThrows()
         {
-            NewRule().FundModelConditionMet(99).Should().BeTrue();
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+
+            // act / assert
+            Assert.Throws<ArgumentNullException>(() => new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, null));
         }
 
+        /// <summary>
+        /// Rule name 1, matches a literal.
+        /// </summary>
         [Fact]
-        public void FundModelConditionMet_False()
+        public void RuleName1()
         {
-            NewRule().FundModelConditionMet(35).Should().BeFalse();
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.Equal("ULN_10", result);
         }
 
+        /// <summary>
+        /// Rule name 2, matches the constant.
+        /// </summary>
         [Fact]
-        public void FilePreparationDateConditionMet_True()
+        public void RuleName2()
         {
-            var learnStartDate = new DateTime(2018, 01, 01);
-            var filePrepDate = new DateTime(2019, 05, 01);
-            var januaryFirst = new DateTime(2019, 01, 01);
+            // arrange
+            var sut = NewRule();
 
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            // act
+            var result = sut.RuleName;
 
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, filePrepDate)).Returns(50);
+            // assert
+            Assert.Equal(RuleNameConstants.ULN_10, result);
+        }
 
-            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).FilePreparationDateConditionMet(learnStartDate, filePrepDate, januaryFirst).Should().BeTrue();
+        /// <summary>
+        /// Minimum course duration meets expectation.
+        /// </summary>
+        [Fact]
+        public void MinimumCourseDurationMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act / assert
+            Assert.Equal(5, ULN_10Rule.MinimumCourseDuration);
+        }
+
+        /// <summary>
+        /// Rule leniency period meets expectation.
+        /// </summary>
+        [Fact]
+        public void RuleLeniencyPeriodMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act / assert
+            Assert.Equal(60, ULN_10Rule.RuleLeniencyPeriod);
+        }
+
+        /// <summary>
+        /// File preparation date meets expectation.
+        /// </summary>
+        [Fact]
+        public void FilePreparationDateMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act / assert
+            Assert.Equal(TestPreparationDate, sut.FilePreparationDate);
+        }
+
+        /// <summary>
+        /// First (of) January meets expectation.
+        /// </summary>
+        [Fact]
+        public void FirstJanuaryMeetsExpectation()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act / assert
+            Assert.Equal(TestNewYearDate, sut.FirstJanuary);
+        }
+
+        /// <summary>
+        /// Rule name 3 test, account for potential false positives.
+        /// </summary>
+        [Fact]
+        public void RuleName3()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act
+            var result = sut.RuleName;
+
+            // assert
+            Assert.NotEqual("SomeOtherRuleName_07", result);
+        }
+
+        /// <summary>
+        /// Validate with null learner throws.
+        /// </summary>
+        [Fact]
+        public void ValidateWithNullLearnerThrows()
+        {
+            // arrange
+            var sut = NewRule();
+
+            // act/assert
+            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Theory]
-        [InlineData(2018)]
-        [InlineData(2019)]
-        public void FilePreparationDateConditionMet_False(int filePrepDateYear)
+        [InlineData("2018-04-02", "2018-04-01", false)]
+        [InlineData("2018-04-01", "2018-04-01", false)]
+        [InlineData("2018-03-31", "2018-04-01", true)]
+        public void IsOutsideQualifyingPeriodMeetsExpectation(string candidate, string yearStart, bool expectation)
         {
-            var learnStartDate = new DateTime(2019, 06, 01);
-            var filePrepDate = new DateTime(filePrepDateYear, 07, 01);
-            var januaryFirst = new DateTime(2019, 01, 01);
+            // arrange
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(DateTime.Parse(yearStart));
 
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, filePrepDate)).Returns(100);
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).FilePreparationDateConditionMet(learnStartDate, filePrepDate, januaryFirst).Should().BeFalse();
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(DateTime.Parse(candidate));
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+
+            // act
+            var result = sut.IsOutsideQualifyingPeriod();
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            academicYear.VerifyAll();
+            dateTime.VerifyAll();
+            fileData.VerifyAll();
+            commonOps.VerifyAll();
         }
 
+        /// <summary>
+        /// Temporary uln meets expectation.
+        /// </summary>
         [Fact]
-        public void LearningDatesConditionMet_True_LearnPlanEndDate()
+        public void TemporaryULNMeetsExpectation()
         {
-            var learnStartDate = new DateTime(2019, 01, 01);
-            var learnPlanEndDate = new DateTime(2019, 05, 01);
-            var learnActEndDate = new DateTime(2018, 05, 01);
-
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(10);
-
-            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).LearningDatesConditionMet(learnStartDate, learnPlanEndDate, learnActEndDate).Should().BeTrue();
+            // arrange / act / assert
+            Assert.Equal(9999999999, ValidationConstants.TemporaryULN);
         }
 
-        [Fact]
-        public void LearningDatesConditionMet_True_LearnActEndDate()
+        /// <summary>
+        /// Is valid uln meets expectation
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(12345, true)]
+        [InlineData(1234, true)]
+        [InlineData(9999999999, false)]
+        public void IsValidULNMeetsExpectation(long candidate, bool expectation)
         {
-            var learnStartDate = new DateTime(2019, 01, 01);
-            var learnPlanEndDate = new DateTime(2018, 05, 01);
-            var learnActEndDate = new DateTime(2019, 05, 01);
+            // arrange
+            var learner = new Mock<ILearner>();
+            learner.SetupGet(x => x.ULN).Returns(candidate);
+            var sut = NewRule();
 
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            // act
+            var result = sut.IsValidULN(learner.Object);
 
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnActEndDate)).Returns(10);
-
-            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).LearningDatesConditionMet(learnStartDate, learnPlanEndDate, learnActEndDate).Should().BeTrue();
+            // assert
+            Assert.Equal(expectation, result);
         }
 
-        [Fact]
-        public void LearningDatesConditionMet_False_LearnActEndDateNull()
+        /// <summary>
+        /// Has qualifying start meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void IsLearnerInCustodyMeetsExpectation(bool expectation)
         {
-            var learnStartDate = new DateTime(2019, 01, 01);
-            var learnPlanEndDate = new DateTime(2018, 05, 01);
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
 
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, learnPlanEndDate)).Returns(0);
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(TestNewYearDate);
 
-            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).LearningDatesConditionMet(learnStartDate, learnPlanEndDate, null).Should().BeFalse();
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(TestPreparationDate);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsLearnerInCustody(delivery.Object))
+                .Returns(expectation);
+
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+
+            // act
+            var result = sut.IsLearnerInCustody(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            academicYear.VerifyAll();
+            dateTime.VerifyAll();
+            fileData.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Type of funding meets expectation.
+        /// </summary>
+        /// <param name="expectation">The expectation.</param>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData(99, TypeOfFunding.NotFundedByESFA)]
+        public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
+        {
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
+        }
+
+        /// <summary>
+        /// Has qualifying model meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(TestNewYearDate);
+
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(TestPreparationDate);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 99))
+                .Returns(expectation);
+
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+
+            // act
+            var result = sut.HasQualifyingModel(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            academicYear.VerifyAll();
+            dateTime.VerifyAll();
+            fileData.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Monitoring code meets expectation.
+        /// </summary>
+        /// <param name="expectation">The expectation.</param>
+        /// <param name="candidate">The candidate.</param>
+        [Theory]
+        [InlineData("SOF1", Monitoring.Delivery.HigherEducationFundingCouncilEngland)]
+        [InlineData("LDM034", Monitoring.Delivery.OLASSOffendersInCustody)]
+        public void MonitoringCodeMeetsExpectation(string expectation, string candidate)
+        {
+            // arrange / act / assert
+            Assert.Equal(expectation, candidate);
+        }
+
+        /// <summary>
+        /// Is higher education funding council england, meets expectation
+        /// </summary>
+        /// <param name="famType">Type of the fam.</param>
+        /// <param name="famCode">The fam code.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData("ACT", "1", false)] // Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer
+        [InlineData("LDM", "034", false)] // Monitoring.Delivery.OLASSOffendersInCustody
+        [InlineData("FFI", "1", false)] // Monitoring.Delivery.FullyFundedLearningAim
+        [InlineData("FFI", "2", false)] // Monitoring.Delivery.CoFundedLearningAim
+        [InlineData("LDM", "363", false)] // Monitoring.Delivery.InReceiptOfLowWages
+        [InlineData("LDM", "318", false)] // Monitoring.Delivery.MandationToSkillsTraining
+        [InlineData("LDM", "328", false)] // Monitoring.Delivery.ReleasedOnTemporaryLicence
+        [InlineData("LDM", "347", false)] // Monitoring.Delivery.SteelIndustriesRedundancyTraining
+        [InlineData("SOF", "1", true)] // Monitoring.Delivery.HigherEducationFundingCouncilEngland
+        [InlineData("SOF", "107", false)] // Monitoring.Delivery.ESFA16To19Funding
+        [InlineData("SOF", "105", false)] // Monitoring.Delivery.ESFAAdultFunding
+        [InlineData("SOF", "110", false)] // Monitoring.Delivery.GreaterManchesterCombinedAuthority
+        [InlineData("SOF", "111", false)] // Monitoring.Delivery.LiverpoolCityRegionCombinedAuthority
+        [InlineData("SOF", "112", false)] // Monitoring.Delivery.WestMidlandsCombinedAuthority
+        [InlineData("SOF", "113", false)] // Monitoring.Delivery.WestOfEnglandCombinedAuthority
+        [InlineData("SOF", "114", false)] // Monitoring.Delivery.TeesValleyCombinedAuthority
+        [InlineData("SOF", "115", false)] // Monitoring.Delivery.CambridgeshireAndPeterboroughCombinedAuthority
+        [InlineData("SOF", "116", false)] // Monitoring.Delivery.GreaterLondonAuthority
+        public void IsHigherEducationFundingCouncilEnglandMeetsExpectation(string famType, string famCode, bool expectation)
+        {
+            // arrange
+            var sut = NewRule();
+            var fam = new Mock<ILearningDeliveryFAM>();
+            fam
+                .SetupGet(y => y.LearnDelFAMType)
+                .Returns(famType);
+            fam
+                .SetupGet(y => y.LearnDelFAMCode)
+                .Returns(famCode);
+
+            // act
+            var result = sut.IsHigherEducationFundingCouncilEngland(fam.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        /// <summary>
+        /// Has qualifying monitor meets expectation
+        /// </summary>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void HasQualifyingMonitorMeetsExpectation(bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(TestNewYearDate);
+
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(TestPreparationDate);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
+                .Returns(expectation);
+
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+
+            // act
+            var result = sut.HasQualifyingMonitor(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            academicYear.VerifyAll();
+            dateTime.VerifyAll();
+            fileData.VerifyAll();
+            commonOps.VerifyAll();
         }
 
         [Theory]
-        [InlineData(10, 10, 10)]
-        [InlineData(01, 04, 03)]
-        public void LearningDatesConditionMet_False(int learnStartDateDay, int learnPlanEndDateDay, int learnActEndDateDay)
+        [InlineData(1, false)]
+        [InlineData(2, false)]
+        [InlineData(3, false)]
+        [InlineData(4, false)]
+        [InlineData(5, true)]
+        [InlineData(6, true)]
+        public void HasQualifyingPlannedDurationMeetsExpectation(int duration, bool expectation)
         {
-            var learnStartDate = new DateTime(2019, 05, learnStartDateDay);
-            var learnPlanEndDate = new DateTime(2019, 05, learnPlanEndDateDay);
-            var learnActEndDate = new DateTime(2019, 05, learnActEndDateDay);
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
 
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(learnStartDate, It.IsAny<DateTime>())).Returns(0);
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(TestNewYearDate);
 
-            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).LearningDatesConditionMet(learnStartDate, learnPlanEndDate, learnActEndDate).Should().BeFalse();
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTime
+                .Setup(x => x.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Returns(duration);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(TestPreparationDate);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+
+            // act
+            var result = sut.HasQualifyingPlannedDuration(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            academicYear.VerifyAll();
+            dateTime.VerifyAll();
+            fileData.VerifyAll();
+            commonOps.VerifyAll();
         }
 
-        [Fact]
-        public void LearningDeliveryFAMConditionMet_True()
-        {
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>();
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-
-            learningDeliveryFamQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, "SOF", "1")).Returns(true);
-            learningDeliveryFamQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, "LDM", "034")).Returns(false);
-
-            NewRule(learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object).LearningDeliveryFAMConditionMet(learningDeliveryFams).Should().BeTrue();
-        }
-
-        [Fact]
-        public void LearningDeliveryFAMConditionMet_False_SOF()
-        {
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>();
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-
-            learningDeliveryFamQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, "SOF", "1")).Returns(false);
-            learningDeliveryFamQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, "LDM", "034")).Returns(false);
-
-            NewRule(learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object).LearningDeliveryFAMConditionMet(learningDeliveryFams).Should().BeFalse();
-        }
-
-        [Fact]
-        public void LearningDeliveryFAMConditionMet_False_LDM()
-        {
-            var learningDeliveryFams = new List<TestLearningDeliveryFAM>();
-
-            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-
-            learningDeliveryFamQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, "SOF", "1")).Returns(true);
-            learningDeliveryFamQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, "LDM", "034")).Returns(true);
-
-            NewRule(learningDeliveryFAMQueryService: learningDeliveryFamQueryServiceMock.Object).LearningDeliveryFAMConditionMet(learningDeliveryFams).Should().BeFalse();
-        }
-
-        [Fact]
-        public void ConditionMet_True()
-        {
-            var uln = 9999999999;
-            var fundModel = 99;
-            var learnStartDate = new DateTime(2019, 02, 01);
-            var learnPlanEndDate = new DateTime(2019, 05, 10);
-            var learnActEndDate = new DateTime(2019, 05, 10);
-            var filePrepDate = new DateTime(2019, 01, 01);
-            var januaryFirst = new DateTime(2019, 01, 01);
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>();
-
-            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-
-            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "SOF", "1")).Returns(true);
-            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "LDM", "034")).Returns(false);
-
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(50);
-
-            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFAMQueryServiceMock.Object)
-                .ConditionMet(uln, fundModel, learningDeliveryFAMs, learnStartDate, learnPlanEndDate, learnActEndDate, filePrepDate, januaryFirst)
-                .Should().BeTrue();
-        }
-
+        /// <summary>
+        /// Has actual end date meets expectation
+        /// </summary>
+        /// <param name="actEnd">The act end.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(1111111111, 99, "2019-01-01", "2019-05-10", 1, "LDM", "033")]
-        [InlineData(9999999999, 35, "2019-01-01", "2019-05-10", 1, "LDM", "033")]
-        [InlineData(9999999999, 99, "2018-3-10", "2019-05-10", 1, "LDM", "033")]
-        [InlineData(9999999999, 99, "2019-01-01", "2019-05-01", 100, "LDM", "033")]
-        [InlineData(9999999999, 99, "2019-01-01", "2019-05-01", 1, "LDM", "034")]
-        [InlineData(9999999999, 99, "2019-01-01", "2019-05-01", 1, "ACT", "1")]
-        public void ConditionMet_False(long uln, int fundModel, string filePrepDateString, string learnPlanEndDateString, double dateTimeMock, string famType, string famCode)
+        [InlineData("2018-04-02", true)]
+        [InlineData(null, false)]
+        public void HasActualEndDateMeetsExpectation(string actEnd, bool expectation)
         {
-            var learnStartDate = new DateTime(2019, 05, 01);
-            var learnPlanEndDate = DateTime.Parse(learnPlanEndDateString);
-            var learnActEndDate = new DateTime(2019, 05, 10);
-            var filePrepDate = DateTime.Parse(filePrepDateString);
-            var januaryFirst = new DateTime(2019, 01, 01);
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-            {
-                new TestLearningDeliveryFAM
-                {
-                    LearnDelFAMType = "ADL",
-                    LearnDelFAMCode = "1"
-                },
-                new TestLearningDeliveryFAM
-                {
-                    LearnDelFAMType = famType,
-                    LearnDelFAMCode = famCode
-                }
-            };
+            // arrange
+            var testDate = GetNullableDate(actEnd);
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnActEndDateNullable)
+                .Returns(testDate);
 
-            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, It.IsAny<string>(), It.IsAny<string>())).Returns(true);
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(dateTimeMock);
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(TestNewYearDate);
 
-            NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object, learningDeliveryFAMQueryService: learningDeliveryFAMQueryServiceMock.Object)
-                .ConditionMet(uln, fundModel, learningDeliveryFAMs, learnStartDate, learnPlanEndDate, learnActEndDate, filePrepDate, januaryFirst)
-                .Should().BeFalse();
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(TestPreparationDate);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+
+            // act
+            var result = sut.HasActualEndDate(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            academicYear.VerifyAll();
+            dateTime.VerifyAll();
+            fileData.VerifyAll();
+            commonOps.VerifyAll();
         }
 
+        /// <summary>
+        /// Has qualifying actual duration meets expectation
+        /// </summary>
+        /// <param name="duration">The duration.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(1, false)]
+        [InlineData(2, false)]
+        [InlineData(3, false)]
+        [InlineData(4, false)]
+        [InlineData(5, true)]
+        [InlineData(6, true)]
+        public void HasQualifyingActualDurationMeetsExpectation(int duration, bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.LearnActEndDateNullable)
+                .Returns(DateTime.Today); // any old date for the test...
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(TestNewYearDate);
+
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTime
+                .Setup(x => x.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Returns(duration);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(TestPreparationDate);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+
+            // act
+            var result = sut.HasQualifyingActualDuration(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            academicYear.VerifyAll();
+            dateTime.VerifyAll();
+            fileData.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Has qualifying actual duration meets expectation
+        /// </summary>
+        /// <param name="duration">The duration.</param>
+        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
+        [Theory]
+        [InlineData(59, false)]
+        [InlineData(60, false)]
+        [InlineData(61, true)]
+        public void IsOutsideLeniencyPeriodMeetsExpectation(int duration, bool expectation)
+        {
+            // arrange
+            var delivery = new Mock<ILearningDelivery>();
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(TestNewYearDate);
+
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTime
+                .Setup(x => x.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Returns(duration);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(TestPreparationDate);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+
+            // act
+            var result = sut.IsOutsideLeniencyPeriod(delivery.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+
+            handler.VerifyAll();
+            academicYear.VerifyAll();
+            dateTime.VerifyAll();
+            fileData.VerifyAll();
+            commonOps.VerifyAll();
+        }
+
+        /// <summary>
+        /// Gets the nullable date.
+        /// </summary>
+        /// <param name="candidate">The candidate.</param>
+        /// <returns>a nullable date</returns>
+        public DateTime? GetNullableDate(string candidate) =>
+            string.IsNullOrWhiteSpace(candidate) ? (DateTime?)null : DateTime.Parse(candidate);
+
+        /// <summary>
+        /// Invalid item raises validation message.
+        /// dates are deliberately out of sync to ensure the mock's are controlling the flow
+        /// </summary>
         [Fact]
-        public void Validate_Error()
+        public void InvalidItemRaisesValidationMessage()
         {
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>();
-            var learner = new TestLearner()
-            {
-                ULN = 9999999999,
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = 99,
-                        LearnStartDate = new DateTime(2019, 02, 01),
-                        LearnPlanEndDate = new DateTime(2019, 05, 10),
-                        LearningDeliveryFAMs = learningDeliveryFAMs
-                    }
-                }
-            };
+            // arrange
+            const string LearnRefNumber = "123456789X";
 
-            var academicDataQueryServiceMock = new Mock<IAcademicYearDataService>();
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            var fileDataServiceMock = new Mock<IFileDataService>();
-            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            var testStart = DateTime.Parse("2016-05-01");
+            var testEnd = DateTime.Parse("2017-05-01");
 
-            academicDataQueryServiceMock.Setup(qs => qs.JanuaryFirst()).Returns(new DateTime(2019, 01, 01));
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(30);
-            fileDataServiceMock.Setup(fd => fd.FilePreparationDate()).Returns(new DateTime(2019, 01, 01));
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(99);
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(testStart);
+            delivery
+                .SetupGet(y => y.LearnPlanEndDate)
+                .Returns(testEnd);
+            delivery
+                .SetupGet(y => y.LearnActEndDateNullable)
+                .Returns(DateTime.Today);
 
-            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "SOF", "1")).Returns(true);
-            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "LDM", "034")).Returns(false);
+            var deliveries = new ILearningDelivery[] { delivery.Object };
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-            {
-                NewRule(
-                    academicDataQueryServiceMock.Object,
-                    dateTimeQueryServiceMock.Object,
-                    fileDataServiceMock.Object,
-                    learningDeliveryFAMQueryServiceMock.Object,
-                    validationErrorHandlerMock.Object)
-                    .Validate(learner);
-            }
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.ULN)
+                .Returns(ValidationConstants.TemporaryULN);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            handler
+                .Setup(x => x.Handle(RuleNameConstants.ULN_10, LearnRefNumber, 0, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("ULN", ValidationConstants.TemporaryULN))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("FundModel", 99))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testStart)))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnPlanEndDate", AbstractRule.AsRequiredCultureDate(testEnd)))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMType", "SOF"))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+            handler
+                .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMCode", "1"))
+                .Returns(new Mock<IErrorMessageParameter>().Object);
+
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(TestNewYearDate);
+
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTime
+                .Setup(x => x.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .ReturnsInOrder(4, 5, 61);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(TestPreparationDate);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsLearnerInCustody(delivery.Object))
+                .Returns(false);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 99))
+                .Returns(true);
+
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+
+            // post construction mock setups
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsHigherEducationFundingCouncilEngland))
+                .Returns(true);
+
+            // act
+            sut.Validate(learner.Object);
+
+            // assert
+            handler.VerifyAll();
+            academicYear.VerifyAll();
+            dateTime.VerifyAll();
+            fileData.VerifyAll();
+            commonOps.VerifyAll();
         }
 
+        /// <summary>
+        /// Valid item does not raise validation message.
+        /// </summary>
         [Fact]
-        public void Validate_NoError()
+        public void ValidItemDoesNotRaiseValidationMessage()
         {
-            var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>();
-            var learner = new TestLearner()
-            {
-                ULN = 1,
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = 35,
-                        LearnStartDate = new DateTime(2019, 05, 01),
-                        LearnPlanEndDate = new DateTime(2019, 05, 10),
-                        LearningDeliveryFAMs = learningDeliveryFAMs
-                    }
-                }
-            };
+            // arrange
+            const string LearnRefNumber = "123456789X";
 
-            var academicDataQueryServiceMock = new Mock<IAcademicYearDataService>();
-            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            var fileDataServiceMock = new Mock<IFileDataService>();
-            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            var testStart = DateTime.Parse("2016-05-01");
+            var testEnd = DateTime.Parse("2017-05-01");
 
-            academicDataQueryServiceMock.Setup(qs => qs.JanuaryFirst()).Returns(new DateTime(2019, 01, 01));
-            dateTimeQueryServiceMock.Setup(qs => qs.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(100);
-            fileDataServiceMock.Setup(fd => fd.FilePreparationDate()).Returns(new DateTime(2019, 01, 01));
-            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "ADL", "1")).Returns(false);
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(99);
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(testStart);
+            delivery
+                .SetupGet(y => y.LearnPlanEndDate)
+                .Returns(testEnd);
+            delivery
+                .SetupGet(y => y.LearnActEndDateNullable)
+                .Returns(DateTime.Today);
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
-            {
-                NewRule(
-                    academicDataQueryServiceMock.Object,
-                    dateTimeQueryServiceMock.Object,
-                    fileDataServiceMock.Object,
-                    learningDeliveryFAMQueryServiceMock.Object,
-                    validationErrorHandlerMock.Object)
-                    .Validate(learner);
-            }
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.ULN)
+                .Returns(ValidationConstants.TemporaryULN);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(TestNewYearDate);
+
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTime
+                .Setup(x => x.DaysBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .ReturnsInOrder(4, 5, 60);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(TestPreparationDate);
+
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            commonOps
+                .Setup(x => x.IsLearnerInCustody(delivery.Object))
+                .Returns(false);
+            commonOps
+                .Setup(x => x.HasQualifyingFunding(delivery.Object, 99))
+                .Returns(true);
+
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+
+            // post construction mock setups
+            commonOps
+                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsHigherEducationFundingCouncilEngland))
+                .Returns(true);
+
+            // act
+            sut.Validate(learner.Object);
+
+            // assert
+            handler.VerifyAll();
+            academicYear.VerifyAll();
+            dateTime.VerifyAll();
+            fileData.VerifyAll();
+            commonOps.VerifyAll();
         }
 
-        [Fact]
-        public void BuildErrorMessageParameters()
+        /// <summary>
+        /// New rule.
+        /// </summary>
+        /// <returns>a constructed and mocked up validation rule</returns>
+        public ULN_10Rule NewRule()
         {
-            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("ULN", (long)1234567890)).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnStartDate", "01/01/2019")).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnPlanEndDate", "01/12/2018")).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("FundModel", 99)).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnDelFAMType", "SOF")).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnDelFAMCode", "1")).Verifiable();
+            var academicYear = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            academicYear
+                .Setup(x => x.JanuaryFirst())
+                .Returns(TestNewYearDate);
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(1234567890, new DateTime(2019, 01, 01), new DateTime(2018, 12, 01), 99, "SOF", "1");
+            var dateTime = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            validationErrorHandlerMock.Verify();
-        }
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.FilePreparationDate())
+                .Returns(TestPreparationDate);
 
-        private ULN_10Rule NewRule(
-            IAcademicYearDataService academicDataQueryService = null,
-            IDateTimeQueryService dateTimeQueryService = null,
-            IFileDataService fileDataService = null,
-            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
-            IValidationErrorHandler validationErrorHandler = null)
-        {
-            return new ULN_10Rule(academicDataQueryService, dateTimeQueryService, fileDataService, learningDeliveryFAMQueryService, validationErrorHandler);
+            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
+            return new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
         }
     }
 }

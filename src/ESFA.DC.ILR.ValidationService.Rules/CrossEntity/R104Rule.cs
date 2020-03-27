@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
@@ -13,12 +13,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
     {
         private readonly string _famTypeACT = Monitoring.Delivery.Types.ApprenticeshipContract;
 
-        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
-
-        public R104Rule(ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService, IValidationErrorHandler validationErrorHandler)
+        public R104Rule( IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.R104)
         {
-            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -30,23 +27,63 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                var overlappingLearningDeliveryFAMs =
-                    _learningDeliveryFAMQueryService
-                    .GetOverLappingLearningDeliveryFAMsForType(learningDelivery.LearningDeliveryFAMs, _famTypeACT);
+                if (learningDelivery.LearningDeliveryFAMs == null)
+                {
+                    continue;
+                }
 
-                foreach (var learningDeliveryFAM in overlappingLearningDeliveryFAMs)
+                var learnDelFAMsToCheck = learningDelivery.LearningDeliveryFAMs?
+                    .Where(fam => fam.LearnDelFAMType.CaseInsensitiveEquals(_famTypeACT))
+                    .OrderBy(ld => ld.LearnDelFAMDateFromNullable ?? DateTime.MaxValue);
+
+                if (!HasValidFamsToCheck(learnDelFAMsToCheck))
+                {
+                    continue;
+                }
+
+                var nonConsecutiveLearningDeliveryFAMs = GetNonConsecutiveLearningDeliveryFAMs(learnDelFAMsToCheck);
+
+                foreach (var learningDeliveryFAM in nonConsecutiveLearningDeliveryFAMs)
                 {
                     HandleValidationError(
-                    objectToValidate.LearnRefNumber,
-                    learningDelivery.AimSeqNumber,
-                    errorMessageParameters: BuildErrorMessageParameters(
-                        learningDelivery.LearnPlanEndDate,
-                        learningDelivery.LearnActEndDateNullable,
-                        _famTypeACT,
-                        learningDeliveryFAM.LearnDelFAMDateFromNullable,
-                        learningDeliveryFAM.LearnDelFAMDateToNullable));
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(
+                            learningDelivery.LearnPlanEndDate,
+                            learningDelivery.LearnActEndDateNullable,
+                            _famTypeACT,
+                            learningDeliveryFAM.LearnDelFAMDateFromNullable,
+                            learningDeliveryFAM.LearnDelFAMDateToNullable));
+                }
+
+            }
+        }
+
+        public bool HasValidFamsToCheck(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
+        {
+            return learningDeliveryFams.Any(ldf => ldf.LearnDelFAMDateFromNullable != null) &&
+                   learningDeliveryFams.Count() >= 2;
+        }
+
+        public IEnumerable<ILearningDeliveryFAM> GetNonConsecutiveLearningDeliveryFAMs(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
+        {
+            var nonConsecutiveLearningDeliveryFAMs = new List<ILearningDeliveryFAM>();
+
+            var learnDelFAMsArray = learningDeliveryFams.ToArray();
+            var arraySize = learnDelFAMsArray.Length;
+
+            for (var i = 0; i < arraySize - 1; i++)
+            {
+                var learnDelFAMSource = learnDelFAMsArray[i];
+                var learnDelFAMToCompare = learnDelFAMsArray[i + 1];
+
+                if (learnDelFAMToCompare.LearnDelFAMDateFromNullable != null && learnDelFAMSource.LearnDelFAMDateToNullable != learnDelFAMToCompare.LearnDelFAMDateFromNullable.Value.AddDays(-1))
+                {
+                    nonConsecutiveLearningDeliveryFAMs.Add(learnDelFAMToCompare);
                 }
             }
+
+            return nonConsecutiveLearningDeliveryFAMs;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnPlanEndDate, DateTime? learnActEndDate, string famType, DateTime? learnDelFamDateFrom, DateTime? learnDelFamDateTo)

@@ -10,6 +10,9 @@ using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
+    /// <summary>
+    /// learn start date rule 16
+    /// </summary>
     public class LearnStartDate_16Rule :
         AbstractRule,
         IRule<ILearner>
@@ -54,23 +57,40 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// <param name="thisDelivery">this delivery.</param>
         /// <returns>a conttract allocation</returns>
         public IFcsContractAllocation GetAllocationFor(ILearningDelivery thisDelivery) =>
-            _contracts.GetContractAllocationFor(thisDelivery?.ConRefNumber);
+            _contracts.GetContractAllocationFor(thisDelivery.ConRefNumber);
 
         /// <summary>
-        /// Determines whether [has qualifying start] [the specified this delivery].
+        /// Determines whether [has qualifying start] [the specified delivery].
         /// </summary>
         /// <param name="thisDelivery">this delivery.</param>
         /// <param name="allocation">The allocation.</param>
         /// <returns>
-        ///   <c>true</c> if [has qualifying start] [the specified this delivery]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [has qualifying start] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasQualifyingStart(ILearningDelivery thisDelivery, IFcsContractAllocation allocation) =>
             It.Has(allocation)
             && It.Has(allocation.StartDate)
             && _check.HasQualifyingStart(thisDelivery, allocation.StartDate.Value);
 
+        /// <summary>
+        /// Determines whether [has qualifying aim] [the specified delivery].
+        /// </summary>
+        /// <param name="thisDelivery">The this delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying aim] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
         public bool HasQualifyingAim(ILearningDelivery thisDelivery) =>
             It.IsInRange(thisDelivery.LearnAimRef, TypeOfAim.References.ESFLearnerStartandAssessment);
+
+        /// <summary>
+        /// Determines whether [has qualifying model] [the specified delivery].
+        /// </summary>
+        /// <param name="thisDelivery">The this delivery.</param>
+        /// <returns>
+        ///   <c>true</c> if [has qualifying model] [the specified delivery]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasQualifyingModel(ILearningDelivery thisDelivery) =>
+            _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.EuropeanSocialFund);
 
         /// <summary>
         /// Determines whether [is not valid] [the specified delivery].
@@ -80,7 +100,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         ///   <c>true</c> if [is not valid] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
-            _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.EuropeanSocialFund)
+            HasQualifyingModel(thisDelivery)
             && HasQualifyingAim(thisDelivery)
             && !HasQualifyingStart(thisDelivery, GetAllocationFor(thisDelivery));
 
@@ -104,10 +124,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// </summary>
         /// <param name="learnRefNumber">The learn reference number.</param>
         /// <param name="thisDelivery">this delivery.</param>
-        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)
-        {
+        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery) =>
             HandleValidationError(learnRefNumber, thisDelivery.AimSeqNumber, BuildMessageParametersFor(thisDelivery));
-        }
 
         /// <summary>
         /// Builds the error message parameters.
@@ -116,12 +134,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// <returns>
         /// returns a list of message parameters
         /// </returns>
-        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery thisDelivery)
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearningDelivery thisDelivery) => new[]
         {
-            return new[]
-            {
-                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, thisDelivery.LearnStartDate)
-            };
-        }
+            BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, thisDelivery.LearnStartDate)
+        };
     }
 }

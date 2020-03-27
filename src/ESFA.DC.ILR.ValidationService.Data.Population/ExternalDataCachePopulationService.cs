@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using ESFA.DC.ILR.ReferenceDataService.Model;
+﻿using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
@@ -45,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
             _validationRulesDataMapper = validationRulesDataMapper;
         }
 
-        public void Populate(ReferenceDataRoot referenceDataRoot)
+        public void Populate(ReferenceDataRoot referenceDataRoot, IValidationContext validationContext)
         {
             var externalDataCache = (ExternalDataCache)_externalDataCache;
 
@@ -57,6 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
 
             externalDataCache.Postcodes = _postcodesDataMapper.MapPostcodes(referenceDataRoot.Postcodes);
             externalDataCache.ONSPostcodes = _postcodesDataMapper.MapONSPostcodes(referenceDataRoot.Postcodes);
+            externalDataCache.DevolvedPostcodes = _postcodesDataMapper.MapDevolvedPostcodes(referenceDataRoot.DevolvedPostocdes?.Postcodes);
 
             externalDataCache.Organisations = _organisationsDataMapper.MapOrganisations(referenceDataRoot.Organisations);
             externalDataCache.CampusIdentifiers = _organisationsDataMapper.MapCampusIdentifiers(referenceDataRoot.Organisations);
@@ -69,6 +68,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
 
             externalDataCache.ValidationErrors = _validationErrorsDataMapper.MapValidationErrors(referenceDataRoot.MetaDatas?.ValidationErrors);
             externalDataCache.ValidationRules = _validationRulesDataMapper.MapValidationRules(referenceDataRoot.MetaDatas?.ValidationRules);
+
+            externalDataCache.ReturnPeriod = validationContext.ReturnPeriod;
         }
     }
 }

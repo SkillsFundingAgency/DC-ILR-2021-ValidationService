@@ -17,7 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         /// <summary>
         /// Gets the name of the rule.
         /// </summary>
-        public const string Name = "LearnDelFAMType_22";
+        public const string Name = RuleNameConstants.LearnDelFAMType_22;
 
         /// <summary>
         /// The message handler

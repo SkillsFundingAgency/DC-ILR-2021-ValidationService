@@ -57,8 +57,8 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
         public async Task ExecuteAsync(IValidationContext validationContext, IMessage message, CancellationToken cancellationToken)
         {
             // Get L/A and split the learners into separate lists
-            var learnerMessageShards = _learnerPerActorProviderService.Provide(message).ToList();
-            var learnerDPMessageShards = _learnerDPPerActorProviderService.Provide(message).ToList();
+            var learnerMessageShards = _learnerPerActorProviderService.Provide(message)?.ToList() ?? new List<IMessage>();
+            var learnerDPMessageShards = _learnerDPPerActorProviderService.Provide(message)?.ToList() ?? new List<IMessage>();
 
             List<IValidationActor> learnerValidationActors = new List<IValidationActor>();
             List<IValidationDPActor> learnerDPValidationActors = new List<IValidationDPActor>();
@@ -84,6 +84,8 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             {
                 foreach (IMessage messageShard in learnerMessageShards)
                 {
+                    _logger.LogDebug($"Validation Shard has {messageShard.Learners.Count} learners");
+
                     var actor = CreateValidationActor<IValidationActor, ValidationActorModel>(validationContext, messageShard, learnerValidationActors, internalDataCacheAsString, externalDataCacheAsString, fileDataCacheAsString, _validationActorServiceName, out var validationActorModel);
 
                     actorTasks.Add(actor.Validate(validationActorModel, cancellationToken));
@@ -94,6 +96,8 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             {
                 foreach (IMessage messageShard in learnerDPMessageShards)
                 {
+                    _logger.LogDebug($"Validation Shard has {messageShard.LearnerDestinationAndProgressions.Count} learnersDestinationAndProgressions");
+
                     var actor = CreateValidationActor<IValidationDPActor, ValidationDPActorModel>(validationContext, messageShard, learnerDPValidationActors, internalDataCacheAsString, externalDataCacheAsString, fileDataCacheAsString, _validationDPActorServiceName, out var validationActorModel);
 
                     actorTasks.Add(actor.Validate(validationActorModel, cancellationToken));
@@ -147,8 +151,6 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             where T : IActor
             where S : ActorModel, new()
         {
-            _logger.LogDebug($"Validation Shard has {messageShard.Learners.Count} learners");
-
             // create actors for each Shard.
             T actor = GetActor<T>(actorServiceName);
             learnerValidationActors.Add(actor);
