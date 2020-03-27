@@ -29,6 +29,15 @@ stages:
       #- ServiceFabricSDKVersion -equals 65
 
     steps:
+    - powershell: |
+           $Filter = "ApplicationParameters";
+           $ApplicationParametersFolder = Get-ChildItem -Directory -recurse   | Where {$_.Name.ToLower() -eq $Filter.ToLower() };
+           Copy-Item "$($ApplicationParametersFolder.FullName)\Cloud.xml" "$($ApplicationParametersFolder.FullName)\Local.1Node.xml" -Force;
+           Copy-Item "$($ApplicationParametersFolder.FullName)\Cloud.xml" "$($ApplicationParametersFolder.FullName)\Local.5Node.xml" -Force;
+ 
+      workingDirectory: '$(build.sourcesdirectory)\src'
+      displayName: 'Generate Fake Application Parameters Node Config Files'
+
     - task: DotNetCoreInstaller@0
       displayName: 'Use .NET Core sdk $(DotNet>Core.Version)'
       inputs:
