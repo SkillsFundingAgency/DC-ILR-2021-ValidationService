@@ -11,11 +11,5 @@
     <Parameter Name="ProcessingServicePlacementConstraints" Value="__ProcessingServicePlacementConstraints__" />
     <Parameter Name="ServiceReleaseVersion" Value="__ServiceReleaseVersion__" />
     <Parameter Name="ServiceReleaseDateTime" Value="__ServiceReleaseDateTime__" />
-    <Parameter Name="ValidationActorService_PartitionCount" Value="1" />
-    <Parameter Name="ValidationActorService_TargetReplicaSetSize" Value="1" />
-    <Parameter Name="ValidationActorService_MinReplicaSetSize" Value="1" />
-    <Parameter Name="ValidationDPActorService_PartitionCount" Value="1" />
-    <Parameter Name="ValidationDPActorService_TargetReplicaSetSize" Value="1" />
-    <Parameter Name="ValidationDPActorService_MinReplicaSetSize" Value="1" />
   </Parameters>
 </Application>
