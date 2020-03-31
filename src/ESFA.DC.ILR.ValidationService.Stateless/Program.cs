@@ -66,7 +66,6 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
 
             var statelessServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAsStatelessServiceConfiguration();
             var azureStorageFileServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<AzureStorageFileServiceConfiguration>("AzureStorageFileServiceConfiguration");
-            var ioConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<IOConfiguration>("IOConfiguration");
 
             containerBuilder.RegisterModule(new StatelessServiceModule(statelessServiceConfiguration));
             containerBuilder.RegisterModule<SerializationModule>();
@@ -76,7 +75,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
             containerBuilder.RegisterInstance(azureStorageOptions).As<IAzureStorageKeyValuePersistenceServiceConfig>().SingleInstance();
 
             containerBuilder.RegisterModule<PreValidationServiceModule>();
-            containerBuilder.RegisterModule(new IOModule(azureStorageFileServiceConfiguration, ioConfiguration));
+            containerBuilder.RegisterModule(new IOModule(azureStorageFileServiceConfiguration));
 
             containerBuilder.RegisterType<DefaultJobContextMessageMapper<JobContextMessage>>().As<IMapper<JobContextMessage, JobContextMessage>>();
             containerBuilder.RegisterType<MessageHandler>().As<IMessageHandler<JobContextMessage>>();

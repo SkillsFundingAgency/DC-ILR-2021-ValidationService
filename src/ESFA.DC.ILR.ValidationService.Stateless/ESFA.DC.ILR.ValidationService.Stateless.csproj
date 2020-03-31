@@ -384,7 +384,6 @@
   <ItemGroup>
     <Compile Include="ActorValidationExecutionProvider.cs" />
     <Compile Include="Configuration\AzureStorageModel.cs" />
-    <Compile Include="Configuration\IOConfiguration.cs" />
     <Compile Include="Context\JobContextMessageValidationContext.cs" />
     <Compile Include="Context\JobContextMessageValidationContextFactory.cs" />
     <Compile Include="Handlers\MessageHandler.cs" />
