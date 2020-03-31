@@ -5,7 +5,6 @@ using Autofac;
 using Autofac.Integration.ServiceFabric;
 using ESFA.DC.FileService.Config;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Stateless.Configuration;
 using ESFA.DC.ILR.ValidationService.Stateless.Context;
 using ESFA.DC.ILR.ValidationService.Stateless.Handlers;
 using ESFA.DC.ILR.ValidationService.Stateless.Modules;
@@ -69,10 +68,6 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
 
             containerBuilder.RegisterModule(new StatelessServiceModule(statelessServiceConfiguration));
             containerBuilder.RegisterModule<SerializationModule>();
-
-            var azureStorageOptions = configHelper.GetSectionValues<AzureStorageModel>("AzureStorageSection");
-            containerBuilder.RegisterInstance(azureStorageOptions).As<AzureStorageModel>().SingleInstance();
-            containerBuilder.RegisterInstance(azureStorageOptions).As<IAzureStorageKeyValuePersistenceServiceConfig>().SingleInstance();
 
             containerBuilder.RegisterModule<PreValidationServiceModule>();
             containerBuilder.RegisterModule(new IOModule(azureStorageFileServiceConfiguration));

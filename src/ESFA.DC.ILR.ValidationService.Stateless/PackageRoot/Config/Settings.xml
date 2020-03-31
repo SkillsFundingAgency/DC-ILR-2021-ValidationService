@@ -22,14 +22,6 @@
   <Section Name="AzureStorageFileServiceConfiguration">
     <Parameter Name="ConnectionString" Value="" />
   </Section>
-  <Section  Name="AzureStorageSection">
-    <Parameter Name="AzureBlobConnectionString" Value="" />
-    <Parameter Name="AzureBlobContainerName" Value="" />
-  </Section>
-  <Section Name="IOConfiguration">
-    <Parameter Name="ConnectionString" Value="" />
-    <Parameter Name="ContainerName" Value="" />
-  </Section>
   <Section Name="DataTransportSettings">
     <Parameter Name="MaxMessageSize" Value="1073741824" MustOverride="true"/>
     <Parameter Name="SecurityCredentialsType" Value="None" />

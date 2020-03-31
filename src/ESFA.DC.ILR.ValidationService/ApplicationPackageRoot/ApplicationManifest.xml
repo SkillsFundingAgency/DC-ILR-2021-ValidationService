@@ -14,7 +14,6 @@
     <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
     <Parameter Name="LoggerConnectionstring" DefaultValue="Server=localhost;Database=logs;User Id=loguser;" />
     <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
-    <Parameter Name="AzureBlobContainerName" DefaultValue="ilr-files" />
     <Parameter Name="ValidationActorService_PartitionCount" DefaultValue="100" />
     <Parameter Name="ValidationActorService_MinReplicaSetSize" DefaultValue="1" />
     <Parameter Name="ValidationActorService_TargetReplicaSetSize" DefaultValue="1" />
@@ -36,9 +35,6 @@
           <Section Name="LoggerSection">
             <Parameter Name="LoggerConnectionstring" Value="[LoggerConnectionstring]" />
           </Section>
-          <Section Name="AzureStorageSection">
-            <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
-          </Section>
         </Settings>
       </ConfigOverride>
     </ConfigOverrides>
@@ -50,9 +46,6 @@
         <Settings>
           <Section Name="LoggerSection">
             <Parameter Name="LoggerConnectionstring" Value="[LoggerConnectionstring]" />
-          </Section>
-          <Section Name="AzureStorageSection">
-            <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
           </Section>
         </Settings>
       </ConfigOverride>
@@ -78,16 +71,8 @@
           <Section Name="DataTransportSettings">
             <Parameter Name="MaxMessageSize" Value="[MaxMessageSize]" />
           </Section>
-          <Section Name="AzureStorageSection">
-            <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
-            <Parameter Name="AzureBlobContainerName" Value="[AzureBlobContainerName]" />
-          </Section>
           <Section Name="AzureStorageFileServiceConfiguration">
             <Parameter Name="ConnectionString" Value="[AzureBlobConnectionString]" />
-          </Section>
-          <Section Name="IOConfiguration">
-            <Parameter Name="ConnectionString" Value="[AzureBlobConnectionString]" />
-            <Parameter Name="ContainerName" Value="[AzureBlobContainerName]" />
           </Section>
           <Section Name="VersionSection">
             <Parameter Name="ServiceReleaseVersion" Value="[ServiceReleaseVersion]" />
