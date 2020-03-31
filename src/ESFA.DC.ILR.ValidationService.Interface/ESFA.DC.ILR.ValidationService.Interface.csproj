@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ESFA.DC.ILR.1920.Model.Interface" Version="0.1.4-beta0001" />
+    <PackageReference Include="ESFA.DC.ILR.2021.Model.Interface" Version="0.1.0-beta0001" />
   </ItemGroup>
 
 </Project>

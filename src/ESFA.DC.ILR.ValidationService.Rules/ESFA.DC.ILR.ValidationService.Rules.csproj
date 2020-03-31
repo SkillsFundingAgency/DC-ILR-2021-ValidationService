@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CrossEntity\R97Rule.cs" />
+    <Compile Remove="EmploymentStatus\AgreeId\AgreeId_02Rule.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.2" />
     <PackageReference Include="ESFA.DC.DateTimeProvider.Interface" Version="0.1.6-beta0001" />
   </ItemGroup>
@@ -12,6 +17,10 @@
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj" />
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Interface\ESFA.DC.ILR.ValidationService.Interface.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="EmploymentStatus\AgreeId\" />
   </ItemGroup>
 
 </Project>
