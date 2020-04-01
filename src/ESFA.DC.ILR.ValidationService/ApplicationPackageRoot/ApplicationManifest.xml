@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ESFA.DC.ILR1920.ValidationServiceType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="ESFA.DC.ILR2021.ValidationServiceType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="ESFA.DC.ILR.ValidationService.Stateless_InstanceCount" DefaultValue="-1" />
     <Parameter Name="JobStatusQueueName" DefaultValue="jobstatusqueue" />
@@ -14,7 +14,6 @@
     <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
     <Parameter Name="LoggerConnectionstring" DefaultValue="Server=localhost;Database=logs;User Id=loguser;" />
     <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
-    <Parameter Name="AzureBlobContainerName" DefaultValue="ilr-files" />
     <Parameter Name="ValidationActorService_PartitionCount" DefaultValue="100" />
     <Parameter Name="ValidationActorService_MinReplicaSetSize" DefaultValue="1" />
     <Parameter Name="ValidationActorService_TargetReplicaSetSize" DefaultValue="1" />
@@ -36,9 +35,6 @@
           <Section Name="LoggerSection">
             <Parameter Name="LoggerConnectionstring" Value="[LoggerConnectionstring]" />
           </Section>
-          <Section Name="AzureStorageSection">
-            <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
-          </Section>
         </Settings>
       </ConfigOverride>
     </ConfigOverrides>
@@ -51,15 +47,12 @@
           <Section Name="LoggerSection">
             <Parameter Name="LoggerConnectionstring" Value="[LoggerConnectionstring]" />
           </Section>
-          <Section Name="AzureStorageSection">
-            <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
-          </Section>
         </Settings>
       </ConfigOverride>
     </ConfigOverrides>
   </ServiceManifestImport>
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="ESFA.DC.ILR1920.ValidationService.StatelessPkg" ServiceManifestVersion="1.0.0" />
+    <ServiceManifestRef ServiceManifestName="ESFA.DC.ILR2021.ValidationService.StatelessPkg" ServiceManifestVersion="1.0.0" />
     <ConfigOverrides>
       <ConfigOverride Name="Config">
         <Settings>
@@ -78,16 +71,8 @@
           <Section Name="DataTransportSettings">
             <Parameter Name="MaxMessageSize" Value="[MaxMessageSize]" />
           </Section>
-          <Section Name="AzureStorageSection">
-            <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
-            <Parameter Name="AzureBlobContainerName" Value="[AzureBlobContainerName]" />
-          </Section>
           <Section Name="AzureStorageFileServiceConfiguration">
             <Parameter Name="ConnectionString" Value="[AzureBlobConnectionString]" />
-          </Section>
-          <Section Name="IOConfiguration">
-            <Parameter Name="ConnectionString" Value="[AzureBlobConnectionString]" />
-            <Parameter Name="ContainerName" Value="[AzureBlobContainerName]" />
           </Section>
           <Section Name="VersionSection">
             <Parameter Name="ServiceReleaseVersion" Value="[ServiceReleaseVersion]" />
@@ -103,8 +88,8 @@
          ServiceFabric PowerShell module.
          
          The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
-    <Service Name="ESFA.DC.ILR1920.ValidationService.Stateless" ServicePackageActivationMode="ExclusiveProcess">
-      <StatelessService ServiceTypeName="ESFA.DC.ILR1920.ValidationService.StatelessType" InstanceCount="[ESFA.DC.ILR.ValidationService.Stateless_InstanceCount]">
+    <Service Name="ESFA.DC.ILR2021.ValidationService.Stateless" ServicePackageActivationMode="ExclusiveProcess">
+      <StatelessService ServiceTypeName="ESFA.DC.ILR2021.ValidationService.StatelessType" InstanceCount="[ESFA.DC.ILR.ValidationService.Stateless_InstanceCount]">
         <SingletonPartition />
         <PlacementConstraints>[ProcessingServicePlacementConstraints]</PlacementConstraints>
       </StatelessService>

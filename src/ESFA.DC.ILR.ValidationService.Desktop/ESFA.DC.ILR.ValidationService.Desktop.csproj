@@ -19,8 +19,8 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.2" />
-    <PackageReference Include="ESFA.DC.ILR.1920.Constants" Version="0.1.5-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.1920.Desktop.Interface" Version="0.1.0-beta0001" />
+    <PackageReference Include="ESFA.DC.ILR.2021.Constants" Version="0.1.0-beta0001" />
   </ItemGroup>
 
   <ItemGroup>

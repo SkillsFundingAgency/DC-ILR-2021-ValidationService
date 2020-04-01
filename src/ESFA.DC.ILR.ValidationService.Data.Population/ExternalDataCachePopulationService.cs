@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
 
             externalDataCache.Postcodes = _postcodesDataMapper.MapPostcodes(referenceDataRoot.Postcodes);
             externalDataCache.ONSPostcodes = _postcodesDataMapper.MapONSPostcodes(referenceDataRoot.Postcodes);
-            externalDataCache.DevolvedPostcodes = _postcodesDataMapper.MapDevolvedPostcodes(referenceDataRoot.DevolvedPostocdes?.Postcodes);
+            externalDataCache.DevolvedPostcodes = _postcodesDataMapper.MapDevolvedPostcodes(referenceDataRoot.DevolvedPostcodes?.Postcodes);
 
             externalDataCache.Organisations = _organisationsDataMapper.MapOrganisations(referenceDataRoot.Organisations);
             externalDataCache.CampusIdentifiers = _organisationsDataMapper.MapCampusIdentifiers(referenceDataRoot.Organisations);

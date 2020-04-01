@@ -5,7 +5,6 @@ using Autofac;
 using Autofac.Integration.ServiceFabric;
 using ESFA.DC.FileService.Config;
 using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Stateless.Configuration;
 using ESFA.DC.ILR.ValidationService.Stateless.Context;
 using ESFA.DC.ILR.ValidationService.Stateless.Handlers;
 using ESFA.DC.ILR.ValidationService.Stateless.Modules;
@@ -40,7 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
                 builder.RegisterServiceFabricSupport();
 
                 // Register the stateless service.
-                builder.RegisterStatelessService<ESFA.DC.ServiceFabric.Common.Stateless>("ESFA.DC.ILR1920.ValidationService.StatelessType");
+                builder.RegisterStatelessService<ESFA.DC.ServiceFabric.Common.Stateless>("ESFA.DC.ILR2021.ValidationService.StatelessType");
 
                 using (var container = builder.Build())
                 {
@@ -66,17 +65,12 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
 
             var statelessServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAsStatelessServiceConfiguration();
             var azureStorageFileServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<AzureStorageFileServiceConfiguration>("AzureStorageFileServiceConfiguration");
-            var ioConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<IOConfiguration>("IOConfiguration");
 
             containerBuilder.RegisterModule(new StatelessServiceModule(statelessServiceConfiguration));
             containerBuilder.RegisterModule<SerializationModule>();
 
-            var azureStorageOptions = configHelper.GetSectionValues<AzureStorageModel>("AzureStorageSection");
-            containerBuilder.RegisterInstance(azureStorageOptions).As<AzureStorageModel>().SingleInstance();
-            containerBuilder.RegisterInstance(azureStorageOptions).As<IAzureStorageKeyValuePersistenceServiceConfig>().SingleInstance();
-
             containerBuilder.RegisterModule<PreValidationServiceModule>();
-            containerBuilder.RegisterModule(new IOModule(azureStorageFileServiceConfiguration, ioConfiguration));
+            containerBuilder.RegisterModule(new IOModule(azureStorageFileServiceConfiguration));
 
             containerBuilder.RegisterType<DefaultJobContextMessageMapper<JobContextMessage>>().As<IMapper<JobContextMessage, JobContextMessage>>();
             containerBuilder.RegisterType<MessageHandler>().As<IMessageHandler<JobContextMessage>>();

@@ -8,7 +8,6 @@ using ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutEndDate;
 using ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutStartDate;
 using ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutType;
 using ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutULN;
-using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.AgreeId;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.DateEmpStatApp;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat;
@@ -222,7 +221,6 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(AFinType_12Rule),
                 typeof(AFinType_13Rule),
                 typeof(AFinType_14Rule),
-                typeof(AgreeId_02Rule),
                 typeof(AimSeqNumber_02Rule),
                 typeof(AimType_01Rule),
                 typeof(AimType_05Rule),
@@ -599,7 +597,6 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(R91Rule),
                 typeof(R92Rule),
                 typeof(R96Rule),
-                typeof(R97Rule),
                 typeof(R99Rule),
                 typeof(R100Rule),
                 typeof(R101Rule),
