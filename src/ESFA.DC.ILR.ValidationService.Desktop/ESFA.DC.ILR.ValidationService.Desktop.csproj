@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>ESFA.DC.ILR.1920.ValidationService.Desktop</PackageId>
+    <PackageId>ESFA.DC.ILR.2021.ValidationService.Desktop</PackageId>
     <Version>0.0.5</Version>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
     <Authors>DC</Authors>
     <Company>ESFA</Company>
-    <Product>ESFA.DC.ILR.1920.ValidationService.Desktop</Product>
+    <Product>ESFA.DC.ILR.2021.ValidationService.Desktop</Product>
   </PropertyGroup>
 
   <!--<ItemGroup>
@@ -19,8 +19,8 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.2" />
-    <PackageReference Include="ESFA.DC.ILR.1920.Desktop.Interface" Version="0.1.0-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.2021.Constants" Version="0.1.0-beta0001" />
+    <PackageReference Include="ESFA.DC.ILR.2021.Desktop.Interface" Version="0.1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
