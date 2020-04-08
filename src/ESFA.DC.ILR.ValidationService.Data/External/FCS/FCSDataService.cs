@@ -36,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.FCS
         /// a contract allocation (if found)
         /// </returns>
         public IFcsContractAllocation GetContractAllocationFor(string thisContractReference) =>
-            _contractAllocations.GetValueOrDefault(thisContractReference, null);
+            _contractAllocations.GetValueOrDefault(thisContractReference);
 
         /// <summary>
         /// Gets the contract allocations for.
@@ -143,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.FCS
         /// <returns>true if it does</returns>
         public bool FundingRelationshipFCTExists(IEnumerable<string> fundingStreamPeriodCodes)
         {
-            var fsCodes = fundingStreamPeriodCodes.AsSafeDistinctKeySet();
+            var fsCodes = fundingStreamPeriodCodes.ToCaseInsensitiveHashSet();
 
             return _contractAllocations.Values.Any(ca => fsCodes.Contains(ca.FundingStreamPeriodCode));
         }

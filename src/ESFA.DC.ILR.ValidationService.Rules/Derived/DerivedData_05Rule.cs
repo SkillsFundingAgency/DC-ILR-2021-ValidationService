@@ -1,4 +1,5 @@
-﻿using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
+﻿using ESFA.DC.ILR.ValidationService.Data.Extensions;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,17 +67,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                     otherwise set DD05 to number of the result (1-9).
              */
 
-            var list = thisEmployer.AsSafeReadOnlyDigitList();
+            var list = thisEmployer.SplitIntDigitsToList();
 
             // the employer id has to have a length of 9 digits
-            if (!It.HasCountOf(list, _requiredIDLength))
+            if (list.Count != _requiredIDLength)
             {
                 return InvalidLengthChecksum;
             }
 
-            var result = 11 - (Sum(list) % 11);
+            var result1 = 11 - (Sum(list) % 11);
 
-            return _validChecksums[result];
+            return _validChecksums[result1];
         }
 
         /// <summary>

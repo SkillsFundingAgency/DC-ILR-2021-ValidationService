@@ -108,7 +108,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
             It.HasValues(postcodes)
             && It.HasValues(eligibilities)
             && It.Has(delivery)
-            && HasAnyQualifyingEligibility(delivery, postcodes, eligibilities.Select(x => x.Code).AsSafeDistinctKeySet());
+            && HasAnyQualifyingEligibility(delivery, postcodes, eligibilities.Select(x => x.Code));
 
         /// <summary>
         /// Determines whether [has any qualifying eligibility] [the specified delivery].
@@ -119,7 +119,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         /// <returns>
         ///   <c>true</c> if [has any qualifying eligibility] [the specified delivery]; otherwise, <c>false</c>.
         /// </returns>
-        public abstract bool HasAnyQualifyingEligibility(ILearningDelivery delivery, IReadOnlyCollection<IONSPostcode> postcodes, IContainThis<string> eligibilityCodes);
+        public abstract bool HasAnyQualifyingEligibility(ILearningDelivery delivery, IReadOnlyCollection<IONSPostcode> postcodes, IEnumerable<string> eligibilityCodes);
 
         /// <summary>
         /// Determines whether [in qualifying period] [the specified delivery].

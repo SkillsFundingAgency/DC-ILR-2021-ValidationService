@@ -1,9 +1,10 @@
-﻿using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
+using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Interface;
+using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
 {
@@ -33,9 +34,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
         }
 
         public IReadOnlyCollection<IONSPostcode> GetONSPostcodes(string fromPostcode) =>
-            _onsPostcodes.Where(x => x.Postcode.ComparesWith(fromPostcode)).ToList();
+            _onsPostcodes.Where(x => x.Postcode.CaseInsensitiveEquals(fromPostcode)).ToList();
 
         public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodes(string fromPostcode) =>
-            _devolvedPostcodes.GetValueOrDefault(fromPostcode, Collection.EmptyAndReadOnly<IDevolvedPostcode>());
+            _devolvedPostcodes.GetValueOrDefault(fromPostcode);
     }
 }

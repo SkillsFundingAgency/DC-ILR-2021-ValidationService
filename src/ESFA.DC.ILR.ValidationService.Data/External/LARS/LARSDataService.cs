@@ -42,10 +42,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         }
 
         public ILARSLearningDelivery GetDeliveryFor(string thisAimRef) =>
-            _larsDeliveries.GetValueOrDefault(thisAimRef, null);
+            _larsDeliveries.GetValueOrDefault(thisAimRef);
 
         public ILARSStandard GetStandardFor(int standardCode) =>
-            _larsStandards.GetValueOrDefault(standardCode, null);
+            _larsStandards.GetValueOrDefault(standardCode);
 
         public ILARSStandardFunding GetStandardFundingFor(int standardCode, DateTime startDate)
         {
@@ -207,7 +207,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             var learningDelivery = GetDeliveryFor(learnAimRef);
 
             return learningDelivery != null
-                && levels.AsSafeDistinctKeySet().Contains(learningDelivery.NotionalNVQLevelv2);
+                && levels.ToCaseInsensitiveHashSet().Contains(learningDelivery.NotionalNVQLevelv2);
         }
 
         // TODO: this should happen in the rule
@@ -297,13 +297,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         }
 
         // TODO: this should happen in the rule
-        public bool BasicSkillsMatchForLearnAimRefAndStartDate(IEnumerable<int> basicSkillsType, string learnAimRef, DateTime learnStartDate)
+        public bool BasicSkillsMatchForLearnAimRefAndStartDate(IEnumerable<int> basicSkillsTypes, string learnAimRef, DateTime learnStartDate)
         {
-            var values = GetAnnualValuesFor(learnAimRef);
-            var safeSkillsSet = basicSkillsType.AsSafeDistinctKeySet();
+            if (basicSkillsTypes == null || string.IsNullOrEmpty(learnAimRef))
+            {
+                return false;
+            }
 
+            var values = GetAnnualValuesFor(learnAimRef);
             return values.SafeAny(a => a.BasicSkillsType.HasValue
-                        && safeSkillsSet.Contains((int)a.BasicSkillsType)
+                        && basicSkillsTypes.Contains((int)a.BasicSkillsType)
                         && a.IsCurrent(learnStartDate));
         }
 

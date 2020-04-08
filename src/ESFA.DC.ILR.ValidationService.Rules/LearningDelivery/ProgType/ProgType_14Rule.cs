@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
@@ -80,7 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
             return It.Has(thisDelivery)
-                ? It.IsDifferent(thisDelivery.LearnAimRef, TypeOfAim.References.IndustryPlacement)
+                ? !thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.IndustryPlacement)
                 : true;
         }
 

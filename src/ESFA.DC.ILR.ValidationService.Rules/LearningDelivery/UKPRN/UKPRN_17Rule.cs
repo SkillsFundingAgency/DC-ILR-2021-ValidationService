@@ -30,14 +30,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         /// </summary>
         private readonly IFCSDataService _fcsData;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UKPRN_17Rule"/> class.
-        /// </summary>
-        /// <param name="validationErrorHandler">The validation error handler.</param>
-        /// <param name="fileDataService">The file data service.</param>
-        /// <param name="commonOps">The common ops.</param>
-        /// <param name="fcsDataService">The FCS data service.</param>
-        public UKPRN_17Rule(
+        private readonly HashSet<string> _fundingStreams = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { FundingStreamPeriodCodeConstants.C16_18TRN1920 };
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UKPRN_17Rule"/> class.
+    /// </summary>
+    /// <param name="validationErrorHandler">The validation error handler.</param>
+    /// <param name="fileDataService">The file data service.</param>
+    /// <param name="commonOps">The common ops.</param>
+    /// <param name="fcsDataService">The FCS data service.</param>
+    public UKPRN_17Rule(
             IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
             IProvideRuleCommonOperations commonOps,
@@ -54,19 +56,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 .AsGuard<ArgumentNullException>(nameof(fcsDataService));
 
             ProviderUKPRN = fileDataService.UKPRN();
-            FundingStreams = new CaseInsensitiveDistinctKeySet
-            {
-                FundingStreamPeriodCodeConstants.C16_18TRN1920
-            };
+            
 
             _check = commonOps;
             _fcsData = fcsDataService;
         }
-
-        /// <summary>
-        /// Gets the funding streams.
-        /// </summary>
-        public CaseInsensitiveDistinctKeySet FundingStreams { get; }
 
         /// <summary>
         /// Gets the provider ukprn.
@@ -161,7 +155,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         ///   <c>true</c> if [has funding relationship] [the specified allocation]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasFundingRelationship(IFcsContractAllocation theAllocation) =>
-            FundingStreams.Contains(theAllocation.FundingStreamPeriodCode);
+            _fundingStreams.Contains(theAllocation.FundingStreamPeriodCode);
 
         /// <summary>
         /// Determines whether [has started after stop date] [the specified allocation].

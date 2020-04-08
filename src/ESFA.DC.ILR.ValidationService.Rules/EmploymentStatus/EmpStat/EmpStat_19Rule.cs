@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -58,7 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         ///   <c>true</c> if [has a qualifying monitor status] [the specified monitor]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasADisqualifyingMonitorStatus(IEmploymentStatusMonitoring monitor) =>
-            monitor.ESMType.ComparesWith(Monitoring.EmploymentStatus.Types.EmploymentIntensityIndicator)
+            monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.EmploymentIntensityIndicator)
             && It.IsOutOfRange(
                 $"{monitor.ESMType}{monitor.ESMCode}",
                 Monitoring.EmploymentStatus.EmployedFor0To10HourPW,

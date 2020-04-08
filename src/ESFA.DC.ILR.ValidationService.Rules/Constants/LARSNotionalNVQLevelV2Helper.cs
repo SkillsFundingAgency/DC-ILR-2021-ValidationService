@@ -35,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
         /// <returns>a mapped notional nvq level v2 value</returns>
         public static double AsNotionalNVQLevelV2(this string source)
         {
-            return It.IsEmpty(source) || !_notionalLevelV2Map.ContainsKey(source)
+            return string.IsNullOrWhiteSpace(source) || !_notionalLevelV2Map.ContainsKey(source)
                 ? TypeOfNotionalNVQLevelV2.OutOfScope
                 : _notionalLevelV2Map[source];
         }

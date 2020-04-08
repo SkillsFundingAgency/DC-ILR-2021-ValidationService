@@ -13,5 +13,29 @@ namespace ESFA.DC.ILR.ValidationService.Data.Extensions
 
             return source?.Equals(data, StringComparison.OrdinalIgnoreCase) ?? false;
         }
+
+        public static bool CommencesWith(this string item, params string[] anyCandidate)
+        {
+           if (anyCandidate == null)
+           {
+               return false;
+           }
+
+            foreach (var candidate in anyCandidate)
+            {
+                var result = CommencesWith(item, candidate);
+                if (result)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool CommencesWith(this string item, string thisCandidate)
+        {
+            return item.IndexOf(thisCandidate, StringComparison.OrdinalIgnoreCase) == 0;
+        }
     }
 }

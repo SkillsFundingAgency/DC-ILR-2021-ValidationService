@@ -150,7 +150,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         /// </returns>
         public bool HasCompletedCourse(ILearner learner) =>
             It.HasValues(learner.LearningDeliveries)
-                && learner.LearningDeliveries.SafeAll(HasCompletedCourse);
+                && learner.LearningDeliveries.All(HasCompletedCourse);
 
         /// <summary>
         /// Determines whether [in training] [the specified delivery].

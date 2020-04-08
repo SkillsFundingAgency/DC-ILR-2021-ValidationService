@@ -6,13 +6,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.Extensions
 {
     public static class IDictionaryExtensions
     {
-        /// <summary>
-        /// As case insensitive read only dictionary.
-        /// ordinal ignore case, because it's faster than it's invariant culture cousin
-        /// </summary>
-        /// <typeparam name="TValue">The type of value.</typeparam>
-        /// <param name="source">The source.</param>
-        /// <returns>a case insensitive readonly dictionary</returns>
         public static IReadOnlyDictionary<string, TValue> ToCaseInsensitiveDictionary<TValue>(this IReadOnlyDictionary<string, TValue> source)
         {
             if (source == null)
@@ -21,6 +14,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.Extensions
             }
 
             return source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
+        }
+
+        public static TValue GetValueOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default(TValue))
+        {
+            if (dictionary == null || key == null || !dictionary.TryGetValue(key, out var value))
+            {
+                return defaultValue;
+            }
+
+            return value;
         }
     }
 }

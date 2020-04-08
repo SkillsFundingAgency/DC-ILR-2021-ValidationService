@@ -31,6 +31,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         /// </summary>
         private readonly IFCSDataService _fcsData;
 
+        private readonly HashSet<string> _fundingStreams = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            FundingStreamPeriodCodeConstants.LEVY1799,
+            FundingStreamPeriodCodeConstants.NONLEVY2019
+        };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UKPRN_10Rule"/> class.
         /// </summary>
@@ -58,11 +64,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             It.IsNull(fcsDataService)
                 .AsGuard<ArgumentNullException>(nameof(fcsDataService));
 
-            FundingStreams = new CaseInsensitiveDistinctKeySet
-            {
-                FundingStreamPeriodCodeConstants.LEVY1799,
-                FundingStreamPeriodCodeConstants.NONLEVY2019
-            };
             FirstViableStart = new DateTime(2017, 05, 01);
             AcademicYearStartDate = academicYearDataService.Start();
             ProviderUKPRN = fileDataService.UKPRN();
@@ -70,11 +71,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             _check = commonOps;
             _fcsData = fcsDataService;
         }
-
-        /// <summary>
-        /// Gets the funding streams.
-        /// </summary>
-        public CaseInsensitiveDistinctKeySet FundingStreams { get; }
 
         /// <summary>
         /// Gets the first viable start, which is 1st May 2017
@@ -189,7 +185,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public bool HasFundingRelationship() =>
             _fcsData
                 .GetContractAllocationsFor(ProviderUKPRN)
-                .SafeAny(x => FundingStreams.Contains(x.FundingStreamPeriodCode));
+                .SafeAny(x => _fundingStreams.Contains(x.FundingStreamPeriodCode));
 
         /// <summary>
         /// Raises the validation message.
