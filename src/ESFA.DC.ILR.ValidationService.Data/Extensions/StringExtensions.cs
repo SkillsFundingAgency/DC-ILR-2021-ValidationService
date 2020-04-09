@@ -14,28 +14,14 @@ namespace ESFA.DC.ILR.ValidationService.Data.Extensions
             return source?.Equals(data, StringComparison.OrdinalIgnoreCase) ?? false;
         }
 
-        public static bool CommencesWith(this string item, params string[] anyCandidate)
+        public static bool CaseInsensitiveStartsWith(this string source, string thisCandidate)
         {
-           if (anyCandidate == null)
-           {
-               return false;
-           }
-
-            foreach (var candidate in anyCandidate)
+            if (string.IsNullOrWhiteSpace(source))
             {
-                var result = CommencesWith(item, candidate);
-                if (result)
-                {
-                    return true;
-                }
+                return false;
             }
 
-            return false;
-        }
-
-        public static bool CommencesWith(this string item, string thisCandidate)
-        {
-            return item.IndexOf(thisCandidate, StringComparison.OrdinalIgnoreCase) == 0;
+            return source.StartsWith(thisCandidate, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

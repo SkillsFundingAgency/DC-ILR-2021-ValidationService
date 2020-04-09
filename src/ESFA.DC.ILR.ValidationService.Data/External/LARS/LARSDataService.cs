@@ -198,7 +198,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             var learningDelivery = GetDeliveryFor(learnAimRef);
 
             return learningDelivery != null
-                && levels.ToCaseInsensitiveHashSet().Contains(learningDelivery.NotionalNVQLevelv2);
+                && levels.Any(x => x.CaseInsensitiveEquals(learningDelivery.NotionalNVQLevelv2));
         }
 
         // TODO: this should happen in the rule
@@ -317,20 +317,20 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         // TODO: this should happen in the rule
         public bool OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(DateTime origLearnStartDate, string learnAimRef, string validityCategory)
         {
-            return OrigLearnStartDateBetweenStartAndEndDateForAnyValidityCategory(
-                origLearnStartDate,
-                learnAimRef,
-                new List<string>() { validityCategory });
+            var validities = GetValiditiesFor(learnAimRef);
+
+            return validities.Any(
+                lv => lv.ValidityCategory.CaseInsensitiveEquals(validityCategory)
+                && lv.IsCurrent(origLearnStartDate));
         }
 
         // TODO: this should happen in the rule
         public bool OrigLearnStartDateBetweenStartAndEndDateForAnyValidityCategory(DateTime origLearnStartDate, string learnAimRef, IEnumerable<string> categoriesHashSet)
         {
             var validities = GetValiditiesFor(learnAimRef);
-            var caseInsensitveCategoriesHashSet = categoriesHashSet.ToCaseInsensitiveHashSet();
 
             return validities.Any(lv =>
-                caseInsensitveCategoriesHashSet.Contains(lv.ValidityCategory)
+                categoriesHashSet.Any(x => x.CaseInsensitiveEquals(lv.ValidityCategory))
                 && lv.IsCurrent(origLearnStartDate));
         }
 
@@ -349,7 +349,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             var learningDelivery = GetDeliveryFor(learnAimRef);
 
             return It.Has(learningDelivery)
-                && learnAimRefTypes.ToCaseInsensitiveHashSet().Contains(learningDelivery.LearnAimRefType);
+                && learnAimRefTypes.Any(x => x.CaseInsensitiveEquals(learningDelivery.LearnAimRefType));
         }
     }
 }
