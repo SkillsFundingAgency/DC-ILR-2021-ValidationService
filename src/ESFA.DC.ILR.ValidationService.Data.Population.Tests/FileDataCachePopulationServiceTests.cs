@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.FileData.Tests
     public class FileDataCachePopulationServiceTests
     {
         [Fact]
-        public async Task Populate()
+        public void Populate()
         {
             var filePreparationDate = new DateTime(2018, 1, 5);
             var ukprn = 1;

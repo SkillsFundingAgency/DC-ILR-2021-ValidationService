@@ -54,7 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var organisationDataServiceMock = new Mock<IOrganisationDataService>();
             var fileDataServiceMock = new Mock<IFileDataService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.AgeAtGivenDate(dateOfBirth, learnStartDate)).Returns(25);
+            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(dateOfBirth, learnStartDate)).Returns(25);
             larsDataServiceMock.Setup(ds => ds.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(learnAimRef, nvqLevels)).Returns(true);
 
             NewRule(
@@ -81,7 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var organisationDataServiceMock = new Mock<IOrganisationDataService>();
             var fileDataServiceMock = new Mock<IFileDataService>();
 
-            dateTimeQueryServiceMock.Setup(qs => qs.AgeAtGivenDate(dateOfBirth, learnStartDate)).Returns(25);
+            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(dateOfBirth, learnStartDate)).Returns(25);
             larsDataServiceMock.Setup(ds => ds.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(learnAimRef, nvqLevels)).Returns(true);
 
             NewRule(
@@ -152,7 +152,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void DateOfBirthConditionMet_Test(DateTime? dateOfBirth, DateTime learnStartDate, int ageAtGivenDate, bool expected)
         {
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(qs => qs.AgeAtGivenDate(dateOfBirth.GetValueOrDefault(), learnStartDate)).Returns(ageAtGivenDate);
+            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(dateOfBirth.GetValueOrDefault(), learnStartDate)).Returns(ageAtGivenDate);
 
             NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).DateOfBirthConditionMet(dateOfBirth, learnStartDate).Should().Be(expected);
         }
@@ -265,7 +265,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var fileDataServiceMock = new Mock<IFileDataService>();
 
             dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
-            dateTimeQueryServiceMock.Setup(qs => qs.AgeAtGivenDate(dateOfBirth, learnStartDate)).Returns(25);
+            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(dateOfBirth, learnStartDate)).Returns(25);
             larsDataServiceMock.Setup(ds => ds.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(learnAimRef, nvqLevels)).Returns(true);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", ldmCodes)).Returns(false);
@@ -333,7 +333,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var fileDataServiceMock = new Mock<IFileDataService>();
 
             dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
-            dateTimeQueryServiceMock.Setup(qs => qs.AgeAtGivenDate(dateOfBirth, learnStartDate)).Returns(25);
+            dateTimeQueryServiceMock.Setup(qs => qs.YearsBetween(dateOfBirth, learnStartDate)).Returns(25);
             larsDataServiceMock.Setup(ds => ds.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(learnAimRef, nvqLevels)).Returns(true);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(true);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", ldmCodes)).Returns(false);

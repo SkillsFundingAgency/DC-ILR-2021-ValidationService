@@ -72,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.LLDDHealthProb
         {
             var startDate = _derivedData06.Derive(learningDeliveries);
 
-            return _dateTimeQueryService.AgeAtGivenDate(dateOfBirth ?? DateTime.MaxValue, startDate) >= MaxRuleAge;
+            return _dateTimeQueryService.YearsBetween(dateOfBirth ?? DateTime.MaxValue, startDate) >= MaxRuleAge;
         }
 
         private void RaiseValidationMessage(ILearner learner)

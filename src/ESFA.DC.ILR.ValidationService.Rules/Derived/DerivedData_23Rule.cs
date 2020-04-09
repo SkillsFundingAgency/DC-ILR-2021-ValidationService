@@ -37,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 return null;
             }
 
-            return _dateTimeQueryService.AgeAtGivenDate(
+            return _dateTimeQueryService.YearsBetween(
                 learner.DateOfBirthNullable.Value,
                 delivery.LearnStartDate);
         }

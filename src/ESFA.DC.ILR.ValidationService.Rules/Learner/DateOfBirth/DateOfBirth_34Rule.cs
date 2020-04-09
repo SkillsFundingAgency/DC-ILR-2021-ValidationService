@@ -40,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                 return;
             }
 
-            var age = _dateTimeQueryService.AgeAtGivenDate(
+            var age = _dateTimeQueryService.YearsBetween(
                 learner.DateOfBirthNullable ?? DateTime.MinValue,
                 _academicYearDataService.AugustThirtyFirst());
 

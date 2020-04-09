@@ -32,15 +32,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             }
         }
 
-        public IReadOnlyCollection<ILARSLearningDelivery> GetDeliveriesFor(string thisAimRef)
-        {
-            var delivery = GetDeliveryFor(thisAimRef);
-
-            return It.Has(delivery)
-                ? new[] { delivery }
-                : Collection.EmptyAndReadOnly<ILARSLearningDelivery>();
-        }
-
         public ILARSLearningDelivery GetDeliveryFor(string thisAimRef) =>
             _larsDeliveries.GetValueOrDefault(thisAimRef);
 

@@ -99,7 +99,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var dateOfBirth = new DateTime(1994, 10, 10);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(x => x.AgeAtGivenDate(dateOfBirth, It.IsAny<DateTime>())).Returns(23);
+            dateTimeQueryServiceMock.Setup(x => x.YearsBetween(dateOfBirth, It.IsAny<DateTime>())).Returns(23);
 
             NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).AgeConditionMet(new DateTime(2018, 10, 10), dateOfBirth).Should().BeFalse();
         }
@@ -643,7 +643,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             IDateTimeQueryService dateTimeQueryService = null)
         {
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(x => x.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(24);
+            dateTimeQueryServiceMock.Setup(x => x.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(24);
 
             return new LearnDelFAMType_57Rule(
                 validationErrorHandler,

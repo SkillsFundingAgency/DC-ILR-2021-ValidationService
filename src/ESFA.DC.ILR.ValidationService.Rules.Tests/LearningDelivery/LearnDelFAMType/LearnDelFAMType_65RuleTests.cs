@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -175,7 +175,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -237,7 +237,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -299,7 +299,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -361,7 +361,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -423,7 +423,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(17);
 
             var testLearner = new TestLearner
@@ -485,7 +485,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -549,7 +549,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -611,7 +611,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner

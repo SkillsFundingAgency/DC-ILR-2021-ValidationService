@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LLDDHealthProb
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(26);
+            dateTimeServiceMock.Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(26);
 
             var derivedDataMock = new Mock<IDerivedData_06Rule>();
             derivedDataMock.Setup(m => m.Derive(It.IsAny<IEnumerable<ILearningDelivery>>()))
@@ -184,7 +184,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LLDDHealthProb
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
+            dateTimeServiceMock.Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
 
             var derivedDataMock = new Mock<IDerivedData_06Rule>();
             derivedDataMock.Setup(m => m.Derive(It.IsAny<IEnumerable<ILearningDelivery>>()))

@@ -816,7 +816,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         /// New rule.
         /// </summary>
         /// <returns>a constructed and mocked up validation rule</returns>
-
         public LearnDelFAMType_64Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
