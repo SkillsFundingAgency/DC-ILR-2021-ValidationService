@@ -128,10 +128,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             // arrange
             var testDate = DateTime.Parse(candidate);
 
-            var contractCandidates = Collection.Empty<DateTime>();
+            var contractCandidates = new List<DateTime>();
             d22Dates.ForEach(x => contractCandidates.Add(DateTime.Parse(x)));
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             for (int i = 0; i < contractCandidates.Count; i++)
             {
                 var mockDelivery = new Mock<ILearningDelivery>();
@@ -166,8 +166,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             deliveries.Add(mockItem.Object);
 
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
-
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
@@ -175,7 +173,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, commonOps.Object);
 
             // act
-            var result = sut.GetQualifyingdAimOn(safeDeliveries);
+            var result = sut.GetQualifyingdAimOn(deliveries);
 
             // assert
             handler.VerifyAll();
@@ -272,7 +270,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(x => x.EmpStat)
                 .Returns(status);
 
-            var items = Collection.Empty<IEsfEligibilityRuleEmploymentStatus>();
+            var items = new List<IEsfEligibilityRuleEmploymentStatus>();
             eligibilities.ForEach(x =>
             {
                 var mockEligibility = new Mock<IEsfEligibilityRuleEmploymentStatus>();
@@ -284,7 +282,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             });
 
             // act
-            var result = sut.IsNotValid(items.AsSafeReadOnlyList(), mockStatus.Object);
+            var result = sut.IsNotValid(items, mockStatus.Object);
 
             // assert
             Assert.Equal(expectation, result);
@@ -308,7 +306,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var testDate = DateTime.Parse("2016-06-14");
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             for (int i = -5; i < 1; i++)
             {
                 deliveries.Add(GetTestDelivery(testDate.AddDays(i), conRefNumber, i));
@@ -327,7 +325,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
                 .Returns(statii);
@@ -345,7 +343,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testDate)))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var employmentStatuses = Collection.Empty<IEsfEligibilityRuleEmploymentStatus>();
+            var employmentStatuses = new List<IEsfEligibilityRuleEmploymentStatus>();
             eligibilities.ForEach(x => employmentStatuses.Add(GetEligibility(x)));
 
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
@@ -386,7 +384,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var testDate = DateTime.Parse("2016-06-14");
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             for (int i = -5; i < 1; i++)
             {
                 deliveries.Add(GetTestDelivery(testDate.AddDays(i), conRefNumber, i));
@@ -405,14 +403,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
                 .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            var employmentStatuses = Collection.Empty<IEsfEligibilityRuleEmploymentStatus>();
+            var employmentStatuses = new List<IEsfEligibilityRuleEmploymentStatus>();
             eligibilities.ForEach(x => employmentStatuses.Add(GetEligibility(x)));
 
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);

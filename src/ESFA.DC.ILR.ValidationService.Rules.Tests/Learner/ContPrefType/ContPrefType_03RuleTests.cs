@@ -128,7 +128,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ContPrefType
             // arrange
             const string learnRefNumber = "123456789X";
 
-            var preferences = Collection.Empty<IContactPreference>();
+            var preferences = new List<IContactPreference>();
 
             var prefType = candidate.Substring(0, 3);
             var prefCode = int.Parse(candidate.Substring(3));
@@ -148,7 +148,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ContPrefType
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.ContactPreferences)
-                .Returns(preferences.AsSafeReadOnlyList());
+                .Returns(preferences);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -199,7 +199,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ContPrefType
             // arrange
             const string learnRefNumber = "123456789X";
 
-            var preferences = Collection.Empty<IContactPreference>();
+            var preferences = new List<IContactPreference>();
 
             var prefType = candidate.Substring(0, 3);
             var prefCode = int.Parse(candidate.Substring(3));
@@ -219,7 +219,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ContPrefType
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.ContactPreferences)
-                .Returns(preferences.AsSafeReadOnlyList());
+                .Returns(preferences);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

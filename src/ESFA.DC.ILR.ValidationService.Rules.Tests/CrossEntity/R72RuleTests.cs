@@ -269,7 +269,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         public void GetRecordTotalsForPaymentRequestsMeetsExpectation(int expectation, params int[] recordPairs)
         {
             // arrange
-            var records = Collection.Empty<IAppFinRecord>();
+            var records = new List<IAppFinRecord>();
 
             for (var i = 0; i < recordPairs.Length; i += 2)
             {
@@ -284,7 +284,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var sut = NewRule();
 
             // act
-            var result = sut.GetRecordTotals(records.AsSafeReadOnlyList(), sut.IsPaymentRequest);
+            var result = sut.GetRecordTotals(records, sut.IsPaymentRequest);
 
             // assert
             Assert.Equal(expectation, result);
@@ -301,7 +301,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         public void GetRecordTotalsForProviderReimbursementsMeetsExpectation(int expectation, params int[] recordPairs)
         {
             // arrange
-            var records = Collection.Empty<IAppFinRecord>();
+            var records = new List<IAppFinRecord>();
 
             for (var i = 0; i < recordPairs.Length; i += 2)
             {
@@ -316,7 +316,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var sut = NewRule();
 
             // act
-            var result = sut.GetRecordTotals(records.AsSafeReadOnlyList(), sut.IsProviderReimbursement);
+            var result = sut.GetRecordTotals(records, sut.IsProviderReimbursement);
 
             // assert
             Assert.Equal(expectation, result);
@@ -531,7 +531,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             const string LearnRefNumber = "123456789X";
             const int testStdCode = 234;
 
-            var records = Collection.Empty<IAppFinRecord>();
+            var records = new List<IAppFinRecord>();
 
             for (var i = 0; i < recordPairs.Length; i += 2)
             {
@@ -549,7 +549,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Returns(testStdCode);
             delivery
                 .SetupGet(x => x.AppFinRecords)
-                .Returns(records.AsSafeReadOnlyList());
+                .Returns(records);
 
             var deliveries = new ILearningDelivery[] { delivery.Object };
 
@@ -621,7 +621,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             const string LearnRefNumber = "123456789X";
             const int testStdCode = 234;
 
-            var records = Collection.Empty<IAppFinRecord>();
+            var records = new List<IAppFinRecord>();
 
             for (var i = 0; i < recordPairs.Length; i += 2)
             {
@@ -639,7 +639,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Returns(testStdCode);
             delivery
                 .SetupGet(x => x.AppFinRecords)
-                .Returns(records.AsSafeReadOnlyList());
+                .Returns(records);
 
             var deliveries = new ILearningDelivery[] { delivery.Object };
 

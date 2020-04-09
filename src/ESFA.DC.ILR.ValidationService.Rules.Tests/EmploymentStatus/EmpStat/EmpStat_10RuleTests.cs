@@ -160,7 +160,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockItem = new Mock<ILearner>();
             mockItem
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(Collection.EmptyAndReadOnly<ILearnerEmploymentStatus>());
+                .Returns(new List<ILearnerEmploymentStatus>());
 
             // act
             var result = sut.IsNotValid(mockItem.Object, DateTime.MinValue);
@@ -187,25 +187,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var testDate = DateTime.Parse(candidate);
 
-            var latestContractCandidates = Collection.Empty<DateTime?>();
+            var latestContractCandidates = new List<DateTime?>();
             d22Dates.ForEach(x => latestContractCandidates.Add(GetNullableDate(x)));
             var expectedContractDate = latestContractCandidates.Max();
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             for (int i = 0; i < latestContractCandidates.Count; i++)
             {
                 var mockDelivery = new Mock<ILearningDelivery>();
                 deliveries.Add(mockDelivery.Object);
             }
 
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
-
             var mockStatus = new Mock<ILearnerEmploymentStatus>();
             mockStatus
                 .SetupGet(y => y.DateEmpStatApp)
                 .Returns(testDate);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(mockStatus.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -214,10 +212,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(safeDeliveries);
+                .Returns(deliveries);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -239,7 +237,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var mockDDRule22 = new Mock<IDerivedData_22Rule>(MockBehavior.Strict);
             mockDDRule22
-                .Setup(x => x.GetLatestLearningStartForESFContract(Moq.It.IsAny<ILearningDelivery>(), safeDeliveries))
+                .Setup(x => x.GetLatestLearningStartForESFContract(Moq.It.IsAny<ILearningDelivery>(), deliveries))
                 .ReturnsInOrder(latestContractCandidates);
 
             var sut = new EmpStat_10Rule(handler.Object, mockDDRule22.Object);
@@ -269,25 +267,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var testDate = DateTime.Parse(candidate);
 
-            var latestContractCandidates = Collection.Empty<DateTime?>();
+            var latestContractCandidates = new List<DateTime?>();
             d22Dates.ForEach(x => latestContractCandidates.Add(GetNullableDate(x)));
             var expectedContractDate = latestContractCandidates.Max();
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             for (int i = 0; i < latestContractCandidates.Count; i++)
             {
                 var mockDelivery = new Mock<ILearningDelivery>();
                 deliveries.Add(mockDelivery.Object);
             }
 
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
-
             var mockStatus = new Mock<ILearnerEmploymentStatus>();
             mockStatus
                 .SetupGet(y => y.DateEmpStatApp)
                 .Returns(testDate);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(mockStatus.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -296,16 +292,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(safeDeliveries);
+                .Returns(deliveries);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
             var mockDDRule22 = new Mock<IDerivedData_22Rule>(MockBehavior.Strict);
             mockDDRule22
-                .Setup(x => x.GetLatestLearningStartForESFContract(Moq.It.IsAny<ILearningDelivery>(), safeDeliveries))
+                .Setup(x => x.GetLatestLearningStartForESFContract(Moq.It.IsAny<ILearningDelivery>(), deliveries))
                 .ReturnsInOrder(latestContractCandidates);
 
             var sut = new EmpStat_10Rule(handler.Object, mockDDRule22.Object);

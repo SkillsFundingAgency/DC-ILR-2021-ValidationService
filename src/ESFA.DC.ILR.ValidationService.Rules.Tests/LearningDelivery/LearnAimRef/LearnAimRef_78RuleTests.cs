@@ -345,7 +345,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
                 .Setup(x => x.GetCategoriesFor(candidate))
-                .Returns(Collection.EmptyAndReadOnly<ILARSLearningCategory>());
+                .Returns(new List<ILARSLearningCategory>());
 
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
@@ -389,7 +389,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.FundModel)
                 .Returns(TypeOfFunding.AdultSkills);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -398,7 +398,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -419,7 +419,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(x => x.CategoryRef)
                 .Returns(TypeOfLARSCategory.LegalEntitlementLevel2);
 
-            var larsCategories = Collection.Empty<ILARSLearningCategory>();
+            var larsCategories = new List<ILARSLearningCategory>();
             larsCategories.Add(mockCategory.Object);
 
             var mockLars = new Mock<ILARSLearningDelivery>();
@@ -433,7 +433,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(mockLars.Object);
             service
                 .Setup(x => x.GetCategoriesFor(learnAimRef))
-                .Returns(larsCategories.AsSafeReadOnlyList());
+                .Returns(larsCategories);
 
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonChecks
@@ -501,7 +501,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.FundModel)
                 .Returns(TypeOfFunding.AdultSkills);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -510,7 +510,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
@@ -520,7 +520,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(x => x.CategoryRef)
                 .Returns(TypeOfLARSCategory.OnlyForLegalEntitlementAtLevel3);
 
-            var larsCategories = Collection.Empty<ILARSLearningCategory>();
+            var larsCategories = new List<ILARSLearningCategory>();
             larsCategories.Add(mockCategory.Object);
 
             var mockLars = new Mock<ILARSLearningDelivery>();
@@ -534,7 +534,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(mockLars.Object);
             service
                 .Setup(x => x.GetCategoriesFor(learnAimRef))
-                .Returns(larsCategories.AsSafeReadOnlyList());
+                .Returns(larsCategories);
 
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonChecks

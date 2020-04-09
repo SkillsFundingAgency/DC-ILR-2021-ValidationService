@@ -23,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
                 .AsGuard<ArgumentNullException>(nameof(externalDataCache));
 
             _externalDataCache = externalDataCache;
-            _onsPostcodes = _externalDataCache.ONSPostcodes.AsSafeReadOnlyList();
+            _onsPostcodes = _externalDataCache.ONSPostcodes.ToReadOnlyCollection();
             _devolvedPostcodes = _externalDataCache.DevolvedPostcodes;
         }
 

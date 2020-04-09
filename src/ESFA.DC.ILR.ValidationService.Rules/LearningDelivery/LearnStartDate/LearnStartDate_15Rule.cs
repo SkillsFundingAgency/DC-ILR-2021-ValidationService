@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -90,7 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
                 .AsGuard<ArgumentNullException>(nameof(thisLearner));
 
             var learnRefNumber = thisLearner.LearnRefNumber;
-            var deliveries = thisLearner.LearningDeliveries.AsSafeReadOnlyList();
+            var deliveries = thisLearner.LearningDeliveries.ToReadOnlyCollection();
 
             deliveries
                 .ForAny(x => IsNotValid(x, deliveries), x => RaiseValidationMessage(learnRefNumber, x));

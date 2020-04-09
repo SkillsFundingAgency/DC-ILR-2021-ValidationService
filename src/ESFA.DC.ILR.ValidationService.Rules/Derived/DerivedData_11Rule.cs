@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
@@ -45,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         {
             It.IsNull(delivery)
                 .AsGuard<ArgumentNullException>(nameof(delivery));
-            var employments = learnerEmployments.AsSafeReadOnlyList();
+            var employments = learnerEmployments.ToReadOnlyCollection();
 
             /*
                 if

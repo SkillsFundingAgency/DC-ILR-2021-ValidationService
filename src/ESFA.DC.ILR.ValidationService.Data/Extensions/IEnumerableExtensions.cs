@@ -20,5 +20,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Extensions
                 yield return l.Skip(i).Take(pageSize);
             }
         }
+
+        public static IReadOnlyCollection<T> ToReadOnlyCollection<T>(this IEnumerable<T> list)
+        {
+            return list?.ToArray() ?? Array.Empty<T>();
+        }
     }
 }

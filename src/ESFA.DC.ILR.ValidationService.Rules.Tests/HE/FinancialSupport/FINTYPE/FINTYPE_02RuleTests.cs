@@ -128,7 +128,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
             var sut = NewRule();
 
             // act
-            var result = sut.ConditionMet(Collection.EmptyAndReadOnly<ILearnerHEFinancialSupport>());
+            var result = sut.ConditionMet(new List<ILearnerHEFinancialSupport>());
 
             // assert
             Assert.True(result);
@@ -217,9 +217,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
             mockDelivery.SetupGet(x => x.LearningDeliveryHEEntity)
                 .Returns(mockDeliveryHE.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
-            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries.AsSafeReadOnlyList());
+            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
@@ -260,8 +260,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
 
             var mockDelivery = new Mock<ILearningDelivery>();
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries.AsSafeReadOnlyList());
+            var deliveries = new List<ILearningDelivery>();
+            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler.Setup(x => x.Handle(
@@ -297,7 +297,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
         /// <returns>a collection of mocks built from the candidate "Fin Types"</returns>
         public IReadOnlyCollection<ILearnerHEFinancialSupport> GetFinancialSupport(int[] candidates)
         {
-            var collection = Collection.Empty<ILearnerHEFinancialSupport>();
+            var collection = new List<ILearnerHEFinancialSupport>();
 
             candidates.ForEach(x =>
             {
@@ -306,7 +306,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
                 collection.Add(mock.Object);
             });
 
-            return collection.AsSafeReadOnlyList();
+            return collection;
         }
 
         /// <summary>

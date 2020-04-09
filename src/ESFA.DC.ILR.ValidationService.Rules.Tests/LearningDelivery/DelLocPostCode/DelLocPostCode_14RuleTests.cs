@@ -385,7 +385,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
             var fcsServiceMock = new Mock<IFCSDataService>();
             fcsServiceMock
                 .Setup(m => m.GetEligibilityRuleLocalAuthoritiesFor(It.IsAny<string>()))
-                .Returns(Utility.Collection.EmptyAndReadOnly<EsfEligibilityRuleLocalAuthority>());
+                .Returns(new List<EsfEligibilityRuleLocalAuthority>());
 
             var postcodeServiceMock = new Mock<IPostcodesDataService>();
             postcodeServiceMock

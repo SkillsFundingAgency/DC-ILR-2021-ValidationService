@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
@@ -75,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
                 .AsGuard<ArgumentNullException>(nameof(theLearner));
 
             var learnrefNumber = theLearner.LearnRefNumber;
-            var deliveries = theLearner.LearningDeliveries.AsSafeReadOnlyList();
+            var deliveries = theLearner.LearningDeliveries.ToReadOnlyCollection();
 
             deliveries.ForAny(
                 x => IsNotValid(x, GetEarliestStartDateFor(x, deliveries)),
@@ -205,7 +206,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
                 .SafeWhere(fa => fa.ProgType == theDelivery.ProgTypeNullable
                     && fa.FworkCode == theDelivery.FworkCodeNullable
                     && fa.PwayCode == theDelivery.PwayCodeNullable)
-                .AsSafeReadOnlyList();
+                .ToReadOnlyCollection();
 
         /// <summary>
         /// Determines whether [has qualifying framework aim] [this delivery].

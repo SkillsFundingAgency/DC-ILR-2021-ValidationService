@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -60,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
                 return;
             }
 
-            var employments = thisLearner.LearnerEmploymentStatuses.AsSafeReadOnlyList();
+            var employments = thisLearner.LearnerEmploymentStatuses.ToReadOnlyCollection();
 
             thisLearner.LearningDeliveries
                 .ForAny(

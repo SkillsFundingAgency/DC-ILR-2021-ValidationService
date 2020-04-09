@@ -100,7 +100,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var testDate = DateTime.Parse(expectedDate);
             var sut = NewRule();
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             testDates.ForEach(x =>
             {
                 var mockDel = new Mock<ILearningDelivery>();
@@ -114,7 +114,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var mockItem = new Mock<ILearner>();
             mockItem
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             // act
             var result = sut.GetLastDelivery(mockItem.Object);
@@ -151,7 +151,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         public void GetDAndPMeetsExpectation(string learnRN, int candidateCount)
         {
             // arrange
-            var outcomes = Collection.Empty<IDPOutcome>();
+            var outcomes = new List<IDPOutcome>();
             for (int i = 0; i < candidateCount; i++)
             {
                 outcomes.Add(new Mock<IDPOutcome>().Object);
@@ -163,9 +163,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Returns(learnRN);
             mockItem
                 .SetupGet(x => x.DPOutcomes)
-                .Returns(outcomes.AsSafeReadOnlyList());
+                .Returns(outcomes);
 
-            var collection = Collection.Empty<ILearnerDestinationAndProgression>();
+            var collection = new List<ILearnerDestinationAndProgression>();
             collection.Add(mockItem.Object);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
@@ -173,7 +173,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             message
                 .SetupGet(x => x.LearnerDestinationAndProgressions)
-                .Returns(collection.AsSafeReadOnlyList());
+                .Returns(collection);
 
             var sut = NewRule();
 
@@ -299,7 +299,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var mockItem = new Mock<ILearner>();
             mockItem
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(Collection.EmptyAndReadOnly<ILearningDelivery>());
+                .Returns(new List<ILearningDelivery>());
 
             // act
             var result = sut.HasQualifyingFundModel(mockItem.Object);
@@ -397,7 +397,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var mockItem = new Mock<ILearner>();
             mockItem
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(Collection.EmptyAndReadOnly<ILearningDelivery>());
+                .Returns(new List<ILearningDelivery>());
 
             // act
             var result = sut.HasCompletedCourse(mockItem.Object);
@@ -468,7 +468,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var mockItem = new Mock<ILearner>();
             mockItem
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(Collection.EmptyAndReadOnly<ILearningDelivery>());
+                .Returns(new List<ILearningDelivery>());
 
             // act
             var result = sut.InTraining(mockItem.Object);
@@ -551,7 +551,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(progType);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDel.Object);
 
             var mockItem = new Mock<ILearner>();
@@ -560,9 +560,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Returns(LearnRefNumber);
             mockItem
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
-            var learners = Collection.Empty<ILearner>();
+            var learners = new List<ILearner>();
             learners.Add(mockItem.Object);
 
             var outcome = new Mock<IDPOutcome>();
@@ -570,24 +570,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .SetupGet(x => x.OutStartDate)
                 .Returns(DateTime.Parse("2013-03-30"));
 
-            var outcomes = Collection.Empty<IDPOutcome>();
+            var outcomes = new List<IDPOutcome>();
             outcomes.Add(outcome.Object);
 
             var mockDAndP = new Mock<ILearnerDestinationAndProgression>();
             mockDAndP
                 .SetupGet(x => x.DPOutcomes)
-                .Returns(outcomes.AsSafeReadOnlyList());
+                .Returns(outcomes);
 
-            var collection = Collection.Empty<ILearnerDestinationAndProgression>();
-            collection.Add(mockDAndP.Object);
+            var destinationProgressions = new List<ILearnerDestinationAndProgression>();
+            destinationProgressions.Add(mockDAndP.Object);
 
             var message = new Mock<IMessage>(MockBehavior.Strict);
             message
                 .SetupGet(x => x.Learners)
-                .Returns(learners.AsSafeReadOnlyList());
+                .Returns(learners);
             message
                 .SetupGet(x => x.LearnerDestinationAndProgressions)
-                .Returns(collection.AsSafeReadOnlyList());
+                .Returns(destinationProgressions);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -681,7 +681,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(progType);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDel.Object);
 
             var mockItem = new Mock<ILearner>();
@@ -690,9 +690,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Returns(LearnRefNumber);
             mockItem
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
-            var learners = Collection.Empty<ILearner>();
+            var learners = new List<ILearner>();
             learners.Add(mockItem.Object);
 
             var outcome = new Mock<IDPOutcome>();
@@ -700,24 +700,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .SetupGet(x => x.OutStartDate)
                 .Returns(DateTime.Parse("2013-04-02"));
 
-            var outcomes = Collection.Empty<IDPOutcome>();
+            var outcomes = new List<IDPOutcome>();
             outcomes.Add(outcome.Object);
 
             var mockDAndP = new Mock<ILearnerDestinationAndProgression>();
             mockDAndP
                 .SetupGet(x => x.DPOutcomes)
-                .Returns(outcomes.AsSafeReadOnlyList());
+                .Returns(outcomes);
 
-            var collection = Collection.Empty<ILearnerDestinationAndProgression>();
-            collection.Add(mockDAndP.Object);
+            var destinationProgressions = new List<ILearnerDestinationAndProgression>();
+            destinationProgressions.Add(mockDAndP.Object);
 
             var message = new Mock<IMessage>(MockBehavior.Strict);
             message
                 .SetupGet(x => x.Learners)
-                .Returns(learners.AsSafeReadOnlyList());
+                .Returns(learners);
             message
                 .SetupGet(x => x.LearnerDestinationAndProgressions)
-                .Returns(collection.AsSafeReadOnlyList());
+                .Returns(destinationProgressions);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler

@@ -301,12 +301,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
 
-            var allocations = Collection.Empty<IFcsContractAllocation>();
+            var allocations = new List<IFcsContractAllocation>();
             allocations.Add(allocation.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(delivery.Object);
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -314,7 +313,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(safeDeliveries);
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -385,9 +384,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(delivery.Object);
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -395,7 +393,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(safeDeliveries);
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);

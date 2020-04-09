@@ -18,7 +18,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             // arrange
             var sut = NewRule();
 
-            var deliveries = Collection.EmptyAndReadOnly<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
 
             // act / assert
             Assert.Throws<ArgumentNullException>(() => sut.GetApprenticeshipStandardProgrammeStartDateFor(null, deliveries));
@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var sut = NewRule();
 
             var delivery = new Mock<ILearningDelivery>();
-            var deliveries = Collection.EmptyAndReadOnly<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
 
             // act / assert
             Assert.Throws<ArgumentNullException>(() => sut.GetApprenticeshipStandardProgrammeStartDateFor(delivery.Object, deliveries));
@@ -148,7 +148,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             Aim 3    10/01/2019       ProgType 25  StdCode 2  DD18 01/01/2019
             */
 
-            var candidates = Collection.Empty<ILearningDelivery>();
+            var candidates = new List<ILearningDelivery>();
 
             candidates.Add(GetTestDelivery(TypeOfAim.ProgrammeAim, "2018-01-01", TypeOfLearningProgramme.ApprenticeshipStandard, 1));
             candidates.Add(GetTestDelivery(TypeOfAim.ComponentAimInAProgramme, "2018-01-10", TypeOfLearningProgramme.ApprenticeshipStandard, 1));
@@ -156,7 +156,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             candidates.Add(GetTestDelivery(TypeOfAim.ProgrammeAim, "2019-01-01", TypeOfLearningProgramme.ApprenticeshipStandard, 2));
             candidates.Add(GetTestDelivery(TypeOfAim.ComponentAimInAProgramme, "2019-01-10", TypeOfLearningProgramme.ApprenticeshipStandard, 2));
 
-            return candidates.AsSafeReadOnlyList();
+            return candidates;
         }
 
         /// <summary>

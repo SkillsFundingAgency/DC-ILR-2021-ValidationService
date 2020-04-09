@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
@@ -61,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         {
             var filtered = theDeliveries
                 .SafeWhere(x => IsQualifyingItem(x, theStandard))
-                .AsSafeReadOnlyList();
+                .ToReadOnlyCollection();
 
             return filtered.Any() ? RunCheck(filtered, theStandard) : false;
         }

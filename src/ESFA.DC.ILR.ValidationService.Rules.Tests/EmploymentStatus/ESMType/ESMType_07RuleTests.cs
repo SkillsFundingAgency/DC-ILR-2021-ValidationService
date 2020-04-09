@@ -198,7 +198,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             // arrange
             var sut = NewRule();
 
-            var monitorings = Collection.EmptyAndReadOnly<IEmploymentStatusMonitoring>();
+            var monitorings = new List<IEmploymentStatusMonitoring>();
             var mockItem = new Mock<ILearnerEmploymentStatus>();
             mockItem
                 .SetupGet(x => x.EmploymentStatusMonitorings)
@@ -233,7 +233,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(monitorValue.Substring(3)));
 
-            var monitorings = Collection.Empty<IEmploymentStatusMonitoring>();
+            var monitorings = new List<IEmploymentStatusMonitoring>();
             monitorings.Add(monitor.Object);
 
             var status = new Mock<ILearnerEmploymentStatus>();
@@ -242,9 +242,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(empStatus);
             status
                 .SetupGet(x => x.EmploymentStatusMonitorings)
-                .Returns(monitorings.AsSafeReadOnlyList());
+                .Returns(monitorings);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(status.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -253,7 +253,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(y => y.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -302,7 +302,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(monitorValue.Substring(3)));
 
-            var monitorings = Collection.Empty<IEmploymentStatusMonitoring>();
+            var monitorings = new List<IEmploymentStatusMonitoring>();
             monitorings.Add(monitor.Object);
 
             var status = new Mock<ILearnerEmploymentStatus>();
@@ -311,9 +311,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(empStatus);
             status
                 .SetupGet(x => x.EmploymentStatusMonitorings)
-                .Returns(monitorings.AsSafeReadOnlyList());
+                .Returns(monitorings);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(status.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -322,7 +322,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(y => y.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

@@ -5,22 +5,7 @@ using System.Linq;
 namespace ESFA.DC.ILR.ValidationService.Utility
 {
     public static class Collection
-    {
-        public static ICollection<T> Empty<T>()
-        {
-            return Enumerable.Empty<T>().ToList();
-        }
-
-        public static IReadOnlyCollection<T> EmptyAndReadOnly<T>()
-        {
-            return Enumerable.Empty<T>().ToList();
-        }
-
-        public static IReadOnlyCollection<T> AsSafeReadOnlyList<T>(this IEnumerable<T> list)
-        {
-            return list?.ToList() ?? Enumerable.Empty<T>().ToList();
-        }
-     
+    {     
         public static bool SafeAny<T>(this IEnumerable<T> list, Func<T, bool> expression)
         {
             return list != null ? list.Any(expression) : false;

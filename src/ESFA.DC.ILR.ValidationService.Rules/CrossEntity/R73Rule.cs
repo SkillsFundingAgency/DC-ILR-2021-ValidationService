@@ -76,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public IReadOnlyCollection<ILearningDelivery> GetQualifyingItemsFrom(IReadOnlyCollection<ILearningDelivery> theDeliveries) =>
             theDeliveries
                 .Where(IsQualifyingItem)
-                .AsSafeReadOnlyList();
+                .ToReadOnlyCollection();
 
         /// <summary>
         /// Determines whether [is qualifying item] [the specified delivery].
@@ -143,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             theDeliveries
                 .ForEach(delivery =>
                 {
-                    var finRecords = delivery.AppFinRecords.AsSafeReadOnlyList();
+                    var finRecords = delivery.AppFinRecords.ToReadOnlyCollection();
                     var stdCode = delivery.StdCodeNullable.Value;
                     var totalPaymentRequests = GetRecordTotals(finRecords, IsPaymentRequest);
                     var totalReimbursement = GetRecordTotals(finRecords, IsProviderReimbursement);
@@ -201,7 +201,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public IReadOnlyCollection<ILearningDelivery> GetDeliveriesMatching(IReadOnlyCollection<ILearningDelivery> theDeliveries, Func<ILearningDelivery, bool> hasMatchingStdCode) =>
             theDeliveries
                 .Where(hasMatchingStdCode)
-                .AsSafeReadOnlyList();
+                .ToReadOnlyCollection();
 
         /// <summary>
         /// Determines whether [has matching standard code] [the specified delivery].

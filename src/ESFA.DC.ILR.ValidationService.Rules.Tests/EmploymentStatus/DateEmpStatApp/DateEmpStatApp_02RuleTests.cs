@@ -144,7 +144,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
                 .SetupGet(y => y.DateEmpStatApp)
                 .Returns(empStartDate);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(mockStatus.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -153,7 +153,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -198,7 +198,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
                 .SetupGet(y => y.DateEmpStatApp)
                 .Returns(empStartDate);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(mockStatus.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -207,7 +207,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.DateEmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

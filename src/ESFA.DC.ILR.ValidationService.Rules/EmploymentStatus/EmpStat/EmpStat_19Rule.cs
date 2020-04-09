@@ -100,7 +100,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
                 .AsGuard<ArgumentNullException>(nameof(objectToValidate));
 
             var learnRefNumber = objectToValidate.LearnRefNumber;
-            var employments = objectToValidate.LearnerEmploymentStatuses.AsSafeReadOnlyList();
+            var employments = objectToValidate.LearnerEmploymentStatuses.ToReadOnlyCollection();
 
             objectToValidate.LearningDeliveries
                 .SafeWhere(IsRestrictionMatch)

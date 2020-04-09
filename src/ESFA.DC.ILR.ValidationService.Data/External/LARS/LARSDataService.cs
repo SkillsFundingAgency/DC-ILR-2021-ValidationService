@@ -50,26 +50,17 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
 
         public IReadOnlyCollection<ILARSLearningCategory> GetCategoriesFor(string thisAimRef)
         {
-            var delivery = GetDeliveryFor(thisAimRef);
-
-            return delivery?.Categories
-                ?? Collection.EmptyAndReadOnly<ILARSLearningCategory>();
+            return GetDeliveryFor(thisAimRef)?.Categories ?? Array.Empty<ILARSLearningCategory>();
         }
 
         public IReadOnlyCollection<ILARSLearningDeliveryValidity> GetValiditiesFor(string thisAimRef)
         {
-            var delivery = GetDeliveryFor(thisAimRef);
-
-            return delivery?.Validities
-                ?? Collection.EmptyAndReadOnly<ILARSLearningDeliveryValidity>();
+            return GetDeliveryFor(thisAimRef)?.Validities ?? Array.Empty<ILARSLearningDeliveryValidity>();
         }
 
         public IReadOnlyCollection<ILARSAnnualValue> GetAnnualValuesFor(string thisAimRef)
         {
-            var delivery = GetDeliveryFor(thisAimRef);
-
-            return delivery?.AnnualValues
-                ?? Collection.EmptyAndReadOnly<ILARSAnnualValue>();
+            return GetDeliveryFor(thisAimRef)?.AnnualValues ?? Array.Empty<ILARSAnnualValue>();
         }
 
         public IReadOnlyCollection<ILARSFrameworkAim> GetFrameworkAimsFor(string thisAimRef)
@@ -79,15 +70,14 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             return delivery?.Frameworks
                 .SafeWhere(f => f.FrameworkAim != null)
                 .Select(f => f.FrameworkAim)
-                .AsSafeReadOnlyList()
-                    ?? Collection.EmptyAndReadOnly<ILARSFrameworkAim>();
+                .ToArray() ?? Array.Empty<ILARSFrameworkAim>();
         }
 
         public IReadOnlyCollection<ILARSStandardValidity> GetStandardValiditiesFor(int thisStandardCode)
         {
             return _externalDataCache.StandardValidities
                 .SafeWhere(x => x.StandardCode == thisStandardCode)
-                .AsSafeReadOnlyList();
+                .ToArray() ?? Array.Empty<ILARSStandardValidity>();
         }
 
         public bool ContainsStandardFor(int thisStandardCode)

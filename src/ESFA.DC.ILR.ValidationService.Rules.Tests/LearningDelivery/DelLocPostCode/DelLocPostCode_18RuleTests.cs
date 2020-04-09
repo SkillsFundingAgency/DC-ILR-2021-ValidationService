@@ -339,7 +339,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
             var fcsServiceMock = new Mock<IFCSDataService>();
             fcsServiceMock
                 .Setup(m => m.GetEligibilityRuleEnterprisePartnershipsFor(It.IsAny<string>()))
-                .Returns(Utility.Collection.EmptyAndReadOnly<IEsfEligibilityRuleLocalEnterprisePartnership>());
+                .Returns(new List<IEsfEligibilityRuleLocalEnterprisePartnership>());
 
             var postcodeServiceMock = new Mock<IPostcodesDataService>();
             postcodeServiceMock

@@ -144,7 +144,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             // arrange
             var sut = NewRule();
 
-            var fams = Collection.EmptyAndReadOnly<ILearningDeliveryFAM>();
+            var fams = new List<ILearningDeliveryFAM>();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.LearningDeliveryFAMs)
@@ -208,7 +208,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(y => y.LearnDelFAMType)
                 .Returns(Monitoring.Delivery.Types.FullOrCoFunding);
 
-            var fams = Collection.Empty<ILearningDeliveryFAM>();
+            var fams = new List<ILearningDeliveryFAM>();
             fams.Add(mockFAM.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -217,9 +217,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(candidate);
             mockDelivery
                 .SetupGet(x => x.LearningDeliveryFAMs)
-                .Returns(fams.AsSafeReadOnlyList());
+                .Returns(fams);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -228,7 +228,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -274,7 +274,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(y => y.LearnDelFAMType)
                 .Returns(Monitoring.Delivery.Types.FullOrCoFunding);
 
-            var fams = Collection.Empty<ILearningDeliveryFAM>();
+            var fams = new List<ILearningDeliveryFAM>();
             fams.Add(mockFAM.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -283,9 +283,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(candidate);
             mockDelivery
                 .SetupGet(x => x.LearningDeliveryFAMs)
-                .Returns(fams.AsSafeReadOnlyList());
+                .Returns(fams);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -294,7 +294,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

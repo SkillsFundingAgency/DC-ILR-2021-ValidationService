@@ -218,7 +218,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceEm
                 .SetupGet(y => y.WorkPlaceStartDate)
                 .Returns(DateTime.Parse("2018-05-14"));
 
-            var placements = Collection.Empty<ILearningDeliveryWorkPlacement>();
+            var placements = new List<ILearningDeliveryWorkPlacement>();
             placements.Add(mockItem.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -227,9 +227,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceEm
                 .Returns(TypeOfLearningProgramme.Traineeship);
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryWorkPlacements)
-                .Returns(placements.AsSafeReadOnlyList());
+                .Returns(placements);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -238,7 +238,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceEm
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler.Setup(x => x.Handle(
@@ -284,7 +284,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceEm
                 .SetupGet(y => y.WorkPlaceStartDate)
                 .Returns(DateTime.Parse("2018-06-15"));
 
-            var placements = Collection.Empty<ILearningDeliveryWorkPlacement>();
+            var placements = new List<ILearningDeliveryWorkPlacement>();
             placements.Add(mockItem.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -293,9 +293,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceEm
                 .Returns(TypeOfLearningProgramme.Traineeship);
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryWorkPlacements)
-                .Returns(placements.AsSafeReadOnlyList());
+                .Returns(placements);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -304,7 +304,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceEm
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<IFileDataService>(MockBehavior.Strict);

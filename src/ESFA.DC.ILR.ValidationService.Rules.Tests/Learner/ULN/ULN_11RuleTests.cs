@@ -374,7 +374,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .SetupGet(y => y.LearnDelFAMCode)
                 .Returns("1");
 
-            var fams = Collection.Empty<ILearningDeliveryFAM>();
+            var fams = new List<ILearningDeliveryFAM>();
             fams.Add(mockFam.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -383,7 +383,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Returns(TypeOfFunding.NotFundedByESFA);
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryFAMs)
-                .Returns(fams.AsSafeReadOnlyList());
+                .Returns(fams);
             mockDelivery
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(DateTime.Parse("2019-01-02"));
@@ -391,7 +391,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .SetupGet(x => x.LearnPlanEndDate)
                 .Returns(DateTime.Parse("2019-02-02"));
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -403,7 +403,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Returns(9999999999);
             mockLearner
                 .SetupGet(y => y.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -455,7 +455,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .SetupGet(y => y.LearnDelFAMCode)
                 .Returns("1");
 
-            var fams = Collection.Empty<ILearningDeliveryFAM>();
+            var fams = new List<ILearningDeliveryFAM>();
             fams.Add(mockFam.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -464,7 +464,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Returns(TypeOfFunding.NotFundedByESFA);
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryFAMs)
-                .Returns(fams.AsSafeReadOnlyList());
+                .Returns(fams);
             mockDelivery
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(DateTime.Parse("2019-03-02")); // <= push the learn start date inside the registration period
@@ -472,7 +472,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .SetupGet(x => x.LearnPlanEndDate)
                 .Returns(DateTime.Parse("2019-05-02"));
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -484,7 +484,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Returns(9999999999);
             mockLearner
                 .SetupGet(y => y.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);

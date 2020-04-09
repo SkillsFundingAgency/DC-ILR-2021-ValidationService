@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
@@ -63,9 +64,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 
         private void RaiseValidationMessage(string learnRefNumber, ILearnerEmploymentStatus thisEmployment)
         {
-            var parameters = Collection.Empty<IErrorMessageParameter>();
-
-            parameters.Add(BuildErrorMessageParameter(PropertyNameConstants.EmpId, thisEmployment.EmpIdNullable));
+            var parameters = new List<IErrorMessageParameter>
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.EmpId, thisEmployment.EmpIdNullable)
+            };
 
             HandleValidationError(learnRefNumber, null, parameters);
         }

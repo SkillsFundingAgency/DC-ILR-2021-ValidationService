@@ -5,6 +5,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Learner.EngGrade;
 using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
@@ -182,7 +183,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
             // arrange
             const string LearnRefNumber = "123456789X";
 
-            var fams = Collection.Empty<ILearnerFAM>();
+            var fams = new List<ILearnerFAM>();
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -193,7 +194,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
                 .Returns(candidate);
             mockLearner
                 .SetupGet(x => x.LearnerFAMs)
-                .Returns(fams.AsSafeReadOnlyList());
+                .Returns(fams);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -258,7 +259,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
                 .SetupGet(x => x.LearnFAMCode)
                 .Returns(2);
 
-            var fams = Collection.Empty<ILearnerFAM>();
+            var fams = new List<ILearnerFAM>();
             fams.Add(mockFAM.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -270,7 +271,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
                 .Returns(candidate);
             mockLearner
                 .SetupGet(x => x.LearnerFAMs)
-                .Returns(fams.AsSafeReadOnlyList());
+                .Returns(fams);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

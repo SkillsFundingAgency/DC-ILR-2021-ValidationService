@@ -202,9 +202,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(testDate);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(delivery.Object);
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -212,7 +211,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(safeDeliveries);
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -223,7 +222,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var ddRule22 = new Mock<IDerivedData_22Rule>(MockBehavior.Strict);
             ddRule22
-                .Setup(x => x.GetLatestLearningStartForESFContract(delivery.Object, safeDeliveries))
+                .Setup(x => x.GetLatestLearningStartForESFContract(delivery.Object, deliveries))
                 .Returns(testDate);
 
             // pass or fail is based on the return of this function
@@ -262,9 +261,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(testDate);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(delivery.Object);
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -272,13 +270,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(safeDeliveries);
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
             var ddRule22 = new Mock<IDerivedData_22Rule>(MockBehavior.Strict);
             ddRule22
-                .Setup(x => x.GetLatestLearningStartForESFContract(delivery.Object, safeDeliveries))
+                .Setup(x => x.GetLatestLearningStartForESFContract(delivery.Object, deliveries))
                 .Returns(testDate);
 
             // pass or fail is based on the return of this function

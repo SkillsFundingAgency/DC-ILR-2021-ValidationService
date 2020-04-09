@@ -177,7 +177,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
                 .Setup(x => x.GetCategoriesFor(candidate))
-                .Returns(Collection.EmptyAndReadOnly<ILARSLearningCategory>());
+                .Returns(new List<ILARSLearningCategory>());
 
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
@@ -217,7 +217,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.FundModel)
                 .Returns(TypeOfFunding.AdultSkills);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -226,7 +226,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -253,13 +253,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(x => x.CategoryRef)
                 .Returns(TypeOfLARSCategory.LicenseToPractice);
 
-            var larsItems = Collection.Empty<ILARSLearningCategory>();
+            var larsItems = new List<ILARSLearningCategory>();
             larsItems.Add(mockLars.Object);
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
                 .Setup(x => x.GetCategoriesFor(learnAimRef))
-                .Returns(larsItems.AsSafeReadOnlyList());
+                .Returns(larsItems);
 
             var mockMonitor = new Mock<IEmploymentStatusMonitoring>();
             mockMonitor
@@ -269,13 +269,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.ESMCode)
                 .Returns(3);
 
-            var monitors = Collection.Empty<IEmploymentStatusMonitoring>();
+            var monitors = new List<IEmploymentStatusMonitoring>();
             monitors.Add(mockMonitor.Object);
 
             var mockEmployment = new Mock<ILearnerEmploymentStatus>();
             mockEmployment
                 .SetupGet(y => y.EmploymentStatusMonitorings)
-                .Returns(monitors.AsSafeReadOnlyList());
+                .Returns(monitors);
 
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonChecks
@@ -325,7 +325,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.FundModel)
                 .Returns(TypeOfFunding.AdultSkills);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -334,19 +334,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
             var mockLars = new Mock<ILARSLearningCategory>();
 
-            var larsItems = Collection.Empty<ILARSLearningCategory>();
+            var larsItems = new List<ILARSLearningCategory>();
             larsItems.Add(mockLars.Object);
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
                 .Setup(x => x.GetCategoriesFor(learnAimRef))
-                .Returns(larsItems.AsSafeReadOnlyList());
+                .Returns(larsItems);
 
             var mockMonitor = new Mock<IEmploymentStatusMonitoring>();
             mockMonitor
@@ -356,13 +356,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.ESMCode)
                 .Returns(3);
 
-            var monitors = Collection.Empty<IEmploymentStatusMonitoring>();
+            var monitors = new List<IEmploymentStatusMonitoring>();
             monitors.Add(mockMonitor.Object);
 
             var mockEmployment = new Mock<ILearnerEmploymentStatus>();
             mockEmployment
                 .SetupGet(y => y.EmploymentStatusMonitorings)
-                .Returns(monitors.AsSafeReadOnlyList());
+                .Returns(monitors);
 
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonChecks

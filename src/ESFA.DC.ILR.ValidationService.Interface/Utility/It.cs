@@ -116,8 +116,7 @@ namespace ESFA.DC.ILR.ValidationService.Utility
         public static bool IsInRange<T>(T source, params T[] target)
             where T : IComparable
         {
-            var values = target.AsSafeReadOnlyList();
-            return values.Contains(source);
+            return target != null ? target.Contains(source) : false;
         }
 
         /// <summary>
