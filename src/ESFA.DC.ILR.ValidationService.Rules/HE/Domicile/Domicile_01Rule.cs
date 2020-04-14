@@ -1,4 +1,5 @@
 ﻿using System;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -46,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(x => IsQualifyingStartDate(x) && HasHigherEd(x) && !HasDomicile(x.LearningDeliveryHEEntity))
+                .NullSafeWhere(x => IsQualifyingStartDate(x) && HasHigherEd(x) && !HasDomicile(x.LearningDeliveryHEEntity))
                 .ForEach(x =>
                 {
                     RaiseValidationMessage(learnRefNumber, x);

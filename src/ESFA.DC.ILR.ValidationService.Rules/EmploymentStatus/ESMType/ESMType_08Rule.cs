@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.LengthOfUnemployment);
 
         public bool HasQualifyingIndicator(ILearnerEmploymentStatus employmentStatus) =>
-            employmentStatus.EmploymentStatusMonitorings.SafeAny(HasQualifyingIndicator);
+            employmentStatus.EmploymentStatusMonitorings.NullSafeAny(HasQualifyingIndicator);
 
         public bool IsNotValid(ILearnerEmploymentStatus employmentStatus) =>
             IsQualifyingPeriod(employmentStatus) && IsQualifyingEmployment(employmentStatus) && !HasQualifyingIndicator(employmentStatus);
@@ -47,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             It.IsInRange(delivery.FundModel, TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.Other16To19);
 
         public bool IsExcluded(ILearner candidate) =>
-            candidate.LearningDeliveries.SafeAny(IsExcluded);
+            candidate.LearningDeliveries.NullSafeAny(IsExcluded);
 
         public void Validate(ILearner objectToValidate)
         {
@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearnerEmploymentStatuses
-                .SafeWhere(IsNotValid)
+                .NullSafeWhere(IsNotValid)
                 .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
         }
 

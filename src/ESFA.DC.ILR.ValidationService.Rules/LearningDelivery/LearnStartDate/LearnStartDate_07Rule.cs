@@ -203,7 +203,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         /// </returns>
         public IReadOnlyCollection<ILARSFrameworkAim> FilteredFrameworkAimsFor(ILearningDelivery theDelivery, IReadOnlyCollection<ILARSFrameworkAim> usingTheseAims) =>
             usingTheseAims
-                .SafeWhere(fa => fa.ProgType == theDelivery.ProgTypeNullable
+                .NullSafeWhere(fa => fa.ProgType == theDelivery.ProgTypeNullable
                     && fa.FworkCode == theDelivery.FworkCodeNullable
                     && fa.PwayCode == theDelivery.PwayCodeNullable)
                 .ToReadOnlyCollection();

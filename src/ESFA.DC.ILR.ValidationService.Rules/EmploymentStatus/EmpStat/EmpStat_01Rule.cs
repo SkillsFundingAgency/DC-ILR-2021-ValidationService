@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -48,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         public TimeSpan LastInviableAge => new TimeSpan(6939, 0, 0, 0);       
 
         public bool CheckDeliveryFAMs(ILearningDelivery delivery, Func<ILearningDeliveryFAM, bool> matchCondition) =>
-            delivery.LearningDeliveryFAMs.SafeAny(matchCondition);
+            delivery.LearningDeliveryFAMs.NullSafeAny(matchCondition);
 
         public bool IsLearnerInCustody(ILearningDeliveryFAM monitor) =>
             It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.OLASSOffendersInCustody);
@@ -96,7 +97,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             eStatus.DateEmpStatApp <= learningStartDate;
 
         public bool HasQualifyingEmploymentStatus(ILearner learner, ILearningDelivery delivery) =>
-            learner.LearnerEmploymentStatuses.SafeAny(x => HasQualifyingEmploymentStatus(x, delivery.LearnStartDate));
+            learner.LearnerEmploymentStatuses.NullSafeAny(x => HasQualifyingEmploymentStatus(x, delivery.LearnStartDate));
 
         public bool IsNotValid(ILearner learner, ILearningDelivery delivery) =>
             !IsExcluded(delivery)
@@ -113,7 +114,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(x => IsNotValid(objectToValidate, x))
+                .NullSafeWhere(x => IsNotValid(objectToValidate, x))
                 .ForEach(x => RaiseValidationMessage(objectToValidate, x));
         }
 

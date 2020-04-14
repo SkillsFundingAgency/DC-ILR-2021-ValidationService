@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             thisEmployment.DateEmpStatApp < thresholdDate;
 
         public bool IsNotValid(ILearner learner, DateTime referenceDate) =>
-            !learner.LearnerEmploymentStatuses.SafeAny(x => HasAQualifyingEmploymentStatus(x, referenceDate));
+            !learner.LearnerEmploymentStatuses.NullSafeAny(x => HasAQualifyingEmploymentStatus(x, referenceDate));
 
         public void Validate(ILearner objectToValidate)
         {

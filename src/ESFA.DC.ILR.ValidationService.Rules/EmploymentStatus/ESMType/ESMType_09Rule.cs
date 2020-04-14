@@ -40,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public DateTime? GetLastestQualifyingDate(IReadOnlyCollection<ILearningDelivery> deliveries) =>
             deliveries
-                .SafeWhere(IsACandidate)
+                .NullSafeWhere(IsACandidate)
                 .OrderByDescending(x => x.LearnStartDate)
                 .FirstOrDefault()?
                 .LearnStartDate;
@@ -57,7 +57,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.LengthOfEmployment);
 
         public bool HasQualifyingIndicator(ILearnerEmploymentStatus employmentStatus) =>
-            employmentStatus.EmploymentStatusMonitorings.SafeAny(HasQualifyingIndicator);
+            employmentStatus.EmploymentStatusMonitorings.NullSafeAny(HasQualifyingIndicator);
 
         public bool IsNotValid(ILearnerEmploymentStatus employmentStatus, DateTime? lastViabledate) =>
             It.Has(lastViabledate)
@@ -74,7 +74,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             var qualifyingDate = GetLastestQualifyingDate(objectToValidate.LearningDeliveries);
 
             objectToValidate.LearnerEmploymentStatuses
-                .SafeWhere(x => IsNotValid(x, qualifyingDate))
+                .NullSafeWhere(x => IsNotValid(x, qualifyingDate))
                 .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
         }
 

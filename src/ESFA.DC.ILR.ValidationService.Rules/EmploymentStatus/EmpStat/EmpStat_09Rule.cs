@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
@@ -52,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             eStatus.DateEmpStatApp < learningStartDate;
 
         public bool HasAQualifyingEmploymentStatus(ILearner learner, ILearningDelivery delivery) =>
-            learner.LearnerEmploymentStatuses.SafeAny(x => HasAQualifyingEmploymentStatus(x, delivery.LearnStartDate));
+            learner.LearnerEmploymentStatuses.NullSafeAny(x => HasAQualifyingEmploymentStatus(x, delivery.LearnStartDate));
 
         public bool IsNotValid(ILearner learner, ILearningDelivery delivery) =>
             (IsApprenticeship(delivery) || InTraining(delivery))
@@ -68,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(x => IsNotValid(objectToValidate, x))
+                .NullSafeWhere(x => IsNotValid(objectToValidate, x))
                 .ForEach(x => RaiseValidationMessage(objectToValidate, x));
         }
 

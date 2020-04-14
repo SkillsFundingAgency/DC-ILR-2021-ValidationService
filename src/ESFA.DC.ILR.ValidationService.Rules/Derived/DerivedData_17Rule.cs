@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         public bool IsTNPMoreThanContributionCapFor(int theStandard, IReadOnlyCollection<ILearningDelivery> theDeliveries)
         {
             var filtered = theDeliveries
-                .SafeWhere(x => IsQualifyingItem(x, theStandard))
+                .NullSafeWhere(x => IsQualifyingItem(x, theStandard))
                 .ToReadOnlyCollection();
 
             return filtered.Any() ? RunCheck(filtered, theStandard) : false;

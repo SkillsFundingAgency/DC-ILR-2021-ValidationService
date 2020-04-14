@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public bool HasAQualifyingEmploymentStatus(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> usingEmployments) =>
             usingEmployments
-                .SafeAny(x => x.DateEmpStatApp < delivery.LearnStartDate);
+                .NullSafeAny(x => x.DateEmpStatApp < delivery.LearnStartDate);
 
         public bool IsNotValid(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> usingEmployments) =>
             !InTraining(delivery)

@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.EmploymentIntensityIndicator);
 
         public bool HasQualifyingIndicator(ILearnerEmploymentStatus employmentStatus) =>
-            employmentStatus.EmploymentStatusMonitorings.SafeAny(HasQualifyingIndicator);
+            employmentStatus.EmploymentStatusMonitorings.NullSafeAny(HasQualifyingIndicator);
 
         public bool IsNotValid(ILearnerEmploymentStatus employmentStatus) =>
             IsQualifyingPeriod(employmentStatus) && IsQualifyingEmployment(employmentStatus) && !HasQualifyingIndicator(employmentStatus);
@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearnerEmploymentStatuses
-                .SafeWhere(IsNotValid)
+                .NullSafeWhere(IsNotValid)
                 .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
         }
 

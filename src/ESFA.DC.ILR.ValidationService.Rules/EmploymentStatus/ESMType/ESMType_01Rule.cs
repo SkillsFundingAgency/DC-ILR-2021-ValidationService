@@ -39,7 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
             objectToValidate.LearnerEmploymentStatuses?
                 .SelectMany(x => x.EmploymentStatusMonitorings.ToReadOnlyCollection())
-                .SafeWhere(IsInvalidDomainItem)
+                .NullSafeWhere(IsInvalidDomainItem)
                 .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
         }
 

@@ -41,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(d => IsApprenticeship(d) && IsInAProgramme(d))
+                .NullSafeWhere(d => IsApprenticeship(d) && IsInAProgramme(d))
                 .ForEach(x =>
                 {
                     var failedValidation = !ConditionMet(x);
@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return !It.Has(thisDelivery) || thisDelivery.AppFinRecords.SafeAny(afr => afr.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice));
+            return !It.Has(thisDelivery) || thisDelivery.AppFinRecords.NullSafeAny(afr => afr.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice));
         }
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)

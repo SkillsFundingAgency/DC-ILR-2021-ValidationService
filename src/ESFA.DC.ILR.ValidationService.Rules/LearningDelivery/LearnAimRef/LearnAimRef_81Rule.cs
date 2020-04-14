@@ -58,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             var candidate = _check.GetEmploymentStatusOn(delivery.LearnStartDate, learner.LearnerEmploymentStatuses);
 
             var esms = candidate?.EmploymentStatusMonitorings.ToReadOnlyCollection();
-            return esms.SafeAny(InReceiptOfAnotherStateBenefit);
+            return esms.NullSafeAny(InReceiptOfAnotherStateBenefit);
         }
 
         public bool InReceiptOfAnotherStateBenefit(IEmploymentStatusMonitoring monitor) =>
@@ -82,7 +82,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(x => IsNotValid(x, objectToValidate))
+                .NullSafeWhere(x => IsNotValid(x, objectToValidate))
                 .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
         }
 

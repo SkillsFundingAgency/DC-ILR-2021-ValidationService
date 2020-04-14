@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -45,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearnerEmploymentStatuses
-                .SafeWhere(IsNotValid)
+                .NullSafeWhere(IsNotValid)
                 .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
         }
 

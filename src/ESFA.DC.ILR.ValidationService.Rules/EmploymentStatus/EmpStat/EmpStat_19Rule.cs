@@ -103,7 +103,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             var employments = objectToValidate.LearnerEmploymentStatuses.ToReadOnlyCollection();
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(IsRestrictionMatch)
+                .NullSafeWhere(IsRestrictionMatch)
                 .ForEach(x => CheckEmploymentStatus(GetEmploymentStatusOn(x.LearnStartDate, employments), y => RaiseValidationMessage(learnRefNumber, x, y)));
         }
 

@@ -23,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.FCS
         public IReadOnlyCollection<IFcsContractAllocation> GetContractAllocationsFor(int thisProviderID)
         {
             return _contractAllocations.Values
-                .SafeWhere(ca => ca.DeliveryUKPRN == thisProviderID)
+                .NullSafeWhere(ca => ca.DeliveryUKPRN == thisProviderID)
                 .ToReadOnlyCollection();
         }
 

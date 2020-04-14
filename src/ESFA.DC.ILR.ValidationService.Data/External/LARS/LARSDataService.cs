@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             var standard = GetStandardFor(standardCode);
 
             return standard?.StandardsFunding
-                .SafeWhere(sf => It.IsBetween(startDate, sf.EffectiveFrom, sf.EffectiveTo ?? DateTime.MaxValue))
+                .NullSafeWhere(sf => It.IsBetween(startDate, sf.EffectiveFrom, sf.EffectiveTo ?? DateTime.MaxValue))
                 .OrderBy(x => x.EffectiveTo) // get the earliest closure first
                 .FirstOrDefault();
         }
@@ -68,7 +68,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             var delivery = GetDeliveryFor(thisAimRef);
 
             return delivery?.Frameworks
-                .SafeWhere(f => f.FrameworkAim != null)
+                .NullSafeWhere(f => f.FrameworkAim != null)
                 .Select(f => f.FrameworkAim)
                 .ToArray() ?? Array.Empty<ILARSFrameworkAim>();
         }
@@ -76,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         public IReadOnlyCollection<ILARSStandardValidity> GetStandardValiditiesFor(int thisStandardCode)
         {
             return _externalDataCache.StandardValidities
-                .SafeWhere(x => x.StandardCode == thisStandardCode)
+                .NullSafeWhere(x => x.StandardCode == thisStandardCode)
                 .ToArray() ?? Array.Empty<ILARSStandardValidity>();
         }
 
@@ -286,7 +286,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             }
 
             var values = GetAnnualValuesFor(learnAimRef);
-            return values.SafeAny(a => a.BasicSkillsType.HasValue
+            return values.NullSafeAny(a => a.BasicSkillsType.HasValue
                         && basicSkillsTypes.Contains((int)a.BasicSkillsType)
                         && a.IsCurrent(learnStartDate));
         }

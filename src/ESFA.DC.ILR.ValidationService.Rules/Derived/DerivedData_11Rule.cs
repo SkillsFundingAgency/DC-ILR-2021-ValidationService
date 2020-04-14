@@ -31,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool InReceiptOfBenefits(IReadOnlyCollection<IEmploymentStatusMonitoring> monitors)
         {
-            return monitors.SafeAny(InReceiptOfBenefits);
+            return monitors.NullSafeAny(InReceiptOfBenefits);
         }
 
         public bool InReceiptOfBenefits(IEmploymentStatusMonitoring monitor) =>

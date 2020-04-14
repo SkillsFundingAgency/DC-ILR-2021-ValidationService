@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -141,7 +142,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate) =>
             _fcsData
                 .GetContractAllocationsFor(ProviderUKPRN)
-                .SafeAny(x => HasFundingRelationship(x) && hasStartedAfterStopDate(x));
+                .NullSafeAny(x => HasFundingRelationship(x) && hasStartedAfterStopDate(x));
 
         /// <summary>
         /// Determines whether [has funding relationship] [the specified allocation].

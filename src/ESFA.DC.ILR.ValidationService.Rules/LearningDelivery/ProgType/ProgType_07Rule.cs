@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
@@ -43,7 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(x => IsViable(x) && IsTrainee(x) && IsInAProgramme(x))
+                .NullSafeWhere(x => IsViable(x) && IsTrainee(x) && IsInAProgramme(x))
                 .ForEach(x =>
                 {
                     var failedValidation = !ConditionMet(x);

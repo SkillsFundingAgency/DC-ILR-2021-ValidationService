@@ -466,15 +466,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
 
             var employments = new List<ILearnerEmploymentStatus>();
 
-            starts.ForEach(x =>
+            foreach (var start in starts)
             {
                 var mockItem = new Mock<ILearnerEmploymentStatus>();
                 mockItem
                     .SetupGet(y => y.DateEmpStatApp)
-                    .Returns(DateTime.Parse(x));
+                    .Returns(DateTime.Parse(start));
 
                 employments.Add(mockItem.Object);
-            });
+            }
 
             // act
             var result = sut.GetEmploymentStatusOn(learnDate, employments);

@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -36,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             _lookups.IsCurrent(TypeOfLimitedLifeLookup.ESMType, $"{monitor.ESMType}{monitor.ESMCode}", candidate);
 
         public bool IsNotValid(ILearnerEmploymentStatus employmentStatus) =>
-            employmentStatus.EmploymentStatusMonitorings.SafeAny(x => !InQualifyingPeriod(x, employmentStatus.DateEmpStatApp));
+            employmentStatus.EmploymentStatusMonitorings.NullSafeAny(x => !InQualifyingPeriod(x, employmentStatus.DateEmpStatApp));
 
         public void Validate(ILearner objectToValidate)
         {
@@ -46,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearnerEmploymentStatuses
-                .SafeWhere(IsNotValid)
+                .NullSafeWhere(IsNotValid)
                 .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
         }
 

@@ -44,10 +44,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(x => IsFunded(x) && IsTargetApprenticeship(x) && IsInAProgramme(x))
+                .NullSafeWhere(x => IsFunded(x) && IsTargetApprenticeship(x) && IsInAProgramme(x))
                 .ForEach(x =>
                 {
-                    var failedValidation = !x.AppFinRecords.SafeAny(y => ConditionMet(y));
+                    var failedValidation = !x.AppFinRecords.NullSafeAny(y => ConditionMet(y));
 
                     if (failedValidation)
                     {

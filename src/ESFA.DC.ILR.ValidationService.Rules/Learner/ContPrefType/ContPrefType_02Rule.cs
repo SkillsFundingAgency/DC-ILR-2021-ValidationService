@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
@@ -39,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
                 ContactPreference.AgreesContactSurveysAndResearchPostGDPR);
 
         public bool HasDisqualifyingContactIndicator(ILearner thisLearner) =>
-            thisLearner.ContactPreferences.SafeAny(HasDisqualifyingContactIndicator);
+            thisLearner.ContactPreferences.NullSafeAny(HasDisqualifyingContactIndicator);
 
         public bool HasRestrictedContactIndicator(IContactPreference preference) =>
             It.IsInRange(
@@ -49,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
                 ContactPreference.NoContactDueToDeath);
 
         public bool HasRestrictedContactIndicator(ILearner thisLearner) =>
-            thisLearner.ContactPreferences.SafeAny(HasRestrictedContactIndicator);
+            thisLearner.ContactPreferences.NullSafeAny(HasRestrictedContactIndicator);
 
         public bool HasConflictingContactIndicators(ILearner thisLearner) =>
             HasRestrictedContactIndicator(thisLearner) && HasDisqualifyingContactIndicator(thisLearner);
@@ -64,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
             if (HasConflictingContactIndicators(objectToValidate))
             {
                 objectToValidate.ContactPreferences
-                    .SafeWhere(HasDisqualifyingContactIndicator)
+                    .NullSafeWhere(HasDisqualifyingContactIndicator)
                     .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
             }
         }

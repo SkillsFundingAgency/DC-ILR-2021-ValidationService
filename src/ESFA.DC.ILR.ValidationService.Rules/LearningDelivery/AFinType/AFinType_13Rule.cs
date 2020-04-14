@@ -42,11 +42,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(d => IsApprenticeshipFunded(d) && IsInAProgramme(d))
+                .NullSafeWhere(d => IsApprenticeshipFunded(d) && IsInAProgramme(d))
                 .ForEach(x =>
                 {
                     var failedValidation = !x.AppFinRecords
-                        .SafeWhere(afr => afr.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice))
+                        .NullSafeWhere(afr => afr.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice))
                         .Any(y => ConditionMet(x, y));
 
                     if (failedValidation)

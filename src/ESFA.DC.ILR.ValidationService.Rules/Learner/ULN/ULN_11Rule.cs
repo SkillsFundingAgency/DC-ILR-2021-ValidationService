@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -46,10 +47,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
         public TimeSpan SixtyDays => new TimeSpan(60, 0, 0, 0);   
 
         public bool CheckDeliveryFAMs(ILearningDelivery delivery, Func<ILearningDeliveryFAM, bool> matchCondition) =>
-            delivery.LearningDeliveryFAMs.SafeAny(matchCondition);
+            delivery.LearningDeliveryFAMs.NullSafeAny(matchCondition);
 
         public bool CheckLearningDeliveries(ILearner candidate, Func<ILearningDelivery, bool> matchCondition) =>
-            candidate.LearningDeliveries.SafeAny(matchCondition);
+            candidate.LearningDeliveries.NullSafeAny(matchCondition);
 
         public bool IsExternallyFunded(ILearningDelivery delivery) =>
             It.IsInRange(delivery.FundModel, TypeOfFunding.NotFundedByESFA);
@@ -106,7 +107,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(x => IsExternallyFunded(x) && IsHEFCEFunded(x) && !IsShortCourse(x))
+                .NullSafeWhere(x => IsExternallyFunded(x) && IsHEFCEFunded(x) && !IsShortCourse(x))
                 .ForEach(x =>
                 {
                     var failedValidation = HasExceedRegistrationPeriod(x);

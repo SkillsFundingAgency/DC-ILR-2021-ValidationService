@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
@@ -36,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             It.IsInRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.FullOrCoFunding);
 
         public bool HasFullOrCoFundingIndicator(ILearningDelivery delivery) =>
-            delivery.LearningDeliveryFAMs.SafeAny(HasFullOrCoFundingIndicator);
+            delivery.LearningDeliveryFAMs.NullSafeAny(HasFullOrCoFundingIndicator);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             !IsQualifyingFundModel(delivery) && HasFullOrCoFundingIndicator(delivery);
@@ -49,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(IsNotValid)
+                .NullSafeWhere(IsNotValid)
                 .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
         }
 
