@@ -371,7 +371,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(TypeOfEmploymentStatus.InPaidEmployment);
             mockStatus
                 .SetupGet(y => y.EmploymentStatusMonitorings)
-                .Returns(monitors.AsSafeReadOnlyList());
+                .Returns(monitors);
 
             var statii = new ILearnerEmploymentStatus[] { mockStatus.Object };
 

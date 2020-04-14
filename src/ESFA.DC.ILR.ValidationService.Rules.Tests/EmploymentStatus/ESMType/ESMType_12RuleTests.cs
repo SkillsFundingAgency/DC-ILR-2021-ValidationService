@@ -211,7 +211,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             // arrange
             var sut = NewRule();
 
-            var monitorings = Collection.EmptyAndReadOnly<IEmploymentStatusMonitoring>();
+            var monitorings = new List<IEmploymentStatusMonitoring>();
             var mockItem = new Mock<ILearnerEmploymentStatus>();
             mockItem
                 .SetupGet(x => x.EmploymentStatusMonitorings)
@@ -261,7 +261,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(candidate.Substring(3)));
 
-            var monitorings = Collection.Empty<IEmploymentStatusMonitoring>();
+            var monitorings = new List<IEmploymentStatusMonitoring>();
             monitorings.Add(monitor.Object);
 
             var testDate = DateTime.Parse("2013-08-01");
@@ -275,9 +275,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(empStat);
             status
                 .SetupGet(x => x.EmploymentStatusMonitorings)
-                .Returns(monitorings.AsSafeReadOnlyList());
+                .Returns(monitorings);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(status.Object);
 
             var learnStart = DateTime.Parse("2016-09-24");
@@ -286,7 +286,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(learnStart);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -295,10 +295,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
             mockLearner
                 .SetupGet(y => y.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -377,7 +377,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(candidate.Substring(3)));
 
-            var monitorings = Collection.Empty<IEmploymentStatusMonitoring>();
+            var monitorings = new List<IEmploymentStatusMonitoring>();
             monitorings.Add(monitor.Object);
 
             var testDate = DateTime.Parse("2013-08-01");
@@ -391,9 +391,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(empStat);
             status
                 .SetupGet(x => x.EmploymentStatusMonitorings)
-                .Returns(monitorings.AsSafeReadOnlyList());
+                .Returns(monitorings);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(status.Object);
 
             var learnStart = DateTime.Parse("2016-09-24");
@@ -402,7 +402,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(learnStart);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -411,10 +411,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
             mockLearner
                 .SetupGet(y => y.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

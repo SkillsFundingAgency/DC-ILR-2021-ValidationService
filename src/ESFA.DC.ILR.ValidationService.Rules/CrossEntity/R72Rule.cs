@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -84,7 +85,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public IReadOnlyCollection<ILearningDelivery> GetQualifyingItemsFrom(IReadOnlyCollection<ILearningDelivery> theDeliveries) =>
             theDeliveries
                 .Where(IsQualifyingItem)
-                .AsSafeReadOnlyList();
+                .ToReadOnlyCollection();
 
         /// <summary>
         /// Determines whether [is qualifying item] [the specified delivery].
@@ -151,7 +152,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             theDeliveries
                 .ForEach(delivery =>
                 {
-                    var finRecords = delivery.AppFinRecords.AsSafeReadOnlyList();
+                    var finRecords = delivery.AppFinRecords.ToReadOnlyCollection();
                     var stdCode = delivery.StdCodeNullable.Value;
                     var totalPaymentRequests = GetRecordTotals(finRecords, IsPaymentRequest);
                     var totalReimbursement = GetRecordTotals(finRecords, IsProviderReimbursement);
@@ -186,7 +187,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         ///   <c>true</c> if [is payment request] [the specified record]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsPaymentRequest(IAppFinRecord theRecord) =>
-            theRecord.AFinType.ComparesWith(ApprenticeshipFinancialRecord.Types.PaymentRecord)
+            theRecord.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.PaymentRecord)
             && It.IsInRange(theRecord.AFinCode, TypeOfPMRAFin.TrainingPayment, TypeOfPMRAFin.AssessmentPayment);
 
         /// <summary>
@@ -197,7 +198,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         ///   <c>true</c> if [is provider reimbursement] [the specified record]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsProviderReimbursement(IAppFinRecord theRecord) =>
-            theRecord.AFinType.ComparesWith(ApprenticeshipFinancialRecord.Types.PaymentRecord)
+            theRecord.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.PaymentRecord)
             && It.IsInRange(theRecord.AFinCode, TypeOfPMRAFin.EmployerPaymentReimbursedByProvider);
 
         /// <summary>
@@ -209,7 +210,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public IReadOnlyCollection<ILearningDelivery> GetDeliveriesMatching(IReadOnlyCollection<ILearningDelivery> theDeliveries, Func<ILearningDelivery, bool> hasMatchingStdCode) =>
             theDeliveries
                 .Where(hasMatchingStdCode)
-                .AsSafeReadOnlyList();
+                .ToReadOnlyCollection();
 
         /// <summary>
         /// Determines whether [has matching standard code] [the specified delivery].

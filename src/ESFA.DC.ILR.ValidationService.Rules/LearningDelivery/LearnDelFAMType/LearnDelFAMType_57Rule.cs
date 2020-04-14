@@ -140,7 +140,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 return false;
             }
 
-            var ageAtCourseStart = _dateTimeQueryService.AgeAtGivenDate(dateOfBirth.Value, learnStartDate);
+            var ageAtCourseStart = _dateTimeQueryService.YearsBetween(dateOfBirth.Value, learnStartDate);
             if (ageAtCourseStart >= MinAge)
             {
                 return true;

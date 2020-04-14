@@ -235,7 +235,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.FundModel)
                 .Returns(TypeOfFunding.AdultSkills);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -247,7 +247,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(candidate);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -333,7 +333,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.FundModel)
                 .Returns(TypeOfFunding.AdultSkills);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -345,7 +345,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(candidate);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

@@ -5,6 +5,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
@@ -221,7 +222,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         {
             // arrange
             var expectedDate = DateTime.Parse(expectation);
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
 
             for (var i = 0; i < datePairs.Length; i += 2)
             {
@@ -239,7 +240,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var sut = NewRule();
 
             // act
-            var result = sut.GetEarliestDateForCapChecking(deliveries.AsSafeReadOnlyList());
+            var result = sut.GetEarliestDateForCapChecking(deliveries);
 
             // assert
             Assert.Equal(expectedDate, result);

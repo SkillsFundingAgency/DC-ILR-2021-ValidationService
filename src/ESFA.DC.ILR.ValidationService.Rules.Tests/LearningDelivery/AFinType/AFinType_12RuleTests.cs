@@ -129,7 +129,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
-                .Returns(Collection.EmptyAndReadOnly<IAppFinRecord>());
+                .Returns(new List<IAppFinRecord>());
 
             // act
             var result = sut.ConditionMet(mockDelivery.Object);
@@ -149,11 +149,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var mockDelivery = new Mock<ILearningDelivery>();
             var mockFinRec = new Mock<IAppFinRecord>();
 
-            var records = Collection.Empty<IAppFinRecord>();
+            var records = new List<IAppFinRecord>();
             records.Add(mockFinRec.Object);
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
-                .Returns(records.AsSafeReadOnlyList());
+                .Returns(records);
 
             // act
             var result = sut.ConditionMet(mockDelivery.Object);
@@ -183,11 +183,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .SetupGet(x => x.AFinType)
                 .Returns(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice);
 
-            var records = Collection.Empty<IAppFinRecord>();
+            var records = new List<IAppFinRecord>();
             records.Add(mockFinRec.Object);
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
-                .Returns(records.AsSafeReadOnlyList());
+                .Returns(records);
 
             // act
             var result = sut.ConditionMet(mockDelivery.Object);
@@ -223,15 +223,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
 
             var mockFinRec = new Mock<IAppFinRecord>();
-            var records = Collection.Empty<IAppFinRecord>();
+            var records = new List<IAppFinRecord>();
             records.Add(mockFinRec.Object);
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
-                .Returns(records.AsSafeReadOnlyList());
+                .Returns(records);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
-            mockLearner.SetupGet(x => x.LearningDeliveries).Returns(deliveries.AsSafeReadOnlyList());
+            mockLearner.SetupGet(x => x.LearningDeliveries).Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             mockHandler.Setup(x => x.Handle(
@@ -282,15 +282,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .SetupGet(x => x.AFinType)
                 .Returns(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice);
 
-            var records = Collection.Empty<IAppFinRecord>();
+            var records = new List<IAppFinRecord>();
             records.Add(mockFinRec.Object);
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
-                .Returns(records.AsSafeReadOnlyList());
+                .Returns(records);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
-            mockLearner.SetupGet(x => x.LearningDeliveries).Returns(deliveries.AsSafeReadOnlyList());
+            mockLearner.SetupGet(x => x.LearningDeliveries).Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

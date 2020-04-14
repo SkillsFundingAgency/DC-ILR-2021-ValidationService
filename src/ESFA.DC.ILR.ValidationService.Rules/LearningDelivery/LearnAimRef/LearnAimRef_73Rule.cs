@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool IsNotValid(ILearningDelivery thisDelivery)
         {
-            var esfEligibilities = _fcsData.GetEligibilityRuleSectorSubjectAreaLevelsFor(thisDelivery.ConRefNumber).AsSafeReadOnlyList();
+            var esfEligibilities = _fcsData.GetEligibilityRuleSectorSubjectAreaLevelsFor(thisDelivery.ConRefNumber).ToReadOnlyCollection();
             var larsLearningDelivery = _larsData.GetDeliveryFor(thisDelivery.LearnAimRef);
 
             if (esfEligibilities.Count > 0 && larsLearningDelivery != null)

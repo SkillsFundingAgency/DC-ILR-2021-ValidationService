@@ -176,12 +176,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
                 .SetupGet(y => y.ProgTypeNullable)
                 .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             mockHandler.Setup(x => x.Handle(
@@ -240,12 +240,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
                 .SetupGet(y => y.ProgTypeNullable)
                 .Returns(programmeType);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

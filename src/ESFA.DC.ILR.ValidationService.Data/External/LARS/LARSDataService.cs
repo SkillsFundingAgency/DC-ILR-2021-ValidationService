@@ -32,53 +32,35 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             }
         }
 
-        public IReadOnlyCollection<ILARSLearningDelivery> GetDeliveriesFor(string thisAimRef)
-        {
-            var delivery = GetDeliveryFor(thisAimRef);
-
-            return It.Has(delivery)
-                ? new[] { delivery }
-                : Collection.EmptyAndReadOnly<ILARSLearningDelivery>();
-        }
-
         public ILARSLearningDelivery GetDeliveryFor(string thisAimRef) =>
-            _larsDeliveries.GetValueOrDefault(thisAimRef, null);
+            _larsDeliveries.GetValueOrDefault(thisAimRef);
 
         public ILARSStandard GetStandardFor(int standardCode) =>
-            _larsStandards.GetValueOrDefault(standardCode, null);
+            _larsStandards.GetValueOrDefault(standardCode);
 
         public ILARSStandardFunding GetStandardFundingFor(int standardCode, DateTime startDate)
         {
             var standard = GetStandardFor(standardCode);
 
             return standard?.StandardsFunding
-                .SafeWhere(sf => It.IsBetween(startDate, sf.EffectiveFrom, sf.EffectiveTo ?? DateTime.MaxValue))
+                .NullSafeWhere(sf => It.IsBetween(startDate, sf.EffectiveFrom, sf.EffectiveTo ?? DateTime.MaxValue))
                 .OrderBy(x => x.EffectiveTo) // get the earliest closure first
                 .FirstOrDefault();
         }
 
         public IReadOnlyCollection<ILARSLearningCategory> GetCategoriesFor(string thisAimRef)
         {
-            var delivery = GetDeliveryFor(thisAimRef);
-
-            return delivery?.Categories
-                ?? Collection.EmptyAndReadOnly<ILARSLearningCategory>();
+            return GetDeliveryFor(thisAimRef)?.Categories ?? Array.Empty<ILARSLearningCategory>();
         }
 
         public IReadOnlyCollection<ILARSLearningDeliveryValidity> GetValiditiesFor(string thisAimRef)
         {
-            var delivery = GetDeliveryFor(thisAimRef);
-
-            return delivery?.Validities
-                ?? Collection.EmptyAndReadOnly<ILARSLearningDeliveryValidity>();
+            return GetDeliveryFor(thisAimRef)?.Validities ?? Array.Empty<ILARSLearningDeliveryValidity>();
         }
 
         public IReadOnlyCollection<ILARSAnnualValue> GetAnnualValuesFor(string thisAimRef)
         {
-            var delivery = GetDeliveryFor(thisAimRef);
-
-            return delivery?.AnnualValues
-                ?? Collection.EmptyAndReadOnly<ILARSAnnualValue>();
+            return GetDeliveryFor(thisAimRef)?.AnnualValues ?? Array.Empty<ILARSAnnualValue>();
         }
 
         public IReadOnlyCollection<ILARSFrameworkAim> GetFrameworkAimsFor(string thisAimRef)
@@ -86,17 +68,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             var delivery = GetDeliveryFor(thisAimRef);
 
             return delivery?.Frameworks
-                .SafeWhere(f => f.FrameworkAim != null)
+                .NullSafeWhere(f => f.FrameworkAim != null)
                 .Select(f => f.FrameworkAim)
-                .AsSafeReadOnlyList()
-                    ?? Collection.EmptyAndReadOnly<ILARSFrameworkAim>();
+                .ToArray() ?? Array.Empty<ILARSFrameworkAim>();
         }
 
         public IReadOnlyCollection<ILARSStandardValidity> GetStandardValiditiesFor(int thisStandardCode)
         {
             return _externalDataCache.StandardValidities
-                .SafeWhere(x => x.StandardCode == thisStandardCode)
-                .AsSafeReadOnlyList();
+                .NullSafeWhere(x => x.StandardCode == thisStandardCode)
+                .ToArray() ?? Array.Empty<ILARSStandardValidity>();
         }
 
         public bool ContainsStandardFor(int thisStandardCode)
@@ -207,7 +188,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             var learningDelivery = GetDeliveryFor(learnAimRef);
 
             return learningDelivery != null
-                && levels.AsSafeDistinctKeySet().Contains(learningDelivery.NotionalNVQLevelv2);
+                && levels.Any(x => x.CaseInsensitiveEquals(learningDelivery.NotionalNVQLevelv2));
         }
 
         // TODO: this should happen in the rule
@@ -297,13 +278,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         }
 
         // TODO: this should happen in the rule
-        public bool BasicSkillsMatchForLearnAimRefAndStartDate(IEnumerable<int> basicSkillsType, string learnAimRef, DateTime learnStartDate)
+        public bool BasicSkillsMatchForLearnAimRefAndStartDate(IEnumerable<int> basicSkillsTypes, string learnAimRef, DateTime learnStartDate)
         {
-            var values = GetAnnualValuesFor(learnAimRef);
-            var safeSkillsSet = basicSkillsType.AsSafeDistinctKeySet();
+            if (basicSkillsTypes == null || string.IsNullOrEmpty(learnAimRef))
+            {
+                return false;
+            }
 
-            return values.SafeAny(a => a.BasicSkillsType.HasValue
-                        && safeSkillsSet.Contains((int)a.BasicSkillsType)
+            var values = GetAnnualValuesFor(learnAimRef);
+            return values.NullSafeAny(a => a.BasicSkillsType.HasValue
+                        && basicSkillsTypes.Contains((int)a.BasicSkillsType)
                         && a.IsCurrent(learnStartDate));
         }
 
@@ -323,20 +307,20 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         // TODO: this should happen in the rule
         public bool OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(DateTime origLearnStartDate, string learnAimRef, string validityCategory)
         {
-            return OrigLearnStartDateBetweenStartAndEndDateForAnyValidityCategory(
-                origLearnStartDate,
-                learnAimRef,
-                new List<string>() { validityCategory });
+            var validities = GetValiditiesFor(learnAimRef);
+
+            return validities.Any(
+                lv => lv.ValidityCategory.CaseInsensitiveEquals(validityCategory)
+                && lv.IsCurrent(origLearnStartDate));
         }
 
         // TODO: this should happen in the rule
         public bool OrigLearnStartDateBetweenStartAndEndDateForAnyValidityCategory(DateTime origLearnStartDate, string learnAimRef, IEnumerable<string> categoriesHashSet)
         {
             var validities = GetValiditiesFor(learnAimRef);
-            var caseInsensitveCategoriesHashSet = categoriesHashSet.ToCaseInsensitiveHashSet();
 
             return validities.Any(lv =>
-                caseInsensitveCategoriesHashSet.Contains(lv.ValidityCategory)
+                categoriesHashSet.Any(x => x.CaseInsensitiveEquals(lv.ValidityCategory))
                 && lv.IsCurrent(origLearnStartDate));
         }
 
@@ -355,7 +339,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             var learningDelivery = GetDeliveryFor(learnAimRef);
 
             return It.Has(learningDelivery)
-                && learnAimRefTypes.ToCaseInsensitiveHashSet().Contains(learningDelivery.LearnAimRefType);
+                && learnAimRefTypes.Any(x => x.CaseInsensitiveEquals(learningDelivery.LearnAimRefType));
         }
     }
 }

@@ -172,7 +172,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
                 .SetupGet(x => x.StdCodeNullable)
                 .Returns(candidate);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mock = new Mock<ILearner>();
@@ -181,7 +181,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
                 .Returns(LearnRefNumber);
             mock
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -230,7 +230,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
                 .SetupGet(x => x.StdCodeNullable)
                 .Returns(candidate);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mock = new Mock<ILearner>();
@@ -239,7 +239,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
                 .Returns(LearnRefNumber);
             mock
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);

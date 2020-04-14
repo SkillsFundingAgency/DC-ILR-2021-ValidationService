@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.ReferenceDataService.Model.Postcodes;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
@@ -52,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                         SourceOfFunding = dp.SourceOfFunding,
                         EffectiveFrom = dp.EffectiveFrom,
                         EffectiveTo = dp.EffectiveTo
-                    }).AsSafeReadOnlyList<IDevolvedPostcode>(),
+                    }).ToReadOnlyCollection<IDevolvedPostcode>(),
                     StringComparer.OrdinalIgnoreCase)
                         ?? new Dictionary<string, IReadOnlyCollection<IDevolvedPostcode>>(StringComparer.OrdinalIgnoreCase);
         }

@@ -126,7 +126,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE
             // arrange
             var sut = NewRule();
             var mock = new Mock<ILearnerHE>();
-            var learningDeliveries = Collection.EmptyAndReadOnly<ILearningDelivery>();
+            var learningDeliveries = new List<ILearningDelivery>();
 
             // act
             var result = sut.ConditionMet(mock.Object, learningDeliveries);
@@ -147,11 +147,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE
 
             var mockDelivery = new Mock<ILearningDelivery>();
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             // act
-            var result = sut.ConditionMet(mock.Object, deliveries.AsSafeReadOnlyList());
+            var result = sut.ConditionMet(mock.Object, deliveries);
 
             // assert
             Assert.False(result);
@@ -173,11 +173,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE
             mockDelivery.SetupGet(x => x.LearningDeliveryHEEntity)
                 .Returns(mockDeliveryHE.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             // act
-            var result = sut.ConditionMet(mock.Object, deliveries.AsSafeReadOnlyList());
+            var result = sut.ConditionMet(mock.Object, deliveries);
 
             // assert
             Assert.True(result);
@@ -197,11 +197,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE
             mockDelivery.SetupGet(x => x.LearningDeliveryHEEntity)
                 .Returns(mockDeliveryHE.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             // act
-            var result = sut.ConditionMet(null, deliveries.AsSafeReadOnlyList());
+            var result = sut.ConditionMet(null, deliveries);
 
             // assert
             Assert.True(result);
@@ -224,8 +224,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE
 
             var mockDelivery = new Mock<ILearningDelivery>();
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries.AsSafeReadOnlyList());
+            var deliveries = new List<ILearningDelivery>();
+            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             mockHandler.Setup(x => x.Handle(
@@ -270,9 +270,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE
             mockDelivery.SetupGet(x => x.LearningDeliveryHEEntity)
                 .Returns(mockDeliveryHE.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
-            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries.AsSafeReadOnlyList());
+            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

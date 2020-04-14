@@ -460,7 +460,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockItem = new Mock<ILearner>();
             mockItem
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(Collection.EmptyAndReadOnly<ILearnerEmploymentStatus>());
+                .Returns(new List<ILearnerEmploymentStatus>());
 
             // act
             var result = sut.HasQualifyingEmploymentStatus(mockItem.Object, null);
@@ -504,7 +504,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(y => y.ProgTypeNullable)
                 .Returns(TypeOfLearningProgramme.IntermediateLevelApprenticeship);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             // ensure the status is OUTSIDE the qualifying date range
@@ -513,7 +513,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(y => y.DateEmpStatApp)
                 .Returns(testDate.AddDays(1));
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(mockStatus.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -522,10 +522,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             // get the learner inside the qualifying date range
             mockLearner
@@ -613,7 +613,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(y => y.ProgTypeNullable)
                 .Returns(TypeOfLearningProgramme.IntermediateLevelApprenticeship);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             // ensure the status is INSIDE the qualifying date range
@@ -622,7 +622,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(y => y.DateEmpStatApp)
                 .Returns(testDate);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(mockStatus.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -631,10 +631,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             // get the learner inside the qualifying date range
             mockLearner

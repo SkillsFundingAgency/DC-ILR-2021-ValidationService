@@ -141,7 +141,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(y => y.EmpStat)
                 .Returns(EmpStat);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(mockStatus.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -150,7 +150,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -195,7 +195,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(y => y.EmpStat)
                 .Returns(EmpStat);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(mockStatus.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -204,7 +204,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var lookups = new Mock<IProvideLookupDetails>(MockBehavior.Strict);

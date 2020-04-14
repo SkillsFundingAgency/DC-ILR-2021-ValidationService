@@ -11,7 +11,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
     public class LearnerDPPerActorProviderServiceTests
     {
         [Fact]
-        public async Task ProvideAsync()
+        public void ProvideAsync()
         {
             var testLearners = new MessageLearner[]
             {
@@ -44,7 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
         }
 
         [Fact]
-        public async Task ProvideAsync_MultipleShards()
+        public void ProvideAsync_MultipleShards()
         {
             var testLearnerDP = new List<MessageLearnerDestinationandProgression>();
 

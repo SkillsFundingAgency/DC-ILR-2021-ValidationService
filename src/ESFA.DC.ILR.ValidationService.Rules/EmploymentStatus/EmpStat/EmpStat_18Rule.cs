@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -51,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
                 .AsGuard<ArgumentNullException>(nameof(thisLearner));
 
             var learnRefNumber = thisLearner.LearnRefNumber;
-            var employments = thisLearner.LearnerEmploymentStatuses.AsSafeReadOnlyList();
+            var employments = thisLearner.LearnerEmploymentStatuses.ToReadOnlyCollection();
 
             thisLearner.LearningDeliveries
                 .ForEach(x => RunChecks(x, GetEmploymentStatusOn(x.LearnStartDate, employments), y => RaiseValidationMessage(learnRefNumber, x, y)));

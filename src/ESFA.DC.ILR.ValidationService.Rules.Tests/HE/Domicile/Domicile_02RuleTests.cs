@@ -183,7 +183,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.DOMICILE
                 .SetupGet(y => y.LearningDeliveryHEEntity)
                 .Returns(mockHE.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -192,7 +192,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.DOMICILE
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(y => y.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -239,7 +239,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.DOMICILE
                 .SetupGet(y => y.LearningDeliveryHEEntity)
                 .Returns(mockHE.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -248,7 +248,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.DOMICILE
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(y => y.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<IProvideLookupDetails>(MockBehavior.Strict);

@@ -47,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var rule = NewRule();
 
             // act / assert
-            Assert.Throws<InvalidOperationException>(() => rule.Derive(Collection.Empty<ILearningDelivery>()));
+            Assert.Throws<InvalidOperationException>(() => rule.Derive(Array.Empty<ILearningDelivery>()));
         }
 
         private DerivedData_06Rule NewRule()

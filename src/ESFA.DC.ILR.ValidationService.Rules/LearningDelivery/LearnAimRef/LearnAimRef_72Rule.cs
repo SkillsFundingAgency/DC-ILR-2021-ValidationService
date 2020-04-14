@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -172,7 +173,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         /// <param name="thisDelivery">this delivery.</param>
         /// <returns>a collection of subject area levels</returns>
         public IReadOnlyCollection<IEsfEligibilityRuleSectorSubjectAreaLevel> GetSubjectAreaLevelsFor(ILearningDelivery thisDelivery) =>
-            _fcsData.GetEligibilityRuleSectorSubjectAreaLevelsFor(thisDelivery.ConRefNumber).AsSafeReadOnlyList();
+            _fcsData.GetEligibilityRuleSectorSubjectAreaLevelsFor(thisDelivery.ConRefNumber).ToReadOnlyCollection();
 
         /// <summary>
         /// Determines whether the specified this delivery is excluded.

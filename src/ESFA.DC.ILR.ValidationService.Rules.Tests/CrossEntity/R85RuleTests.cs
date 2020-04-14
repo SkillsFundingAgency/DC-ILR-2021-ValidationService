@@ -152,7 +152,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .SetupGet(y => y.ULN)
                 .Returns(learnerULN);
 
-            var learners = Collection.Empty<ILearner>();
+            var learners = new List<ILearner>();
             learners.Add(learner.Object);
 
             var dAndP = new Mock<ILearnerDestinationAndProgression>();
@@ -163,16 +163,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .SetupGet(y => y.ULN)
                 .Returns(dAndP__ULN);
 
-            var records = Collection.Empty<ILearnerDestinationAndProgression>();
+            var records = new List<ILearnerDestinationAndProgression>();
             records.Add(dAndP.Object);
 
             var message = new Mock<IMessage>();
             message
                 .SetupGet(y => y.Learners)
-                .Returns(learners.AsSafeReadOnlyList());
+                .Returns(learners);
             message
                 .SetupGet(x => x.LearnerDestinationAndProgressions)
-                .Returns(records.AsSafeReadOnlyList());
+                .Returns(records);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -223,19 +223,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .SetupGet(y => y.ULN)
                 .Returns(learnerULN);
 
-            var records = Collection.Empty<ILearnerDestinationAndProgression>();
+            var records = new List<ILearnerDestinationAndProgression>();
             records.Add(dAndP.Object);
 
-            var learners = Collection.Empty<ILearner>();
+            var learners = new List<ILearner>();
             learners.Add(learner.Object);
 
             var message = new Mock<IMessage>();
             message
                 .SetupGet(y => y.Learners)
-                .Returns(learners.AsSafeReadOnlyList());
+                .Returns(learners);
             message
                 .SetupGet(x => x.LearnerDestinationAndProgressions)
-                .Returns(records.AsSafeReadOnlyList());
+                .Returns(records);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

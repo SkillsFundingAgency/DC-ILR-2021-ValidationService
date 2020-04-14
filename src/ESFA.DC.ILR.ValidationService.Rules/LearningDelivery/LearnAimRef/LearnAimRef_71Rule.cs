@@ -60,9 +60,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 .Where(s => s.SectorSubjectAreaCode.HasValue)
                 .Select(s => s.SectorSubjectAreaCode).ToList();
 
-            var learningDeliveries = _lARSDataService.GetDeliveriesFor(learnAimRef);
-            bool isMatchNotFoundForSectorSubjectAreaTier1 = !learningDeliveries.Join(sectorSubjectAreaCodes, ld => ld.SectorSubjectAreaTier1, fcs => fcs.Value, (ld, fcs) => fcs.Value).Any();
-            bool isMatchNotFoundForSectorSubjectAreaTier2 = !learningDeliveries.Join(sectorSubjectAreaCodes, ld => ld.SectorSubjectAreaTier2, fcs => fcs.Value, (ld, fcs) => fcs.Value).Any();
+            var learningDelivery = _lARSDataService.GetDeliveryFor(learnAimRef);
+            bool isMatchNotFoundForSectorSubjectAreaTier1 = !sectorSubjectAreaCodes.Contains(learningDelivery.SectorSubjectAreaTier1);
+            bool isMatchNotFoundForSectorSubjectAreaTier2 = !sectorSubjectAreaCodes.Contains(learningDelivery.SectorSubjectAreaTier2);
 
             return isMatchNotFoundForSectorSubjectAreaTier1 && isMatchNotFoundForSectorSubjectAreaTier2;
         }

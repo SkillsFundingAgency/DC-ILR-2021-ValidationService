@@ -145,21 +145,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         /// <summary>
-        /// Funding streams meet expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        [Theory]
-        [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN1920)]
-        public void FundingStreamsMeetsExpectation(string candidate)
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Contains(candidate, sut.FundingStreams);
-        }
-
-        /// <summary>
         /// Provider ukprn meets expectation.
         /// </summary>
         [Fact]

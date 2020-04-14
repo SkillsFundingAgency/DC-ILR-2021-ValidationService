@@ -22,7 +22,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.External
     public class ExternalDataCachePopulationServiceTests
     {
         [Fact]
-        public async void PopulateAsync()
+        public void Populate()
         {
             var validationContextMock = new Mock<IValidationContext>();
 

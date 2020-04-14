@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -30,6 +31,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         /// </summary>
         private readonly IFCSDataService _fcsData;
 
+        private readonly HashSet<string> _fundingStreams = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            FundingStreamPeriodCodeConstants.AEB_19TRN1920,
+            FundingStreamPeriodCodeConstants.AEB_AS1920
+        };
+
         public UKPRN_19Rule(
             IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
@@ -47,21 +54,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 .AsGuard<ArgumentNullException>(nameof(fcsDataService));
 
             ProviderUKPRN = fileDataService.UKPRN();
-            FundingStreams = new CaseInsensitiveDistinctKeySet
-            {
-                FundingStreamPeriodCodeConstants.AEB_19TRN1920,
-                FundingStreamPeriodCodeConstants.AEB_AS1920
-            };
 
             _check = commonOps;
             _fcsData = fcsDataService;
         }
-
-
-        /// <summary>
-        /// Gets the funding streams.
-        /// </summary>
-        public CaseInsensitiveDistinctKeySet FundingStreams { get; }
 
         /// <summary>
         /// Gets the provider ukprn.
@@ -146,7 +142,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate) =>
             _fcsData
                 .GetContractAllocationsFor(ProviderUKPRN)
-                .SafeAny(x => HasFundingRelationship(x) && hasStartedAfterStopDate(x));
+                .NullSafeAny(x => HasFundingRelationship(x) && hasStartedAfterStopDate(x));
 
         /// <summary>
         /// Determines whether [has funding relationship] [the specified allocation].
@@ -156,7 +152,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         ///   <c>true</c> if [has funding relationship] [the specified allocation]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasFundingRelationship(IFcsContractAllocation theAllocation) =>
-            FundingStreams.Contains(theAllocation.FundingStreamPeriodCode);
+            _fundingStreams.Contains(theAllocation.FundingStreamPeriodCode);
 
         /// <summary>
         /// Determines whether [has started after stop date] [the specified allocation].

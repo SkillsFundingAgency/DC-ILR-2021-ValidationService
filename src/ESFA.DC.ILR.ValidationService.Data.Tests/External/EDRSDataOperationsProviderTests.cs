@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 
             cache
                 .SetupGet(x => x.ERNs)
-                .Returns(collection.AsSafeReadOnlyList());
+                .Returns(collection);
 
             return cache.Object;
         }

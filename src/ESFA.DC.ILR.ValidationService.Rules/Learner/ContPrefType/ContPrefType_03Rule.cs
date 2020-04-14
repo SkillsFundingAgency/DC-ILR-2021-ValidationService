@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
@@ -82,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
                 .AsGuard<ArgumentNullException>(nameof(thisLearner));
 
             var learnRefNumber = thisLearner.LearnRefNumber;
-            var earliestStart = GetQualifyingStartDate(thisLearner.LearningDeliveries.AsSafeReadOnlyList());
+            var earliestStart = GetQualifyingStartDate(thisLearner.LearningDeliveries.ToReadOnlyCollection());
 
             thisLearner.ContactPreferences
                 .ForAny(x => IsNotValid(x, earliestStart), x => RaiseValidationMessage(learnRefNumber, x, earliestStart));

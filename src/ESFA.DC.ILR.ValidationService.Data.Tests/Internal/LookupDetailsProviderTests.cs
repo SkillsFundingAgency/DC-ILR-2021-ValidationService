@@ -168,7 +168,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.Internal
         /// <returns>a <seealso cref="LookupDetailsProvider"/></returns>
         public LookupDetailsProvider NewService()
         {
-            var aimTypes = new DistinctKeySet<int> { 1, 2, 4, 5, 6, 9, 24, 25, 29, 45 };
+            var aimTypes = new HashSet<int> { 1, 2, 4, 5, 6, 9, 24, 25, 29, 45 };
 
             var tTAccomItems = new Dictionary<string, ValidityPeriods>()
             {

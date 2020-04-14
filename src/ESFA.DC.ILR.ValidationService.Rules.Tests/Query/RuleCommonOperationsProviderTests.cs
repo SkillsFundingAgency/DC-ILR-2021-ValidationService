@@ -5,6 +5,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Query;
 using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
@@ -463,20 +464,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             var learnDate = DateTime.Parse(candidate);
             var expectedDate = DateTime.Parse(expectation);
 
-            var employments = Collection.Empty<ILearnerEmploymentStatus>();
+            var employments = new List<ILearnerEmploymentStatus>();
 
-            starts.ForEach(x =>
+            foreach (var start in starts)
             {
                 var mockItem = new Mock<ILearnerEmploymentStatus>();
                 mockItem
                     .SetupGet(y => y.DateEmpStatApp)
-                    .Returns(DateTime.Parse(x));
+                    .Returns(DateTime.Parse(start));
 
                 employments.Add(mockItem.Object);
-            });
+            }
 
             // act
-            var result = sut.GetEmploymentStatusOn(learnDate, employments.AsSafeReadOnlyList());
+            var result = sut.GetEmploymentStatusOn(learnDate, employments);
 
             // assert
             Assert.Equal(expectedDate, result.DateEmpStatApp);

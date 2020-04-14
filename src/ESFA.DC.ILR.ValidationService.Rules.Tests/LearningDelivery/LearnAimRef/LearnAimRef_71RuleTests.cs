@@ -58,35 +58,33 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             string conRefNumber = "ESF223344";
 
             var esfEligibilityRuleSectorSubjectAreaLevels = new IEsfEligibilityRuleSectorSubjectAreaLevel[]
-                {
-                    new EsfEligibilityRuleSectorSubjectAreaLevel()
-                    {
-                        TenderSpecReference = "tt_2976",
-                        LotReference = "A1",
-                        SectorSubjectAreaCode = 13.1M,
-                    },
-                    new EsfEligibilityRuleSectorSubjectAreaLevel()
-                    {
-                        TenderSpecReference = "tt_2978",
-                        LotReference = "A3",
-                        SectorSubjectAreaCode = 15.1M,
-                    }
-                };
-            var learningDeliveries = new ILARSLearningDelivery[]
             {
-                new Data.External.LARS.Model.LearningDelivery()
+                new EsfEligibilityRuleSectorSubjectAreaLevel()
                 {
-                    LearnAimRef = learnAimRef,
-                    SectorSubjectAreaTier1 = string.IsNullOrEmpty(sectorSubjectArea1) ? (decimal?)null : decimal.Parse(sectorSubjectArea1),
-                    SectorSubjectAreaTier2 = string.IsNullOrEmpty(sectorSubjectArea2) ? (decimal?)null : decimal.Parse(sectorSubjectArea2)
+                    TenderSpecReference = "tt_2976",
+                    LotReference = "A1",
+                    SectorSubjectAreaCode = 13.1M,
+                },
+                new EsfEligibilityRuleSectorSubjectAreaLevel()
+                {
+                    TenderSpecReference = "tt_2978",
+                    LotReference = "A3",
+                    SectorSubjectAreaCode = 15.1M,
                 }
+            };
+
+            var learningDelivery = new Data.External.LARS.Model.LearningDelivery()
+            {
+                LearnAimRef = learnAimRef,
+                SectorSubjectAreaTier1 = string.IsNullOrEmpty(sectorSubjectArea1) ? (decimal?)null : decimal.Parse(sectorSubjectArea1),
+                SectorSubjectAreaTier2 = string.IsNullOrEmpty(sectorSubjectArea2) ? (decimal?)null : decimal.Parse(sectorSubjectArea2)
             };
 
             var fcsDataServiceMock = new Mock<IFCSDataService>();
             var larsDataServiceMock = new Mock<ILARSDataService>();
 
             fcsDataServiceMock.Setup(m => m.GetEligibilityRuleSectorSubjectAreaLevelsFor(conRefNumber)).Returns(esfEligibilityRuleSectorSubjectAreaLevels);
-            larsDataServiceMock.Setup(l => l.GetDeliveriesFor(learnAimRef)).Returns(learningDeliveries);
+            larsDataServiceMock.Setup(l => l.GetDeliveryFor(learnAimRef)).Returns(learningDelivery);
 
             NewRule(
                 fCSDataService: fcsDataServiceMock.Object,
@@ -108,21 +106,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                         SectorSubjectAreaCode = 13.2M,
                     },
                 };
-            var learningDeliveries = new ILARSLearningDelivery[]
+            var learningDelivery = new Data.External.LARS.Model.LearningDelivery()
             {
-                new Data.External.LARS.Model.LearningDelivery()
-                {
-                    LearnAimRef = learnAimRef,
-                    SectorSubjectAreaTier1 = 14.2M,
-                    SectorSubjectAreaTier2 = 15.2M
-                }
+                LearnAimRef = learnAimRef,
+                SectorSubjectAreaTier1 = 14.2M,
+                SectorSubjectAreaTier2 = 15.2M
             };
 
             var fcsDataServiceMock = new Mock<IFCSDataService>();
             var larsDataServiceMock = new Mock<ILARSDataService>();
 
             fcsDataServiceMock.Setup(m => m.GetEligibilityRuleSectorSubjectAreaLevelsFor(conRefNumber)).Returns(esfEligibilityRuleSectorSubjectAreaLevels);
-            larsDataServiceMock.Setup(l => l.GetDeliveriesFor(learnAimRef)).Returns(learningDeliveries);
+            larsDataServiceMock.Setup(l => l.GetDeliveryFor(learnAimRef)).Returns(learningDelivery);
 
             NewRule(
                 fCSDataService: fcsDataServiceMock.Object,
@@ -141,28 +136,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         public void ConditionMet_False(int fundModel, string conRefNumber, string learnAimRef, string sectorSubjectArea1, string sectorSubjectArea2)
         {
             var esfEligibilityRuleSectorSubjectAreaLevels = new IEsfEligibilityRuleSectorSubjectAreaLevel[]
-                {
-                    new EsfEligibilityRuleSectorSubjectAreaLevel()
-                    {
-                        TenderSpecReference = "tt_2976",
-                        LotReference = "A1",
-                        SectorSubjectAreaCode = 13.1M,
-                    },
-                    new EsfEligibilityRuleSectorSubjectAreaLevel()
-                    {
-                        TenderSpecReference = "tt_2978",
-                        LotReference = "A3",
-                        SectorSubjectAreaCode = 15.1M,
-                    }
-                };
-            var learningDeliveries = new ILARSLearningDelivery[]
             {
-                new Data.External.LARS.Model.LearningDelivery()
+                new EsfEligibilityRuleSectorSubjectAreaLevel()
                 {
-                    LearnAimRef = learnAimRef,
-                    SectorSubjectAreaTier1 = string.IsNullOrEmpty(sectorSubjectArea1) ? (decimal?)null : decimal.Parse(sectorSubjectArea1),
-                    SectorSubjectAreaTier2 = string.IsNullOrEmpty(sectorSubjectArea2) ? (decimal?)null : decimal.Parse(sectorSubjectArea2)
+                    TenderSpecReference = "tt_2976",
+                    LotReference = "A1",
+                    SectorSubjectAreaCode = 13.1M,
+                },
+                new EsfEligibilityRuleSectorSubjectAreaLevel()
+                {
+                    TenderSpecReference = "tt_2978",
+                    LotReference = "A3",
+                    SectorSubjectAreaCode = 15.1M,
                 }
+            };
+
+            var learningDelivery = new Data.External.LARS.Model.LearningDelivery()
+            {
+                LearnAimRef = learnAimRef,
+                SectorSubjectAreaTier1 = string.IsNullOrEmpty(sectorSubjectArea1) ? (decimal?)null : decimal.Parse(sectorSubjectArea1),
+                SectorSubjectAreaTier2 = string.IsNullOrEmpty(sectorSubjectArea2) ? (decimal?)null : decimal.Parse(sectorSubjectArea2)
             };
 
             var fcsDataServiceMock = new Mock<IFCSDataService>();
@@ -170,7 +163,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             fcsDataServiceMock.Setup(m => m.GetEligibilityRuleSectorSubjectAreaLevelsFor(conRefNumber)).Returns(esfEligibilityRuleSectorSubjectAreaLevels);
             fcsDataServiceMock.Setup(m => m.GetEligibilityRuleSectorSubjectAreaLevelsFor("ESF223344")).Returns(new IEsfEligibilityRuleSectorSubjectAreaLevel[] { });
-            larsDataServiceMock.Setup(l => l.GetDeliveriesFor(learnAimRef)).Returns(learningDeliveries);
+            larsDataServiceMock.Setup(l => l.GetDeliveryFor(learnAimRef)).Returns(learningDelivery);
 
             NewRule(
                 fCSDataService: fcsDataServiceMock.Object,
@@ -184,29 +177,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             string learnAimRef = "ZESF0002";
             string conRefNumber = "ESF7890";
             var esfEligibilityRuleSectorSubjectAreaLevels = new IEsfEligibilityRuleSectorSubjectAreaLevel[]
-                {
-                    new EsfEligibilityRuleSectorSubjectAreaLevel()
-                    {
-                        TenderSpecReference = "tt_2976",
-                        LotReference = "01",
-                        SectorSubjectAreaCode = 13.2M,
-                    },
-                };
-            var learningDeliveries = new ILARSLearningDelivery[]
             {
-                new Data.External.LARS.Model.LearningDelivery()
+                new EsfEligibilityRuleSectorSubjectAreaLevel()
                 {
-                    LearnAimRef = learnAimRef,
-                    SectorSubjectAreaTier1 = 14.2M,
-                    SectorSubjectAreaTier2 = 15.2M
-                }
+                    TenderSpecReference = "tt_2976",
+                    LotReference = "01",
+                    SectorSubjectAreaCode = 13.2M,
+                },
+            };
+
+            var learningDelivery = new Data.External.LARS.Model.LearningDelivery()
+            {
+                LearnAimRef = learnAimRef,
+                SectorSubjectAreaTier1 = 14.2M,
+                SectorSubjectAreaTier2 = 15.2M
             };
 
             var fcsDataServiceMock = new Mock<IFCSDataService>();
             var larsDataServiceMock = new Mock<ILARSDataService>();
 
             fcsDataServiceMock.Setup(m => m.GetEligibilityRuleSectorSubjectAreaLevelsFor(conRefNumber)).Returns(esfEligibilityRuleSectorSubjectAreaLevels);
-            larsDataServiceMock.Setup(l => l.GetDeliveriesFor(learnAimRef)).Returns(learningDeliveries);
+            larsDataServiceMock.Setup(l => l.GetDeliveryFor(learnAimRef)).Returns(learningDelivery);
 
             NewRule(
                 fCSDataService: fcsDataServiceMock.Object,
@@ -234,29 +225,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             };
 
             var esfEligibilityRuleSectorSubjectAreaLevels = new IEsfEligibilityRuleSectorSubjectAreaLevel[]
-                {
-                    new EsfEligibilityRuleSectorSubjectAreaLevel()
-                    {
-                        TenderSpecReference = "tt_2976",
-                        LotReference = "01",
-                        SectorSubjectAreaCode = 13.2M,
-                    },
-                };
-            var learningDeliveries = new ILARSLearningDelivery[]
             {
-                new Data.External.LARS.Model.LearningDelivery()
+                new EsfEligibilityRuleSectorSubjectAreaLevel()
                 {
-                    LearnAimRef = learnAimRef,
-                    SectorSubjectAreaTier1 = 14.2M,
-                    SectorSubjectAreaTier2 = 15.2M
-                }
+                    TenderSpecReference = "tt_2976",
+                    LotReference = "01",
+                    SectorSubjectAreaCode = 13.2M,
+                },
+            };
+
+            var learningDelivery = new Data.External.LARS.Model.LearningDelivery()
+            {
+                LearnAimRef = learnAimRef,
+                SectorSubjectAreaTier1 = 14.2M,
+                SectorSubjectAreaTier2 = 15.2M
             };
 
             var fcsDataServiceMock = new Mock<IFCSDataService>();
             var larsDataServiceMock = new Mock<ILARSDataService>();
 
             fcsDataServiceMock.Setup(m => m.GetEligibilityRuleSectorSubjectAreaLevelsFor(conRefNumber)).Returns(esfEligibilityRuleSectorSubjectAreaLevels);
-            larsDataServiceMock.Setup(l => l.GetDeliveriesFor(learnAimRef)).Returns(learningDeliveries);
+            larsDataServiceMock.Setup(l => l.GetDeliveryFor(learnAimRef)).Returns(learningDelivery);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
@@ -287,22 +276,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             };
 
             var esfEligibilityRuleSectorSubjectAreaLevels = new IEsfEligibilityRuleSectorSubjectAreaLevel[]
-                {
-                    new EsfEligibilityRuleSectorSubjectAreaLevel()
-                    {
-                        TenderSpecReference = "tt_2976",
-                        LotReference = "01",
-                        SectorSubjectAreaCode = 13.2M,
-                    },
-                };
-            var learningDeliveries = new ILARSLearningDelivery[]
             {
-                new Data.External.LARS.Model.LearningDelivery()
+                new EsfEligibilityRuleSectorSubjectAreaLevel()
                 {
-                    LearnAimRef = learnAimRef,
-                    SectorSubjectAreaTier1 = 14.2M,
-                    SectorSubjectAreaTier2 = 15.2M
-                }
+                    TenderSpecReference = "tt_2976",
+                    LotReference = "01",
+                    SectorSubjectAreaCode = 13.2M,
+                },
+            };
+
+            var learningDelivery = new Data.External.LARS.Model.LearningDelivery()
+            {
+                LearnAimRef = learnAimRef,
+                SectorSubjectAreaTier1 = 14.2M,
+                SectorSubjectAreaTier2 = 15.2M
             };
 
             var fcsDataServiceMock = new Mock<IFCSDataService>();
@@ -310,7 +297,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             fcsDataServiceMock.Setup(m => m.GetEligibilityRuleSectorSubjectAreaLevelsFor(conRefNumber)).Returns(esfEligibilityRuleSectorSubjectAreaLevels);
             fcsDataServiceMock.Setup(m => m.GetEligibilityRuleSectorSubjectAreaLevelsFor("ESF223344")).Returns(new IEsfEligibilityRuleSectorSubjectAreaLevel[] { });
-            larsDataServiceMock.Setup(l => l.GetDeliveriesFor(learnAimRef)).Returns(learningDeliveries);
+            larsDataServiceMock.Setup(l => l.GetDeliveryFor(learnAimRef)).Returns(learningDelivery);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {

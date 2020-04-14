@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -49,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.SWSupAimId
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .SafeWhere(x => It.Has(x.SWSupAimId))
+                .NullSafeWhere(x => It.Has(x.SWSupAimId))
                 .ForEach(x =>
                 {
                     var failedValidation = !ConditionMet(x);

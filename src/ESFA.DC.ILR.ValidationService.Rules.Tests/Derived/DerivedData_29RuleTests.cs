@@ -5,6 +5,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Derived;
 using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
@@ -105,13 +106,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 .SetupGet(y => y.CategoryRef)
                 .Returns(candidate);
 
-            var categories = Collection.Empty<ILARSLearningCategory>();
+            var categories = new List<ILARSLearningCategory>();
             categories.Add(mockItem.Object);
 
             var mockLARS = new Mock<ILARSDataService>(MockBehavior.Strict);
             mockLARS
                 .Setup(x => x.GetCategoriesFor(aimRef))
-                .Returns(categories.AsSafeReadOnlyList());
+                .Returns(categories);
 
             var sut = new DerivedData_29Rule(mockLARS.Object);
 

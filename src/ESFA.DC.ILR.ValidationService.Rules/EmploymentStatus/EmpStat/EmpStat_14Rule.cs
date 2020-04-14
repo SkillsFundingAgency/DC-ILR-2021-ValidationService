@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
@@ -71,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         /// <param name="delivery">The delivery.</param>
         /// <returns>the eligible employment status for the allocated contract</returns>
         public IReadOnlyCollection<IEsfEligibilityRuleEmploymentStatus> GetEligibilityRulesFor(ILearningDelivery delivery) =>
-            _fcsData.GetEligibilityRuleEmploymentStatusesFor(delivery?.ConRefNumber).AsSafeReadOnlyList();
+            _fcsData.GetEligibilityRuleEmploymentStatusesFor(delivery?.ConRefNumber).ToReadOnlyCollection();
 
         /// <summary>
         /// Determines whether [has a qualifying employment status] [the specified employment].
@@ -99,7 +100,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
-            var fromDeliveries = objectToValidate.LearningDeliveries.AsSafeReadOnlyList();
+            var fromDeliveries = objectToValidate.LearningDeliveries.ToReadOnlyCollection();
             var qualifyingAim = GetQualifyingdAimOn(fromDeliveries);
 
             if (It.IsNull(qualifyingAim))
@@ -114,7 +115,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
                 return;
             }
 
-            var fromEmployments = objectToValidate.LearnerEmploymentStatuses.AsSafeReadOnlyList();
+            var fromEmployments = objectToValidate.LearnerEmploymentStatuses.ToReadOnlyCollection();
             var employment = _check.GetEmploymentStatusOn(qualifyingAim.LearnStartDate, fromEmployments);
 
             if (It.IsNull(employment))

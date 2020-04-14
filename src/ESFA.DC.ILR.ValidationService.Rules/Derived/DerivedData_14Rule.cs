@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 
@@ -41,9 +42,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 otherwise set DD14 to number of the result(1 - 9)
             */
 
-            var list = workPlaceEmpId.AsSafeReadOnlyDigitList();
+            var list = workPlaceEmpId.SplitIntDigitsToList();
 
-            if (!It.HasCountOf(list, _requiredIDLength))
+            if (list.Count != _requiredIDLength)
             {
                 return InvalidLengthChecksum;
             }

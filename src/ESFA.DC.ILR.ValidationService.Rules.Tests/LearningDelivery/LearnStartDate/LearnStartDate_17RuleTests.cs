@@ -137,7 +137,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
                 .Setup(x => x.GetStandardValiditiesFor(candidate))
-                .Returns(Collection.EmptyAndReadOnly<ILARSStandardValidity>());
+                .Returns(new List<ILARSStandardValidity>());
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
@@ -182,7 +182,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
 
-            var validities = Collection.Empty<ILARSStandardValidity>();
+            var validities = new List<ILARSStandardValidity>();
             validities.Add(validity.Object);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
@@ -195,7 +195,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object);
 
             // act
-            var result = sut.HasQualifyingStart(delivery.Object, validities.AsSafeReadOnlyList());
+            var result = sut.HasQualifyingStart(delivery.Object, validities);
 
             // assert
             Assert.Equal(expectation, result);
@@ -269,12 +269,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
 
-            var validities = Collection.Empty<ILARSStandardValidity>();
+            var validities = new List<ILARSStandardValidity>();
             validities.Add(validity.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(delivery.Object);
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -282,7 +281,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(safeDeliveries);
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -303,7 +302,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
                 .Setup(x => x.GetStandardValiditiesFor(stdCode))
-                .Returns(validities.AsSafeReadOnlyList());
+                .Returns(validities);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
@@ -370,12 +369,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.StartDate)
                 .Returns(testDate);
 
-            var validities = Collection.Empty<ILARSStandardValidity>();
+            var validities = new List<ILARSStandardValidity>();
             validities.Add(validity.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(delivery.Object);
-            var safeDeliveries = deliveries.AsSafeReadOnlyList();
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -383,13 +381,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(safeDeliveries);
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
                 .Setup(x => x.GetStandardValiditiesFor(stdCode))
-                .Returns(validities.AsSafeReadOnlyList());
+                .Returns(validities);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps

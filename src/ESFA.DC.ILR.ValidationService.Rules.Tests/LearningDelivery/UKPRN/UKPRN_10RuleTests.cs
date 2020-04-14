@@ -171,22 +171,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         /// <summary>
-        /// Funding streams meet expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        [Theory]
-        [InlineData(FundingStreamPeriodCodeConstants.LEVY1799)]
-        [InlineData(FundingStreamPeriodCodeConstants.NONLEVY2019)]
-        public void FundingStreamsMeetsExpectation(string candidate)
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Contains(candidate, sut.FundingStreams);
-        }
-
-        /// <summary>
         /// First viable start meets expectation.
         /// </summary>
         [Fact]

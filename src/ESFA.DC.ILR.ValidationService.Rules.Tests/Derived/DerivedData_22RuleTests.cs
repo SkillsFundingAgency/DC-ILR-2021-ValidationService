@@ -4,6 +4,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Derived;
 using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
@@ -18,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         {
             // arrange
             var sut = NewRule();
-            var sources = Collection.EmptyAndReadOnly<ILearningDelivery>();
+            var sources = new List<ILearningDelivery>();
 
             // act / assert
             Assert.Throws<ArgumentNullException>(() => sut.GetLatestLearningStartForESFContract(null, sources));
@@ -108,7 +109,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var sut = NewRule();
             var candidate = new Mock<ILearningDelivery>();
 
-            var sources = Collection.EmptyAndReadOnly<ILearningDelivery>();
+            var sources = new List<ILearningDelivery>();
 
             // act / assert
             var result = sut.GetLatestLearningStartForESFContract(candidate.Object, sources);
@@ -142,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(DateTime.Today);
 
-            var sources = Collection.Empty<ILearningDelivery>();
+            var sources = new List<ILearningDelivery>();
             for (int i = 0; i < 10; i++)
             {
                 var del = new Mock<ILearningDelivery>();
@@ -166,7 +167,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             sources.Add(candidate.Object);
 
             // act / assert
-            var result = sut.GetLatestLearningStartForESFContract(candidate.Object, sources.AsSafeReadOnlyList());
+            var result = sut.GetLatestLearningStartForESFContract(candidate.Object, sources);
 
             // assert
             Assert.Equal(DateTime.Today, result);

@@ -120,7 +120,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         {
             // arrange
             var testDate = DateTime.Parse(candidate);
-            var employments = Collection.EmptyAndReadOnly<ILearnerEmploymentStatus>();
+            var employments = new List<ILearnerEmploymentStatus>();
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonchecks
@@ -223,7 +223,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var testDate = DateTime.Parse("2018-07-31");
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.LearnStartDate)
@@ -236,7 +236,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var esmType = candidate.Substring(0, 3);
             var esmCode = int.Parse(candidate.Substring(3));
 
-            var monitors = Collection.Empty<IEmploymentStatusMonitoring>();
+            var monitors = new List<IEmploymentStatusMonitoring>();
             var mockItem = new Mock<IEmploymentStatusMonitoring>(MockBehavior.Strict);
             mockItem
                 .SetupGet(y => y.ESMType)
@@ -255,7 +255,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(TypeOfEmploymentStatus.InPaidEmployment);
             mockStatus
                 .SetupGet(y => y.EmploymentStatusMonitorings)
-                .Returns(monitors.AsSafeReadOnlyList());
+                .Returns(monitors);
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -263,7 +263,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -330,7 +330,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var testDate = DateTime.Parse("2018-07-31");
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.LearnStartDate)
@@ -343,7 +343,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var esmType = candidate.Substring(0, 3);
             var esmCode = int.Parse(candidate.Substring(3));
 
-            var monitors = Collection.Empty<IEmploymentStatusMonitoring>();
+            var monitors = new List<IEmploymentStatusMonitoring>();
             var mockItem = new Mock<IEmploymentStatusMonitoring>(MockBehavior.Strict);
             mockItem
                 .SetupGet(y => y.ESMType)
@@ -362,7 +362,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(TypeOfEmploymentStatus.InPaidEmployment);
             mockStatus
                 .SetupGet(y => y.EmploymentStatusMonitorings)
-                .Returns(monitors.AsSafeReadOnlyList());
+                .Returns(monitors);
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -370,7 +370,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);

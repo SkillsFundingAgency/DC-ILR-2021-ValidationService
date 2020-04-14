@@ -11,7 +11,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
     public class PreValidationPopulationServiceTests
     {
         [Fact]
-        public async Task Populate()
+        public void Populate()
         {
             var validationContextMock = Mock.Of<IValidationContext>();
 

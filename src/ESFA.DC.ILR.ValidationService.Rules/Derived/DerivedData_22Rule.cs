@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
@@ -54,6 +55,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         ///   <c>true</c> if [has matching contract reference] [the specified source]; otherwise, <c>false</c>.
         /// </returns>
         public bool HasMatchingContractReference(ILearningDelivery source, ILearningDelivery candidate) =>
-            It.Has(source.ConRefNumber) && source.ConRefNumber.ComparesWith(candidate.ConRefNumber);
+            It.Has(source.ConRefNumber) && source.ConRefNumber.CaseInsensitiveEquals(candidate.ConRefNumber);
     }
 }

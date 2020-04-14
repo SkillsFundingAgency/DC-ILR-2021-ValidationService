@@ -169,13 +169,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         public void ConditionMetForLearningDeliveriesWithWorkPlacementReturnsTrue()
         {
             // arrange
-            var workplacements = Collection.Empty<ILearningDeliveryWorkPlacement>();
+            var workplacements = new List<ILearningDeliveryWorkPlacement>();
             workplacements.Add(new Mock<ILearningDeliveryWorkPlacement>().Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryWorkPlacements)
-                .Returns(workplacements.AsSafeReadOnlyList());
+                .Returns(workplacements);
 
             var sut = NewRule();
 
@@ -193,12 +193,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         public void ConditionMetForLearningDeliveriesWithNoWorkPlacementReturnsFalse()
         {
             // arrange
-            var workplacements = Collection.Empty<ILearningDeliveryWorkPlacement>();
+            var workplacements = new List<ILearningDeliveryWorkPlacement>();
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryWorkPlacements)
-                .Returns(workplacements.AsSafeReadOnlyList());
+                .Returns(workplacements);
 
             var sut = NewRule();
 
@@ -256,7 +256,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
                 .SetupGet(x => x.AimSeqNumber)
                 .Returns(0);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -265,7 +265,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             mockHandler
@@ -302,13 +302,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
             // arrange
             const string LearnRefNumber = "123456789X";
 
-            var workplacements = Collection.Empty<ILearningDeliveryWorkPlacement>();
+            var workplacements = new List<ILearningDeliveryWorkPlacement>();
             workplacements.Add(new Mock<ILearningDeliveryWorkPlacement>().Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryWorkPlacements)
-                .Returns(workplacements.AsSafeReadOnlyList());
+                .Returns(workplacements);
             mockDelivery
                 .SetupGet(y => y.LearnAimRef)
                 .Returns(aimReference);
@@ -316,7 +316,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(DateTime.Parse(startDate));
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -325,7 +325,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 

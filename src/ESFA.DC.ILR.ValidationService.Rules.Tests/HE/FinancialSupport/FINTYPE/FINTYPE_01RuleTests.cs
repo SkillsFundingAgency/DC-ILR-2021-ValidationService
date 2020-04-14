@@ -1,8 +1,8 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.HE.FinancialSupport.FINTYPE;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -131,7 +131,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
             var sut = new FINTYPE_01Rule(handler.Object, provider.Object);
 
             // act
-            var result = sut.ConditionMet(Collection.EmptyAndReadOnly<ILearnerHEFinancialSupport>());
+            var result = sut.ConditionMet(new List<ILearnerHEFinancialSupport>());
 
             // assert
             Assert.True(result);
@@ -225,9 +225,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
             mockDelivery.SetupGet(x => x.LearningDeliveryHEEntity)
                 .Returns(mockDeliveryHE.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
-            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries.AsSafeReadOnlyList());
+            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
@@ -270,8 +270,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
 
             var mockDelivery = new Mock<ILearningDelivery>();
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries.AsSafeReadOnlyList());
+            var deliveries = new List<ILearningDelivery>();
+            mock.SetupGet(x => x.LearningDeliveries).Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             mockHandler.Setup(x => x.Handle(
@@ -307,7 +307,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
         /// <returns>a collection of mocks built from the candidate "Fin Types"</returns>
         public IReadOnlyCollection<ILearnerHEFinancialSupport> GetFinancialSupport(int[] candidates)
         {
-            var collection = Collection.Empty<ILearnerHEFinancialSupport>();
+            var collection = new List<ILearnerHEFinancialSupport>();
 
             candidates.ForEach(x =>
             {
@@ -316,7 +316,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
                 collection.Add(mock.Object);
             });
 
-            return collection.AsSafeReadOnlyList();
+            return collection;
         }
 
         /// <summary>
@@ -328,13 +328,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
         /// </returns>
         public IReadOnlyCollection<ILearnerHEFinancialSupport> GetFinancialSupport(int candidate)
         {
-            var collection = Collection.Empty<ILearnerHEFinancialSupport>();
+            var collection = new List<ILearnerHEFinancialSupport>();
 
             var mock = new Mock<ILearnerHEFinancialSupport>();
             mock.SetupGet(y => y.FINTYPE).Returns(candidate);
             collection.Add(mock.Object);
 
-            return collection.AsSafeReadOnlyList();
+            return collection;
         }
 
         /// <summary>
