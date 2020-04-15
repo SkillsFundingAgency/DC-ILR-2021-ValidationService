@@ -92,7 +92,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             _check.IsLearnerInCustody(theDelivery);
 
         public bool IsLevyFundedApprenticeship(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer);
+            Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
 
         public bool IsLevyFundedApprenticeship(ILearningDelivery theDelivery) =>
             _check.CheckDeliveryFAMs(theDelivery, IsLevyFundedApprenticeship);
@@ -113,7 +113,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
                 TypeOfFunding.NotFundedByESFA);
 
         public bool IsFinancedByAdvancedLearnerLoans(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.FinancedByAdvancedLearnerLoans);
+            Monitoring.Delivery.FinancedByAdvancedLearnerLoans.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
 
         public bool HasAdvancedLearnerLoan(ILearningDelivery theDelivery) =>
             _check.CheckDeliveryFAMs(theDelivery, IsFinancedByAdvancedLearnerLoans);
@@ -122,7 +122,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             _dateTimeQuery.DaysBetween(theDelivery.LearnStartDate, theDelivery.LearnPlanEndDate) >= MinimumCourseDuration;
 
         public bool HasActualEndDate(ILearningDelivery theDelivery) =>
-            It.Has(theDelivery.LearnActEndDateNullable);
+            theDelivery.LearnActEndDateNullable.HasValue;
 
         public bool HasQualifyingActualDuration(ILearningDelivery theDelivery) =>
             _dateTimeQuery.DaysBetween(theDelivery.LearnStartDate, (DateTime)theDelivery.LearnActEndDateNullable) >= MinimumCourseDuration;

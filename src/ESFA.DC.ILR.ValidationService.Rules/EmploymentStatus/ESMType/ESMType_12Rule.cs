@@ -38,10 +38,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public string RuleName => Name;
 
         public bool IsQualifyingEmployment(ILearnerEmploymentStatus employmentStatus) =>
-            It.IsInRange(
-                employmentStatus.EmpStat,
-                TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable,
-                TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable);
+            employmentStatus.EmpStat == TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
+            || employmentStatus.EmpStat == TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable;
 
         public bool HasDisqualifyingIndicator(IEmploymentStatusMonitoring monitor) =>
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.SelfEmploymentIndicator)

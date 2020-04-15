@@ -110,7 +110,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
             var eligibilities = GetEligibilityRulesFor(qualifyingAim);
 
-            if (It.IsEmpty(eligibilities))
+            if (eligibilities.IsNullOrEmpty())
             {
                 return;
             }

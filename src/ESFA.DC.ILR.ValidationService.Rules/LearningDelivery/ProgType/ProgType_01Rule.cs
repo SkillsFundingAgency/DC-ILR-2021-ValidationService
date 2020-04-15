@@ -50,8 +50,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return It.Has(thisDelivery)
-                ? It.Has(thisDelivery.ProgTypeNullable)
+            return thisDelivery != null
+                ? thisDelivery.ProgTypeNullable.HasValue
                 : true;
         }
 

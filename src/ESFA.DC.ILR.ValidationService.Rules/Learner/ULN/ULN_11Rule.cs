@@ -53,10 +53,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             candidate.LearningDeliveries.NullSafeAny(matchCondition);
 
         public bool IsExternallyFunded(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.FundModel, TypeOfFunding.NotFundedByESFA);
+           delivery.FundModel == TypeOfFunding.NotFundedByESFA;
 
         public bool IsHEFCEFunded(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.HigherEducationFundingCouncilEngland);
+            Monitoring.Delivery.HigherEducationFundingCouncilEngland.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool IsHEFCEFunded(ILearningDelivery delivery) =>
             CheckDeliveryFAMs(delivery, IsHEFCEFunded);
@@ -68,7 +68,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             (delivery.LearnPlanEndDate - delivery.LearnStartDate) < FiveDays;
 
         public bool IsCompletedShortCourse(ILearningDelivery delivery) =>
-            It.Has(delivery.LearnActEndDateNullable)
+            delivery.LearnActEndDateNullable.HasValue
                 && ((delivery.LearnActEndDateNullable.Value - delivery.LearnStartDate) < FiveDays);
 
         public bool HasExceedRegistrationPeriod(ILearningDelivery delivery) =>
@@ -80,7 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             candidate.ULN != 9999999999;
 
         public bool IsLearnerInCustody(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.OLASSOffendersInCustody);
+            Monitoring.Delivery.OLASSOffendersInCustody.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool IsExcluded(ILearner candidate)
         {

@@ -34,10 +34,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
             delivery.LearnStartDate > LastInviableDate;
 
         public bool HasHigherEd(ILearningDelivery delivery) =>
-            It.Has(delivery.LearningDeliveryHEEntity);
+            delivery.LearningDeliveryHEEntity != null;
 
         public bool HasDomicile(ILearningDeliveryHE he) =>
-            It.Has(he.DOMICILE);
+            !string.IsNullOrWhiteSpace(he.DOMICILE);
 
         public void Validate(ILearner objectToValidate)
         {

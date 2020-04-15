@@ -244,7 +244,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         public DateTime? GetNullableDate(string candidate) =>
-            Utility.It.Has(candidate) ? DateTime.Parse(candidate) : (DateTime?)null;
+            !string.IsNullOrWhiteSpace(candidate) ? DateTime.Parse(candidate) : (DateTime?)null;
 
         public EmpStat_10Rule NewRule()
         {

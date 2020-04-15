@@ -28,10 +28,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         public string RuleName => Name;
 
         public bool IsTrainee(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.AimType, TypeOfAim.ProgrammeAim);
+            delivery.AimType == TypeOfAim.ProgrammeAim;
 
         public bool IsViable(ILearningDelivery delivery) =>
             TypeOfLearningProgramme.IsViableApprenticeship(delivery.LearnStartDate);
@@ -58,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return It.Has(thisDelivery)
+            return thisDelivery != null
                 ? thisDelivery.LearnStartDate > DateTime.MinValue
                     && TypeOfLearningProgramme.WithinMaxmimumTrainingDuration(thisDelivery.LearnStartDate, thisDelivery.LearnPlanEndDate)
                 : true;

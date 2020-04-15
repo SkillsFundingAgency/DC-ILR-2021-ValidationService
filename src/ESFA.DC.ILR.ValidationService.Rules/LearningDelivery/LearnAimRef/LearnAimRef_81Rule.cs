@@ -44,7 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public string RuleName => Name;
 
         public bool HasDisqualifyingLearningCategory(ILARSLearningCategory category) =>
-            It.IsInRange(category.CategoryRef, TypeOfLARSCategory.LicenseToPractice);
+            category.CategoryRef == TypeOfLARSCategory.LicenseToPractice;
 
         public bool HasDisqualifyingLearningCategory(ILearningDelivery delivery)
         {
@@ -62,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         }
 
         public bool InReceiptOfAnotherStateBenefit(IEmploymentStatusMonitoring monitor) =>
-            It.IsInRange($"{monitor.ESMType}{monitor.ESMCode}", Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit);
+             Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit.CaseInsensitiveEquals($"{monitor.ESMType}{monitor.ESMCode}");
 
         public bool IsExcluded(ILearningDelivery delivery) =>
             _check.IsSteelWorkerRedundancyTraining(delivery);

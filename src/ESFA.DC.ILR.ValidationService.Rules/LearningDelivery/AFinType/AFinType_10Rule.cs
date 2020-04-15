@@ -31,10 +31,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
             TypeOfFunding.AsAFundedSet.Contains(delivery.FundModel);
 
         public bool IsTargetApprenticeship(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.ApprenticeshipStandard);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.AimType, TypeOfAim.ProgrammeAim);
+            delivery.AimType == TypeOfAim.ProgrammeAim;
 
         public void Validate(ILearner objectToValidate)
         {
@@ -58,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public bool ConditionMet(IAppFinRecord financialRecord)
         {
-            return !It.Has(financialRecord)
+            return financialRecord == null
                    || $"{financialRecord.AFinType}{financialRecord.AFinCode}".CaseInsensitiveEquals(ApprenticeshipFinancialRecord.TotalAssessmentPrice)
                    || $"{financialRecord.AFinType}{financialRecord.AFinCode}".CaseInsensitiveEquals(ApprenticeshipFinancialRecord.ResidualAssessmentPrice);
         }

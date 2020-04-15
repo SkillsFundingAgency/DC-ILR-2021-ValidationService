@@ -36,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .NullSafeWhere(x => It.Has(x.ProgTypeNullable))
+                .NullSafeWhere(x => x.ProgTypeNullable.HasValue)
                 .ForEach(x =>
                 {
                     var failedValidation = !ConditionMet(x);
@@ -50,8 +50,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return It.Has(thisDelivery)
-                ? It.Has(thisDelivery.ProgTypeNullable) && TypeOfLearningProgramme.AsASet.Contains((int)thisDelivery.ProgTypeNullable)
+            return thisDelivery != null
+                ? thisDelivery.ProgTypeNullable.HasValue && TypeOfLearningProgramme.AsASet.Contains((int)thisDelivery.ProgTypeNullable)
                 : true;
         }
 

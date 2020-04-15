@@ -12,6 +12,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
     public class DerivedData_11Rule :
         IDerivedData_11Rule
     {
+        private readonly HashSet<string> _employmentStatuses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            Monitoring.EmploymentStatus.InReceiptOfUniversalCredit,
+            Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit,
+            Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance,
+            Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance
+        };
+
         private readonly IProvideRuleCommonOperations _check;
 
         public DerivedData_11Rule(IProvideRuleCommonOperations commonOps)
@@ -35,12 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool InReceiptOfBenefits(IEmploymentStatusMonitoring monitor) =>
-            It.IsInRange(
-                $"{monitor.ESMType}{monitor.ESMCode}",
-                Monitoring.EmploymentStatus.InReceiptOfUniversalCredit,
-                Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit,
-                Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance,
-                Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance);
+            _employmentStatuses.Contains($"{monitor.ESMType}{monitor.ESMCode}");
 
         public bool IsAdultFundedOnBenefitsAtStartOfAim(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmployments)
         {

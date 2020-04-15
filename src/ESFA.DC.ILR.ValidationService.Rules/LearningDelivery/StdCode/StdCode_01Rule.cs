@@ -29,10 +29,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.StdCode
         public string RuleName => Name;
 
         public bool HasStandardCode(ILearningDelivery delivery) =>
-            It.Has(delivery.StdCodeNullable);
+            delivery.StdCodeNullable.HasValue;
 
         public bool IsQualifyingLearningProgramme(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.ApprenticeshipStandard);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             IsQualifyingLearningProgramme(delivery) && !HasStandardCode(delivery);

@@ -23,20 +23,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool IsNotEmployed(ILearnerEmploymentStatus candidate) =>
-            It.IsInRange(
-                candidate?.EmpStat,
-                TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable,
-                TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable);
+            candidate?.EmpStat == TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
+            || candidate?.EmpStat == TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable;
 
         public bool InReceiptOfAnotherBenefit(IEmploymentStatusMonitoring employmentMonitoring) =>
-            It.IsInRange(
-                $"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}",
-                Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit);
+            Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit.CaseInsensitiveEquals($"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}");
 
         public bool InReceiptOfUniversalCredit(IEmploymentStatusMonitoring employmentMonitoring) =>
-            It.IsInRange(
-                $"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}",
-                Monitoring.EmploymentStatus.InReceiptOfUniversalCredit);
+            Monitoring.EmploymentStatus.InReceiptOfUniversalCredit.CaseInsensitiveEquals($"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}");
 
         public bool InReceiptOfBenefits(ILearnerEmploymentStatus learnerEmploymentStatus) =>
             learnerEmploymentStatus.EmploymentStatusMonitorings.NullSafeAny(InReceiptOfAnotherBenefit);
@@ -45,13 +39,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             learnerEmploymentStatus.EmploymentStatusMonitorings.NullSafeAny(InReceiptOfUniversalCredit);
 
         public bool NotIsMonitored(ILearningDeliveryFAM fam) =>
-            !It.IsInRange(fam.LearnDelFAMType, Monitoring.Delivery.Types.Learning);
+            !fam.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.Learning);
 
         public bool NotIsMonitored(IReadOnlyCollection<ILearningDeliveryFAM> fams) =>
             fams.NullSafeAny(NotIsMonitored);
 
         public bool MandatedToSkillsTraining(ILearningDeliveryFAM fam) =>
-            It.IsInRange($"{fam.LearnDelFAMType}{fam.LearnDelFAMCode}", Monitoring.Delivery.MandationToSkillsTraining);
+            Monitoring.Delivery.MandationToSkillsTraining.CaseInsensitiveEquals($"{fam.LearnDelFAMType}{fam.LearnDelFAMCode}");
 
         public bool MandatedToSkillsTraining(IReadOnlyCollection<ILearningDeliveryFAM> fams) =>
             fams.NullSafeAny(MandatedToSkillsTraining);
@@ -88,7 +82,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             var employment = _check.GetEmploymentStatusOn(thisDelivery.LearnStartDate, forThisCandidate.LearnerEmploymentStatuses);
 
             return _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.AdultSkills)
-                && It.Has(employment)
+                && employment != null
                 && IsNotEmployed(employment)
                 && (InReceiptOfBenefits(employment)
                     || (InReceiptOfCredits(employment)

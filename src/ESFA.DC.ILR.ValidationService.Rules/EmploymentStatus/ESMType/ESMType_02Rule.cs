@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             employmentStatus.DateEmpStatApp > LastInviableDate;
 
         public bool IsQualifyingEmployment(ILearnerEmploymentStatus employmentStatus) =>
-            It.IsInRange(employmentStatus.EmpStat, TypeOfEmploymentStatus.InPaidEmployment);
+            employmentStatus.EmpStat == TypeOfEmploymentStatus.InPaidEmployment;
 
         public bool HasQualifyingIndicator(IEmploymentStatusMonitoring monitor) =>
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.EmploymentIntensityIndicator);

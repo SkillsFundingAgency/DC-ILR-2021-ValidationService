@@ -43,13 +43,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public string RuleName => Name;
 
         public bool IsQualifyingNotionalNVQ(ILARSLearningDelivery delivery) =>
-            It.IsOutOfRange(delivery?.NotionalNVQLevelv2, LARSNotionalNVQLevelV2.Level4);
+            delivery != null
+            && !delivery.NotionalNVQLevelv2.CaseInsensitiveEquals(LARSNotionalNVQLevelV2.Level4);
 
         public bool HasQualifyingNotionalNVQ(ILearningDelivery delivery)
         {
             var larsDelivery = _larsData.GetDeliveryFor(delivery.LearnAimRef);
 
-            return IsQualifyingNotionalNVQ(larsDelivery);
+            return !IsQualifyingNotionalNVQ(larsDelivery);
         }
 
         public bool IsExcluded(ILearningDelivery delivery) =>
@@ -62,7 +63,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             !IsExcluded(delivery)
             && _check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)
             && _check.HasQualifyingStart(delivery, FirstViableDate)
-            && !HasQualifyingNotionalNVQ(delivery);
+            && HasQualifyingNotionalNVQ(delivery);
 
         public void Validate(ILearner objectToValidate)
         {

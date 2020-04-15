@@ -56,17 +56,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             _academicYearDataService.Start();
 
         public bool IsNotPartOfThisYear(ILearningDelivery thisDelivery) =>
-            It.Has(thisDelivery.LearnActEndDateNullable)
+            thisDelivery.LearnActEndDateNullable.HasValue
                 && thisDelivery.LearnActEndDateNullable < GetCurrentAcademicYearCommencementDate();
 
         public bool HasQualifyingProviderID(IFcsContractAllocation allocation, int providerID) =>
             allocation.DeliveryUKPRN == providerID;
 
         public bool HasQualifyingFundingStream(IFcsContractAllocation allocation) =>
-            It.IsInRange(
-                allocation.FundingStreamPeriodCode,
-                FundingStreamPeriodCodeConstants.ALLB1920,
-                FundingStreamPeriodCodeConstants.ALLBC1920);
+            allocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.ALLB1920)
+            || allocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.ALLBC1920);
 
         public bool HasFundingRelationship(ILearningDelivery thisDelivery)
         {

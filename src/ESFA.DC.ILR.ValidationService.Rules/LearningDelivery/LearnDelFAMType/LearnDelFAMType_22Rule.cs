@@ -11,7 +11,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     public class LearnDelFAMType_22Rule :
         IRule<ILearner>
     {
-        public const string MessagePropertyName = PropertyNameConstants.LearnDelFAMType;
+        public HashSet<int> _fundModels = new HashSet<int>
+        {
+            TypeOfFunding.AdultSkills,
+            TypeOfFunding.OtherAdult
+        };
 
         public const string Name = RuleNameConstants.LearnDelFAMType_22;
 
@@ -28,13 +32,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public string RuleName => Name;
 
         public bool IsQualifyingFundModel(ILearningDelivery delivery) =>
-            It.IsInRange(
-                delivery.FundModel,
-                TypeOfFunding.AdultSkills,
-                TypeOfFunding.OtherAdult);
+            _fundModels.Contains(delivery.FundModel);
 
         public bool HasFullOrCoFundingIndicator(ILearningDeliveryFAM monitor) =>
-            It.IsInRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.FullOrCoFunding);
+            monitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.FullOrCoFunding);
 
         public bool HasFullOrCoFundingIndicator(ILearningDelivery delivery) =>
             delivery.LearningDeliveryFAMs.NullSafeAny(HasFullOrCoFundingIndicator);
@@ -59,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             var parameters = new List<IErrorMessageParameter>
             {
                 _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.FundModel, thisDelivery.FundModel),
-                _messageHandler.BuildErrorMessageParameter(MessagePropertyName, Monitoring.Delivery.Types.FullOrCoFunding)
+                _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, Monitoring.Delivery.Types.FullOrCoFunding)
             };
 
             _messageHandler.Handle(RuleName, learnRefNumber, thisDelivery.AimSeqNumber, parameters);

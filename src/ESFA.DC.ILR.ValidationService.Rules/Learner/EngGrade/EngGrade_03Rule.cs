@@ -31,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.EngGrade
             Monitoring.Learner.Level1AndLowerGrades.Contains(candidate.EngGrade);
 
         public bool HasEligibleFunding(ILearnerFAM monitor) =>
-            It.IsInRange($"{monitor.LearnFAMType}{monitor.LearnFAMCode}", Monitoring.Learner.NotAchievedLevel2EnglishGCSEByYear11);
+            Monitoring.Learner.NotAchievedLevel2EnglishGCSEByYear11.CaseInsensitiveEquals($"{monitor.LearnFAMType}{monitor.LearnFAMCode}");
 
         public bool CheckFAMs(ILearner learner, Func<ILearnerFAM, bool> matchCondition) =>
             learner.LearnerFAMs.NullSafeAny(matchCondition);

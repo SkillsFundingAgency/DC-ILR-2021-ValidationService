@@ -34,7 +34,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public string RuleName => Name;
 
         public bool IsWorkExperience(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.LearnAimRef, TypeOfAim.References.WorkExperience);
+            delivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.WorkExperience);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             _check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)

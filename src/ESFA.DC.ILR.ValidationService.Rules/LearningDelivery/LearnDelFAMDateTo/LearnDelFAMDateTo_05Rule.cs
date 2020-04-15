@@ -55,10 +55,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo
             && HasDisqualifyingDates(theDelivery, theMonitor);
 
         public bool IsQualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange(theMonitor.LearnDelFAMType, Monitoring.Delivery.Types.ApprenticeshipContract);
+            theMonitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.ApprenticeshipContract);
 
         public bool HasDisqualifyingDates(ILearningDelivery theDelivery, ILearningDeliveryFAM theMonitor) =>
-            It.Has(theMonitor.LearnDelFAMDateToNullable) && theMonitor.LearnDelFAMDateToNullable > theDelivery.AchDateNullable;
+            theMonitor.LearnDelFAMDateToNullable.HasValue && theMonitor.LearnDelFAMDateToNullable > theDelivery.AchDateNullable;
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery, ILearningDeliveryFAM theInvalidMonitor)
         {

@@ -30,10 +30,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
         public string RuleName => Name;
 
         public bool HasOriginalLearningStartDate(ILearningDelivery delivery) =>
-            It.Has(delivery.OrigLearnStartDateNullable);
+            delivery.OrigLearnStartDateNullable.HasValue;
 
         public bool HasRestartIndicator(ILearningDeliveryFAM monitor) =>
-            It.IsInRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.Restart);
+            monitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.Restart);
 
         public bool HasRestartIndicator(ILearningDelivery delivery) =>
             delivery.LearningDeliveryFAMs.NullSafeAny(HasRestartIndicator);

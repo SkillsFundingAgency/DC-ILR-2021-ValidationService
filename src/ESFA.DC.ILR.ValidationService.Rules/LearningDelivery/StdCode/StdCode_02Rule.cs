@@ -39,7 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.StdCode
             _larsData.ContainsStandardFor(delivery.StdCodeNullable.Value);
 
         public bool HasStandardCode(ILearningDelivery delivery) =>
-            It.Has(delivery.StdCodeNullable);
+            delivery.StdCodeNullable.HasValue;
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             HasStandardCode(delivery) && !IsValidStandardCode(delivery);

@@ -12,6 +12,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
     public class DerivedData_28Rule :
         IDerivedData_28Rule
     {
+        private readonly HashSet<int> _employmentStatusesTypes = new HashSet<int>
+        {
+            TypeOfEmploymentStatus.InPaidEmployment,
+            TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable,
+            TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable,
+            TypeOfEmploymentStatus.NotKnownProvided
+        };
+
+        private readonly HashSet<string> _employmentStatuses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            Monitoring.EmploymentStatus.EmployedForLessThan16HoursPW,
+            Monitoring.EmploymentStatus.EmployedFor0To10HourPW,
+            Monitoring.EmploymentStatus.EmployedFor11To20HoursPW
+        };
+
         private IProvideRuleCommonOperations _check;
 
         public DerivedData_28Rule(IProvideRuleCommonOperations commonOperations)
@@ -22,22 +37,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             _check = commonOperations;
         }
 
-        public bool InReceiptOfEmploymentSupport(IEmploymentStatusMonitoring employmentMonitoring) =>
-            It.IsInRange(
-                $"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}",
-                Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance,
-                Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance);
+        public bool InReceiptOfEmploymentSupport(IEmploymentStatusMonitoring employmentMonitoring)
+        {
+            var code = $"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}";
+
+            return code.CaseInsensitiveEquals(Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance)
+                || code.CaseInsensitiveEquals(Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance);
+        }
 
         public bool InReceiptOfEmploymentSupport(IReadOnlyCollection<IEmploymentStatusMonitoring> employmentMonitorings) =>
             employmentMonitorings.NullSafeAny(InReceiptOfEmploymentSupport);
 
         public bool HasValidEmploymentStatus(ILearnerEmploymentStatus candidate) =>
-            It.IsInRange(
-                candidate?.EmpStat,
-                TypeOfEmploymentStatus.InPaidEmployment,
-                TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable,
-                TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable,
-                TypeOfEmploymentStatus.NotKnownProvided);
+            _employmentStatusesTypes.Contains(candidate.EmpStat);
 
         public bool IsValidWithEmploymentSupport(ILearnerEmploymentStatus candidate)
         {
@@ -45,20 +57,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 && InReceiptOfEmploymentSupport(candidate.EmploymentStatusMonitorings);
         }
 
-        public bool InReceiptOfCredits(IEmploymentStatusMonitoring employmentMonitoring) =>
-            It.IsInRange(
-                $"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}",
-                Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit,
-                Monitoring.EmploymentStatus.InReceiptOfUniversalCredit);
+        public bool InReceiptOfCredits(IEmploymentStatusMonitoring employmentMonitoring)
+        {
+            var code = $"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}";
+
+            return code.CaseInsensitiveEquals(Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit)
+                || code.CaseInsensitiveEquals(Monitoring.EmploymentStatus.InReceiptOfUniversalCredit);
+        }
 
         public bool InReceiptOfCredits(IReadOnlyCollection<IEmploymentStatusMonitoring> employmentMonitorings) =>
             employmentMonitorings.NullSafeAny(InReceiptOfCredits);
 
         public bool IsNotEmployed(ILearnerEmploymentStatus candidate) =>
-            It.IsInRange(
-                candidate.EmpStat,
-                TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable,
-                TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable);
+            candidate.EmpStat == TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
+                && candidate.EmpStat == TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable;
 
         public bool IsNotEmployedWithBenefits(ILearnerEmploymentStatus candidate)
         {
@@ -67,17 +79,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool IsWorkingShortHours(IEmploymentStatusMonitoring monitor) =>
-            It.IsInRange(
-                $"{monitor.ESMType}{monitor.ESMCode}",
-                Monitoring.EmploymentStatus.EmployedForLessThan16HoursPW,
-                Monitoring.EmploymentStatus.EmployedFor0To10HourPW,
-                Monitoring.EmploymentStatus.EmployedFor11To20HoursPW);
+            _employmentStatuses.Contains($"{monitor.ESMType}{monitor.ESMCode}");
 
         public bool IsWorkingShortHours(IReadOnlyCollection<IEmploymentStatusMonitoring> employmentMonitorings) =>
             employmentMonitorings.NullSafeAny(IsWorkingShortHours);
 
         public bool IsEmployed(ILearnerEmploymentStatus candidate) =>
-            It.IsInRange(candidate.EmpStat, TypeOfEmploymentStatus.InPaidEmployment);
+            candidate.EmpStat ==  TypeOfEmploymentStatus.InPaidEmployment;
 
         public bool IsEmployedWithSupport(ILearnerEmploymentStatus candidate)
         {
@@ -118,7 +126,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             var employment = _check.GetEmploymentStatusOn(thisDelivery.LearnStartDate, forThisCandidate.LearnerEmploymentStatuses);
 
             return _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.AdultSkills)
-                && It.Has(employment)
+                && employment != null
                 && (IsValidWithEmploymentSupport(employment)
                 || IsNotEmployedWithBenefits(employment)
                 || IsEmployedWithSupport(employment));

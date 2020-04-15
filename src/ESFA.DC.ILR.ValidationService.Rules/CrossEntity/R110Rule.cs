@@ -7,7 +7,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
@@ -36,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            if (IsApprenticeshipProgramme(learningDelivery) && It.Has(learningDelivery.LearningDeliveryFAMs))
+            if (IsApprenticeshipProgramme(learningDelivery) && learningDelivery.LearningDeliveryFAMs != null)
             {
                 return GetLearningDeliveryFAMsWhereApprenticeshipProgrammeFundedThroughContract(learningDelivery.LearningDeliveryFAMs)
                     .Any(fam => LearnerNotEmployedOnDate(learnerEmploymentStatuses, fam.LearnDelFAMDateFromNullable));

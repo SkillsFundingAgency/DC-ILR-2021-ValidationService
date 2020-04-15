@@ -12,6 +12,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDat
     public class WorkPlaceStartDate_01Rule :
         AbstractRule, IRule<ILearner>
     {
+        private readonly HashSet<string> _workPlacementAims = new HashSet<string>(TypeOfAim.References.AsWorkPlacementCodes, StringComparer.OrdinalIgnoreCase);
+
         public WorkPlaceStartDate_01Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.WorkPlaceStartDate_01)
         {
@@ -23,7 +25,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDat
             delivery.LearnStartDate > LastInviableDate;
 
         public bool IsWorkPlacement(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.LearnAimRef, TypeOfAim.References.AsWorkPlacementCodes);
+            _workPlacementAims.Contains(delivery.LearnAimRef);
 
         public void Validate(ILearner objectToValidate)
         {
@@ -47,8 +49,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDat
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return It.Has(thisDelivery)
-                ? It.HasValues(thisDelivery.LearningDeliveryWorkPlacements)
+            return thisDelivery != null
+                ? !thisDelivery.LearningDeliveryWorkPlacements.IsNullOrEmpty()
                 : true;
         }
 

@@ -74,13 +74,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             _check.CheckDeliveryFAMs(theDelivery, IsAdultEducationBudgets);
 
         public bool IsAdultEducationBudgets(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.AdultEducationBudgets);
+            Monitoring.Delivery.AdultEducationBudgets.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
             _check.HasQualifyingFunding(theDelivery, TypeOfFunding.AdultSkills);
 
         public bool IsESFAAdultFunding(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
+            Monitoring.Delivery.ESFAAdultFunding.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
 
         public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
             _check.CheckDeliveryFAMs(theDelivery, IsESFAAdultFunding);

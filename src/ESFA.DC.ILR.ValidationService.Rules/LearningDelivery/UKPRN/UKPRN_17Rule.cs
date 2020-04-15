@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             _check.IsTraineeship(theDelivery);
 
         public bool HasQualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
+            Monitoring.Delivery.ESFAAdultFunding.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
 
         public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
             _check.CheckDeliveryFAMs(theDelivery, HasQualifyingMonitor);

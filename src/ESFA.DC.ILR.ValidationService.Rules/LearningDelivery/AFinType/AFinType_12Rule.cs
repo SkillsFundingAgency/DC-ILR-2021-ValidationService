@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return !It.Has(thisDelivery) || thisDelivery.AppFinRecords.NullSafeAny(afr => afr.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice));
+            return thisDelivery == null || thisDelivery.AppFinRecords.NullSafeAny(afr => afr.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice));
         }
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)

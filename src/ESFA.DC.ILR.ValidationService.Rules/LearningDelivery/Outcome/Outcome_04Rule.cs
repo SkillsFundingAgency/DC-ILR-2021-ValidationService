@@ -25,10 +25,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
         }
 
         public bool HasAchievementDate(ILearningDelivery delivery) =>
-            It.Has(delivery.AchDateNullable);
+            delivery.AchDateNullable.HasValue;
 
         public bool HasQualifyingOutcome(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.OutcomeNullable, OutcomeConstants.Achieved);
+            delivery.OutcomeNullable == OutcomeConstants.Achieved;
 
         public bool IsExcluded(ILearningDelivery delivery) =>
             _common.IsStandardApprenticeship(delivery)

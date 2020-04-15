@@ -41,10 +41,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
 
         public bool InTraining(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.AimType, TypeOfAim.ProgrammeAim);
+            delivery.AimType == TypeOfAim.ProgrammeAim;
 
         public bool HasAViableStart(ILearningDelivery delivery) =>
             delivery.LearnStartDate > LastInviableDate;

@@ -19,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool IsTraineeship(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool IsWorkExperience(ILearningDelivery delivery)
         {
@@ -29,7 +29,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool IsWorkExperience(ILARSLearningCategory category) =>
-            It.IsInRange(category.CategoryRef, TypeOfLARSCategory.WorkPlacementSFAFunded, TypeOfLARSCategory.WorkPreparationSFATraineeships);
+            category.CategoryRef == TypeOfLARSCategory.WorkPlacementSFAFunded
+            || category.CategoryRef == TypeOfLARSCategory.WorkPreparationSFATraineeships;
 
         public bool IsInflexibleElementOfTrainingAimLearningDelivery(ILearningDelivery candidate)
         {

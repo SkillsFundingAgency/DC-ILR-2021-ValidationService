@@ -20,13 +20,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WithdrawReason
         }
 
         public bool HasWithdrawn(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.CompStatus, CompletionState.HasWithdrawn);
+            delivery.CompStatus == CompletionState.HasWithdrawn;
 
         public bool HasWithdrewAsIndustrialPlacementLearner(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.WithdrawReasonNullable, ReasonForWithdrawal.IndustrialPlacementLearnerWithdrew);
+           delivery.WithdrawReasonNullable == ReasonForWithdrawal.IndustrialPlacementLearnerWithdrew;
 
         public bool HasQualifyingAim(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.LearnAimRef, TypeOfAim.References.IndustryPlacement);
+            delivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.IndustryPlacement);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             HasWithdrawn(delivery)

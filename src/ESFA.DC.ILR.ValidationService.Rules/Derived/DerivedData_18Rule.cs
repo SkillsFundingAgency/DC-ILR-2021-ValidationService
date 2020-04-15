@@ -23,8 +23,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool HasMatchingStandardCode(ILearningDelivery delivery, ILearningDelivery candidate) =>
-            It.Has(delivery?.StdCodeNullable)
-                && delivery.StdCodeNullable == candidate.StdCodeNullable;
+            delivery != null
+            && delivery.StdCodeNullable.HasValue
+            && delivery.StdCodeNullable == candidate.StdCodeNullable;
 
         public bool HasRestrictionsMatch(ILearningDelivery candidate, ILearningDelivery andDelivery) =>
             _check.IsStandardApprenticeship(candidate)
@@ -35,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         {
             It.IsNull(thisDelivery)
                 .AsGuard<ArgumentNullException>(nameof(thisDelivery));
-            It.IsEmpty(usingSources)
+            usingSources.IsNullOrEmpty()
                 .AsGuard<ArgumentNullException>(nameof(usingSources));
 
             /*

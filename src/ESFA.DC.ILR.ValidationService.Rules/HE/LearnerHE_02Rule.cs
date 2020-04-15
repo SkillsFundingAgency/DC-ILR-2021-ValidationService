@@ -46,8 +46,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE
 
         public bool ConditionMet(ILearnerHE learnerHE, IReadOnlyCollection<ILearningDelivery> learningDeliveries)
         {
-            return It.Has(learnerHE)
-                ? It.HasValues(learningDeliveries) && learningDeliveries.Any(d => It.Has(d.LearningDeliveryHEEntity))
+            return learnerHE != null
+                ? learningDeliveries != null && learningDeliveries.Any(d => d.LearningDeliveryHEEntity != null)
                 : true;
         }
 

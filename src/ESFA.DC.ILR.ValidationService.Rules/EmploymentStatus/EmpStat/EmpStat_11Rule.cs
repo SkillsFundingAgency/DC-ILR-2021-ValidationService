@@ -33,13 +33,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         public DateTime LastInviableDate => new DateTime(2014, 07, 31);
 
         public bool InTraining(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool IsViableStart(ILearningDelivery delivery) =>
             delivery.LearnStartDate > LastInviableDate;
 
         public bool HasQualifyingFunding(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.FundModel, TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.Other16To19);
+           delivery.FundModel == TypeOfFunding.Age16To19ExcludingApprenticeships
+           || delivery.FundModel == TypeOfFunding.Other16To19;
 
         public bool HasAQualifyingEmploymentStatus(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> usingEmployments) =>
             usingEmployments

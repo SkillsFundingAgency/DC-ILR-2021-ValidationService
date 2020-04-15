@@ -41,9 +41,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             && IsDisqualifyingSubjectAreaLevel(subjectAreaLevel, GetNotionalNVQLevelV2(larsDelivery));
 
         public bool IsUsableSubjectArea(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel) =>
-            It.Has(subjectAreaLevel?.SectorSubjectAreaCode)
-            && (It.Has(subjectAreaLevel.MinLevelCode)
-                || It.Has(subjectAreaLevel.MaxLevelCode));
+            subjectAreaLevel?.SectorSubjectAreaCode != null
+            && (!string.IsNullOrWhiteSpace(subjectAreaLevel.MinLevelCode)
+                || !string.IsNullOrWhiteSpace(subjectAreaLevel.MaxLevelCode));
 
         public double GetNotionalNVQLevelV2(ILARSLearningDelivery larsDelivery) =>
             larsDelivery.NotionalNVQLevelv2.AsNotionalNVQLevelV2();

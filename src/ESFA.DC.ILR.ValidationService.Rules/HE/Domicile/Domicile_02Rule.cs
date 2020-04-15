@@ -36,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
         public string RuleName => Name;
 
         public bool HasHigherEd(ILearningDelivery delivery) =>
-            It.Has(delivery.LearningDeliveryHEEntity);
+            delivery.LearningDeliveryHEEntity != null;
 
         public bool HasValidDomicile(ILearningDeliveryHE he) =>
             he.DOMICILE == null || _lookups.Contains(TypeOfStringCodedLookup.Domicile, he.DOMICILE);

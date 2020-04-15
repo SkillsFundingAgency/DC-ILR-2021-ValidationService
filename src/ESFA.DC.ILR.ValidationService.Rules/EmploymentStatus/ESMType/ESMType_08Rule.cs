@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             employmentStatus.DateEmpStatApp > LastInviableDate;
 
         public bool IsQualifyingEmployment(ILearnerEmploymentStatus employmentStatus) =>
-            It.IsInRange(employmentStatus.EmpStat, TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable);
+            employmentStatus.EmpStat == TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable;
 
         public bool HasQualifyingIndicator(IEmploymentStatusMonitoring monitor) =>
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.LengthOfUnemployment);
@@ -44,7 +44,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             IsQualifyingPeriod(employmentStatus) && IsQualifyingEmployment(employmentStatus) && !HasQualifyingIndicator(employmentStatus);
 
         public bool IsExcluded(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.FundModel, TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.Other16To19);
+           delivery.FundModel == TypeOfFunding.Age16To19ExcludingApprenticeships
+            || delivery.FundModel == TypeOfFunding.Other16To19;
 
         public bool IsExcluded(ILearner candidate) =>
             candidate.LearningDeliveries.NullSafeAny(IsExcluded);

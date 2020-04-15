@@ -34,7 +34,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
         }
 
         public IReadOnlyCollection<IONSPostcode> GetONSPostcodes(string fromPostcode) =>
-            _onsPostcodes.Where(x => x.Postcode.CaseInsensitiveEquals(fromPostcode)).ToList();
+            _onsPostcodes?.Where(x => x.Postcode.CaseInsensitiveEquals(fromPostcode)).ToArray()
+            ?? Array.Empty<IONSPostcode>();
 
         public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodes(string fromPostcode) =>
             _devolvedPostcodes.GetValueOrDefault(fromPostcode);

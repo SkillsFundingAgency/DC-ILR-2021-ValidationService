@@ -42,13 +42,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
 
         public bool InAProgramme(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.AimType, TypeOfAim.ProgrammeAim);
+            delivery.AimType == TypeOfAim.ProgrammeAim;
 
         public bool IsQualifyingAim(ILearningDelivery delivery) =>
             delivery.LearnStartDate > LastInviableDate;
 
         public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus eStatus) =>
-            It.IsOutOfRange(eStatus?.EmpStat, TypeOfEmploymentStatus.NotKnownProvided);
+            eStatus?.EmpStat != TypeOfEmploymentStatus.NotKnownProvided;
 
         public ILearnerEmploymentStatus GetQualifyingEmploymentStatus(ILearner learner, ILearningDelivery delivery) =>
             learner.LearnerEmploymentStatuses

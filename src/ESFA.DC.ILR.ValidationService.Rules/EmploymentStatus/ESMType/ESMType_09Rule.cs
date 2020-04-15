@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
                 && _check.HasQualifyingStart(delivery, FirstViableDate);
 
         public bool IsQualifyingEmployment(ILearnerEmploymentStatus employmentStatus) =>
-            It.IsInRange(employmentStatus.EmpStat, TypeOfEmploymentStatus.InPaidEmployment);
+            employmentStatus.EmpStat == TypeOfEmploymentStatus.InPaidEmployment;
 
         public bool HasQualifyingIndicator(IEmploymentStatusMonitoring monitor) =>
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.LengthOfEmployment);
@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             employmentStatus.EmploymentStatusMonitorings.NullSafeAny(HasQualifyingIndicator);
 
         public bool IsNotValid(ILearnerEmploymentStatus employmentStatus, DateTime? lastViabledate) =>
-            It.Has(lastViabledate)
+            lastViabledate.HasValue
                 && _check.HasQualifyingStart(employmentStatus, FirstViableDate, lastViabledate)
                 && IsQualifyingEmployment(employmentStatus)
                 && !HasQualifyingIndicator(employmentStatus);

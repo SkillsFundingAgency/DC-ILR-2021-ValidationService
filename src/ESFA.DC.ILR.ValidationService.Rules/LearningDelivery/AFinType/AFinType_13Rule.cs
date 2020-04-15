@@ -29,10 +29,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
         public string RuleName => Name;
 
         public bool IsApprenticeshipFunded(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.FundModel, TypeOfFunding.ApprenticeshipsFrom1May2017);
+            delivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.AimType, TypeOfAim.ProgrammeAim);
+            delivery.AimType == TypeOfAim.ProgrammeAim;
 
         public void Validate(ILearner objectToValidate)
         {
@@ -58,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public bool ConditionMet(ILearningDelivery thisDelivery, IAppFinRecord thisFinancialRecord)
         {
-            return It.Has(thisDelivery) && It.Has(thisFinancialRecord)
+            return thisDelivery != null && thisFinancialRecord != null
                 ? thisFinancialRecord.AFinDate > DateTime.MinValue
                     && thisDelivery.LearnStartDate == thisFinancialRecord.AFinDate
                 : true;

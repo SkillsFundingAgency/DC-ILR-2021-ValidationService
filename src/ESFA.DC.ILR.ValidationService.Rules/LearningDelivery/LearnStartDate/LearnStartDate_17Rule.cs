@@ -46,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             !_check.IsRestart(thisDelivery)
             && _check.IsStandardApprenticeship(thisDelivery)
             && _check.InAProgramme(thisDelivery)
-            && It.Has(thisDelivery.StdCodeNullable)
+            && thisDelivery.StdCodeNullable.HasValue
             && !HasQualifyingStart(thisDelivery, GetStandardPeriodsOfValidityFor(thisDelivery));
 
         public void Validate(ILearner objectToValidate)

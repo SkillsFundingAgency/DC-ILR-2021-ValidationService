@@ -802,6 +802,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             service
                 .Setup(x => x.GetAnnualValuesFor(learnAimRef))
                 .Returns(larsAnnualValues);
+            service
+                .Setup(x => x.IsCurrentAndNotWithdrawn(mockLARSValidity.Object, mockDelivery.Object.LearnStartDate, null))
+                .Returns(true);
 
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             mockDDRule07
@@ -962,6 +965,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             service
                 .Setup(x => x.GetAnnualValuesFor(learnAimRef))
                 .Returns(larsAnnualValues);
+            service
+                .Setup(x => x.IsCurrentAndNotWithdrawn(mockLARSValidity.Object, mockDelivery.Object.LearnStartDate, null))
+                .Returns(true);
 
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             mockDDRule07

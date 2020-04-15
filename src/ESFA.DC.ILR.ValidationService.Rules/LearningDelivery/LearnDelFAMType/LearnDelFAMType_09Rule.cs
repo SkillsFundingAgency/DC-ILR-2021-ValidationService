@@ -35,8 +35,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             theDelivery.LearnStartDate < FirstInviableDate;
 
         public bool HasDisqualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange(theMonitor.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding)
-            && It.IsOutOfRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
+            theMonitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.SourceOfFunding)
+            && !Monitoring.Delivery.ESFAAdultFunding.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
 
         public bool HasDisqualifyingMonitor(ILearningDelivery theDelivery) =>
             _check.CheckDeliveryFAMs(theDelivery, HasDisqualifyingMonitor);

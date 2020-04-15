@@ -94,7 +94,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             _check.HasQualifyingFunding(theDelivery, TypeOfFunding.NotFundedByESFA);
 
         public bool IsHigherEducationFundingCouncilEngland(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.HigherEducationFundingCouncilEngland);
+             Monitoring.Delivery.HigherEducationFundingCouncilEngland.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
 
         public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
             _check.CheckDeliveryFAMs(theDelivery, IsHigherEducationFundingCouncilEngland);
@@ -103,7 +103,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             _dateTimeQuery.DaysBetween(theDelivery.LearnStartDate, theDelivery.LearnPlanEndDate) >= MinimumCourseDuration;
 
         public bool HasActualEndDate(ILearningDelivery theDelivery) =>
-            It.Has(theDelivery.LearnActEndDateNullable);
+            theDelivery.LearnActEndDateNullable.HasValue;
 
         public bool HasQualifyingActualDuration(ILearningDelivery theDelivery) =>
             _dateTimeQuery.DaysBetween(theDelivery.LearnStartDate, (DateTime)theDelivery.LearnActEndDateNullable) >= MinimumCourseDuration;

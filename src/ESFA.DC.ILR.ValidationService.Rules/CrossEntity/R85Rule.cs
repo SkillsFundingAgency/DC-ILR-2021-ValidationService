@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             var learners = message.Learners.ToReadOnlyCollection();
             var dAndPs = message.LearnerDestinationAndProgressions.ToReadOnlyCollection();
 
-            if (It.IsEmpty(learners) || It.IsEmpty(dAndPs))
+            if (learners.IsNullOrEmpty() || dAndPs.IsNullOrEmpty())
             {
                 return;
             }

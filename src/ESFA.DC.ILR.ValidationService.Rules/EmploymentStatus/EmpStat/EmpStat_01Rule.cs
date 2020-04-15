@@ -2,45 +2,41 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 {
-    public class EmpStat_01Rule :
-        IRule<ILearner>
+    public class EmpStat_01Rule : AbstractRule, IRule<ILearner>
     {
         public const string MessagePropertyName = PropertyNameConstants.EmpStat;
-
-        public const string Name = RuleNameConstants.EmpStat_01;
-
-        private readonly IValidationErrorHandler _messageHandler;
-
+        public HashSet<int> _fundModels = new HashSet<int>
+        {
+            TypeOfFunding.AdultSkills,
+            TypeOfFunding.OtherAdult,
+            TypeOfFunding.NotFundedByESFA
+        };
+       
         private readonly IDerivedData_07Rule _derivedData07;
-
         private readonly IAcademicYearDataService _yearData;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public EmpStat_01Rule(
             IValidationErrorHandler validationErrorHandler,
             IDerivedData_07Rule derivedData07,
-            IAcademicYearDataService yearData)
+            IAcademicYearDataService yearData,
+            IDateTimeQueryService dateTimeQueryService)
+            : base(validationErrorHandler, RuleNameConstants.EmpStat_01)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(derivedData07)
-                .AsGuard<ArgumentNullException>(nameof(derivedData07));
-            It.IsNull(yearData)
-                .AsGuard<ArgumentNullException>(nameof(yearData));
-
-            _messageHandler = validationErrorHandler;
             _derivedData07 = derivedData07;
             _yearData = yearData;
+            _dateTimeQueryService = dateTimeQueryService;
         }
-
-        public string RuleName => Name;
 
         public DateTime FirstViableDate => new DateTime(2012, 08, 01);
 
@@ -52,19 +48,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             delivery.LearningDeliveryFAMs.NullSafeAny(matchCondition);
 
         public bool IsLearnerInCustody(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.OLASSOffendersInCustody);
+            Monitoring.Delivery.OLASSOffendersInCustody.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool IsLearnerInCustody(ILearningDelivery delivery) =>
             CheckDeliveryFAMs(delivery, IsLearnerInCustody);
 
         public bool IsComunityLearningFund(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.LocalAuthorityCommunityLearningFunds);
+            Monitoring.Delivery.LocalAuthorityCommunityLearningFunds.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool IsComunityLearningFund(ILearningDelivery delivery) =>
             CheckDeliveryFAMs(delivery, IsComunityLearningFund);
 
         public bool IsNotFundedByESFA(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.FundModel, TypeOfFunding.NotFundedByESFA);
+            delivery.FundModel == TypeOfFunding.NotFundedByESFA;
 
         public bool IsNotQualifiedFunding(ILearningDelivery delivery) =>
             IsNotFundedByESFA(delivery) && IsComunityLearningFund(delivery);
@@ -73,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
 
         public bool InTraining(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool IsExcluded(ILearningDelivery delivery) =>
             IsLearnerInCustody(delivery)
@@ -82,16 +78,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             || InTraining(delivery);
 
         public bool IsQualifyingFunding(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.FundModel, TypeOfFunding.AdultSkills, TypeOfFunding.OtherAdult, TypeOfFunding.NotFundedByESFA);
+            _fundModels.Contains(delivery.FundModel);
 
         public bool IsQualifyingAim(ILearningDelivery delivery) =>
-            It.IsBetween(delivery.LearnStartDate, FirstViableDate, LastViableDate);
+            _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, LastViableDate);
 
         public DateTime GetYearOfLearningCommencementDate(DateTime candidate) =>
             _yearData.GetAcademicYearOfLearningDate(candidate, AcademicYearDates.PreviousYearEnd);
 
         public bool IsQualifyingAge(ILearner learner, ILearningDelivery delivery) =>
-            It.Has(learner.DateOfBirthNullable) && ((GetYearOfLearningCommencementDate(delivery.LearnStartDate) - learner.DateOfBirthNullable.Value) > LastInviableAge);
+            learner.DateOfBirthNullable.HasValue && ((GetYearOfLearningCommencementDate(delivery.LearnStartDate) - learner.DateOfBirthNullable.Value) > LastInviableAge);
 
         public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus eStatus, DateTime learningStartDate) =>
             eStatus.DateEmpStatApp <= learningStartDate;
@@ -118,17 +114,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
                 .ForEach(x => RaiseValidationMessage(objectToValidate, x));
         }
 
-        public void RaiseValidationMessage(ILearner learner, ILearningDelivery thisDelivery)
-        {
-            var parameters = new List<IErrorMessageParameter>
-            {
-                _messageHandler.BuildErrorMessageParameter(MessagePropertyName, "(missing)"),
-                _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.FundModel, thisDelivery.FundModel),
-                _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, thisDelivery.LearnStartDate),
-                _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, learner.DateOfBirthNullable)
-            };
+        public void RaiseValidationMessage(ILearner learner, ILearningDelivery thisDelivery) =>
+          HandleValidationError(learner.LearnRefNumber, thisDelivery.AimSeqNumber, BuildMessageParametersFor(learner, thisDelivery));
 
-            _messageHandler.Handle(RuleName, learner.LearnRefNumber, thisDelivery.AimSeqNumber, parameters);
-        }
+        public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearner learner, ILearningDelivery thisDelivery) => new[]
+        {
+            BuildErrorMessageParameter(MessagePropertyName, "(missing)"),
+            BuildErrorMessageParameter(PropertyNameConstants.FundModel, thisDelivery.FundModel),
+            BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, thisDelivery.LearnStartDate),
+            BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, learner.DateOfBirthNullable)
+        };
     }
 }

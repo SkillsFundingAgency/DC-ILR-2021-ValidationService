@@ -4,6 +4,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Utility;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
@@ -12,6 +13,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         IRule<IMessage>
     {
         public const string Name = RuleNameConstants.R107;
+        private readonly List<int> _fundModels = new List<int>
+        {
+            TypeOfFunding.Age16To19ExcludingApprenticeships,
+            TypeOfFunding.AdultSkills,
+            TypeOfFunding.EuropeanSocialFund,
+            TypeOfFunding.OtherAdult
+        };
 
         private readonly IValidationErrorHandler _messageHandler;
 
@@ -27,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public ILearningDelivery GetLastDelivery(ILearner learner) =>
             learner.LearningDeliveries?
-                .Where(x => It.Has(x.LearnActEndDateNullable))
+                .Where(x => x.LearnActEndDateNullable.HasValue)
                 .OrderByDescending(x => x.LearnActEndDateNullable.Value)
                 .FirstOrDefault();
 
@@ -44,32 +52,33 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             var dps = GetDAndP(learner.LearnRefNumber, message);
             var delivery = GetLastDelivery(learner);
 
-            return It.Has(dps)
-                && It.Has(delivery)
+            return dps != null
+                && delivery != null
                 && dps.DPOutcomes.NullSafeAny(x => HasQualifyingOutcome(x, delivery.LearnActEndDateNullable.Value));
         }
 
         public bool HasQualifyingFundModel(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.FundModel, TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.AdultSkills, TypeOfFunding.EuropeanSocialFund, TypeOfFunding.OtherAdult);
+            _fundModels.Contains(delivery.FundModel);
 
         public bool HasQualifyingFundModel(ILearner learner) =>
             learner.LearningDeliveries.NullSafeAny(HasQualifyingFundModel);
 
         public bool HasTemporarilyWithdrawn(ILearningDelivery delivery) =>
-            It.IsInRange(delivery?.CompStatus, CompletionState.HasTemporarilyWithdrawn);
+            delivery?.CompStatus == CompletionState.HasTemporarilyWithdrawn;
 
         public bool HasTemporarilyWithdrawn(ILearner learner) =>
             HasTemporarilyWithdrawn(GetLastDelivery(learner));
 
         public bool HasCompletedCourse(ILearningDelivery delivery) =>
-            It.Has(delivery.LearnActEndDateNullable);
+            delivery.LearnActEndDateNullable.HasValue;
 
         public bool HasCompletedCourse(ILearner learner) =>
-            It.HasValues(learner.LearningDeliveries)
+            !learner.LearningDeliveries.IsNullOrEmpty()
                 && learner.LearningDeliveries.All(HasCompletedCourse);
 
         public bool InTraining(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship, TypeOfLearningProgramme.ApprenticeshipStandard);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
+            || delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool InTraining(ILearner learner) =>
             learner.LearningDeliveries.NullSafeAny(InTraining);

@@ -11,8 +11,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
     public static class LearnDirectClassSystemCodeHelper
     {
         public static bool IsKnown(this ILearnDirectClassSystemCode source) =>
-            It.Has(source)
-                && It.Has(source.Code)
+            source != null
+                && !string.IsNullOrWhiteSpace(source.Code)
                 && !source.Code.CaseInsensitiveEquals("NUL");
     }
 }

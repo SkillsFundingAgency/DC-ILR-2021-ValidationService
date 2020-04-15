@@ -50,16 +50,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             _ddrule25.GetLengthOfUnemployment(thisLearner, thisDelivery.ConRefNumber);
 
         public bool HasDisqualifyingMinLOUIndicator(IEsfEligibilityRule eligibility, int derivedRuleResult) =>
-            It.Has(eligibility.MinLengthOfUnemployment)
+            eligibility.MinLengthOfUnemployment.HasValue
             && derivedRuleResult < eligibility.MinLengthOfUnemployment;
 
         public bool HasDisqualifyingMaxLOUIndicator(IEsfEligibilityRule eligibility, int derivedRuleResult) =>
-            It.Has(eligibility.MaxLengthOfUnemployment)
+            eligibility.MaxLengthOfUnemployment.HasValue
             && derivedRuleResult > eligibility.MaxLengthOfUnemployment;
 
         public bool HasDisqualifyingLOUIndicator(IEsfEligibilityRule eligibility, int? derivedRuleResult) =>
-            It.Has(eligibility)
-            && It.Has(derivedRuleResult)
+            eligibility != null
+            && derivedRuleResult != null
             && (HasDisqualifyingMinLOUIndicator(eligibility, derivedRuleResult.Value)
                 || HasDisqualifyingMaxLOUIndicator(eligibility, derivedRuleResult.Value));
 

@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
         {
             var checkSum = _derivedData05.GetEmployerIDChecksum(employerID);
 
-            if (It.IsInRange(checkSum, _derivedData05.InvalidLengthChecksum))
+            if (checkSum == _derivedData05.InvalidLengthChecksum)
             {
                 return false;
             }

@@ -13,143 +13,52 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartDate
 {
-    /// <summary>
-    /// learn start date rule 07 tests
-    /// </summary>
     public class LearnStartDate_07RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            // arrange
-            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_07Rule(null, ddRule04.Object, larsData.Object, commonOps.Object));
-        }
-
-        /// <summary>
-        /// New rule with null derived data rule 04 throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullDerivedDataRule04Throws()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_07Rule(handler.Object, null, larsData.Object, commonOps.Object));
-        }
-
-        /// <summary>
-        /// New rule with null lars data throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullLARSDataThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_07Rule(handler.Object, ddRule04.Object, null, commonOps.Object));
-        }
-
-        /// <summary>
-        /// New rule with null common operations throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullCommonOperationsThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
         [Fact]
         public void RuleName1()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("LearnStartDate_07", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
         [Fact]
         public void RuleName2()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal(RuleNameConstants.LearnStartDate_07, result);
         }
 
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
         [Fact]
         public void RuleName3()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.NotEqual("SomeOtherRuleName_07", result);
         }
 
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
         [Fact]
         public void ValidateWithNullLearnerThrows()
         {
-            // arrange
             var sut = NewRule();
 
-            // act/assert
             Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
-        /// <summary>
-        /// Gets the earliest start date for, meets expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(null)]
         [InlineData("2018-06-04")]
         [InlineData("2018-08-06")]
         public void GetEarliestStartDateForMeetsExpectation(string candidate)
         {
-            // arrange
             var testDate = GetNullableDate(candidate);
             var delivery = new Mock<ILearningDelivery>();
             var deliveries = new ILearningDelivery[] { };
@@ -162,13 +71,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
 
-            // act
             var result = sut.GetEarliestStartDateFor(delivery.Object, deliveries);
 
-            // assert
             handler.VerifyAll();
             ddRule04.VerifyAll();
             larsData.VerifyAll();
@@ -182,7 +90,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [InlineData(false)]
         public void IsStandardApprenticeshipMeetsExpectation(bool expectation)
         {
-            // arrange
             var delivery = new Mock<ILearningDelivery>();
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
@@ -193,12 +100,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(expectation);
 
-            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
 
-            // act
             var result = sut.IsStandardApprenticeship(delivery.Object);
 
-            // assert
             handler.VerifyAll();
             ddRule04.VerifyAll();
             commonOps.VerifyAll();
@@ -211,7 +116,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [InlineData(false)]
         public void IsRestartMeetsExpectation(bool expectation)
         {
-            // arrange
             var delivery = new Mock<ILearningDelivery>();
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
@@ -224,12 +128,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(expectation);
 
-            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
 
-            // act
             var result = sut.IsRestart(delivery.Object);
 
-            // assert
             handler.VerifyAll();
             ddRule04.VerifyAll();
             commonOps.VerifyAll();
@@ -240,13 +142,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Fact]
         public void IsCommonComponentWithNullLARSAimReturnsFalse()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.IsCommonComponent(null);
 
-            // assert
             Assert.False(result);
         }
 
@@ -256,7 +155,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [InlineData(null, false)]
         public void IsCommonComponentMeetsExpectation(int? candidate, bool expectation)
         {
-            // arrange
             var delivery = new Mock<ILARSLearningDelivery>();
             delivery
                 .SetupGet(x => x.FrameworkCommonComponent)
@@ -264,24 +162,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var sut = NewRule();
 
-            // act
             var result = sut.IsCommonComponent(delivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Get framework aims for, meets expectation.
-        /// </summary>
-        /// <param name="learnAimRef">The learn aim reference.</param>
         [Theory]
         [InlineData("shonkyRefCode1")]
         [InlineData("shonkyRefCode2")]
         [InlineData("shonkyRefCode3")]
         public void GetFrameworkAimsForMeetsExpectation(string learnAimRef)
         {
-            // arrange
             var delivery = new Mock<ILearningDelivery>();
             delivery
                 .SetupGet(x => x.LearnAimRef)
@@ -296,12 +187,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
 
-            // act
             var result = sut.GetQualifyingFrameworksFor(delivery.Object);
 
-            // assert
             handler.VerifyAll();
             ddRule04.VerifyAll();
             larsData.VerifyAll();
@@ -310,62 +199,40 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             Assert.Null(result);
         }
 
-        /// <summary>
-        /// Filtered framework aims for null frameworks meets expectation.
-        /// </summary>
         [Fact]
         public void FilteredFrameworkAimsForNullFrameworksMeetsExpectation()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.FilteredFrameworkAimsFor(null, null);
 
-            // assert
             Assert.Empty(result);
         }
 
-        /// <summary>
-        /// Filtered framework aims for empty frameworks meets expectation.
-        /// </summary>
         [Fact]
         public void FilteredFrameworkAimsForEmptyFrameworksMeetsExpectation()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.FilteredFrameworkAimsFor(null, new ILARSFrameworkAim[] { });
 
-            // assert
             Assert.Empty(result);
         }
 
-        /// <summary>
-        /// Filtered framework aims for vanilla delivery and empty frameworks meets expectation.
-        /// </summary>
         [Fact]
         public void FilteredFrameworkAimsForVanillaDeliveryAndEmptyFrameworksMeetsExpectation()
         {
-            // arrange
             var delivery = new Mock<ILearningDelivery>();
             var sut = NewRule();
 
-            // act
             var result = sut.FilteredFrameworkAimsFor(delivery.Object, new ILARSFrameworkAim[] { });
 
-            // assert
             Assert.Empty(result);
         }
 
-        /// <summary>
-        /// Filtered framework aims for, meets expectation.
-        /// </summary>
         [Fact]
         public void FilteredFrameworkAimsForMeetsExpectation()
         {
-            // arrange
             var delivery = new Mock<ILearningDelivery>();
             delivery.SetupGet(x => x.ProgTypeNullable).Returns(2);
             delivery.SetupGet(x => x.FworkCodeNullable).Returns(3);
@@ -378,80 +245,64 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var sut = NewRule();
 
-            // act
             var result = sut.FilteredFrameworkAimsFor(delivery.Object, new ILARSFrameworkAim[] { frameworkAim.Object });
 
-            // assert
             Assert.Contains(result, x => x == frameworkAim.Object);
         }
 
         [Fact]
         public void IsOutOfScopeWithEmptyFrameworksTrue()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.IsOutOfScope(new ILARSFrameworkAim[] { });
 
-            // assert
             Assert.True(result);
         }
 
         [Fact]
         public void IsCurrentWithEmptyFrameworksFalse()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.IsCurrent(new ILARSFrameworkAim[] { }, DateTime.Today);
 
-            // assert
             Assert.False(result);
         }
 
         [Theory]
-        [InlineData("2016-08-02", "2016-04-01", "2017-04-01", true)] // inside
-        [InlineData("2016-04-01", "2016-04-01", "2017-04-01", true)] // lower limit
-        [InlineData("2017-04-01", "2016-04-01", "2017-04-01", true)] // upper limit
-        [InlineData("2017-04-02", "2016-04-01", "2017-04-01", false)] // outside upper limit
-        [InlineData("2016-04-01", "2016-04-01", "2016-03-31", false)] // withdrawn lower limit
-        [InlineData("2017-04-01", "2016-04-01", "2016-03-31", false)] // withdrawn upper limit
+        [InlineData("2016-08-02", "2016-04-01", "2017-04-01", true)]
+        [InlineData("2016-04-01", "2016-04-01", "2017-04-01", true)]
+        [InlineData("2017-04-01", "2016-04-01", "2017-04-01", true)]
+        [InlineData("2017-04-02", "2016-04-01", "2017-04-01", false)]
+        [InlineData("2016-04-01", "2016-04-01", "2016-03-31", false)]
+        [InlineData("2017-04-01", "2016-04-01", "2016-03-31", false)]
         public void IsCurrentMeetsExpectation(string candidate, string start, string end, bool expectation)
         {
-            // arrange
             var testDate = DateTime.Parse(candidate);
             var frameworkAim = new Mock<ILARSFrameworkAim>();
             frameworkAim.SetupGet(x => x.StartDate).Returns(DateTime.Parse(start));
             frameworkAim.SetupGet(x => x.EndDate).Returns(DateTime.Parse(end));
 
-            var sut = NewRule();
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(x => x.IsDateBetween(testDate, DateTime.MinValue, frameworkAim.Object.EndDate.Value, true)).Returns(expectation);
 
-            // act
+            var sut = NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object);
+
             var result = sut.IsCurrent(frameworkAim.Object, testDate);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// this isn't going to happen
-        /// [InlineData("2016-03-31", "2016-04-01", "2017-04-01", Skip = "no lower range checks till next year (19/20)")] // outside lower limit
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
         [Theory]
-        [InlineData("2017-04-02", "2016-04-01", "2017-04-01")] // outside upper limit
-        [InlineData("2016-04-01", "2016-04-01", "2016-03-31")] // withdrawn lower limit
-        [InlineData("2017-04-01", "2016-04-01", "2016-03-31")] // withdrawn upper limit
+        [InlineData("2017-04-02", "2016-04-01", "2017-04-01")]
+        [InlineData("2016-04-01", "2016-04-01", "2016-03-31")]
+        [InlineData("2017-04-01", "2016-04-01", "2016-03-31")]
         public void InvalidItemRaisesValidationMessage(string candidate, string start, string end)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
-            const string learnAimRef = "shonkyRefCode"; // <= any old code for the purpose of the test...
+            const string learnAimRef = "shonkyRefCode";
 
             var testDate = DateTime.Parse(candidate);
             var delivery = new Mock<ILearningDelivery>();
@@ -462,7 +313,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.LearnAimRef)
                 .Returns(learnAimRef);
 
-            // these are random and meaningless values
             delivery
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(2);
@@ -551,33 +401,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
-            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(x => x.IsDateBetween(testDate, DateTime.MinValue, frameworkAim.Object.EndDate.Value, true)).Returns(false);
 
-            // act
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object);
+
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             ddRule04.VerifyAll();
             larsData.VerifyAll();
             commonOps.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
         [Theory]
-        [InlineData("2016-08-02", "2016-04-01", "2017-04-01")] // inside
-        [InlineData("2016-04-01", "2016-04-01", "2017-04-01")] // lower limit
-        [InlineData("2017-04-01", "2016-04-01", "2017-04-01")] // upper limit
+        [InlineData("2016-08-02", "2016-04-01", "2017-04-01")]
+        [InlineData("2016-04-01", "2016-04-01", "2017-04-01")]
+        [InlineData("2017-04-01", "2016-04-01", "2017-04-01")]
         public void ValidItemDoesNotRaiseValidationMessage(string candidate, string start, string end)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
-            const string learnAimRef = "shonkyRefCode"; // <= any old code for the purpose of the test...
+            const string learnAimRef = "shonkyRefCode";
 
             var testDate = DateTime.Parse(candidate);
             var delivery = new Mock<ILearningDelivery>();
@@ -588,7 +432,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.LearnAimRef)
                 .Returns(learnAimRef);
 
-            // these are random and meaningless values
             delivery
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(2);
@@ -662,12 +505,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
-            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(x => x.IsDateBetween(testDate, DateTime.MinValue, frameworkAim.Object.EndDate.Value, true)).Returns(true);
 
-            // act
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object);
+
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             ddRule04.VerifyAll();
             larsData.VerifyAll();
@@ -677,7 +521,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         [Fact]
         public void Bug84886_RaisesValidationMessage()
         {
-            // arrange
             const string learnRefNumber = "0LstartDt07";
             const string learnAimRef = "50104767";
             const int pwayCode = 0;
@@ -783,31 +626,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
-            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(x => x.IsDateBetween(testDate, DateTime.MinValue, frameworkAim.Object.EndDate.Value, true)).Returns(false);
 
-            // act
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object);
+
             sut.Validate(learner.Object);
 
-            // assert
             handler.VerifyAll();
             ddRule04.VerifyAll();
             larsData.VerifyAll();
             commonOps.VerifyAll();
         }
 
-        /// <summary>
-        /// Shonky learn aim reference not crash.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="start">The start.</param>
-        /// <param name="end">The end.</param>
         [Theory]
-        [InlineData("2016-08-02", "2016-04-01", "2017-04-01")] // inside
+        [InlineData("2016-08-02", "2016-04-01", "2017-04-01")]
         public void ShonkyLearnAimRefNotCrash(string candidate, string start, string end)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
-            const string learnAimRef = "shonkyRefCode"; // <= any old code for the purpose of the test...
+            const string learnAimRef = "shonkyRefCode";
             var testDate = DateTime.Parse(candidate);
             var delivery = new Mock<ILearningDelivery>();
             delivery
@@ -817,7 +654,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .SetupGet(x => x.LearnAimRef)
                 .Returns(learnAimRef);
 
-            // these are random and meaningless values
             delivery
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(2);
@@ -890,38 +726,46 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
-            var sut = new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock.Setup(x => x.IsDateBetween(testDate, DateTime.MinValue, frameworkAim.Object.EndDate.Value, true)).Returns(true);
 
-            // act
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object);
+
             sut.Validate(learner.Object);
 
-            // assert
             handler.VerifyAll();
             ddRule04.VerifyAll();
             larsData.VerifyAll();
             commonOps.VerifyAll();
         }
 
-        /// <summary>
-        /// Gets the nullable date.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>a nullable date</returns>
         public DateTime? GetNullableDate(string candidate) =>
             string.IsNullOrWhiteSpace(candidate) ? (DateTime?)null : DateTime.Parse(candidate);
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
-        public LearnStartDate_07Rule NewRule()
-        {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+        //public LearnStartDate_07Rule NewRule()
+        //{
+        //    var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+        //    var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+        //    var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
+        //    var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+        //    var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
+        //    return new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryService.Object);
+        //}
+
+        public LearnStartDate_07Rule NewRule(
+            IValidationErrorHandler handler = null,
+            IDerivedData_04Rule ddRule04 = null,
+            ILARSDataService larsData = null,
+            IProvideRuleCommonOperations commonOps = null,
+            IDateTimeQueryService dateTimeQueryService = null)
+        {
+            return new LearnStartDate_07Rule(
+                handler,
+                ddRule04,
+                larsData,
+                commonOps,
+                dateTimeQueryService);
         }
     }
 }

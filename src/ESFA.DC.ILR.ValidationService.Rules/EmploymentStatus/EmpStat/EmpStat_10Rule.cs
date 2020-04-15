@@ -62,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             var forDeliveries = objectToValidate.LearningDeliveries.ToReadOnlyCollection();
             var completionDate = GetLatestContractCompletionDate(forDeliveries);
 
-            if (It.Has(completionDate) && IsNotValid(objectToValidate, completionDate.Value))
+            if (completionDate.HasValue && IsNotValid(objectToValidate, completionDate.Value))
             {
                 RaiseValidationMessage(learnRefNumber, completionDate.Value);
             }

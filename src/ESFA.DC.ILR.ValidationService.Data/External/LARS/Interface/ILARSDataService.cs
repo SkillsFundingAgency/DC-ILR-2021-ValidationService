@@ -20,8 +20,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
 
         ILARSStandard GetStandardFor(int standardCode);
 
-        ILARSStandardFunding GetStandardFundingFor(int standardCode, DateTime startDate);
-
         bool ContainsStandardFor(int thisStandardCode);
 
         bool HasKnownLearnDirectClassSystemCode3For(string thisLearnAimRef);
@@ -77,6 +75,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
         bool LearnStartDateGreaterThanStandardsEffectiveTo(int stdCode, DateTime learnStartDate);
 
         bool HasAnyLearningDeliveryForLearnAimRefAndTypes(string learnAimRef, IEnumerable<string> types);
+
+        bool IsCurrentAndNotWithdrawn(ISupportFundingWithdrawal source, DateTime candidate, DateTime? optionalEnding = null);
 
         bool OrigLearnStartDateBetweenStartAndEndDateForAnyValidityCategory(
             DateTime origLearnStartDate,
