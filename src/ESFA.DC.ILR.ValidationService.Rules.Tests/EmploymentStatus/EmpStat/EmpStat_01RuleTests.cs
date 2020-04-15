@@ -16,21 +16,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
     public class EmpStat_01RuleTests : AbstractRuleTests<EmpStat_01Rule>
     {
         [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             var sut = NewRule();
 
             var result = sut.RuleName;
 
             Assert.Equal("EmpStat_01", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            var sut = NewRule();
-
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Fact]

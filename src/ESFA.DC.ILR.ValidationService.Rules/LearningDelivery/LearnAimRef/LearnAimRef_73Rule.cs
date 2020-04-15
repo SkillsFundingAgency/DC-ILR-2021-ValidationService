@@ -7,7 +7,6 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
@@ -31,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             || subjectAreaLevel.SectorSubjectAreaCode == larsDelivery.SectorSubjectAreaTier2);
 
         public bool HasDisqualifyingSubjectSector(ILARSLearningDelivery larsDelivery, IReadOnlyCollection<IEsfEligibilityRuleSectorSubjectAreaLevel> subjectAreaLevels) =>
-            It.IsNull(larsDelivery)
+            larsDelivery == null
             || (subjectAreaLevels.Where(x => SubjectAreaTierFilter(x, larsDelivery)).Count() > 0
             ? subjectAreaLevels.Where(x => SubjectAreaTierFilter(x, larsDelivery)).Any(x => HasDisqualifyingSubjectSector(x, larsDelivery))
             : true);

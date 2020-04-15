@@ -2,8 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
 using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
@@ -34,9 +32,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool IsInflexibleElementOfTrainingAimLearningDelivery(ILearningDelivery candidate)
         {
-            It.IsNull(candidate)
-                .AsGuard<ArgumentNullException>(nameof(candidate));
-
             /*
                if
                    LearningDelivery.ProgType = 24

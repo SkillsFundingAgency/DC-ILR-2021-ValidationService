@@ -3,7 +3,6 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -24,9 +23,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public DerivedData_11Rule(IProvideRuleCommonOperations commonOps)
         {
-            It.IsNull(commonOps)
-                .AsGuard<ArgumentNullException>(nameof(commonOps));
-
             _check = commonOps;
         }
 
@@ -47,8 +43,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool IsAdultFundedOnBenefitsAtStartOfAim(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmployments)
         {
-            It.IsNull(delivery)
-                .AsGuard<ArgumentNullException>(nameof(delivery));
             var employments = learnerEmployments.ToReadOnlyCollection();
 
             /*

@@ -16,108 +16,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 {
     public class EmpStat_14RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new EmpStat_14Rule(null, fcsData.Object, commonOps.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullFCSDataServiceThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new EmpStat_14Rule(handler.Object, null, commonOps.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullCommonOperationsThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new EmpStat_14Rule(handler.Object, fcsData.Object, null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("EmpStat_14", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(RuleNameConstants.EmpStat_14, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Get qualifying aim meets expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="d22Dates">The D22 dates.</param>
         [Theory]
         [InlineData("2018-09-11", "2014-08-01", "2018-09-01", "2016-02-11", "2017-06-09")]
         [InlineData("2017-12-31", "2015-12-31", "2017-12-30", "2014-12-31", "2017-10-16")]
@@ -125,7 +33,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         [InlineData("2016-11-17", "2016-11-16")]
         public void GetQualifyingAimMeetsExpectation(string candidate, params string[] d22Dates)
         {
-            // arrange
             var testDate = DateTime.Parse(candidate);
 
             var contractCandidates = new List<DateTime>();
@@ -172,23 +79,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, commonOps.Object);
 
-            // act
             var result = sut.GetQualifyingdAimOn(deliveries);
 
-            // assert
             handler.VerifyAll();
             fcsData.VerifyAll();
 
             Assert.Equal(mockItem.Object, result);
         }
 
-        /// <summary>
-        /// Get eligible employment status with null delivery meets expectation.
-        /// </summary>
         [Fact]
         public void GetEligibleEmploymentStatusWithNullDeliveryMeetsExpectation()
         {
-            // arrange
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             fcsData
@@ -198,10 +99,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, commonOps.Object);
 
-            // act
             var result = sut.GetEligibilityRulesFor(null);
 
-            // assert
             handler.VerifyAll();
             fcsData.VerifyAll();
 
@@ -209,23 +108,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             Assert.IsAssignableFrom<IReadOnlyCollection<IEsfEligibilityRuleEmploymentStatus>>(result);
         }
 
-        /// <summary>
-        /// Has a qualifying employment status meets expectation
-        /// </summary>
-        /// <param name="status">The status.</param>
-        /// <param name="eligibility">The eligibility.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(10, 10, true)] // TypeOfEmploymentStatus.InPaidEmployment, TypeOfEmploymentStatus.InPaidEmployment
-        [InlineData(10, 12, false)] // TypeOfEmploymentStatus.InPaidEmployment, TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
-        [InlineData(10, 11, false)] // TypeOfEmploymentStatus.InPaidEmployment, TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable
-        [InlineData(10, 98, false)] // TypeOfEmploymentStatus.InPaidEmployment, TypeOfEmploymentStatus.NotKnownProvided
-        [InlineData(12, 11, false)] // TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable
-        [InlineData(12, 98, false)] // TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, TypeOfEmploymentStatus.NotKnownProvided
-        [InlineData(11, 98, false)] // TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, TypeOfEmploymentStatus.NotKnownProvided
+        [InlineData(10, 10, true)]
+        [InlineData(10, 12, false)]
+        [InlineData(10, 11, false)]
+        [InlineData(10, 98, false)]
+        [InlineData(12, 11, false)]
+        [InlineData(12, 98, false)]
+        [InlineData(11, 98, false)]
         public void HasAQualifyingEmploymentStatusMeetsExpectation(int status, int eligibility, bool expectation)
         {
-            // arrange
             var sut = NewRule();
 
             var mockStatus = new Mock<ILearnerEmploymentStatus>();
@@ -238,19 +130,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(x => x.Code)
                 .Returns(eligibility);
 
-            // act
             var result = sut.HasAQualifyingEmploymentStatus(mockEligibility.Object, mockStatus.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Is not valid meets expectation
-        /// </summary>
-        /// <param name="status">The status.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
-        /// <param name="eligibilities">The eligibilities.</param>
         [Theory]
         [InlineData(10, false, 10, 11, 12, 98)]
         [InlineData(10, true, 11, 12, 98)]
@@ -262,7 +146,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         [InlineData(98, true, 10, 11, 12)]
         public void IsNotValidMeetsExpectation(int status, bool expectation, params int[] eligibilities)
         {
-            // arrange
             var sut = NewRule();
 
             var mockStatus = new Mock<ILearnerEmploymentStatus>();
@@ -281,18 +164,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 items.Add(mockEligibility.Object);
             });
 
-            // act
             var result = sut.IsNotValid(items, mockStatus.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="eligibilities">The eligibilities.</param>
         [Theory]
         [InlineData(10, 11, 12, 98)]
         [InlineData(11, 10, 12, 98)]
@@ -300,7 +176,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         [InlineData(98, 10, 11, 12)]
         public void InvalidItemRaisesValidationMessage(int candidate, params int[] eligibilities)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
             const string conRefNumber = "test-Con-Ref";
 
@@ -358,19 +233,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, commonOps.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             fcsData.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="eligibilities">The eligibilities.</param>
         [Theory]
         [InlineData(10, 10, 11, 12, 98)]
         [InlineData(11, 10, 11, 12, 98)]
@@ -378,7 +246,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         [InlineData(98, 10, 11, 12, 98)]
         public void ValidItemDoesNotRaiseValidationMessage(int candidate, params int[] eligibilities)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
             const string conRefNumber = "test-Con-Ref";
 
@@ -425,10 +292,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, commonOps.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             fcsData.VerifyAll();
         }
@@ -472,10 +337,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             return mockItem.Object;
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public EmpStat_14Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

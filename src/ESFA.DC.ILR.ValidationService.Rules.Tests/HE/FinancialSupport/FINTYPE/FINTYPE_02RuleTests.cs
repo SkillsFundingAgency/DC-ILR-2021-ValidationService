@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.HE.FinancialSupport.FINTYPE;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -13,57 +12,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FinancialSupport.FINTYPE
     public class FINTYPE_02RuleTests
     {
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            var provider = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new FINTYPE_02Rule(null, provider.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullProviderThrows()
-        {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new FINTYPE_02Rule(handler.Object, null));
-        }
-
-        [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             var sut = NewRule();
 
             var result = sut.RuleName;
 
             Assert.Equal("FINTYPE_02", result);
-        }
-
-        [Fact]
-        public void RuleName2()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.Equal(FINTYPE_02Rule.Name, result);
-        }
-
-        [Fact]
-        public void RuleName3()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            var sut = NewRule();
-
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Fact]

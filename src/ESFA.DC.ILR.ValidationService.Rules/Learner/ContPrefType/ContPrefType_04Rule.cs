@@ -3,7 +3,7 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +19,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
         public ContPrefType_04Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.ContPrefType_04)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
+            
+                
         }
 
         public bool HasPreGDPRMerchandisingCodes(IContactPreference preference)
@@ -46,8 +46,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
 
         public void Validate(ILearner thisLearner)
         {
-            It.IsNull(thisLearner)
-                .AsGuard<ArgumentNullException>(nameof(thisLearner));
+            
+                
 
             var learnRefNumber = thisLearner.LearnRefNumber;
 

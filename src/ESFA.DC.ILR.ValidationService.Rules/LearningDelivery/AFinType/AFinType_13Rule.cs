@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public AFinType_13Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
             _messageHandler = validationErrorHandler;
         }
 
@@ -36,10 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
-            var learnRefNumber = objectToValidate.LearnRefNumber;
+           var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
                 .NullSafeWhere(d => IsApprenticeshipFunded(d) && IsInAProgramme(d))

@@ -15,21 +15,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
     public class OrigLearnStartDate_02RuleTests
     {
         [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             var sut = NewRule();
 
             var result = sut.RuleName;
 
             Assert.Equal("OrigLearnStartDate_02", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            var sut = NewRule();
-
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Theory]

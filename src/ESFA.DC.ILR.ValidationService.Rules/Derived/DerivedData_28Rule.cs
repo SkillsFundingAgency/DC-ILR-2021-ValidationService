@@ -3,7 +3,6 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -31,9 +30,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public DerivedData_28Rule(IProvideRuleCommonOperations commonOperations)
         {
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
             _check = commonOperations;
         }
 
@@ -96,11 +92,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool IsAdultFundedUnemployedWithBenefits(ILearningDelivery thisDelivery, ILearner forThisCandidate)
         {
-            It.IsNull(thisDelivery)
-                .AsGuard<ArgumentNullException>(nameof(thisDelivery));
-            It.IsNull(forThisCandidate)
-                .AsGuard<ArgumentNullException>(nameof(forThisCandidate));
-
             /*
                 if
                     // is adult skills

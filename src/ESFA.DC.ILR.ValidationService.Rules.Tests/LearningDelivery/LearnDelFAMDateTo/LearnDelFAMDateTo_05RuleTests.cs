@@ -14,27 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
     public class LearnDelFAMDateTo_05RuleTests
     {
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            // arrange
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMDateTo_05Rule(null, commonOps.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullCommonOperationsThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMDateTo_05Rule(handler.Object, null));
-        }
-
-        [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             // arrange
             var sut = NewRule();
@@ -44,16 +24,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             // assert
             Assert.Equal("LearnDelFAMDateTo_05", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Theory]

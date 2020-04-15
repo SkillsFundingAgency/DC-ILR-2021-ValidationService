@@ -21,14 +21,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             NewRule().RuleName.Should().Be(RuleNameConstants.LearnDelFAMType_74);
         }
 
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            Action act = () => NewRule().Validate(null);
-
-            act.Should().Throw<ArgumentNullException>();
-        }
-
        [Theory]
        [InlineData("ACT", "105")]
        [InlineData("SOF", "110")]

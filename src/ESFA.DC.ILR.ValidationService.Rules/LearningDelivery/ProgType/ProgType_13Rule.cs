@@ -3,7 +3,7 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -22,11 +22,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public ProgType_13Rule(IValidationErrorHandler validationErrorHandler, IFileDataService fileData)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(fileData)
-                .AsGuard<ArgumentNullException>(nameof(fileData));
-
             _messageHandler = validationErrorHandler;
             _fileData = fileData;
         }
@@ -35,9 +30,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

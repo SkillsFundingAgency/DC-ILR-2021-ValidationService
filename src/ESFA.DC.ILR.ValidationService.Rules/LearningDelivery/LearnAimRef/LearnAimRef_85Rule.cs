@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -36,13 +35,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             ILARSDataService larsData,
             IProvideRuleCommonOperations commonChecks)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(larsData)
-                .AsGuard<ArgumentNullException>(nameof(larsData));
-            It.IsNull(commonChecks)
-                .AsGuard<ArgumentNullException>(nameof(commonChecks));
-
             _messageHandler = validationErrorHandler;
             _larsData = larsData;
             _check = commonChecks;
@@ -82,9 +74,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             if (HasQualifyingAttainment(objectToValidate))
             {
                 objectToValidate.LearningDeliveries

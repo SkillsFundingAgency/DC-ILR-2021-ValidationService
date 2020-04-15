@@ -6,7 +6,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -29,15 +28,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             IProvideRuleCommonOperations commonOperations)
             : base(validationErrorHandler, RuleNameConstants.ESMType_14)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(ddrule26)
-                .AsGuard<ArgumentNullException>(nameof(ddrule26));
-            It.IsNull(fcsData)
-                .AsGuard<ArgumentNullException>(nameof(fcsData));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
             _ddrule26 = ddrule26;
             _fcsData = fcsData;
             _check = commonOperations;
@@ -61,9 +51,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public void Validate(ILearner thisLearner)
         {
-            It.IsNull(thisLearner)
-                .AsGuard<ArgumentNullException>(nameof(thisLearner));
-
             var learnRefNumber = thisLearner.LearnRefNumber;
 
             thisLearner.LearningDeliveries

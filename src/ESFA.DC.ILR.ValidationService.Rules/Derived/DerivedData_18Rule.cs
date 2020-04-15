@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +15,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public DerivedData_18Rule(IProvideRuleCommonOperations commonOperations)
         {
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
             _check = commonOperations;
         }
 
@@ -34,11 +30,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public DateTime? GetApprenticeshipStandardProgrammeStartDateFor(ILearningDelivery thisDelivery, IReadOnlyCollection<ILearningDelivery> usingSources)
         {
-            It.IsNull(thisDelivery)
-                .AsGuard<ArgumentNullException>(nameof(thisDelivery));
-            usingSources.IsNullOrEmpty()
-                .AsGuard<ArgumentNullException>(nameof(usingSources));
-
             /*
               LearningDelivery.ProgType = 25
               and the earliest value of LearningDelivery.LearnStartDate for all programme aims with LearningDelivery.AimType = 1

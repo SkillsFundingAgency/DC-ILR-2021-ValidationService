@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.StdCode;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -12,75 +11,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
 {
     public class StdCode_03RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange / act / assert
-            Assert.Throws<ArgumentNullException>(() => new StdCode_03Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("StdCode_03", result);
-        }
-
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(StdCode_03Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Theory]
@@ -88,7 +26,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
         [InlineData(null, false)]
         public void HasStandardCodeMeetsExpectation(int? candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
 
             var mockItem = new Mock<ILearningDelivery>();
@@ -96,10 +33,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
                 .SetupGet(x => x.StdCodeNullable)
                 .Returns(candidate);
 
-            // act
             var result = sut.HasStandardCode(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
@@ -115,7 +50,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
         [InlineData(TypeOfLearningProgramme.Traineeship, false)]
         public void IsQualifyingLearningProgrammeMeetsExpectation(int? candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
 
             var mockItem = new Mock<ILearningDelivery>();
@@ -123,20 +57,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsQualifyingLearningProgramme(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
         [Fact]
         public void InvalidItemRaisesValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -147,8 +75,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
                 .SetupGet(x => x.StdCodeNullable)
                 .Returns(3);
 
-            var deliveries = new List<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
+            var deliveries = new List<ILearningDelivery>
+            {
+                mockDelivery.Object
+            };
 
             var mock = new Mock<ILearner>();
             mock
@@ -178,20 +108,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
 
             var sut = new StdCode_03Rule(handler.Object);
 
-            // act
             sut.Validate(mock.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise a validation message.
-        /// </summary>
         [Fact]
         public void ValidItemDoesNotRaiseAValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -199,8 +123,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(TypeOfLearningProgramme.AdvancedLevelApprenticeship);
 
-            var deliveries = new List<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
+            var deliveries = new List<ILearningDelivery>
+            {
+                mockDelivery.Object
+            };
 
             var mock = new Mock<ILearner>();
             mock
@@ -214,17 +140,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
 
             var sut = new StdCode_03Rule(handler.Object);
 
-            // act
             sut.Validate(mock.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public StdCode_03Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

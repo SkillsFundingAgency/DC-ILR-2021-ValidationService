@@ -1,7 +1,6 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +15,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
 
         public LARSDataService(IExternalDataCache externalDataCache)
         {
-            It.IsNull(externalDataCache)
-                .AsGuard<ArgumentNullException>(nameof(externalDataCache));
-
             _externalDataCache = externalDataCache;
 
             // de-sensitise the lars deliveries

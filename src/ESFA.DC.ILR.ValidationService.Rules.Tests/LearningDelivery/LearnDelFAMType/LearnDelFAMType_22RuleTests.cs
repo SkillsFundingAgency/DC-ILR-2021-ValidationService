@@ -3,7 +3,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -12,39 +11,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
     public class LearnDelFAMType_22RuleTests
     {
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_22Rule(null));
-        }
-
-        [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             var sut = NewRule();
 
             var result = sut.RuleName;
 
             Assert.Equal("LearnDelFAMType_22", result);
-        }
-
-        [Fact]
-        public void RuleName2()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.Equal(LearnDelFAMType_22Rule.Name, result);
-        }
-
-        [Fact]
-        public void RuleName3()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.NotEqual("SomeOtherRuleName_07", result);
         }
 
         [Theory]
@@ -76,14 +49,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var result = sut.HasFullOrCoFundingIndicator(mockFAM.Object);
 
             Assert.Equal(expectation, result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            var sut = NewRule();
-
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Fact]

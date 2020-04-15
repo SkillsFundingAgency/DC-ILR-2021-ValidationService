@@ -1,9 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -11,82 +9,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 {
     public class R85RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            Assert.Throws<ArgumentNullException>(() => new R85Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("R85", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(R85Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullMessageThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Blahes the meets expectation.
-        /// </summary>
-        /// <param name="dAndPULN">The destination and progression uln.</param>
-        /// <param name="learnerULN">The learner uln.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(99998, 99999, true)]
         [InlineData(99999, 99999, false)]
@@ -94,7 +26,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [InlineData(92958, 92958, false)]
         public void IsNotMatchingLearnerNumberMeetsExpectation(long dAndPULN, long learnerULN, bool expectation)
         {
-            // arrange
             var sut = NewRule();
 
             var dAndP = new Mock<ILearnerDestinationAndProgression>();
@@ -103,10 +34,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var learner = new Mock<ILearner>();
             learner.SetupGet(x => x.ULN).Returns(learnerULN);
 
-            // act
             var result = sut.IsNotMatchingLearnerNumber(dAndP.Object, learner.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
@@ -117,7 +46,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [InlineData("92958", "92958", true)]
         public void HasMatchingReferenceNumberMeetsExpectation(string dAndPRefNum, string learnerRefNum, bool expectation)
         {
-            // arrange
             var sut = NewRule();
 
             var dAndP = new Mock<ILearnerDestinationAndProgression>();
@@ -126,20 +54,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var learner = new Mock<ILearner>();
             learner.SetupGet(x => x.LearnRefNumber).Returns(learnerRefNum);
 
-            // act
             var result = sut.HasMatchingReferenceNumber(dAndP.Object, learner.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
         [Fact]
         public void InvalidItemRaisesValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
             const long learnerULN = 999998;
             const long dAndP__ULN = 999999;
@@ -189,20 +111,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var sut = new R85Rule(handler.Object);
 
-            // act
             sut.Validate(message.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise a validation message.
-        /// </summary>
         [Fact]
         public void ValidItemDoesNotRaiseAValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
             const int learnerULN = 999999;
             const int dAndP__ULN = 999999;
@@ -241,17 +157,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var sut = new R85Rule(handler.Object);
 
-            // act
             sut.Validate(message.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a new rule (with a strict mock message handler)</returns>
         private R85Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

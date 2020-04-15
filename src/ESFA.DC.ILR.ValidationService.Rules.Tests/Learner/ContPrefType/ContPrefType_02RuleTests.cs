@@ -13,47 +13,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ContPrefType
     public class ContPrefType_02RuleTests
     {
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            Assert.Throws<ArgumentNullException>(() => new ContPrefType_02Rule(null));
-        }
-
-        [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             var sut = NewRule();
 
             var result = sut.RuleName;
 
             Assert.Equal("ContPrefType_02", result);
-        }
-
-        [Fact]
-        public void RuleName2()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.Equal(ContPrefType_02Rule.Name, result);
-        }
-
-        [Fact]
-        public void RuleName3()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            var sut = NewRule();
-
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Theory]

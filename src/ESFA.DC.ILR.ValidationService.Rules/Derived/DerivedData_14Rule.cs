@@ -2,7 +2,7 @@
 using System.Linq;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {

@@ -7,7 +7,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 {
@@ -20,11 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             IDerivedData_05Rule derivedData05)
             : base(validationErrorHandler, RuleNameConstants.EmpId_02)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(derivedData05)
-                .AsGuard<ArgumentNullException>(nameof(derivedData05));
-
             _derivedData05 = derivedData05;
         }
 

@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -15,68 +14,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
     public class LearnAimRef_79RuleTests
     {
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_79Rule(null, service.Object, commonChecks.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullLARSServiceThrows()
-        {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_79Rule(handler.Object, null, commonChecks.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullDerivedData07Throws()
-        {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_79Rule(handler.Object, service.Object, null));
-        }
-
-        [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             var sut = NewRule();
 
             var result = sut.RuleName;
 
             Assert.Equal("LearnAimRef_79", result);
-        }
-
-        [Fact]
-        public void RuleName2()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.Equal(LearnAimRef_79Rule.Name, result);
-        }
-
-        [Fact]
-        public void RuleName3()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            var sut = NewRule();
-
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Fact]

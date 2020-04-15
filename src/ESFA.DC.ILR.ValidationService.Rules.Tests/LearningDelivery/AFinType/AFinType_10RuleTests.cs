@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -12,97 +11,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
 {
     public class AFinType_10RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            Assert.Throws<ArgumentNullException>(() => new AFinType_10Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("AFinType_10", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(AFinType_10Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Condition met with null financial record returns true.
-        /// </summary>
         [Fact]
         public void ConditionMetWithNullFinancialRecordReturnsTrue()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.ConditionMet(null);
 
-            // assert
             Assert.True(result);
         }
 
-        /// <summary>
-        /// Determines whether [is target apprenticeship meets expectation] [(for) the specified candidate].
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(null, false)]
         [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship, false)]
@@ -115,25 +43,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         [InlineData(TypeOfLearningProgramme.Traineeship, false)]
         public void IsTargetApprenticeshipMeetsExpectation(int? candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsTargetApprenticeship(mockDelivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Determines whether [is in a programme meets expectation] [(for) the specified candidate].
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(TypeOfAim.AimNotPartOfAProgramme, false)]
         [InlineData(TypeOfAim.CoreAim16To19ExcludingApprenticeships, false)]
@@ -142,25 +62,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         [InlineData(2, false)]
         public void IsInAProgrammeMeetsExpectation(int candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.AimType)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsInAProgramme(mockDelivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Determines whether [is funded meets expectation] [(for) the specified candidate].
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(TypeOfFunding.AdultSkills, true)]
         [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, true)]
@@ -172,26 +84,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         [InlineData(TypeOfFunding.OtherAdult, true)]
         public void IsFundedMeetsExpectation(int candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.FundModel)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsFunded(mockDelivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Conditions the met with financial record meets expectation.
-        /// </summary>
-        /// <param name="candidateType">Type of the candidate.</param>
-        /// <param name="candidateCode">The candidate code.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(null, 1, false)]
         [InlineData(null, 2, false)]
@@ -211,7 +114,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         [InlineData(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice, 4, true)]
         public void ConditionMetWithFinancialRecordMeetsExpectation(string candidateType, int candidateCode, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockFinRec = new Mock<IAppFinRecord>();
             mockFinRec
@@ -221,17 +123,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .SetupGet(x => x.AFinCode)
                 .Returns(candidateCode);
 
-            // act
             var result = sut.ConditionMet(mockFinRec.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidates">The candidates.</param>
         [Theory]
         [InlineData("PMR1", "PMR2")]
         [InlineData("TNP1", "TNP3")]
@@ -239,7 +135,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         [InlineData("PMR1", "TNP1", "TNP3", "PMR2", "PMR3")]
         public void InvalidItemRaisesValidationMessage(params string[] candidates)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var records = new List<IAppFinRecord>();
@@ -293,17 +188,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
 
             var sut = new AFinType_10Rule(mockHandler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             mockHandler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise a validation message.
-        /// </summary>
-        /// <param name="candidates">The candidates.</param>
         [Theory]
         [InlineData("PMR1", "PMR2", "TNP2")]
         [InlineData("TNP1", "TNP3", "TNP4")]
@@ -311,7 +200,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         [InlineData("PMR1", "TNP1", "TNP3", "TNP2", "PMR2", "PMR3")]
         public void ValidItemDoesNotRaiseAValidationMessage(params string[] candidates)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var records = new List<IAppFinRecord>();
@@ -360,17 +248,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
 
             var sut = new AFinType_10Rule(mockHandler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             mockHandler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public AFinType_10Rule NewRule()
         {
             var mock = new Mock<IValidationErrorHandler>();

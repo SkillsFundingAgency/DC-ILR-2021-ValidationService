@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +15,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             ILearningDelivery candidate,
             IReadOnlyCollection<ILearningDelivery> usingSources)
         {
-            It.IsNull(candidate)
-                .AsGuard<ArgumentNullException>(nameof(candidate));
-            It.IsNull(usingSources)
-                .AsGuard<ArgumentNullException>(nameof(usingSources));
-
             var latest = usingSources
                 .Where(x => IsCompletedQualifyingAim(x) && HasMatchingContractReference(x, candidate))
                 .OrderByDescending(x => x.LearnStartDate)

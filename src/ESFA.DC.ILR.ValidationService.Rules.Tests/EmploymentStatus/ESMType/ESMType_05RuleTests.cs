@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -12,82 +11,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
 {
     public class ESMType_05RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange / act / assert
-            Assert.Throws<ArgumentNullException>(() => new ESMType_05Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("ESMType_05", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(ESMType_05Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Is qualifying employment meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(TypeOfEmploymentStatus.InPaidEmployment, true)]
         [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, false)]
@@ -95,25 +28,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData(TypeOfEmploymentStatus.NotKnownProvided, false)]
         public void IsQualifyingEmploymentMeetsExpectation(int candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<ILearnerEmploymentStatus>();
             mockItem
                 .SetupGet(y => y.EmpStat)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsQualifyingEmployment(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Has disqualifying indicator meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor0To10HourPW, false)]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor11To20HoursPW, false)]
@@ -155,7 +80,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData("SEM2", false)]
         public void HasDisqualifyingIndicatorMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<IEmploymentStatusMonitoring>();
             mockItem
@@ -165,37 +89,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(candidate.Substring(3)));
 
-            // act
             var result = sut.HasDisqualifyingIndicator(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Has disqualifying indicator with null monitorings returns false
-        /// </summary>
         [Fact]
         public void HasDisqualifyingIndicatorWithNullMonitoringsReturnsFalse()
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<ILearnerEmploymentStatus>();
 
-            // act
             var result = sut.HasDisqualifyingIndicator(mockItem.Object);
 
-            // assert
             Assert.False(result);
         }
 
-        /// <summary>
-        /// Has disqualifying indicator with empty monitorings returns false
-        /// </summary>
         [Fact]
         public void HasDisqualifyingIndicatorWithEmptyMonitoringsReturnsFalse()
         {
-            // arrange
             var sut = NewRule();
 
             var monitorings = new List<IEmploymentStatusMonitoring>();
@@ -204,17 +116,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(x => x.EmploymentStatusMonitorings)
                 .Returns(monitorings);
 
-            // act
             var result = sut.HasDisqualifyingIndicator(mockItem.Object);
 
-            // assert
             Assert.False(result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(Monitoring.EmploymentStatus.UnemployedFor12To23M)]
         [InlineData(Monitoring.EmploymentStatus.UnemployedFor24To35M)]
@@ -225,7 +131,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData("LOU6")]
         public void InvalidItemRaisesValidationMessage(string candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var monitor = new Mock<IEmploymentStatusMonitoring>();
@@ -278,17 +183,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
 
             var sut = new ESMType_05Rule(handler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor4To6M)]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor7To12M)]
@@ -323,7 +222,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData("SEM2")]
         public void ValidItemDoesNotRaiseValidationMessage(string candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var monitor = new Mock<IEmploymentStatusMonitoring>();
@@ -360,17 +258,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
 
             var sut = new ESMType_05Rule(handler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public ESMType_05Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

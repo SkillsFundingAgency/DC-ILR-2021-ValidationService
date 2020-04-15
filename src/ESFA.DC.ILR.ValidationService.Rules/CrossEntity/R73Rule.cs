@@ -8,8 +8,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
@@ -27,22 +25,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             IDerivedData_17Rule dd17)
             : base(validationErrorHandler, RuleNameConstants.R73)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(commonOps)
-                .AsGuard<ArgumentNullException>(nameof(commonOps));
-            It.IsNull(dd17)
-                .AsGuard<ArgumentNullException>(nameof(dd17));
-
             _check = commonOps;
             _derivedData17 = dd17;
         }
 
         public void Validate(ILearner theLearner)
         {
-            It.IsNull(theLearner)
-                .AsGuard<ArgumentNullException>(nameof(theLearner));
-
             var learnRefNumber = theLearner.LearnRefNumber;
             var deliveries = GetQualifyingItemsFrom(theLearner.LearningDeliveries);
             var pmrTotals = GetPaymentRecordTotalsFor(deliveries);

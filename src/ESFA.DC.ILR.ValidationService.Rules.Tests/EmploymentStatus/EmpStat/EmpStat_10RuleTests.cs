@@ -15,57 +15,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
     public class EmpStat_10RuleTests
     {
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            var mockDDRule22 = new Mock<IDerivedData_22Rule>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new EmpStat_10Rule(null, mockDDRule22.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullDerivedDataRule22Throws()
-        {
-            var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new EmpStat_10Rule(mockHandler.Object, null));
-        }
-
-        [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             var sut = NewRule();
 
             var result = sut.RuleName;
 
             Assert.Equal("EmpStat_10", result);
-        }
-
-        [Fact]
-        public void RuleName2()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.Equal(EmpStat_10Rule.Name, result);
-        }
-
-        [Fact]
-        public void RuleName3()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            var sut = NewRule();
-
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Theory]

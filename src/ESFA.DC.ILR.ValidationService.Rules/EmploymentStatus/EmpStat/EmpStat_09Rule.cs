@@ -3,7 +3,6 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -24,11 +23,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             IValidationErrorHandler validationErrorHandler,
             IDerivedData_07Rule derivedData07)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(derivedData07)
-                .AsGuard<ArgumentNullException>(nameof(derivedData07));
-
             _messageHandler = validationErrorHandler;
             _derivedData07 = derivedData07;
         }
@@ -63,9 +57,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

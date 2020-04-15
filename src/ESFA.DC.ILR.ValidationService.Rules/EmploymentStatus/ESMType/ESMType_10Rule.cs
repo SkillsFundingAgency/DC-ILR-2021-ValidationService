@@ -2,7 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -20,8 +20,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public ESMType_10Rule(
             IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
+            
+                
 
             _messageHandler = validationErrorHandler;
         }
@@ -43,8 +43,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            
+                
 
             var learnRefNumber = objectToValidate.LearnRefNumber;
 

@@ -4,7 +4,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -27,10 +27,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             IProvideRuleCommonOperations commonOperations)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_19)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
+            
+                
+            
+                
 
             _check = commonOperations;
         }
@@ -59,8 +59,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            
+                
 
             var learnRefNumber = objectToValidate.LearnRefNumber;
             var employments = objectToValidate.LearnerEmploymentStatuses.ToReadOnlyCollection();

@@ -2,8 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,9 +16,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public R85Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
             _messageHandler = validationErrorHandler;
         }
 
@@ -37,9 +32,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public void Validate(IMessage message)
         {
-            It.IsNull(message)
-                .AsGuard<ArgumentNullException>(nameof(message));
-
             var learners = message.Learners.ToReadOnlyCollection();
             var dAndPs = message.LearnerDestinationAndProgressions.ToReadOnlyCollection();
 

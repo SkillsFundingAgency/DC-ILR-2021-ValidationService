@@ -6,8 +6,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,23 +28,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.LearnAimRef_72)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-            It.IsNull(fcsDataService)
-                .AsGuard<ArgumentNullException>(nameof(fcsDataService));
-            It.IsNull(larsDataService)
-                .AsGuard<ArgumentNullException>(nameof(larsDataService));
-
             _fcsData = fcsDataService;
             _larsData = larsDataService;
             _check = commonOperations;
         }
 
         public bool HasDisqualifyingSubjectSector(ILARSLearningDelivery larsDelivery, IReadOnlyCollection<IEsfEligibilityRuleSectorSubjectAreaLevel> subjectAreaLevels) =>
-            It.IsNull(larsDelivery)
+            larsDelivery == null
             || subjectAreaLevels.Any(x => HasDisqualifyingSubjectSector(x, larsDelivery));
 
         public bool HasDisqualifyingSubjectSector(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, ILARSLearningDelivery larsDelivery) =>
@@ -92,9 +80,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public void Validate(ILearner thisLearner)
         {
-            It.IsNull(thisLearner)
-                .AsGuard<ArgumentNullException>(nameof(thisLearner));
-
             var learnRefNumber = thisLearner.LearnRefNumber;
 
             thisLearner.LearningDeliveries

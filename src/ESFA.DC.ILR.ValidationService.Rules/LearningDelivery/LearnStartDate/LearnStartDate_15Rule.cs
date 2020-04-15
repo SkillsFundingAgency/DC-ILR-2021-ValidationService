@@ -5,7 +5,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -25,13 +25,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             IProvideRuleCommonOperations commonOperations)
             : base(validationErrorHandler, RuleNameConstants.LearnStartDate_15)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(derivedData22)
-                .AsGuard<ArgumentNullException>(nameof(derivedData22));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
             _derivedData22 = derivedData22;
             _check = commonOperations;
         }
@@ -48,9 +41,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         public void Validate(ILearner thisLearner)
         {
-            It.IsNull(thisLearner)
-                .AsGuard<ArgumentNullException>(nameof(thisLearner));
-
             var learnRefNumber = thisLearner.LearnRefNumber;
             var deliveries = thisLearner.LearningDeliveries.ToReadOnlyCollection();
 

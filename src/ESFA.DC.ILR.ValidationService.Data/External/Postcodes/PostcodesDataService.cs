@@ -4,7 +4,7 @@ using System.Linq;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
 {
@@ -19,9 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
 
         public PostcodesDataService(IExternalDataCache externalDataCache)
         {
-            It.IsNull(externalDataCache)
-                .AsGuard<ArgumentNullException>(nameof(externalDataCache));
-
             _externalDataCache = externalDataCache;
             _onsPostcodes = _externalDataCache.ONSPostcodes.ToReadOnlyCollection();
             _devolvedPostcodes = _externalDataCache.DevolvedPostcodes;

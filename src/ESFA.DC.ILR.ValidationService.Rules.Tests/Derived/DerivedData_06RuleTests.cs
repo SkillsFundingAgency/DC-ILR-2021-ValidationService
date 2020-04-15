@@ -1,7 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Rules.Derived;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using FluentAssertions;
 using System;
 using Xunit;

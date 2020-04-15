@@ -3,7 +3,6 @@ using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -17,20 +16,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
         public const string Name = RuleNameConstants.TTACCOM_02;
 
         private readonly IValidationErrorHandler _messageHandler;
-
         private readonly IProvideLookupDetails _lookupDetails;
-
         private readonly IDerivedData_06Rule _derivedData06;
 
         public TTACCOM_02Rule(IValidationErrorHandler validationErrorHandler, IProvideLookupDetails lookupDetails, IDerivedData_06Rule derivedData06)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(lookupDetails)
-                .AsGuard<ArgumentNullException>(nameof(lookupDetails));
-            It.IsNull(derivedData06)
-                .AsGuard<ArgumentNullException>(nameof(derivedData06));
-
             _messageHandler = validationErrorHandler;
             _lookupDetails = lookupDetails;
             _derivedData06 = derivedData06;
@@ -40,9 +30,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
             var learnerHE = objectToValidate.LearnerHEEntity;
             var tTAccom = learnerHE?.TTACCOMNullable;

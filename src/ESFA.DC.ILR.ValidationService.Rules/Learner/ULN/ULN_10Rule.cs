@@ -6,7 +6,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -28,17 +27,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             IProvideRuleCommonOperations commonOps)
             : base(validationErrorHandler, RuleNameConstants.ULN_10)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(academicDataQueryService)
-                .AsGuard<ArgumentNullException>(nameof(academicDataQueryService));
-            It.IsNull(dateTimeQueryService)
-                .AsGuard<ArgumentNullException>(nameof(dateTimeQueryService));
-            It.IsNull(fileDataService)
-                .AsGuard<ArgumentNullException>(nameof(fileDataService));
-            It.IsNull(commonOps)
-                .AsGuard<ArgumentNullException>(nameof(commonOps));
-
             FilePreparationDate = fileDataService.FilePreparationDate();
             FirstJanuary = academicDataQueryService.JanuaryFirst();
 
@@ -56,9 +44,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
 
         public void Validate(ILearner theLearner)
         {
-            It.IsNull(theLearner)
-                .AsGuard<ArgumentNullException>(nameof(theLearner));
-
             if (IsOutsideQualifyingPeriod() || IsValidULN(theLearner))
             {
                 return;

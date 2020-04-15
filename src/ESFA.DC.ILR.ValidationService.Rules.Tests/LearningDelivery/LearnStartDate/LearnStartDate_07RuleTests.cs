@@ -16,41 +16,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
     public class LearnStartDate_07RuleTests
     {
         [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             var sut = NewRule();
 
             var result = sut.RuleName;
 
             Assert.Equal("LearnStartDate_07", result);
-        }
-
-        [Fact]
-        public void RuleName2()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.Equal(RuleNameConstants.LearnStartDate_07, result);
-        }
-
-        [Fact]
-        public void RuleName3()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            var sut = NewRule();
-
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Theory]
@@ -741,17 +713,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
         public DateTime? GetNullableDate(string candidate) =>
             string.IsNullOrWhiteSpace(candidate) ? (DateTime?)null : DateTime.Parse(candidate);
-
-        //public LearnStartDate_07Rule NewRule()
-        //{
-        //    var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-        //    var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-        //    var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
-        //    var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-        //    var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
-
-        //    return new LearnStartDate_07Rule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryService.Object);
-        //}
 
         public LearnStartDate_07Rule NewRule(
             IValidationErrorHandler handler = null,

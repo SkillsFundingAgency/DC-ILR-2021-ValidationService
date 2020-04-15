@@ -15,55 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
     public class LearnAimRef_72RuleTests
     {
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            // arrange
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_72Rule(null, commonOps.Object, fcsData.Object, larsData.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullCommonOperationsThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_72Rule(handler.Object, null, fcsData.Object, larsData.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullFCSDataThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_72Rule(handler.Object, commonOps.Object, null, larsData.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullLARSDataThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_72Rule(handler.Object, commonOps.Object, fcsData.Object, null));
-        }
-
-        [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             // arrange
             var sut = NewRule();
@@ -73,42 +25,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             // assert
             Assert.Equal("LearnAimRef_72", result);
-        }
-
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(RuleNameConstants.LearnAimRef_72, result);
-        }
-
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Theory]

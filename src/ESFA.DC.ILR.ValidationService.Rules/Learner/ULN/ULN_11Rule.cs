@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -28,13 +27,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             IFileDataService fileDataService,
             IAcademicYearDataService yearService)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(fileDataService)
-                .AsGuard<ArgumentNullException>(nameof(fileDataService));
-            It.IsNull(yearService)
-                .AsGuard<ArgumentNullException>(nameof(yearService));
-
             _messageHandler = validationErrorHandler;
             _fileDataService = fileDataService;
             _yearService = yearService;
@@ -91,9 +83,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             if (IsExcluded(objectToValidate))
             {
                 return;

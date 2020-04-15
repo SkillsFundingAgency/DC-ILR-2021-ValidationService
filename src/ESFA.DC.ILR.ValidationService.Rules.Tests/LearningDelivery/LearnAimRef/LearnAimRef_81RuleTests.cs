@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -14,127 +13,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 {
     public class LearnAimRef_81RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_81Rule(null, service.Object, commonChecks.Object));
-        }
-
-        /// <summary>
-        /// New rule with null lars service throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullLARSServiceThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_81Rule(handler.Object, null, commonChecks.Object));
-        }
-
-        /// <summary>
-        /// New rule with null common checks throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullDerivedData07Throws()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_81Rule(handler.Object, service.Object, null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("LearnAimRef_81", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(LearnAimRef_81Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// First viable date meets expectation.
-        /// </summary>
         [Fact]
         public void FirstViableDateMeetsExpectation()
         {
-            // arrange / act
             var result = LearnAimRef_81Rule.FirstViableDate;
 
-            // assert
             Assert.Equal(DateTime.Parse("2016-08-01"), result);
         }
 
-        /// <summary>
-        /// Has disqualifying learning category meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(TypeOfLARSCategory.LegalEntitlementLevel2, false)]
         [InlineData(TypeOfLARSCategory.LicenseToPractice, true)]
@@ -143,31 +39,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         [InlineData(TypeOfLARSCategory.WorkPreparationSFATraineeships, false)]
         public void HasDisqualifyingLearningCategoryMeetsExpectation(int candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<ILARSLearningCategory>();
             mockItem
                 .SetupGet(y => y.CategoryRef)
                 .Returns(candidate);
 
-            // act
             var result = sut.HasDisqualifyingLearningCategory(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Has disqualifying learning category for delivery meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(null)]
         [InlineData("testAim1")]
         [InlineData("testAim2")]
         public void HasDisqualifyingLearningCategoryForDeliveryMeetsExpectation(string candidate)
         {
-            // arrange
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.LearnAimRef)
@@ -183,10 +71,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object);
 
-            // act
             var result = sut.HasDisqualifyingLearningCategory(mockDelivery.Object);
 
-            // assert
             handler.VerifyAll();
             service.VerifyAll();
             commonChecks.VerifyAll();
@@ -194,13 +80,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.False(result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
         [Fact]
         public void InvalidItemRaisesValidationMessage()
         {
-            // arrange
             const string learnRefNumber = "123456789X";
             const string learnAimRef = "salddfkjeifdnase";
 
@@ -247,7 +129,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.BuildErrorMessageParameter("ESMCode", 3))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            // it's this value that triggers the rule
             var mockLars = new Mock<ILARSLearningCategory>();
             mockLars
                 .SetupGet(x => x.CategoryRef)
@@ -293,22 +174,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             service.VerifyAll();
             commonChecks.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
         [Fact]
         public void ValidItemDoesNotRaiseValidationMessage()
         {
-            // arrange
             const string learnRefNumber = "123456789X";
             const string learnAimRef = "salddfkjeifdnase";
 
@@ -380,19 +255,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             service.VerifyAll();
             commonChecks.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public LearnAimRef_81Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

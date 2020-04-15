@@ -23,14 +23,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             Assert.Equal("LearnDelFAMType_64", result);
         }
 
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            var sut = NewRule();
-
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
         public DateTime? GetNullableDate(string candidate) =>
             string.IsNullOrWhiteSpace(candidate) ? (DateTime?)null : DateTime.Parse(candidate);
 

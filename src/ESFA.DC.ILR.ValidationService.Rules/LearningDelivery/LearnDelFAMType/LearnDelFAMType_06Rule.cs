@@ -5,7 +5,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
@@ -24,22 +24,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             IProvideRuleCommonOperations commonOperations)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_06)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(lookupDetails)
-                .AsGuard<ArgumentNullException>(nameof(lookupDetails));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
             _lookupDetails = lookupDetails;
             _check = commonOperations;
         }
 
         public void Validate(ILearner thisLearner)
         {
-            It.IsNull(thisLearner)
-                .AsGuard<ArgumentNullException>(nameof(thisLearner));
-
             thisLearner.LearningDeliveries
                 .ForAny(IsQualifyingDelivery, x => CheckDeliveryFAMs(x, y => RaiseValidationMessage(thisLearner.LearnRefNumber, x, y)));
         }
