@@ -1,11 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo
 {
@@ -38,7 +38,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo
         }
 
         public bool HasQualifyingFunding(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery,
+            _check.HasQualifyingFunding(
+                theDelivery,
                 TypeOfFunding.AdultSkills,
                 TypeOfFunding.ApprenticeshipsFrom1May2017,
                 TypeOfFunding.OtherAdult,

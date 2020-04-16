@@ -66,7 +66,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             }
 
             return false;
-        }           
+        }
 
         public bool FundModelConditionMet(int fundModel)
         {

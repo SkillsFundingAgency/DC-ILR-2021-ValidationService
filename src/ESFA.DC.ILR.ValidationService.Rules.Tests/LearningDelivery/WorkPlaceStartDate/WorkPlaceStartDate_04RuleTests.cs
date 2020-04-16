@@ -19,11 +19,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
             NewRule().RuleName.Should().Be("WorkPlaceStartDate_04");
         }
 
-       [Theory]
-       [InlineData("ZWRKX002", 35, true)]
-       [InlineData("ZWRKX123", 35, false)]
-       [InlineData("ZWRKX002", 25, false)]
-       [InlineData("ZWRKX123", 25, false)]
+        [Theory]
+        [InlineData("ZWRKX002", 35, true)]
+        [InlineData("ZWRKX123", 35, false)]
+        [InlineData("ZWRKX002", 25, false)]
+        [InlineData("ZWRKX123", 25, false)]
         public void LearnAimRefAndFundModelMeetsExpectation(string learnAimRef, int fundModel, bool expectation)
         {
             // arrange

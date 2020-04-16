@@ -42,7 +42,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public DateOfBirth_40Rule()
          : base(null, null)
         {
-
         }
 
         /// <summary>
@@ -60,18 +59,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
                 if (ConditionMet(
-                                 learningDelivery.FundModel, 
-                                 learningDelivery.AimType, 
-                                 learningDelivery.ProgTypeNullable, 
-                                 learningDelivery.OutcomeNullable, 
-                                 learningDelivery.LearnStartDate, 
-                                 learner.DateOfBirthNullable, 
-                                 learningDelivery.LearnActEndDateNullable, 
+                                 learningDelivery.FundModel,
+                                 learningDelivery.AimType,
+                                 learningDelivery.ProgTypeNullable,
+                                 learningDelivery.OutcomeNullable,
+                                 learningDelivery.LearnStartDate,
+                                 learner.DateOfBirthNullable,
+                                 learningDelivery.LearnActEndDateNullable,
                                  learningDelivery.LearningDeliveryFAMs))
                 {
                     RaiseValidationMessage(learner, learningDelivery);
                 }
-            }            
+            }
         }
 
         public virtual bool ConditionMet(int fundModel, int aimType, int? progType, int? outcome, DateTime startDate, DateTime? dateOfBirth, DateTime? actEndDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
@@ -112,7 +111,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         }
 
         public virtual bool AgeConditionMet(DateTime? dateOfBirth, DateTime startDate)
-        {           
+        {
             return dateOfBirth.HasValue && (_dateTimeQueryService.YearsBetween(dateOfBirth.Value, startDate)) >= MinAge;
         }
 

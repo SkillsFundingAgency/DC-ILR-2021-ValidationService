@@ -72,16 +72,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             return learnDelFAMDateTo.HasValue && achDate.HasValue && achDate != learnDelFAMDateTo;
         }
 
-        private DateTime? GetMaxLearnDelFAMDateTo(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
-        {
-            return learningDeliveryFAMs?
-                        .Where(f => f.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.ACT)
-                        && f.LearnDelFAMDateFromNullable.HasValue)
-                        .OrderByDescending(o => o.LearnDelFAMDateFromNullable)
-                        .FirstOrDefault()?
-                        .LearnDelFAMDateToNullable;
-        }
-
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string famType, DateTime? famDateTo, DateTime? achDate)
         {
             return new[]
@@ -90,6 +80,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMDateTo, famDateTo),
                 BuildErrorMessageParameter(PropertyNameConstants.AchDate, achDate)
             };
+        }
+
+        private DateTime? GetMaxLearnDelFAMDateTo(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        {
+            return learningDeliveryFAMs?
+                .Where(f => f.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.ACT)
+                            && f.LearnDelFAMDateFromNullable.HasValue)
+                .OrderByDescending(o => o.LearnDelFAMDateFromNullable)
+                .FirstOrDefault()?
+                .LearnDelFAMDateToNullable;
         }
     }
 }

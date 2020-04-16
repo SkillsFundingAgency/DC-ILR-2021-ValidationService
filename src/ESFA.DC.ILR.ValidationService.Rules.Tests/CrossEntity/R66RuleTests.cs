@@ -139,7 +139,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     PwayCodeNullable = 2,
                     StdCodeNullable = 3
                 }
-            };
+           };
 
             NewRule().ConditionMet(
                 aimType: TypeOfAim.AimNotPartOfAProgramme,

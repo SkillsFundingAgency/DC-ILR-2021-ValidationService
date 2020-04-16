@@ -1,8 +1,7 @@
-﻿using ESFA.DC.ILR.ValidationService.Data.Extensions;
-using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {

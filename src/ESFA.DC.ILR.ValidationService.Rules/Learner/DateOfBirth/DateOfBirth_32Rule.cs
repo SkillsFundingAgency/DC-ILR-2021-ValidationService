@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         {
             LearningDeliveryFAMCodeConstants.LDM_OLASS,
             LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy,
-            LearningDeliveryFAMCodeConstants.LDM_SolentCity            
+            LearningDeliveryFAMCodeConstants.LDM_SolentCity
         };
 
         private readonly IDerivedData_07Rule _dd07;
@@ -76,8 +76,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                     ukprn))
                 {
                     HandleValidationError(
-                        objectToValidate.LearnRefNumber, 
-                        learningDelivery.AimSeqNumber, 
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
                         BuildErrorMessageParameters(objectToValidate.DateOfBirthNullable, learningDelivery.FundModel));
                 }
             }
@@ -123,8 +123,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return  !(_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")
-                || _learningDeliveryFAMQueryService.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", _ldmCodes));      
+            return !(_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES") || _learningDeliveryFAMQueryService.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", _ldmCodes));
         }
 
         public bool LARSCategoryConditionMet(string learnAimRef)

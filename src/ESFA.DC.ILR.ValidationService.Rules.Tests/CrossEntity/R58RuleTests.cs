@@ -233,7 +233,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         LearnStartDate = new DateTime(2018, 8, 1),
                         LearnActEndDateNullable = new DateTime(2018, 10, 1)
                     },
-                   new TestLearningDelivery()
+                    new TestLearningDelivery()
                     {
                         AimSeqNumber = 2,
                         AimType = 5,

@@ -54,7 +54,7 @@
 
             public const string CoFundedLearningAim = "FFI2";
 
-            public const string HigherEducationFundingCouncilEngland = "SOF1";  
+            public const string HigherEducationFundingCouncilEngland = "SOF1";
 
             public const string ESFAAdultFunding = "SOF105";
 

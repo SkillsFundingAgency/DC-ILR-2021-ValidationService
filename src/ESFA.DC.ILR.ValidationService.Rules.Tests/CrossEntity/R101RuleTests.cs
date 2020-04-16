@@ -295,12 +295,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimSeqNumber = 1,
                         LearningDeliveryFAMs = learningDeliveryFAMs
                     },
-                     new TestLearningDelivery()
+                    new TestLearningDelivery()
                      {
                         AimSeqNumber = 2,
                         LearningDeliveryFAMs = learningDeliveryFAMs
-                    },
-               }
+                     },
+                }
             };
 
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();

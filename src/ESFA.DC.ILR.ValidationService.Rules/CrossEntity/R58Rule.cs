@@ -42,7 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 : true;
         }
 
-        public(bool Invalid, DateTime? LearnActEndDate) LearnActEndDateForOverlappingCoreAims(IEnumerable<ILearningDelivery> learningDeliveries)
+        public (bool Invalid, DateTime? LearnActEndDate) LearnActEndDateForOverlappingCoreAims(IEnumerable<ILearningDelivery> learningDeliveries)
         {
             if (learningDeliveries != null)
             {

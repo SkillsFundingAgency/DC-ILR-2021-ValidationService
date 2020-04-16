@@ -44,7 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
             LearningDeliveryHEConditionMet(learningDeliveryHE);
 
         public bool LearnerHEConditionMet(ILearnerHE learnerHE) =>
-            learnerHE == null 
+            learnerHE == null
             || !learnerHE.TTACCOMNullable.HasValue;
 
         public bool LearningDeliveryHEConditionMet(ILearningDeliveryHE learningDeliveryHE) =>

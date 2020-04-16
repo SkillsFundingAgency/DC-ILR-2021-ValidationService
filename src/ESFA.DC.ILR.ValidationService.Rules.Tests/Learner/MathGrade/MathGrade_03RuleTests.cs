@@ -235,7 +235,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.MathGrade
                     LearnFAMType = LearnerFAMTypeConstants.HNS,
                     LearnFAMCode = 101
                 }
-            };
+           };
 
             var learner = new TestLearner()
             {

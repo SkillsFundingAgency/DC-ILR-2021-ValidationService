@@ -1,4 +1,7 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -6,10 +9,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
@@ -55,7 +54,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
                 && IsComponentAim(theDelivery)
                 && IsApprenticeship(theDelivery)
                 && HasEarliestStart(earliestStart)
-                && !HasQualifyingFrameworkAim(FilteredFrameworkAimsFor(theDelivery, GetQualifyingFrameworksFor(theDelivery)), x=> IsCurrent(x, earliestStart.Value));
+                && !HasQualifyingFrameworkAim(
+                    FilteredFrameworkAimsFor(
+                    theDelivery,
+                    GetQualifyingFrameworksFor(theDelivery)),
+                    x => IsCurrent(x, earliestStart.Value));
 
         public bool IsExcluded(ILearningDelivery theDelivery) =>
             IsStandardApprenticeship(theDelivery)
@@ -96,8 +99,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
                 .ToReadOnlyCollection();
 
         public bool HasQualifyingFrameworkAim(IReadOnlyCollection<ILARSFrameworkAim> frameworkAims, Func<IReadOnlyCollection<ILARSFrameworkAim>, bool> isCurrent) =>
-            IsOutOfScope(frameworkAims) 
-            || isCurrent(frameworkAims);
+            IsOutOfScope(frameworkAims) || isCurrent(frameworkAims);
 
         public bool IsOutOfScope(IReadOnlyCollection<ILARSFrameworkAim> frameworkAims) =>
             frameworkAims.IsNullOrEmpty();

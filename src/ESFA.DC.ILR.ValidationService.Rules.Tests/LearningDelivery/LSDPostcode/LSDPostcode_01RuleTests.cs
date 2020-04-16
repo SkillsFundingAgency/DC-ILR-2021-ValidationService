@@ -160,7 +160,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
                 .ConditionMet(learnStartDate, fundModel, null, lsdPostcode, It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeFalse();
         }
 
-       [Fact]
+        [Fact]
         public void ValidateError()
         {
             var learnStartDate = new DateTime(2019, 8, 1);

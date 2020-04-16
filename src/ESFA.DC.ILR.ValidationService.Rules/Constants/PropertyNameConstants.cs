@@ -81,7 +81,7 @@
         public const string PCTLDCS = "PCFLDCS";
         public const string PHours = "PHours";
         public const string PlanEEPHours = "PlanEEPHours";
-        public const string PlanLearnHours = "PlanLearnHours";        
+        public const string PlanLearnHours = "PlanLearnHours";
         public const string ProvSpecDelMonOccur = "ProvSpecDelMonOccur";
         public const string PMUKPRN = "PMUKPRN";
         public const string Postcode = "Postcode";

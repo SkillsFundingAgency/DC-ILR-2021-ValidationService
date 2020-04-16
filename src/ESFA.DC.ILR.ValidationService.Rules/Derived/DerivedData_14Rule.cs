@@ -3,7 +3,6 @@ using System.Linq;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 
-
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
     public class DerivedData_14Rule : IDerivedData_14Rule

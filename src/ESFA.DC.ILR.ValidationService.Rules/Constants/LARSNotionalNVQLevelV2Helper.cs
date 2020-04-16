@@ -1,16 +1,9 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 {
-    /// <summary>
-    /// a lars notional nvq level v2 helper class
-    /// </summary>
     public static class LARSNotionalNVQLevelV2Helper
     {
-        /// <summary>
-        /// The notional level v2 map
-        /// </summary>
         private static readonly Dictionary<string, double> _notionalLevelV2Map = new Dictionary<string, double>
         {
             [LARSNotionalNVQLevelV2.EntryLevel] = TypeOfNotionalNVQLevelV2.EntryLevel,
@@ -28,11 +21,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
             [LARSNotionalNVQLevelV2.NotKnown] = TypeOfNotionalNVQLevelV2.NotKnown
         };
 
-        /// <summary>
-        /// As notional NVQ level v2.
-        /// </summary>
-        /// <param name="source">The source.</param>
-        /// <returns>a mapped notional nvq level v2 value</returns>
         public static double AsNotionalNVQLevelV2(this string source)
         {
             return string.IsNullOrWhiteSpace(source) || !_notionalLevelV2Map.ContainsKey(source)

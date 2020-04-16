@@ -26,7 +26,6 @@
 
         public const string ALLBC1819 = "ALLBC1819";
 
-
         public const string AEBC1920 = "AEBC1920";
 
         public const string AEB_LS1920 = "AEB-LS1920";

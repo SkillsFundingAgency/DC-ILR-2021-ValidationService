@@ -372,7 +372,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                         CompStatus = 1,
                         LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
                     },
-                     new TestLearningDelivery
+                    new TestLearningDelivery
                     {
                         LearnAimRef = "00118775",
                         AimSeqNumber = 2,

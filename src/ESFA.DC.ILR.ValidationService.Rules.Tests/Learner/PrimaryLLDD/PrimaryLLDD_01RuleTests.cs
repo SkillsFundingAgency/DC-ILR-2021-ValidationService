@@ -40,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PrimaryLLDD
                 {
                     LearnStartDate = new DateTime(2018, 01, 01)
                 },
-                 new TestLearningDelivery
+                new TestLearningDelivery
                 {
                     LearnStartDate = new DateTime(2015, 08, 01)
                 }
@@ -62,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PrimaryLLDD
                 {
                     LearnStartDate = new DateTime(2018, 01, 01)
                 },
-                 new TestLearningDelivery
+                new TestLearningDelivery
                 {
                     LearnStartDate = new DateTime(2009, 08, 01)
                 }
@@ -159,7 +159,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PrimaryLLDD
                 {
                     LearnStartDate = new DateTime(2018, 01, 01)
                 },
-                 new TestLearningDelivery
+                new TestLearningDelivery
                 {
                     LearnStartDate = new DateTime(2015, 08, 01)
                 }
@@ -198,7 +198,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PrimaryLLDD
                 {
                     LearnStartDate = new DateTime(year1, 01, 01)
                 },
-                 new TestLearningDelivery
+                new TestLearningDelivery
                 {
                     LearnStartDate = new DateTime(year2, 08, 01)
                 }
@@ -233,7 +233,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PrimaryLLDD
                 {
                     LearnStartDate = new DateTime(2018, 01, 01)
                 },
-                 new TestLearningDelivery
+                new TestLearningDelivery
                 {
                     LearnStartDate = new DateTime(2015, 08, 01)
                 }
@@ -278,7 +278,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PrimaryLLDD
                 {
                     LearnStartDate = new DateTime(2018, 01, 01)
                 },
-                 new TestLearningDelivery
+                new TestLearningDelivery
                 {
                     LearnStartDate = new DateTime(2015, 08, 01)
                 }

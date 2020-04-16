@@ -1,10 +1,9 @@
 ﻿using System;
-using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-
 
 namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
 {
@@ -20,9 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
         public DOMICILE_01Rule(
             IValidationErrorHandler validationErrorHandler)
         {
-            
-                
-
             _messageHandler = validationErrorHandler;
         }
 
@@ -41,9 +37,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
 
         public void Validate(ILearner objectToValidate)
         {
-            
-                
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

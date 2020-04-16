@@ -42,12 +42,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         /* Assumptions made for rule
          * 1. No matching Contract Allocations is OK, this will be caught by another rule
          * 2. There will not be multiple contract assignments with different Stop dates, so any failing contract should flag the violation
-         */ 
+         */
         public void Validate(ILearner objectToValidate)
         {
             var ukprn = _fileDataService.UKPRN();
 
-            // prepare contract allocations list before iterating the learning deliveries 
+            // prepare contract allocations list before iterating the learning deliveries
             var filteredContractAllocations = ContractAllocationsForUkprnAndFundingStreamPeriodCodes(ukprn);
 
             if (filteredContractAllocations == null || objectToValidate.LearningDeliveries == null)

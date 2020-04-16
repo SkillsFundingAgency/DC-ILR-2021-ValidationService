@@ -31,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
                     {
                         OutCollDate = new DateTime(2018, 08, 01)
                     },
-                        new TestDPOutcome
+                    new TestDPOutcome
                     {
                         OutCollDate = new DateTime(2019, 08, 01)
                     }
@@ -57,7 +57,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
                     {
                         OutCollDate = new DateTime(2018, 08, 01)
                     },
-                        new TestDPOutcome
+                    new TestDPOutcome
                     {
                         OutCollDate = new DateTime(2017, 08, 01)
                     }
@@ -83,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
                     {
                         OutCollDate = new DateTime(2018, 08, 01)
                     },
-                        new TestDPOutcome
+                    new TestDPOutcome
                     {
                         OutCollDate = new DateTime(2019, 08, 01)
                     }
@@ -112,7 +112,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.DestinationAndProgression.Ou
                     {
                         OutCollDate = new DateTime(2018, 08, 01)
                     },
-                        new TestDPOutcome
+                    new TestDPOutcome
                     {
                         OutCollDate = new DateTime(2017, 08, 01)
                     }

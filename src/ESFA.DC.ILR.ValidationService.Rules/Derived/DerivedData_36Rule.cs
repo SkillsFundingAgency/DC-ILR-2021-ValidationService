@@ -35,8 +35,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         private bool ProgAimCondition(int aimType) => aimType == TypeOfAim.ProgrammeAim;
+
         private bool ProgTypeCondition(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+
         private bool AchDateKNown(DateTime? achDate) => achDate.HasValue;
+
         private bool LearnActEndDateKnown(DateTime? learnActEndDate) => learnActEndDate.HasValue;
     }
 }

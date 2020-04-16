@@ -175,15 +175,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+           var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            learningDeliveryFAMsQueryServiceMock
+           learningDeliveryFAMsQueryServiceMock
                 .Setup(s => s.HasLearningDeliveryFAMCodeForType(
                     It.IsAny<List<ILearningDeliveryFAM>>(),
                     LearningDeliveryFAMTypeConstants.LDM,
                     LearningDeliveryFAMCodeConstants.LDM_Pilot)).Returns(true);
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+           using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
                 NewRule(validationErrorHandlerMock.Object, learningDeliveryFAMsQueryServiceMock.Object).Validate(learner);
             }

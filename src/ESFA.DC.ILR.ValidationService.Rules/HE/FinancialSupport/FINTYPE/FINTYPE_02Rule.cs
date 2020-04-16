@@ -1,12 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.HE.FinancialSupport.FINTYPE
 {
@@ -23,11 +22,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.FinancialSupport.FINTYPE
 
         public FINTYPE_02Rule(IValidationErrorHandler validationErrorHandler, IProvideLookupDetails lookupDetails)
         {
-            
-                
-            
-                
-
             _messageHandler = validationErrorHandler;
             _lookupDetails = lookupDetails;
         }
@@ -36,9 +30,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.FinancialSupport.FINTYPE
 
         public void Validate(ILearner objectToValidate)
         {
-            
-                
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
             var learnerHE = objectToValidate.LearnerHEEntity;
             var financialSupport = learnerHE?.LearnerHEFinancialSupports;

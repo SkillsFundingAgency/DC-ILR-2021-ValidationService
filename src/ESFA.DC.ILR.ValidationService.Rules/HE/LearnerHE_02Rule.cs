@@ -1,10 +1,9 @@
-﻿using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Constants;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.HE
 {
@@ -19,9 +18,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE
 
         public LearnerHE_02Rule(IValidationErrorHandler validationErrorHandler)
         {
-            
-                
-
             _messageHandler = validationErrorHandler;
         }
 
@@ -29,9 +25,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE
 
         public void Validate(ILearner objectToValidate)
         {
-            
-                
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
             var learnerHE = objectToValidate.LearnerHEEntity;
             var learningDeliveries = objectToValidate.LearningDeliveries;

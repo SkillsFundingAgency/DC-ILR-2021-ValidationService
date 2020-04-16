@@ -1,12 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 {
@@ -25,11 +24,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             IValidationErrorHandler validationErrorHandler,
             IProvideRuleCommonOperations commonOperations)
         {
-            
-                
-            
-                
-
             _messageHandler = validationErrorHandler;
             _check = commonOperations;
         }
@@ -67,9 +61,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public void Validate(ILearner objectToValidate)
         {
-            
-                
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
             var qualifyingDate = GetLastestQualifyingDate(objectToValidate.LearningDeliveries);
 

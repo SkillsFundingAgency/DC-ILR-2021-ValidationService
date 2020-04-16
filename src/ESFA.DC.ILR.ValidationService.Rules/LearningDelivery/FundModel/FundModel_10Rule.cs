@@ -52,7 +52,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.SOF),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, learnDelFAMCode),
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel)
-
             };
         }
     }

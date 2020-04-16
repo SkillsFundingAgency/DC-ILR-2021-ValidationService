@@ -21,10 +21,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             NewRule().RuleName.Should().Be(RuleNameConstants.LearnDelFAMType_74);
         }
 
-       [Theory]
-       [InlineData("ACT", "105")]
-       [InlineData("SOF", "110")]
-       [InlineData("ACT", "110")]
+        [Theory]
+        [InlineData("ACT", "105")]
+        [InlineData("SOF", "110")]
+        [InlineData("ACT", "110")]
         public void HasDisqualifyingMonitor_True(string famType, string famCode)
         {
             var learningDeliveryFAMs = new TestLearningDeliveryFAM[]

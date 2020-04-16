@@ -1,12 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceEmpId
 {
@@ -26,7 +25,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceEmpId
            _fileDataService = fileDataService;
         }
 
-        public TimeSpan SixtyDays => new TimeSpan(60, 0, 0, 0);   
+        public TimeSpan SixtyDays => new TimeSpan(60, 0, 0, 0);
 
         public bool IsQualifyingProgramme(ILearningDelivery delivery) =>
             delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
@@ -35,7 +34,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceEmpId
             (_fileDataService.FilePreparationDate() - placement.WorkPlaceStartDate) > SixtyDays;
 
         public bool RequiresEmployerRegistration(ILearningDeliveryWorkPlacement placement) =>
-            
             placement.WorkPlaceEmpIdNullable == TemporaryEmpID;
 
         public bool IsNotValid(ILearningDeliveryWorkPlacement placement) =>

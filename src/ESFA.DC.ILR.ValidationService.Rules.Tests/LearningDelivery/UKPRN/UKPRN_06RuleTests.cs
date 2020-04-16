@@ -276,7 +276,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
                     LearnDelFAMCode = "357"
                 },
-                 new TestLearningDeliveryFAM
+                new TestLearningDeliveryFAM
                 {
                     LearnDelFAMType = LearningDeliveryFAMTypeConstants.SOF,
                     LearnDelFAMCode = "110"

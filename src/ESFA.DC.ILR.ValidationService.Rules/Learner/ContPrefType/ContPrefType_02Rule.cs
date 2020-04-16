@@ -1,10 +1,9 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
 {
@@ -33,14 +32,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
              ContactPreference.NoContactDueToDeath
         };
 
-
         private readonly IValidationErrorHandler _messageHandler;
 
         public ContPrefType_02Rule(IValidationErrorHandler validationErrorHandler)
         {
-            
-                
-
             _messageHandler = validationErrorHandler;
         }
 
@@ -63,9 +58,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
 
         public void Validate(ILearner objectToValidate)
         {
-            
-                
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             if (HasConflictingContactIndicators(objectToValidate))

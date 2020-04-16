@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Constants;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
-    /// <summary>
-    /// Gets Validity Category for LearningDelivery based on Table1 worksheet in ILR Validation Rules
-    /// </summary>
     public class DerivedData_ValidityCategory : IDerivedData_ValidityCategory
     {
         private readonly DateTime _firstAugust2011 = new DateTime(2011, 08, 01);
@@ -31,7 +28,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public string Derive(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            // Every category condition excludes RES, so perform this check first and drop out if found. 
             if (HasRestartFAMType(learningDelivery.LearningDeliveryFAMs))
             {
                 return null;
@@ -45,17 +41,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             if (CommunityLearningMatch(learningDelivery))
             {
                 return TypeOfLARSValidity.CommunityLearning;
-            };
+            }
 
             if (ESFMatch(learningDelivery))
             {
                 return TypeOfLARSValidity.EuropeanSocialFund;
-            };
+            }
 
             if (EFA16To19Match(learningDelivery))
             {
                 return TypeOfLARSValidity.EFA16To19;
-            };
+            }
 
             if (AdvancedLearnerLoanMatch(learningDelivery))
             {
