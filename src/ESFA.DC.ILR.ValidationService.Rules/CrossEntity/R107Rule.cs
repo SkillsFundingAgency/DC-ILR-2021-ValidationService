@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         IRule<IMessage>
     {
         public const string Name = RuleNameConstants.R107;
-        private readonly List<int> _fundModels = new List<int>
+        private readonly HashSet<int> _fundModels = new HashSet<int>
         {
             TypeOfFunding.Age16To19ExcludingApprenticeships,
             TypeOfFunding.AdultSkills,
