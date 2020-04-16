@@ -81,7 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 && (learningDelivery.LearningDeliveryFAMs != null && LearningDeliveryFAMsConditionMet(learningDelivery.LearningDeliveryFAMs))
                 && (!progType.HasValue || DD07ConditionMet(progType.Value))
                 && (learningDelivery.LearningDeliveryFAMs != null && DD35ConditionMet(learningDelivery))
-                && (!learnActEndDate.HasValue || LearnActEndDateConditionMet(learnActEndDate.Value, academicYearStart))                      
+                && (!learnActEndDate.HasValue || LearnActEndDateConditionMet(learnActEndDate.Value, academicYearStart))
                 && FCTFundingConditionMet();
         }
 
@@ -96,7 +96,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 !(_learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, _ldm034)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, _ldm357));
         }
-        
+
         public virtual bool DD07ConditionMet(int progType)
         {
             return !_dd07.IsApprenticeship(progType);

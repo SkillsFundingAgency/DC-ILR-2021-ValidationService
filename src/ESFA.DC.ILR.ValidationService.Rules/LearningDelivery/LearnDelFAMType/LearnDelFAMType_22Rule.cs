@@ -1,21 +1,21 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_22Rule :
         IRule<ILearner>
     {
+        public const string Name = RuleNameConstants.LearnDelFAMType_22;
+
         public HashSet<int> _fundModels = new HashSet<int>
         {
             TypeOfFunding.AdultSkills,
             TypeOfFunding.OtherAdult
         };
-
-        public const string Name = RuleNameConstants.LearnDelFAMType_22;
 
         private readonly IValidationErrorHandler _messageHandler;
 

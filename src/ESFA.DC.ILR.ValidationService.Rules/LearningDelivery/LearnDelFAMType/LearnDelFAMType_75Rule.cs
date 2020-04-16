@@ -46,7 +46,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                             BuildErrorMessageParameters(LearningDeliveryFAMTypeConstants.LDM, learningDeliveryFam.LearnDelFAMCode));
                     }
                 }
-                
             }
         }
 
@@ -59,7 +58,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             return learningDeliveryFam.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.LDM) &&
                 _famCodes.Contains(learningDeliveryFam.LearnDelFAMCode);
-
         }
 
         public virtual bool DD35ConditionMet(ILearningDelivery learningDelivery)
@@ -67,7 +65,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             return _dd35.IsCombinedAuthorities(learningDelivery);
         }
 
-      
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string learnDelFamType, string learnDelFamCode)
         {
             return new[]

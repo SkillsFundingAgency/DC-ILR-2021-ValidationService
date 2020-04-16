@@ -32,10 +32,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 if (ConditionMet(
-                            learningDelivery.AimType, 
-                            learningDelivery.FundModel, 
+                            learningDelivery.AimType,
+                            learningDelivery.FundModel,
                             learningDelivery.ProgTypeNullable,
-                            learningDelivery.LearnActEndDateNullable, 
+                            learningDelivery.LearnActEndDateNullable,
                             learningDelivery.AchDateNullable))
                 {
                     HandleValidationError(
@@ -46,8 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
                                              learningDelivery.FundModel,
                                              learningDelivery.ProgTypeNullable,
                                              learningDelivery.LearnActEndDateNullable,
-                                             learningDelivery.AchDateNullable
-                                             ));
+                                             learningDelivery.AchDateNullable));
                 }
             }
         }

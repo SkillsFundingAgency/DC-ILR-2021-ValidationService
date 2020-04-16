@@ -1,4 +1,6 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -6,8 +8,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 {
@@ -19,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             TypeOfFunding.OtherAdult,
             TypeOfFunding.NotFundedByESFA
         };
-       
+
         private readonly IDerivedData_07Rule _derivedData07;
         private readonly IAcademicYearDataService _yearData;
         private readonly IDateTimeQueryService _dateTimeQueryService;
@@ -40,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public DateTime LastViableDate => new DateTime(2014, 07, 31);
 
-        public TimeSpan LastInviableAge => new TimeSpan(6939, 0, 0, 0);       
+        public TimeSpan LastInviableAge => new TimeSpan(6939, 0, 0, 0);
 
         public bool CheckDeliveryFAMs(ILearningDelivery delivery, Func<ILearningDeliveryFAM, bool> matchCondition) =>
             delivery.LearningDeliveryFAMs.NullSafeAny(matchCondition);

@@ -33,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless
                 // Registering a service maps a service type name to a .NET type.
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.
-               var builder = BuildContainer();
+                var builder = BuildContainer();
 
                 // Register the Autofac magic for Service Fabric support.
                 builder.RegisterServiceFabricSupport();

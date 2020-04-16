@@ -20,10 +20,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
             NewRule().RuleName.Should().Be("WorkPlaceStartDate_02");
         }
 
-       [Theory]
-       [InlineData("2018-10-10", "2018-09-10")]
-       [InlineData("2018-10-10", "2018-10-09")]
-       [InlineData("2018-10-10", "2017-10-10")]
+        [Theory]
+        [InlineData("2018-10-10", "2018-09-10")]
+        [InlineData("2018-10-10", "2018-10-09")]
+        [InlineData("2018-10-10", "2017-10-10")]
         public void ConditionMet_True(string learnStarDate, string workplaceStartDate)
         {
            NewRule().ConditionMet(DateTime.Parse(learnStarDate), DateTime.Parse(workplaceStartDate)).Should().BeTrue();

@@ -6,7 +6,6 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 
-
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 {
     public class ProgType_03Rule :

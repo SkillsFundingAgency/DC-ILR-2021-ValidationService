@@ -42,10 +42,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
             NewRule().TNP4Exists(appFinRecords).Should().BeTrue();
         }
 
-       [Theory]
-       [InlineData("TNP", "PMR", 4)]
-       [InlineData("PMR", "PMR", 4)]
-       [InlineData("TNP", "TNP", 1)]
+        [Theory]
+        [InlineData("TNP", "PMR", 4)]
+        [InlineData("PMR", "PMR", 4)]
+        [InlineData("TNP", "TNP", 1)]
         public void TNP4Exists_False(string aFinType1, string aFinType2, int aFinCode)
         {
             var appFinRecords = new List<TestAppFinRecord>

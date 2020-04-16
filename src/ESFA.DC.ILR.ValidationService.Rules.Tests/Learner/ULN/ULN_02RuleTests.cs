@@ -133,7 +133,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                             }
                         }
                     },
-                }
+                            }
             };
 
             var fams = learner.LearningDeliveries.SelectMany(ld => ld.LearningDeliveryFAMs);

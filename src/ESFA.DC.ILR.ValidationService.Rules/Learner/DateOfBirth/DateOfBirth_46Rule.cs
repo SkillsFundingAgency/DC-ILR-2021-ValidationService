@@ -93,7 +93,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         }
 
         public bool DateOfBirthConditionMet(DateTime? dateOfBirth, DateTime learnStartDate)
-        {  
+        {
             return dateOfBirth.HasValue
                 && _dateTimeQueryService.YearsBetween((DateTime)dateOfBirth, learnStartDate) >= _age;
         }

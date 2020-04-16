@@ -1,12 +1,12 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
@@ -34,13 +34,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                     RaiseValidationMessage(learnRefNumber, x, latestFAMDateTo);
                 });
         }
-        
+
         public DateTime? GetLatestFAMDateTo(IEnumerable<ILearningDeliveryFAM> fromMonitors) =>
             _learningDeliveryFamQueryService.GetLearningDeliveryFAMsForType(fromMonitors, LearningDeliveryFAMTypeConstants.ACT)
                 .OrderByDescending(x => x.LearnDelFAMDateFromNullable)
                 .FirstOrDefault()?
                 .LearnDelFAMDateToNullable;
-        
+
         public bool ConditionMet(ILearningDelivery theDelivery) =>
             FundModelConditionMet(theDelivery.FundModel)
             && ProgTypeConditionMet(theDelivery.ProgTypeNullable)
@@ -73,9 +73,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, errorMessageParameters);
         }
-            
 
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParametersFor(int compStatus, DateTime? learnDelFamDateTo, DateTime? achDate, DateTime? learnActEndDate) 
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParametersFor(int compStatus, DateTime? learnDelFamDateTo, DateTime? achDate, DateTime? learnActEndDate)
             => new[]
         {
             BuildErrorMessageParameter(PropertyNameConstants.CompStatus, compStatus),

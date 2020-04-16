@@ -1,12 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
 {
@@ -19,8 +18,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
         public ContPrefType_04Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.ContPrefType_04)
         {
-            
-                
         }
 
         public bool HasPreGDPRMerchandisingCodes(IContactPreference preference)
@@ -34,11 +31,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
         public bool HasPostGDPRMerchandisingCodes(IContactPreference preference)
         {
             var code = $"{preference.ContPrefType}{preference.ContPrefCode}";
-            
+
             return code.CaseInsensitiveEquals(ContactPreference.AgreesContactCoursesOrOpportunitiesPostGDPR)
                 || code.CaseInsensitiveEquals(ContactPreference.AgreesContactSurveysAndResearchPostGDPR);
         }
-           
 
         public bool IsNotValid(IReadOnlyCollection<IContactPreference> preferences) =>
             preferences.Any(HasPreGDPRMerchandisingCodes)
@@ -46,9 +42,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
 
         public void Validate(ILearner thisLearner)
         {
-            
-                
-
             var learnRefNumber = thisLearner.LearnRefNumber;
 
             if (IsNotValid(thisLearner.ContactPreferences.ToReadOnlyCollection()))

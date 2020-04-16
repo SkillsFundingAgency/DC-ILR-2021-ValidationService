@@ -59,7 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     "BSI",
                     It.IsAny<IEnumerable<int>>())).Returns(true);
 
-         NewRule(learnerEmploymentStatusMonitoringQueryServiceMock.Object)
+            NewRule(learnerEmploymentStatusMonitoringQueryServiceMock.Object)
                 .IsAdultSkillsFundedOnBenefits(learnerEmploymentStatuses, learningDelivery).Should().BeTrue();
 
             learnerEmploymentStatusMonitoringQueryServiceMock.Verify(
@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 Times.Once);
         }
 
-       [Fact]
+        [Fact]
         public void IsAdultSkillsFundedOnBenefits_True_LDM()
         {
             var learningDelivery = new TestLearningDelivery()

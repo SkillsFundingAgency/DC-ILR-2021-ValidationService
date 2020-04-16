@@ -1,14 +1,13 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
@@ -26,7 +25,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_67)
         {
-
             _check = commonOps;
             _larsData = larsDataService;
         }
@@ -82,14 +80,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsLearningSupportFunding(ILearningDeliveryFAM theMonitor) =>
             theMonitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.LearningSupportFunding);
 
-        private void RaiseValidationMessage(string learnRefNum, ILearningDelivery theDelivery) =>
-            HandleValidationError(learnRefNum, theDelivery.AimSeqNumber, BuildMessageParametersfor(theDelivery));
-
         public IEnumerable<IErrorMessageParameter> BuildMessageParametersfor(ILearningDelivery theDelivery) => new[]
         {
             BuildErrorMessageParameter(PropertyNameConstants.AimType, theDelivery.AimType),
             BuildErrorMessageParameter(PropertyNameConstants.FundModel, theDelivery.FundModel),
             BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, Monitoring.Delivery.Types.LearningSupportFunding)
         };
+
+        private void RaiseValidationMessage(string learnRefNum, ILearningDelivery theDelivery) =>
+            HandleValidationError(learnRefNum, theDelivery.AimSeqNumber, BuildMessageParametersfor(theDelivery));
     }
 }

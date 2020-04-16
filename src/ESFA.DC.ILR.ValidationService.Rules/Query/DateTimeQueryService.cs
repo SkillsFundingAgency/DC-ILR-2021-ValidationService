@@ -60,6 +60,5 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                ? candidate >= min && candidate <= max
                : candidate > min && candidate < max;
         }
-           
     }
 }

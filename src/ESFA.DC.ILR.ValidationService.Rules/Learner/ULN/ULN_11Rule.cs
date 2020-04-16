@@ -1,11 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
 {
@@ -34,9 +34,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
 
         public string RuleName => Name;
 
-        public TimeSpan FiveDays => new TimeSpan(5, 0, 0, 0);   
+        public TimeSpan FiveDays => new TimeSpan(5, 0, 0, 0);
 
-        public TimeSpan SixtyDays => new TimeSpan(60, 0, 0, 0);   
+        public TimeSpan SixtyDays => new TimeSpan(60, 0, 0, 0);
 
         public bool CheckDeliveryFAMs(ILearningDelivery delivery, Func<ILearningDeliveryFAM, bool> matchCondition) =>
             delivery.LearningDeliveryFAMs.NullSafeAny(matchCondition);

@@ -1,10 +1,9 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.DateEmpStatApp
 {
@@ -17,9 +16,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.DateEmpStatApp
 
         public DateEmpStatApp_02Rule(IValidationErrorHandler validationErrorHandler)
         {
-            
-                
-
             _messageHandler = validationErrorHandler;
         }
 
@@ -35,9 +31,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.DateEmpStatApp
 
         public void Validate(ILearner objectToValidate)
         {
-            
-                
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearnerEmploymentStatuses

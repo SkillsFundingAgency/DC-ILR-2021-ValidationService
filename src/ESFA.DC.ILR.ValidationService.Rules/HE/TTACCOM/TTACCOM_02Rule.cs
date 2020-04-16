@@ -1,10 +1,10 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
 {
@@ -45,12 +45,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
         public bool ConditionMet(int? tTAccom, DateTime referenceDate)
         {
             if (!tTAccom.HasValue)
-            {                 
+            {
                 return true;
             }
 
             if (!_lookupDetails.Contains(TypeOfLimitedLifeLookup.TTAccom, tTAccom.Value))
-            {                 
+            {
                 return true;
             }
 

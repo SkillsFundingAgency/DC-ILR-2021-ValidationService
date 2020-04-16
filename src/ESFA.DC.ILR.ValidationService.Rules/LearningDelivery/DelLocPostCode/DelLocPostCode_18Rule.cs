@@ -43,12 +43,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-
                 var latestLearningStart = _derivedData22.GetLatestLearningStartForESFContract(learningDelivery, learner.LearningDeliveries);
 
                 var partnerships = _fcsDataService.GetEligibilityRuleEnterprisePartnershipsFor(learningDelivery.ConRefNumber);
 
-                if(!partnerships.Any())
+                if (!partnerships.Any())
                 {
                     break;
                 }
@@ -61,8 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
                     && ConditionMetStartDate(learningDelivery.LearnStartDate)
                     && ConditionMetFundModel(learningDelivery.FundModel)
                     && (ConditionMetONSPostcode(latestLearningStart, onsPostcodesMatchinglocalEnterprisePartnerships)
-                        || ConditionMetPartnership(partnerships, onsPostCode)
-                    ))
+                        || ConditionMetPartnership(partnerships, onsPostCode)))
                 {
                     HandleValidationError(
                         learner.LearnRefNumber,

@@ -36,10 +36,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 {
                     continue;
                 }
-                
+
                 if (ConditionMet(
-                               learningDelivery.FundModel, 
-                               learningDelivery.LearnActEndDateNullable, 
+                               learningDelivery.FundModel,
+                               learningDelivery.LearnActEndDateNullable,
                                learningDelivery.LearningDeliveryFAMs))
                 {
                     var learnDelFAMDateTo = GetLearnDelFAMDate(learningDelivery.LearningDeliveryFAMs)?.LearnDelFAMDateToNullable;

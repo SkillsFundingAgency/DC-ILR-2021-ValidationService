@@ -29,7 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 var learnRefNumber = theLearner.LearnRefNumber;
 
                 var errorLearningDeliveries = CompareAgainstOtherDeliveries(learningDeliveries, ConditionMet);
-                
+
                 foreach (var learningDelivery in errorLearningDeliveries)
                 {
                     RaiseValidationMessage(learnRefNumber, learningDelivery);

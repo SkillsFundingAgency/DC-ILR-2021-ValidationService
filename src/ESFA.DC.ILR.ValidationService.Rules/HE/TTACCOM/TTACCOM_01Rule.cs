@@ -1,8 +1,8 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
 {

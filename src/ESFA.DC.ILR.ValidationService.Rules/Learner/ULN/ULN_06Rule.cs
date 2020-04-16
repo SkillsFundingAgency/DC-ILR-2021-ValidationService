@@ -1,4 +1,6 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
@@ -6,8 +8,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
 {
@@ -15,8 +15,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
         AbstractRule,
         IRule<ILearner>
     {
-        private readonly IDateTimeQueryService _dateTimeQuery;
+        public const int MinimumCourseDuration = 5;
+        public const int RuleLeniencyPeriod = 60;
 
+        private readonly IDateTimeQueryService _dateTimeQuery;
         private readonly IProvideRuleCommonOperations _check;
 
         public ULN_06Rule(
@@ -33,10 +35,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             _dateTimeQuery = dateTimeQueryService;
             _check = commonOps;
         }
-
-        public const int MinimumCourseDuration = 5;  
-
-        public const int RuleLeniencyPeriod = 60;  
 
         public DateTime FilePreparationDate { get; }
 

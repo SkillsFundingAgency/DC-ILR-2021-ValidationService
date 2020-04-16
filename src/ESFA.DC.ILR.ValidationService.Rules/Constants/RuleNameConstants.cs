@@ -23,7 +23,6 @@
 
         public const string Addline1_03 = "Addline1_03";
 
-
         public const string AFinDate_03 = "AFinDate_03";
         public const string AFinDate_04 = "AFinDate_04";
         public const string AFinDate_05 = "AFinDate_05";
@@ -167,7 +166,7 @@
 
         public const string EPAOrgID_01 = "EPAOrgID_01";
         public const string EPAOrgID_02 = "EPAOrgID_02";
-        public const string EPAOrgID_03 = "EPAOrgID_03"; 
+        public const string EPAOrgID_03 = "EPAOrgID_03";
 
         public const string ESMType_01 = "ESMType_01";
         public const string ESMType_02 = "ESMType_02";

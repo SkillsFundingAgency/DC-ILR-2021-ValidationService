@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         {
             var ukprn = _fileDataService.UKPRN();
 
-            // prepare contract allocations list before iterating the learning deliveries 
+            // prepare contract allocations list before iterating the learning deliveries
             var filteredContractAllocations = ContractAllocationsForUkprnAndFundingStreamPeriodCodes(ukprn);
 
             if (filteredContractAllocations == null || objectToValidate.LearningDeliveries == null)
@@ -59,9 +59,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         {
             var contractAllocations = _fcsDataService.GetContractAllocationsFor(ukprn);
 
-            return contractAllocations?.Where(ca => ca != null &&_fundingStreamPeriodCode.Equals(ca.FundingStreamPeriodCode, StringComparison.OrdinalIgnoreCase)).ToList();
+            return contractAllocations?.Where(ca => ca != null
+            && _fundingStreamPeriodCode.Equals(ca.FundingStreamPeriodCode, StringComparison.OrdinalIgnoreCase)).ToList();
         }
-
 
         public bool ConditionMet(string learnConRef, DateTime learnStartDate, IEnumerable<IFcsContractAllocation> contractAllocations)
         {

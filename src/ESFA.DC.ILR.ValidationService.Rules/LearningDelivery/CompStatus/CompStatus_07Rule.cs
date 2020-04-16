@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
 {
@@ -20,13 +20,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
         {
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (ConditionMet(learningDelivery.AimType, learningDelivery.FundModel,
-                                    learningDelivery.ProgTypeNullable, learningDelivery.CompStatus,
-                                    learningDelivery.LearnActEndDateNullable, learningDelivery.AchDateNullable))
+                if (ConditionMet(
+                    learningDelivery.AimType,
+                    learningDelivery.FundModel,
+                    learningDelivery.ProgTypeNullable,
+                    learningDelivery.CompStatus,
+                    learningDelivery.LearnActEndDateNullable,
+                    learningDelivery.AchDateNullable))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber,
-                                            BuildErrorMessageParameters(learningDelivery.FundModel, learningDelivery.ProgTypeNullable,
-                                                                        learningDelivery.CompStatus, learningDelivery.LearnStartDate, learningDelivery.AchDateNullable));
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(
+                            learningDelivery.FundModel,
+                            learningDelivery.ProgTypeNullable,
+                            learningDelivery.CompStatus,
+                            learningDelivery.LearnStartDate,
+                            learningDelivery.AchDateNullable));
                 }
             }
         }

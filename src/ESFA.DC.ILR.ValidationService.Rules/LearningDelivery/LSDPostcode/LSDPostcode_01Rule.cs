@@ -55,13 +55,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public bool ConditionMet(DateTime learnStartDate, int fundModel, int? ProgType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return 
+            return
                 LearnStartDateConditionMet(learnStartDate)
                 && FundModelConditionMet(fundModel)
                 && PostcodeConditionMet(lsdPostcode)
                 && !IsExcluded(ProgType, lsdPostcode, learningDeliveryFAMs);
         }
-          
+
         public bool LearnStartDateConditionMet(DateTime learnStartDate) => learnStartDate >= _firstAugust2019;
 
         public bool FundModelConditionMet(int fundModel) => _fundModels.Contains(fundModel);

@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
     {
         private readonly string _famTypeACT = Monitoring.Delivery.Types.ApprenticeshipContract;
 
-        public R104Rule( IValidationErrorHandler validationErrorHandler)
+        public R104Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.R104)
         {
         }
@@ -55,7 +55,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                             learningDeliveryFAM.LearnDelFAMDateFromNullable,
                             learningDeliveryFAM.LearnDelFAMDateToNullable));
                 }
-
             }
         }
 

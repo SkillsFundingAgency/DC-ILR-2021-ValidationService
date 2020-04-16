@@ -20,9 +20,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 
         public const int ApprenticeshipStandard = 25;
 
-        public static int MaximumTrainingDuration => -6;   
+        public static int MaximumTrainingDuration => -6;
 
-        public static int MaximumOpenTrainingDuration => -8;   
+        public static int MaximumOpenTrainingDuration => -8;
 
         public static DateTime MininumViableTrainingStartDate => new DateTime(2015, 08, 01);
 

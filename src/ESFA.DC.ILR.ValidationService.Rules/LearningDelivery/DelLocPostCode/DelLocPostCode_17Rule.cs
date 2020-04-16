@@ -43,7 +43,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-
                 var latestLearningStart = _derivedData22.GetLatestLearningStartForESFContract(learningDelivery, learner.LearningDeliveries);
 
                 var localAuthorities = _fcsDataService.GetEligibilityRuleLocalAuthoritiesFor(learningDelivery.ConRefNumber);
@@ -60,8 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
                     && ConditionMetStartDate(learningDelivery.LearnStartDate)
                     && ConditionMetFundModel(learningDelivery.FundModel)
                     && (ConditionMetONSPostcode(latestLearningStart, onsPostcodesMatchinglocalAuthorities)
-                        || ConditionMetLocalAuthority(localAuthorities, allOnsPostCodes)
-                    ))
+                        || ConditionMetLocalAuthority(localAuthorities, allOnsPostCodes)))
                 {
                     HandleValidationError(
                         learner.LearnRefNumber,

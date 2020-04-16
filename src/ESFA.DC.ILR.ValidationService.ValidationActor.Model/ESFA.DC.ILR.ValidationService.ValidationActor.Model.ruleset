@@ -68,7 +68,7 @@
     <Rule Id="CA2241" Action="Warning" />
     <Rule Id="CA2242" Action="Warning" />
   </Rules>
-  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+ <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA1000" Action="Error" />
     <Rule Id="SA1001" Action="Error" />
     <Rule Id="SA1002" Action="Error" />
@@ -97,6 +97,7 @@
     <Rule Id="SA1210" Action="Error" />
     <Rule Id="SA1309" Action="None" />
     <Rule Id="SA1310" Action="None" />
+    <Rule Id="SA1413" Action="None" />
     <Rule Id="SA1502" Action="Error" />
     <Rule Id="SA1505" Action="Error" />
     <Rule Id="SA1507" Action="Error" />
@@ -105,6 +106,7 @@
     <Rule Id="SA1513" Action="Error" />
     <Rule Id="SA1516" Action="Error" />
     <Rule Id="SA1517" Action="Error" />
+    <Rule Id="SA1600" Action="None" />
     <Rule Id="SA1633" Action="None" />
     <Rule Id="SA1649" Action="Error" />
     <Rule Id="SA1652" Action="None" />

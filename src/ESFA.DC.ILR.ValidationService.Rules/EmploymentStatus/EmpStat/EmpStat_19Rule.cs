@@ -1,12 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 {
@@ -27,11 +26,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             IProvideRuleCommonOperations commonOperations)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_19)
         {
-            
-                
-            
-                
-
             _check = commonOperations;
         }
 
@@ -46,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public void CheckEmploymentStatus(ILearnerEmploymentStatus thisEmployment, Action<IEmploymentStatusMonitoring> doThisAction)
         {
-            if (thisEmployment != null && thisEmployment.EmpStat  == TypeOfEmploymentStatus.InPaidEmployment)
+            if (thisEmployment != null && thisEmployment.EmpStat == TypeOfEmploymentStatus.InPaidEmployment)
             {
                 thisEmployment.EmploymentStatusMonitorings.ForAny(HasADisqualifyingMonitorStatus, doThisAction);
             }
@@ -59,9 +53,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public void Validate(ILearner objectToValidate)
         {
-            
-                
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
             var employments = objectToValidate.LearnerEmploymentStatuses.ToReadOnlyCollection();
 

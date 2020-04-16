@@ -12,6 +12,8 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 {
+    using ESFA.DC.ILR.ValidationService.Rules.Structs;
+
     public class R68RuleTests : AbstractRuleTests<R68Rule>
     {
         [Fact]
