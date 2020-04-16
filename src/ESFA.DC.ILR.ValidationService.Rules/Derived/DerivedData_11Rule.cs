@@ -3,7 +3,6 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -12,13 +11,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
     public class DerivedData_11Rule :
         IDerivedData_11Rule
     {
+        private readonly HashSet<string> _employmentStatuses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            Monitoring.EmploymentStatus.InReceiptOfUniversalCredit,
+            Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit,
+            Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance,
+            Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance
+        };
+
         private readonly IProvideRuleCommonOperations _check;
 
         public DerivedData_11Rule(IProvideRuleCommonOperations commonOps)
         {
-            It.IsNull(commonOps)
-                .AsGuard<ArgumentNullException>(nameof(commonOps));
-
             _check = commonOps;
         }
 
@@ -35,17 +39,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool InReceiptOfBenefits(IEmploymentStatusMonitoring monitor) =>
-            It.IsInRange(
-                $"{monitor.ESMType}{monitor.ESMCode}",
-                Monitoring.EmploymentStatus.InReceiptOfUniversalCredit,
-                Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit,
-                Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance,
-                Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance);
+            _employmentStatuses.Contains($"{monitor.ESMType}{monitor.ESMCode}");
 
         public bool IsAdultFundedOnBenefitsAtStartOfAim(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmployments)
         {
-            It.IsNull(delivery)
-                .AsGuard<ArgumentNullException>(nameof(delivery));
             var employments = learnerEmployments.ToReadOnlyCollection();
 
             /*

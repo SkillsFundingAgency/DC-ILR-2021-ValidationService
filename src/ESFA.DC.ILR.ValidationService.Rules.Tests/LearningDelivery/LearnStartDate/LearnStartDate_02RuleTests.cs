@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -25,16 +24,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             // assert
             Assert.Equal("LearnStartDate_02", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Fact]

@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -26,13 +25,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             ILARSDataService larsData,
             IProvideRuleCommonOperations commonChecks)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(larsData)
-                .AsGuard<ArgumentNullException>(nameof(larsData));
-            It.IsNull(commonChecks)
-                .AsGuard<ArgumentNullException>(nameof(commonChecks));
-
             _messageHandler = validationErrorHandler;
             _larsData = larsData;
             _check = commonChecks;
@@ -43,7 +35,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public string RuleName => Name;
 
         public bool IsQualifyingNotionalNVQ(ILARSLearningDelivery delivery) =>
-            It.IsInRange(delivery?.NotionalNVQLevelv2, LARSNotionalNVQLevelV2.Level3);
+            delivery != null 
+            && delivery.NotionalNVQLevelv2.CaseInsensitiveEquals(LARSNotionalNVQLevelV2.Level3);
 
         public bool HasQualifyingNotionalNVQ(ILearningDelivery delivery)
         {
@@ -53,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         }
 
         public bool IsQualifyingCategory(ILARSLearningCategory category) =>
-            It.IsInRange(category.CategoryRef, TypeOfLARSCategory.OnlyForLegalEntitlementAtLevel3);
+            category.CategoryRef == TypeOfLARSCategory.OnlyForLegalEntitlementAtLevel3;
 
         public bool HasQualifyingCategory(ILearningDelivery delivery)
         {
@@ -80,9 +73,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

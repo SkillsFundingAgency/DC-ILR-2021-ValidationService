@@ -1,6 +1,6 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.External.EDRS;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using Moq;
 using System.Collections.Generic;
 using Xunit;

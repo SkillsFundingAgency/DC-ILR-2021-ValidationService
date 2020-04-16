@@ -4,7 +4,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -25,10 +25,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
         }
 
         public bool HasAchievementDate(ILearningDelivery delivery) =>
-            It.Has(delivery.AchDateNullable);
+            delivery.AchDateNullable.HasValue;
 
         public bool HasQualifyingOutcome(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.OutcomeNullable, OutcomeConstants.Achieved);
+            delivery.OutcomeNullable == OutcomeConstants.Achieved;
 
         public bool IsExcluded(ILearningDelivery delivery) =>
             _common.IsStandardApprenticeship(delivery)
@@ -41,9 +41,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
 
         public void Validate(ILearner theLearner)
         {
-            It.IsNull(theLearner)
-                .AsGuard<ArgumentNullException>(nameof(theLearner));
-
             var learnRefNumber = theLearner.LearnRefNumber;
 
             theLearner.LearningDeliveries

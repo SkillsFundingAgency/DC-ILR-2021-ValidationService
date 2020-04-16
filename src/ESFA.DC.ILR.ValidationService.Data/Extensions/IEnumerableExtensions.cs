@@ -51,6 +51,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.Extensions
             }
         }
 
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable == null || !enumerable.Any();
+        }
+
         public static bool NullSafeAny<T>(this IEnumerable<T> list, Func<T, bool> expression)
         {
             return list != null ? list.Any(expression) : false;

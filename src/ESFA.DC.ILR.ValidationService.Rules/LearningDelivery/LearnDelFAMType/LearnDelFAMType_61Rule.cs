@@ -6,7 +6,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +16,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         AbstractRule,
         IRule<ILearner>
     {
+        private readonly HashSet<string> _ldmLookups = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            Monitoring.Delivery.SteelIndustriesRedundancyTraining,
+            Monitoring.Delivery.InReceiptOfLowWages
+        };
+
         private readonly ILARSDataService _larsData;
         private readonly IDerivedData_07Rule _derivedData07;
         private readonly IDerivedData_21Rule _derivedData21;
@@ -49,31 +54,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public static int MaximumViableAge => 23;  
 
         public bool WithinViableAgeGroup(DateTime candidate, DateTime reference) =>
-            It.IsBetween(_dateTimeQueryService.YearsBetween(candidate, reference), MinimumViableAge, MaximumViableAge);
+            _dateTimeQueryService.YearsBetween(candidate, reference).IsBetween(MinimumViableAge, MaximumViableAge);
 
         public bool IsLearnerInCustody(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.OLASSOffendersInCustody);
+            Monitoring.Delivery.OLASSOffendersInCustody.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool IsReleasedOnTemporaryLicence(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.ReleasedOnTemporaryLicence);
+            Monitoring.Delivery.ReleasedOnTemporaryLicence.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool IsRestart(ILearningDeliveryFAM monitor) =>
-            It.IsInRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.Restart);
+            Monitoring.Delivery.Types.Restart.CaseInsensitiveEquals(monitor.LearnDelFAMType);
 
         public bool IsSteelWorkerRedundancyTrainingOrIsInReceiptOfLowWages(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.SteelIndustriesRedundancyTraining, Monitoring.Delivery.InReceiptOfLowWages);
+            _ldmLookups.Contains($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool IsBasicSkillsLearner(ILearningDelivery delivery)
         {
             var validities = _larsData.GetValiditiesFor(delivery.LearnAimRef);
             var annualValues = _larsData.GetAnnualValuesFor(delivery.LearnAimRef);
 
-            return validities.Any(x => x.IsCurrent(delivery.LearnStartDate))
+            return validities.Any(x => _larsData.IsCurrentAndNotWithdrawn(x, delivery.LearnStartDate))
                 && annualValues.Any(IsBasicSkillsLearner);
         }
 
         public bool IsBasicSkillsLearner(ILARSAnnualValue monitor) =>
-            It.IsInRange(monitor.BasicSkillsType, TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
+            monitor.BasicSkillsType.HasValue
+            && TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills.Contains(monitor.BasicSkillsType.Value);
 
         public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearningDelivery thisDelivery, ILearner forCandidate) =>
             _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, forCandidate);
@@ -100,11 +106,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             delivery.LearnStartDate > LastInviableDate;
 
         public bool IsTargetAgeGroup(ILearner learner, ILearningDelivery delivery) =>
-            It.Has(learner.DateOfBirthNullable)
+            learner.DateOfBirthNullable.HasValue
             && WithinViableAgeGroup(learner.DateOfBirthNullable.Value, delivery.LearnStartDate);
 
         public bool IsFullyFundedLearningAim(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.FullyFundedLearningAim);
+            Monitoring.Delivery.FullyFundedLearningAim.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool IsLevel2Nvq(ILearningDelivery delivery)
         {

@@ -2,7 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -12,13 +12,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
         IRule<ILearner>
     {
         public const string Name = RuleNameConstants.ContPrefType_02;
+        private readonly HashSet<string> _contactPreferences = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ContactPreference.NoContactByPostPreGDPR,
+            ContactPreference.NoContactByPhonePreGDPR,
+            ContactPreference.NoContactByEmailPreGDPR,
+            ContactPreference.AgreesContactByPostPostGDPR,
+            ContactPreference.AgreesContactByPhonePostGDPR,
+            ContactPreference.AgreesContactByEmailPostGDPR,
+            ContactPreference.NoContactCoursesOrOpportunitiesPreGDPR,
+            ContactPreference.NoContactSurveysAndResearchPreGDPR,
+            ContactPreference.AgreesContactCoursesOrOpportunitiesPostGDPR,
+            ContactPreference.AgreesContactSurveysAndResearchPostGDPR
+        };
+
+        private readonly HashSet<string> _contactRestrictions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+             ContactPreference.NoContactIllnessOrDied_ValidTo20130731,
+             ContactPreference.NoContactDueToIllness,
+             ContactPreference.NoContactDueToDeath
+        };
+
 
         private readonly IValidationErrorHandler _messageHandler;
 
         public ContPrefType_02Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
+            
+                
 
             _messageHandler = validationErrorHandler;
         }
@@ -26,28 +47,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
         public string RuleName => Name;
 
         public bool HasDisqualifyingContactIndicator(IContactPreference preference) =>
-            It.IsInRange(
-                $"{preference.ContPrefType}{preference.ContPrefCode}",
-                ContactPreference.NoContactByPostPreGDPR,
-                ContactPreference.NoContactByPhonePreGDPR,
-                ContactPreference.NoContactByEmailPreGDPR,
-                ContactPreference.AgreesContactByPostPostGDPR,
-                ContactPreference.AgreesContactByPhonePostGDPR,
-                ContactPreference.AgreesContactByEmailPostGDPR,
-                ContactPreference.NoContactCoursesOrOpportunitiesPreGDPR,
-                ContactPreference.NoContactSurveysAndResearchPreGDPR,
-                ContactPreference.AgreesContactCoursesOrOpportunitiesPostGDPR,
-                ContactPreference.AgreesContactSurveysAndResearchPostGDPR);
+            _contactPreferences.Contains($"{preference.ContPrefType}{preference.ContPrefCode}");
 
         public bool HasDisqualifyingContactIndicator(ILearner thisLearner) =>
             thisLearner.ContactPreferences.NullSafeAny(HasDisqualifyingContactIndicator);
 
         public bool HasRestrictedContactIndicator(IContactPreference preference) =>
-            It.IsInRange(
-                $"{preference.ContPrefType}{preference.ContPrefCode}",
-                ContactPreference.NoContactIllnessOrDied_ValidTo20130731,
-                ContactPreference.NoContactDueToIllness,
-                ContactPreference.NoContactDueToDeath);
+            _contactRestrictions.Contains($"{preference.ContPrefType}{preference.ContPrefCode}");
 
         public bool HasRestrictedContactIndicator(ILearner thisLearner) =>
             thisLearner.ContactPreferences.NullSafeAny(HasRestrictedContactIndicator);
@@ -57,8 +63,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            
+                
 
             var learnRefNumber = objectToValidate.LearnRefNumber;
 

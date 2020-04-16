@@ -6,7 +6,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -29,18 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             IFCSDataService fcsDataService)
             : base(validationErrorHandler, RuleNameConstants.UKPRN_17)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(fileDataService)
-                .AsGuard<ArgumentNullException>(nameof(fileDataService));
-            It.IsNull(commonOps)
-                .AsGuard<ArgumentNullException>(nameof(commonOps));
-            It.IsNull(fcsDataService)
-                .AsGuard<ArgumentNullException>(nameof(fcsDataService));
-
             ProviderUKPRN = fileDataService.UKPRN();
-            
-
             _check = commonOps;
             _fcsData = fcsDataService;
         }
@@ -49,9 +38,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         public void Validate(ILearner theLearner)
         {
-            It.IsNull(theLearner)
-                .AsGuard<ArgumentNullException>(nameof(theLearner));
-
             var learnRefNumber = theLearner.LearnRefNumber;
 
             theLearner.LearningDeliveries
@@ -71,7 +57,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             _check.IsTraineeship(theDelivery);
 
         public bool HasQualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
+            Monitoring.Delivery.ESFAAdultFunding.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
 
         public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
             _check.CheckDeliveryFAMs(theDelivery, HasQualifyingMonitor);

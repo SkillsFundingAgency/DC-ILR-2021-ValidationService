@@ -4,7 +4,7 @@ using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -28,13 +28,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             IAcademicYearDataService yearData,
             IDerivedData_07Rule derivedData07)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(yearData)
-                .AsGuard<ArgumentNullException>(nameof(yearData));
-            It.IsNull(derivedData07)
-                .AsGuard<ArgumentNullException>(nameof(derivedData07));
-
             _messageHandler = validationErrorHandler;
             _yearData = yearData;
             _derivedData07 = derivedData07;
@@ -53,9 +46,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

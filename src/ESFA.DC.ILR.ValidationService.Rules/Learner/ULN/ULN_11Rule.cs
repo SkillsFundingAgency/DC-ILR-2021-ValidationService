@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 
@@ -28,13 +27,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             IFileDataService fileDataService,
             IAcademicYearDataService yearService)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(fileDataService)
-                .AsGuard<ArgumentNullException>(nameof(fileDataService));
-            It.IsNull(yearService)
-                .AsGuard<ArgumentNullException>(nameof(yearService));
-
             _messageHandler = validationErrorHandler;
             _fileDataService = fileDataService;
             _yearService = yearService;
@@ -53,10 +45,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             candidate.LearningDeliveries.NullSafeAny(matchCondition);
 
         public bool IsExternallyFunded(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.FundModel, TypeOfFunding.NotFundedByESFA);
+           delivery.FundModel == TypeOfFunding.NotFundedByESFA;
 
         public bool IsHEFCEFunded(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.HigherEducationFundingCouncilEngland);
+            Monitoring.Delivery.HigherEducationFundingCouncilEngland.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool IsHEFCEFunded(ILearningDelivery delivery) =>
             CheckDeliveryFAMs(delivery, IsHEFCEFunded);
@@ -68,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             (delivery.LearnPlanEndDate - delivery.LearnStartDate) < FiveDays;
 
         public bool IsCompletedShortCourse(ILearningDelivery delivery) =>
-            It.Has(delivery.LearnActEndDateNullable)
+            delivery.LearnActEndDateNullable.HasValue
                 && ((delivery.LearnActEndDateNullable.Value - delivery.LearnStartDate) < FiveDays);
 
         public bool HasExceedRegistrationPeriod(ILearningDelivery delivery) =>
@@ -80,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             candidate.ULN != 9999999999;
 
         public bool IsLearnerInCustody(ILearningDeliveryFAM monitor) =>
-            It.IsInRange($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}", Monitoring.Delivery.OLASSOffendersInCustody);
+            Monitoring.Delivery.OLASSOffendersInCustody.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool IsExcluded(ILearner candidate)
         {
@@ -91,9 +83,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             if (IsExcluded(objectToValidate))
             {
                 return;

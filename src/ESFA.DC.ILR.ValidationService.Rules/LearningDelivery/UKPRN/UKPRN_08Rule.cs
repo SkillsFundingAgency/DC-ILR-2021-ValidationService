@@ -7,7 +7,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -31,18 +31,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             IFCSDataService fcsDataService)
             : base(validationErrorHandler, RuleNameConstants.UKPRN_08)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
-            It.IsNull(fileDataService)
-                .AsGuard<ArgumentNullException>(nameof(fileDataService));
-            It.IsNull(academicYearDataService)
-                .AsGuard<ArgumentNullException>(nameof(academicYearDataService));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-            It.IsNull(fcsDataService)
-                .AsGuard<ArgumentNullException>(nameof(fcsDataService));
-
             _fileDataService = fileDataService;
             _academicYearDataService = academicYearDataService;
             _check = commonOperations;
@@ -56,17 +44,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             _academicYearDataService.Start();
 
         public bool IsNotPartOfThisYear(ILearningDelivery thisDelivery) =>
-            It.Has(thisDelivery.LearnActEndDateNullable)
+            thisDelivery.LearnActEndDateNullable.HasValue
                 && thisDelivery.LearnActEndDateNullable < GetCurrentAcademicYearCommencementDate();
 
         public bool HasQualifyingProviderID(IFcsContractAllocation allocation, int providerID) =>
             allocation.DeliveryUKPRN == providerID;
 
         public bool HasQualifyingFundingStream(IFcsContractAllocation allocation) =>
-            It.IsInRange(
-                allocation.FundingStreamPeriodCode,
-                FundingStreamPeriodCodeConstants.ALLB1920,
-                FundingStreamPeriodCodeConstants.ALLBC1920);
+            allocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.ALLB1920)
+            || allocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.ALLBC1920);
 
         public bool HasFundingRelationship(ILearningDelivery thisDelivery)
         {
@@ -84,8 +70,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         public void Validate(ILearner thisLearner)
         {
-            It.IsNull(thisLearner)
-                .AsGuard<ArgumentNullException>(nameof(thisLearner));
+            
+                
 
             var learnRefNumber = thisLearner.LearnRefNumber;
 

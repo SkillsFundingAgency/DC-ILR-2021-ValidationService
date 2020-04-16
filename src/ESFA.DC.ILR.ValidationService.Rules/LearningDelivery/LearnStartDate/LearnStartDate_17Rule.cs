@@ -5,7 +5,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -25,13 +25,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             IProvideRuleCommonOperations commonOperations)
             : base(validationErrorHandler, RuleNameConstants.LearnStartDate_17)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(larsData)
-                .AsGuard<ArgumentNullException>(nameof(larsData));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
             _larsData = larsData;
             _check = commonOperations;
         }
@@ -46,14 +39,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             !_check.IsRestart(thisDelivery)
             && _check.IsStandardApprenticeship(thisDelivery)
             && _check.InAProgramme(thisDelivery)
-            && It.Has(thisDelivery.StdCodeNullable)
+            && thisDelivery.StdCodeNullable.HasValue
             && !HasQualifyingStart(thisDelivery, GetStandardPeriodsOfValidityFor(thisDelivery));
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

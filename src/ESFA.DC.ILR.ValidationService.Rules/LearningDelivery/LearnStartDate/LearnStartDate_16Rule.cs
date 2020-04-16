@@ -5,7 +5,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -25,13 +25,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             IProvideRuleCommonOperations commonOperations)
             : base(validationErrorHandler, RuleNameConstants.LearnStartDate_16)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(fcsData)
-                .AsGuard<ArgumentNullException>(nameof(fcsData));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
             _contracts = fcsData;
             _check = commonOperations;
         }
@@ -40,12 +33,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             _contracts.GetContractAllocationFor(thisDelivery.ConRefNumber);
 
         public bool HasQualifyingStart(ILearningDelivery thisDelivery, IFcsContractAllocation allocation) =>
-            It.Has(allocation)
-            && It.Has(allocation.StartDate)
+            allocation != null
+            && allocation.StartDate.HasValue
             && _check.HasQualifyingStart(thisDelivery, allocation.StartDate.Value);
 
         public bool HasQualifyingAim(ILearningDelivery thisDelivery) =>
-            It.IsInRange(thisDelivery.LearnAimRef, TypeOfAim.References.ESFLearnerStartandAssessment);
+            thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment);
 
         public bool HasQualifyingModel(ILearningDelivery thisDelivery) =>
             _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.EuropeanSocialFund);
@@ -57,10 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
-            var learnRefNumber = objectToValidate.LearnRefNumber;
+           var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
                 .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));

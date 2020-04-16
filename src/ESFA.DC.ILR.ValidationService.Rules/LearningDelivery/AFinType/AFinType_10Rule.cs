@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Linq;
 
@@ -19,28 +18,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public AFinType_10Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
             _messageHandler = validationErrorHandler;
         }
 
         public string RuleName => Name;
 
         public bool IsFunded(ILearningDelivery delivery) =>
-            TypeOfFunding.AsAFundedSet.Contains(delivery.FundModel);
+            TypeOfFunding.TypeOfFundingCollection.Contains(delivery.FundModel);
 
         public bool IsTargetApprenticeship(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.ApprenticeshipStandard);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.AimType, TypeOfAim.ProgrammeAim);
+            delivery.AimType == TypeOfAim.ProgrammeAim;
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
@@ -58,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public bool ConditionMet(IAppFinRecord financialRecord)
         {
-            return !It.Has(financialRecord)
+            return financialRecord == null
                    || $"{financialRecord.AFinType}{financialRecord.AFinCode}".CaseInsensitiveEquals(ApprenticeshipFinancialRecord.TotalAssessmentPrice)
                    || $"{financialRecord.AFinType}{financialRecord.AFinCode}".CaseInsensitiveEquals(ApprenticeshipFinancialRecord.ResidualAssessmentPrice);
         }

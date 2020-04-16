@@ -6,7 +6,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using FluentAssertions;
 using Moq;
 using System;
@@ -451,8 +450,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.CategoryRef)
                 .Returns(candidate);
 
-            var larsCats = new List<ILARSLearningCategory>();
-            larsCats.Add(mockCat.Object);
+            var larsCats = new List<ILARSLearningCategory>
+            {
+                mockCat.Object
+            };
 
             var mock = new Mock<ILARSLearningDelivery>();
             mock
@@ -691,8 +692,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.LearnDelFAMCode)
                 .Returns("1");
 
-            var fams = new List<ILearningDeliveryFAM>();
-            fams.Add(mockFAM.Object);
+            var fams = new List<ILearningDeliveryFAM>
+            {
+                mockFAM.Object
+            };
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
@@ -711,8 +714,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(y => y.LearningDeliveryFAMs)
                 .Returns(fams);
 
-            var deliveries = new List<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
+            var deliveries = new List<ILearningDelivery>
+            {
+                mockDelivery.Object
+            };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -750,8 +755,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.CategoryRef)
                 .Returns(TypeOfLARSCategory.LicenseToPractice);
 
-            var larsCats = new List<ILARSLearningCategory>();
-            larsCats.Add(mockCat.Object);
+            var larsCats = new List<ILARSLearningCategory>
+            {
+                mockCat.Object
+            };
 
             var mockLARSDel = new Mock<ILARSLearningDelivery>();
             mockLARSDel
@@ -775,8 +782,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.LastNewStartDate)
                 .Returns(new DateTime(2018, 08, 01));
 
-            var larsValidities = new List<ILARSLearningDeliveryValidity>();
-            larsValidities.Add(mockLARSValidity.Object);
+            var larsValidities = new List<ILARSLearningDeliveryValidity>
+            {
+                mockLARSValidity.Object
+            };
 
             var mockLARSAnnualValues = new Mock<ILARSAnnualValue>();
             mockLARSAnnualValues
@@ -789,8 +798,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.BasicSkills)
                 .Returns(1);
 
-            var larsAnnualValues = new List<ILARSAnnualValue>();
-            larsAnnualValues.Add(mockLARSAnnualValues.Object);
+            var larsAnnualValues = new List<ILARSAnnualValue>
+            {
+                mockLARSAnnualValues.Object
+            };
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
@@ -802,6 +813,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             service
                 .Setup(x => x.GetAnnualValuesFor(learnAimRef))
                 .Returns(larsAnnualValues);
+            service
+                .Setup(x => x.IsCurrentAndNotWithdrawn(mockLARSValidity.Object, mockDelivery.Object.LearnStartDate, null))
+                .Returns(true);
 
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             mockDDRule07
@@ -866,8 +880,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.LearnDelFAMCode)
                 .Returns("1");
 
-            var fams = new List<ILearningDeliveryFAM>();
-            fams.Add(mockFAM.Object);
+            var fams = new List<ILearningDeliveryFAM>
+            {
+                mockFAM.Object
+            };
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
@@ -886,8 +902,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(y => y.LearningDeliveryFAMs)
                 .Returns(fams);
 
-            var deliveries = new List<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
+            var deliveries = new List<ILearningDelivery>
+            {
+                mockDelivery.Object
+            };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -910,8 +928,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.CategoryRef)
                 .Returns(TypeOfLARSCategory.LegalEntitlementLevel2);
 
-            var larsCats = new List<ILARSLearningCategory>();
-            larsCats.Add(mockCat.Object);
+            var larsCats = new List<ILARSLearningCategory>
+            {
+                mockCat.Object
+            };
 
             var mockLARSDel = new Mock<ILARSLearningDelivery>();
             mockLARSDel
@@ -935,8 +955,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.LastNewStartDate)
                 .Returns(new DateTime(2018, 08, 01));
 
-            var larsValidities = new List<ILARSLearningDeliveryValidity>();
-            larsValidities.Add(mockLARSValidity.Object);
+            var larsValidities = new List<ILARSLearningDeliveryValidity>
+            {
+                mockLARSValidity.Object
+            };
 
             var mockLARSAnnualValues = new Mock<ILARSAnnualValue>();
             mockLARSAnnualValues
@@ -949,10 +971,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.BasicSkills)
                 .Returns(1);
 
-            var larsAnnualValues = new List<ILARSAnnualValue>();
-            larsAnnualValues.Add(mockLARSAnnualValues.Object);
+            var larsAnnualValues = new List<ILARSAnnualValue>
+            {
+                mockLARSAnnualValues.Object
+            };
 
-        var service = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
                 .Setup(x => x.GetDeliveryFor(learnAimRef))
                 .Returns(mockLARSDel.Object);
@@ -962,6 +986,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             service
                 .Setup(x => x.GetAnnualValuesFor(learnAimRef))
                 .Returns(larsAnnualValues);
+            service
+                .Setup(x => x.IsCurrentAndNotWithdrawn(mockLARSValidity.Object, mockDelivery.Object.LearnStartDate, null))
+                .Returns(true);
 
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             mockDDRule07

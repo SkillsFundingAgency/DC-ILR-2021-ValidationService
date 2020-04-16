@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Linq;
 
@@ -19,9 +18,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.EngGrade
 
         public EngGrade_03Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
             _messageHandler = validationErrorHandler;
         }
 
@@ -31,7 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.EngGrade
             Monitoring.Learner.Level1AndLowerGrades.Contains(candidate.EngGrade);
 
         public bool HasEligibleFunding(ILearnerFAM monitor) =>
-            It.IsInRange($"{monitor.LearnFAMType}{monitor.LearnFAMCode}", Monitoring.Learner.NotAchievedLevel2EnglishGCSEByYear11);
+            Monitoring.Learner.NotAchievedLevel2EnglishGCSEByYear11.CaseInsensitiveEquals($"{monitor.LearnFAMType}{monitor.LearnFAMCode}");
 
         public bool CheckFAMs(ILearner learner, Func<ILearnerFAM, bool> matchCondition) =>
             learner.LearnerFAMs.NullSafeAny(matchCondition);
@@ -40,10 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.EngGrade
             CheckFAMs(learner, HasEligibleFunding);
 
         public void Validate(ILearner objectToValidate)
-        {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
+        {         
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             if (IsEligibleForFunding(objectToValidate))

@@ -5,7 +5,7 @@ using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDate;
-using ESFA.DC.ILR.ValidationService.Utility;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -14,83 +14,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
 {
     public class OrigLearnStartDate_02RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange / act / assert
-            Assert.Throws<ArgumentNullException>(() => new OrigLearnStartDate_02Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("OrigLearnStartDate_02", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(OrigLearnStartDate_02Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Has qualifying dates meets expectation
-        /// </summary>
-        /// <param name="startDate">The start date.</param>
-        /// <param name="originalDate">The original date.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData("2018-04-20", "2018-04-18", true)]
         [InlineData("2018-04-19", "2018-04-18", true)]
@@ -98,9 +31,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
         [InlineData("2018-04-17", "2018-04-18", false)]
         public void HasQualifyingDatesMeetsExpectation(string startDate, string originalDate, bool expectation)
         {
-            // arrange
-            var sut = NewRule();
-
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
@@ -109,20 +39,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
                 .SetupGet(y => y.OrigLearnStartDateNullable)
                 .Returns(DateTime.Parse(originalDate));
 
-            // act
-            var result = sut.HasQualifyingDates(mockDelivery.Object);
+            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQueryService
+                .Setup(x => x.IsDateBetween(
+                    mockDelivery.Object.OrigLearnStartDateNullable.Value,
+                    Moq.It.IsAny<DateTime>(),
+                    mockDelivery.Object.LearnStartDate,
+                    false))
+                .Returns(expectation);
 
-            // assert
+            var result = NewRule(dateTimeQueryService.Object).HasQualifyingDates(mockDelivery.Object);
+
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
         [Fact]
         public void InvalidItemRaisesValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
             var referenceDate = DateTime.Parse("2019-04-19");
 
@@ -167,22 +100,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
                     referenceDate))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var sut = new OrigLearnStartDate_02Rule(handler.Object);
+            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQueryService
+                .Setup(x => x.IsDateBetween(
+                    mockDelivery.Object.OrigLearnStartDateNullable.Value,
+                    Moq.It.IsAny<DateTime>(),
+                    mockDelivery.Object.LearnStartDate,
+                    false))
+                    .Returns(false);
 
-            // act
+            var sut = NewRule(dateTimeQueryService.Object, handler.Object);
+
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
         [Fact]
         public void ValidItemDoesNotRaiseValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var referenceDate = DateTime.Parse("2019-04-19");
@@ -192,7 +128,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(referenceDate);
 
-            // move into range
             mockDelivery
                 .SetupGet(y => y.OrigLearnStartDateNullable)
                 .Returns(referenceDate.AddDays(-1));
@@ -214,12 +149,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            var sut = new OrigLearnStartDate_02Rule(handler.Object);
+            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQueryService
+                .Setup(x => x.IsDateBetween(
+                    mockDelivery.Object.OrigLearnStartDateNullable.Value,
+                    Moq.It.IsAny<DateTime>(),
+                    mockDelivery.Object.LearnStartDate,
+                    false))
+                    .Returns(true);
 
-            // act
+            var sut = NewRule(dateTimeQueryService.Object, handler.Object);
+
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
@@ -253,15 +195,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
             NewRule().HasValidFundModel(learningDelivery).Should().BeFalse();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
-        public OrigLearnStartDate_02Rule NewRule()
+        public OrigLearnStartDate_02Rule NewRule(
+            IDateTimeQueryService dateTimeQueryService = null,
+            IValidationErrorHandler handler = null)
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            return new OrigLearnStartDate_02Rule(handler.Object);
+            return new OrigLearnStartDate_02Rule(dateTimeQueryService, handler);
         }
     }
 }

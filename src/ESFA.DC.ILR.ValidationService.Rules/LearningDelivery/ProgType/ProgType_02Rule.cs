@@ -2,7 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -19,19 +19,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public ProgType_02Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
-            _messageHandler = validationErrorHandler;
+           _messageHandler = validationErrorHandler;
         }
 
         public string RuleName => Name;
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
@@ -49,8 +43,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return It.Has(thisDelivery)
-                ? It.IsEmpty(thisDelivery.ProgTypeNullable)
+            return thisDelivery != null
+                ? !thisDelivery.ProgTypeNullable.HasValue
                 : true;
         }
 

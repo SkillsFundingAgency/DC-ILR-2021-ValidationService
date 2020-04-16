@@ -13,47 +13,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
     public class R107RuleTests
     {
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            Assert.Throws<ArgumentNullException>(() => new R107Rule(null));
-        }
-
-        [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             var sut = NewRule();
 
             var result = sut.RuleName;
 
             Assert.Equal("R107", result);
-        }
-
-        [Fact]
-        public void RuleName2()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.Equal(R107Rule.Name, result);
-        }
-
-        [Fact]
-        public void RuleName3()
-        {
-            var sut = NewRule();
-
-            var result = sut.RuleName;
-
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            var sut = NewRule();
-
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Theory]

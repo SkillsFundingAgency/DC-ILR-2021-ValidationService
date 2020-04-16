@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 
 namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
 {
@@ -20,8 +20,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
         public DOMICILE_01Rule(
             IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
+            
+                
 
             _messageHandler = validationErrorHandler;
         }
@@ -34,15 +34,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
             delivery.LearnStartDate > LastInviableDate;
 
         public bool HasHigherEd(ILearningDelivery delivery) =>
-            It.Has(delivery.LearningDeliveryHEEntity);
+            delivery.LearningDeliveryHEEntity != null;
 
         public bool HasDomicile(ILearningDeliveryHE he) =>
-            It.Has(he.DOMICILE);
+            !string.IsNullOrWhiteSpace(he.DOMICILE);
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            
+                
 
             var learnRefNumber = objectToValidate.LearnRefNumber;
 

@@ -13,34 +13,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 {
     public class LearnDelFAMDateTo_05RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
-        {
-            // arrange
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMDateTo_05Rule(null, commonOps.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullCommonOperationsThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMDateTo_05Rule(handler.Object, null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
             // arrange
             var sut = NewRule();
@@ -52,55 +26,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             Assert.Equal("LearnDelFAMDateTo_05", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(RuleNameConstants.LearnDelFAMDateTo_05, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Has qualifying funding meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -125,11 +50,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             commonOps.VerifyAll();
         }
 
-        /// <summary>
-        /// Is qualifying monitor meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData("ADL", false)] // Monitoring.Delivery.Types.AdvancedLearnerLoan
         [InlineData("ALB", false)] // Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding
@@ -164,12 +84,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Has disqualifying dates meets expectation
-        /// </summary>
-        /// <param name="dateTo">The date to.</param>
-        /// <param name="actEnd">The act end.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData("2017-12-30", null, false)]
         [InlineData(null, "2017-12-31", false)]
@@ -198,19 +112,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Gets the nullable date.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>a nullable date</returns>
         public DateTime? GetNullableDate(string candidate) =>
-            Utility.It.Has(candidate) ? DateTime.Parse(candidate) : (DateTime?)null;
+            DateTime.TryParse(candidate, out var result) ? result : (DateTime?)null;
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="famType">Type of FAM.</param>
-        /// <param name="dateOffset">The date offset, determines the state of the final condition</param>
         [Theory]
         [InlineData("ACT", 1)] // Monitoring.Delivery.Types.ApprenticeshipContract
         public void InvalidItemRaisesValidationMessage(string famType, int dateOffset)
@@ -276,11 +180,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             commonOps.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="famType">Type of FAM.</param>
-        /// <param name="dateOffset">The date offset, determines the state of the final condition</param>
         [Theory]
         [InlineData("ACT", 0)] // Monitoring.Delivery.Types.ApprenticeshipContract
         [InlineData("ADL", 1)] // Monitoring.Delivery.Types.AdvancedLearnerLoan
@@ -352,10 +251,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             commonOps.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public LearnDelFAMDateTo_05Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

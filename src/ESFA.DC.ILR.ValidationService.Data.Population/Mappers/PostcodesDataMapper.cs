@@ -3,7 +3,7 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes;
 using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

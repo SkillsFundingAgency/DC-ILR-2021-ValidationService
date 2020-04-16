@@ -2,9 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Learner.EngGrade;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -12,81 +10,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
 {
     public class EngGrade_03RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            Assert.Throws<ArgumentNullException>(() => new EngGrade_03Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("EngGrade_03", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(EngGrade_03Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Is eligible for funding meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData("A**", false)]
         [InlineData("A*", false)]
@@ -116,31 +49,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
         [InlineData(null, false)]
         public void IsEligibleForFundingMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<ILearner>();
             mockItem
                 .SetupGet(y => y.EngGrade)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsEligibleForFunding(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Has eligible funding meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(Monitoring.Learner.NotAchievedLevel2EnglishGCSEByYear11, true)]
         [InlineData(Monitoring.Learner.NotAchievedLevel2MathsGCSEByYear11, false)]
         public void HasEligibleFundingMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<ILearnerFAM>();
             mockItem
@@ -150,17 +74,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
                 .SetupGet(y => y.LearnFAMCode)
                 .Returns(int.Parse(candidate.Substring(3)));
 
-            // act
             var result = sut.HasEligibleFunding(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData("D")]
         [InlineData("DD")]
@@ -180,7 +98,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
         [InlineData("1")]
         public void InvalidItemRaisesValidationMessage(string candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var fams = new List<ILearnerFAM>();
@@ -206,17 +123,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
 
             var sut = new EngGrade_03Rule(handler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData("A**")]
         [InlineData("A*")]
@@ -246,11 +157,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
         [InlineData(null)]
         public void ValidItemDoesNotRaiseValidationMessage(string candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
-            // this is actually wrong for level 2 passes
-            // but this rule doesn't require a check for this condition.
             var mockFAM = new Mock<ILearnerFAM>();
             mockFAM
                 .SetupGet(x => x.LearnFAMType)
@@ -277,17 +185,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.EngGrade
 
             var sut = new EngGrade_03Rule(handler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public EngGrade_03Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

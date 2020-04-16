@@ -4,7 +4,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -21,11 +21,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             IProvideRuleCommonOperations commonOperations)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_09)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
             _check = commonOperations;
         }
 
@@ -35,8 +30,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             theDelivery.LearnStartDate < FirstInviableDate;
 
         public bool HasDisqualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange(theMonitor.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding)
-            && It.IsOutOfRange($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}", Monitoring.Delivery.ESFAAdultFunding);
+            theMonitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.SourceOfFunding)
+            && !Monitoring.Delivery.ESFAAdultFunding.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
 
         public bool HasDisqualifyingMonitor(ILearningDelivery theDelivery) =>
             _check.CheckDeliveryFAMs(theDelivery, HasDisqualifyingMonitor);
@@ -57,9 +52,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public void Validate(ILearner theLearner)
         {
-            It.IsNull(theLearner)
-                .AsGuard<ArgumentNullException>(nameof(theLearner));
-
             var learnRefNumber = theLearner.LearnRefNumber;
 
             theLearner.LearningDeliveries

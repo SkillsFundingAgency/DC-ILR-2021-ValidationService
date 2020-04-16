@@ -3,8 +3,6 @@ using ESFA.DC.ILR.ValidationService.Data.External.EDRS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
 using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
@@ -18,11 +16,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             IEmployersDataService edrsData)
             : base(validationErrorHandler, RuleNameConstants.EmpId_01)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(edrsData)
-                .AsGuard<ArgumentNullException>(nameof(edrsData));
-
             _edrsData = edrsData;
         }
 

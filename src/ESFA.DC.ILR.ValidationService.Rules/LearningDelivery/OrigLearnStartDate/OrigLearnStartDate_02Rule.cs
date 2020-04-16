@@ -2,7 +2,8 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+
 using System;
 using System.Collections.Generic;
 
@@ -15,6 +16,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
 
         public const string Name = RuleNameConstants.OrigLearnStartDate_02;
 
+        private readonly IDateTimeQueryService _dateTimeQueryService;
         private readonly IValidationErrorHandler _messageHandler;
 
         private readonly HashSet<int> fundModels = new HashSet<int>
@@ -25,21 +27,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
             TypeOfFunding.NotFundedByESFA
         };
 
-        public OrigLearnStartDate_02Rule(IValidationErrorHandler validationErrorHandler)
+        public OrigLearnStartDate_02Rule(IDateTimeQueryService dateTimeQueryService, IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
+            _dateTimeQueryService = dateTimeQueryService;
             _messageHandler = validationErrorHandler;
         }
 
         public string RuleName => Name;
 
         public bool HasOriginalLearningStartDate(ILearningDelivery delivery) =>
-            It.Has(delivery.OrigLearnStartDateNullable);
+            delivery.OrigLearnStartDateNullable.HasValue;
 
         public bool HasQualifyingDates(ILearningDelivery delivery) =>
-            It.IsBetween(delivery.OrigLearnStartDateNullable.Value, DateTime.MinValue, delivery.LearnStartDate, false);
+            _dateTimeQueryService.IsDateBetween(delivery.OrigLearnStartDateNullable.Value, DateTime.MinValue, delivery.LearnStartDate, false);
 
         public bool HasValidFundModel(ILearningDelivery delivery) =>
             fundModels.Contains(delivery.FundModel);
@@ -51,9 +51,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

@@ -4,8 +4,6 @@ using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
 using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
@@ -21,11 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
             IProvideLookupDetails lookups)
             : base(validationErrorHandler, RuleNameConstants.ContPrefType_01)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(lookups)
-                .AsGuard<ArgumentNullException>(nameof(lookups));
-
             _lookups = lookups;
         }
 
@@ -37,9 +30,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
 
         public void Validate(ILearner thisLearner)
         {
-            It.IsNull(thisLearner)
-                .AsGuard<ArgumentNullException>(nameof(thisLearner));
-
             var learnRefNumber = thisLearner.LearnRefNumber;
 
             thisLearner.ContactPreferences

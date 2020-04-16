@@ -3,7 +3,7 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -19,16 +19,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WithdrawReason
         }
 
         public bool HasWithdrawn(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.CompStatus, CompletionState.HasWithdrawn);
+            delivery.CompStatus == CompletionState.HasWithdrawn;
 
         public bool HasWithdrawReason(ILearningDelivery delivery) =>
-            It.Has(delivery.WithdrawReasonNullable);
+            delivery.WithdrawReasonNullable.HasValue;
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

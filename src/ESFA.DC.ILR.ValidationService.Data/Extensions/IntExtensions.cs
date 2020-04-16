@@ -13,5 +13,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.Extensions
                 .Select(x => Convert.ToInt32(x.ToString()))
                 .ToList();
         }
+
+        public static bool IsBetween(this int candidate, int min, int max, bool includeBoundaries = true)
+        {
+            return includeBoundaries
+                ? candidate >= min && candidate <= max
+                : candidate > min && candidate < max;
+        }
     }
 }

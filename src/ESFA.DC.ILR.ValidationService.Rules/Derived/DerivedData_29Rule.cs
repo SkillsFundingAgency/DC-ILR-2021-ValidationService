@@ -2,8 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
 using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
@@ -19,7 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool IsTraineeship(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool IsWorkExperience(ILearningDelivery delivery)
         {
@@ -29,13 +27,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool IsWorkExperience(ILARSLearningCategory category) =>
-            It.IsInRange(category.CategoryRef, TypeOfLARSCategory.WorkPlacementSFAFunded, TypeOfLARSCategory.WorkPreparationSFATraineeships);
+            category.CategoryRef == TypeOfLARSCategory.WorkPlacementSFAFunded
+            || category.CategoryRef == TypeOfLARSCategory.WorkPreparationSFATraineeships;
 
         public bool IsInflexibleElementOfTrainingAimLearningDelivery(ILearningDelivery candidate)
         {
-            It.IsNull(candidate)
-                .AsGuard<ArgumentNullException>(nameof(candidate));
-
             /*
                if
                    LearningDelivery.ProgType = 24

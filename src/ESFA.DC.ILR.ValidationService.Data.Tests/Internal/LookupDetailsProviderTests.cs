@@ -1,7 +1,7 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
 using ESFA.DC.ILR.ValidationService.Data.Internal.Model;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using FluentAssertions;
 using System;
 using System.Collections.Generic;

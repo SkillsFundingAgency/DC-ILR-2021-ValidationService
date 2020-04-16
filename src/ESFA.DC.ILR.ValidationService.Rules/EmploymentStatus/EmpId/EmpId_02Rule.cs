@@ -7,7 +7,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 {
@@ -20,11 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             IDerivedData_05Rule derivedData05)
             : base(validationErrorHandler, RuleNameConstants.EmpId_02)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(derivedData05)
-                .AsGuard<ArgumentNullException>(nameof(derivedData05));
-
             _derivedData05 = derivedData05;
         }
 
@@ -32,7 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
         {
             var checkSum = _derivedData05.GetEmployerIDChecksum(employerID);
 
-            if (It.IsInRange(checkSum, _derivedData05.InvalidLengthChecksum))
+            if (checkSum == _derivedData05.InvalidLengthChecksum)
             {
                 return false;
             }

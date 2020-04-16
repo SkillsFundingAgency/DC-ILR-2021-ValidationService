@@ -3,7 +3,7 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -24,10 +24,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             IValidationErrorHandler validationErrorHandler,
             IProvideRuleCommonOperations commonOperations)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
+            
+                
+            
+                
 
             _messageHandler = validationErrorHandler;
             _check = commonOperations;
@@ -38,10 +38,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public string RuleName => Name;
 
         public bool IsQualifyingEmployment(ILearnerEmploymentStatus employmentStatus) =>
-            It.IsInRange(
-                employmentStatus.EmpStat,
-                TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable,
-                TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable);
+            employmentStatus.EmpStat == TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
+            || employmentStatus.EmpStat == TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable;
 
         public bool HasDisqualifyingIndicator(IEmploymentStatusMonitoring monitor) =>
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.SelfEmploymentIndicator)
@@ -57,8 +55,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            
+                
 
             var learnRefNumber = objectToValidate.LearnRefNumber;
 

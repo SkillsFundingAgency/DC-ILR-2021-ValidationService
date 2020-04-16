@@ -2,7 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +19,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public ESMType_01Rule(
             IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
+            
+                
 
             _messageHandler = validationErrorHandler;
         }
@@ -28,12 +28,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public string RuleName => Name;
 
         public bool IsInvalidDomainItem(IEmploymentStatusMonitoring monitor) =>
-            It.IsOutOfRange($"{monitor.ESMType}{monitor.ESMCode}", Monitoring.EmploymentStatus.AsASet);
+            !Monitoring.EmploymentStatus.StatusesCollection.Contains($"{monitor.ESMType}{monitor.ESMCode}");
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            
+                
 
             var learnRefNumber = objectToValidate.LearnRefNumber;
 

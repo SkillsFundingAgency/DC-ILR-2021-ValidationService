@@ -1,7 +1,6 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +10,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
     public class LARSDataService : ILARSDataService
     {
         private readonly IExternalDataCache _externalDataCache;
-
         private readonly IReadOnlyDictionary<string, Model.LearningDelivery> _larsDeliveries;
-
         private readonly IReadOnlyDictionary<int, ILARSStandard> _larsStandards;
 
         public LARSDataService(IExternalDataCache externalDataCache)
         {
-            It.IsNull(externalDataCache)
-                .AsGuard<ArgumentNullException>(nameof(externalDataCache));
-
             _externalDataCache = externalDataCache;
 
             // de-sensitise the lars deliveries
@@ -37,16 +31,6 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
 
         public ILARSStandard GetStandardFor(int standardCode) =>
             _larsStandards.GetValueOrDefault(standardCode);
-
-        public ILARSStandardFunding GetStandardFundingFor(int standardCode, DateTime startDate)
-        {
-            var standard = GetStandardFor(standardCode);
-
-            return standard?.StandardsFunding
-                .NullSafeWhere(sf => It.IsBetween(startDate, sf.EffectiveFrom, sf.EffectiveTo ?? DateTime.MaxValue))
-                .OrderBy(x => x.EffectiveTo) // get the earliest closure first
-                .FirstOrDefault();
-        }
 
         public IReadOnlyCollection<ILARSLearningCategory> GetCategoriesFor(string thisAimRef)
         {
@@ -102,7 +86,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var validities = GetValiditiesFor(learnAimRef);
 
-            return validities.Any(x => x.IsCurrent(date));
+            return validities.Any(x => IsCurrentAndNotWithdrawn(x, date));
         }
 
         // TODO: this should happen in the rule
@@ -203,14 +187,14 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var values = GetAnnualValuesFor(learnAimRef);
 
-            return values.Any(av => av.FullLevel2Percent == percentValue && av.IsCurrent(effectiveFromDate));
+            return values.Any(av => av.FullLevel2Percent == percentValue && IsCurrentAndNotWithdrawn(av, effectiveFromDate));
         }
 
         public bool FullLevel2PercentForLearnAimRefNotMatchPercentValue(string learnAimRef, DateTime effectiveFromDate, decimal percentValue)
         {
             var values = GetAnnualValuesFor(learnAimRef);
 
-            return values.Any(av => (!av.FullLevel2Percent.HasValue || av.FullLevel2Percent.Value != percentValue) && av.IsCurrent(effectiveFromDate));
+            return values.Any(av => (!av.FullLevel2Percent.HasValue || av.FullLevel2Percent.Value != percentValue) && IsCurrentAndNotWithdrawn(av, effectiveFromDate));
         }
 
         // TODO: this should happen in the rule
@@ -226,7 +210,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var values = GetAnnualValuesFor(learnAimRef);
 
-            return values.Any(av => av.FullLevel3Percent == percentValue && av.IsCurrent(learnStartDate));
+            return values.Any(av => av.FullLevel3Percent == percentValue && IsCurrentAndNotWithdrawn(av, learnStartDate));
         }
 
         // TODO: this should happen in the rule
@@ -234,7 +218,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var delivery = GetDeliveryFor(thisLearnAimRef);
 
-            return It.Has(delivery)
+            return delivery != null
                 && delivery.LearnDirectClassSystemCode3.IsKnown();
         }
 
@@ -243,7 +227,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var delivery = GetDeliveryFor(thisLearnAimRef);
 
-            return It.Has(delivery)
+            return delivery != null
                 && delivery.LearnDirectClassSystemCode1.IsKnown();
         }
 
@@ -252,7 +236,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var delivery = GetDeliveryFor(thisLearnAimRef);
 
-            return It.Has(delivery)
+            return delivery != null
                 && delivery.LearnDirectClassSystemCode2.IsKnown();
         }
 
@@ -288,7 +272,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
             var values = GetAnnualValuesFor(learnAimRef);
             return values.NullSafeAny(a => a.BasicSkillsType.HasValue
                         && basicSkillsTypes.Contains((int)a.BasicSkillsType)
-                        && a.IsCurrent(learnStartDate));
+                        && IsCurrentAndNotWithdrawn(a, learnStartDate));
         }
 
         // TODO: this should happen in the rule
@@ -311,7 +295,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
 
             return validities.Any(
                 lv => lv.ValidityCategory.CaseInsensitiveEquals(validityCategory)
-                && lv.IsCurrent(origLearnStartDate));
+                && IsCurrentAndNotWithdrawn(lv, origLearnStartDate));
         }
 
         // TODO: this should happen in the rule
@@ -321,7 +305,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
 
             return validities.Any(lv =>
                 categoriesHashSet.Any(x => x.CaseInsensitiveEquals(lv.ValidityCategory))
-                && lv.IsCurrent(origLearnStartDate));
+                && IsCurrentAndNotWithdrawn(lv, origLearnStartDate));
         }
 
         // TODO: this should happen in the rule, but may require an accessor => GetStandard(s)For(int thisStandardCode)
@@ -330,7 +314,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var validities = GetStandardValiditiesFor(stdCode);
 
-            return validities.Any(s => s.IsCurrent(learnStartDate));
+            return validities.Any(s => IsCurrentAndNotWithdrawn(s, learnStartDate));
         }
 
         // TODO: this should happen in the rule
@@ -338,8 +322,13 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS
         {
             var learningDelivery = GetDeliveryFor(learnAimRef);
 
-            return It.Has(learningDelivery)
+            return learningDelivery != null
                 && learnAimRefTypes.Any(x => x.CaseInsensitiveEquals(learningDelivery.LearnAimRefType));
         }
+
+        public bool IsCurrentAndNotWithdrawn(ISupportFundingWithdrawal source, DateTime candidate, DateTime? optionalEnding = null) =>
+            source != null
+            && !(source.EndDate < source.StartDate)
+            && (candidate >= source.StartDate && (candidate <= (source.EndDate ?? DateTime.MaxValue)));
     }
 }

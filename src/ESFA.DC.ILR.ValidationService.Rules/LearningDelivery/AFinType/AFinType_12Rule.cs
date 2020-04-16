@@ -2,8 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
 using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
@@ -19,10 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public AFinType_12Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
-            _messageHandler = validationErrorHandler;
+           _messageHandler = validationErrorHandler;
         }
 
         public string RuleName => Name;
@@ -35,9 +30,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
@@ -55,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return !It.Has(thisDelivery) || thisDelivery.AppFinRecords.NullSafeAny(afr => afr.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice));
+            return thisDelivery == null || thisDelivery.AppFinRecords.NullSafeAny(afr => afr.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice));
         }
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)

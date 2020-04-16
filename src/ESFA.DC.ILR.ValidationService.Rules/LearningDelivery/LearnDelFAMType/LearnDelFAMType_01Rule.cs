@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Linq;
 
@@ -19,22 +18,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public LearnDelFAMType_01Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
             _messageHandler = validationErrorHandler;
         }
 
         public string RuleName => Name;
 
         public bool IsFunded(ILearningDelivery delivery) =>
-            TypeOfFunding.AsAFundedSet.Contains(delivery.FundModel);
+            TypeOfFunding.TypeOfFundingCollection.Contains(delivery.FundModel);
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
@@ -52,8 +45,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool ConditionMet(ILearningDeliveryFAM famRecord)
         {
-            return It.Has(famRecord)
-                ? It.IsInRange(famRecord.LearnDelFAMType, Monitoring.Delivery.Types.SourceOfFunding)
+            return famRecord != null
+                ? famRecord.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.SourceOfFunding)
                 : true;
         }
 

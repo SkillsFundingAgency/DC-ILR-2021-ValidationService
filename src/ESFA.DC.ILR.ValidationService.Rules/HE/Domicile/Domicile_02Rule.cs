@@ -5,7 +5,6 @@ using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
 {
@@ -24,11 +23,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
             IValidationErrorHandler validationErrorHandler,
             IProvideLookupDetails lookups)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(lookups)
-                .AsGuard<ArgumentNullException>(nameof(lookups));
-
             _messageHandler = validationErrorHandler;
             _lookups = lookups;
         }
@@ -36,16 +30,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.DOMICILE
         public string RuleName => Name;
 
         public bool HasHigherEd(ILearningDelivery delivery) =>
-            It.Has(delivery.LearningDeliveryHEEntity);
+            delivery.LearningDeliveryHEEntity != null;
 
         public bool HasValidDomicile(ILearningDeliveryHE he) =>
             he.DOMICILE == null || _lookups.Contains(TypeOfStringCodedLookup.Domicile, he.DOMICILE);
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

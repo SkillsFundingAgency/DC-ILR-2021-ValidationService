@@ -2,7 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -21,19 +21,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
 
         public OrigLearnStartDate_04Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
             _messageHandler = validationErrorHandler;
         }
 
         public string RuleName => Name;
 
         public bool HasOriginalLearningStartDate(ILearningDelivery delivery) =>
-            It.Has(delivery.OrigLearnStartDateNullable);
+            delivery.OrigLearnStartDateNullable.HasValue;
 
         public bool HasRestartIndicator(ILearningDeliveryFAM monitor) =>
-            It.IsInRange(monitor.LearnDelFAMType, Monitoring.Delivery.Types.Restart);
+            monitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.Restart);
 
         public bool HasRestartIndicator(ILearningDelivery delivery) =>
             delivery.LearningDeliveryFAMs.NullSafeAny(HasRestartIndicator);
@@ -48,9 +45,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

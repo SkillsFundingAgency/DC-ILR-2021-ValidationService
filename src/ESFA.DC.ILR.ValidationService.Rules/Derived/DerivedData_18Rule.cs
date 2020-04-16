@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +15,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public DerivedData_18Rule(IProvideRuleCommonOperations commonOperations)
         {
-            It.IsNull(commonOperations)
-                .AsGuard<ArgumentNullException>(nameof(commonOperations));
-
             _check = commonOperations;
         }
 
         public bool HasMatchingStandardCode(ILearningDelivery delivery, ILearningDelivery candidate) =>
-            It.Has(delivery?.StdCodeNullable)
-                && delivery.StdCodeNullable == candidate.StdCodeNullable;
+            delivery != null
+            && delivery.StdCodeNullable.HasValue
+            && delivery.StdCodeNullable == candidate.StdCodeNullable;
 
         public bool HasRestrictionsMatch(ILearningDelivery candidate, ILearningDelivery andDelivery) =>
             _check.IsStandardApprenticeship(candidate)
@@ -33,11 +30,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public DateTime? GetApprenticeshipStandardProgrammeStartDateFor(ILearningDelivery thisDelivery, IReadOnlyCollection<ILearningDelivery> usingSources)
         {
-            It.IsNull(thisDelivery)
-                .AsGuard<ArgumentNullException>(nameof(thisDelivery));
-            It.IsEmpty(usingSources)
-                .AsGuard<ArgumentNullException>(nameof(usingSources));
-
             /*
               LearningDelivery.ProgType = 25
               and the earliest value of LearningDelivery.LearnStartDate for all programme aims with LearningDelivery.AimType = 1

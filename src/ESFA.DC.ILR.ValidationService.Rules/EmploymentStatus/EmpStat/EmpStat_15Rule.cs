@@ -3,7 +3,6 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,11 +24,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             IValidationErrorHandler validationErrorHandler,
             IDerivedData_07Rule derivedData07)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(derivedData07)
-                .AsGuard<ArgumentNullException>(nameof(derivedData07));
-
             _messageHandler = validationErrorHandler;
             _derivedData07 = derivedData07;
         }
@@ -42,13 +36,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
 
         public bool InAProgramme(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.AimType, TypeOfAim.ProgrammeAim);
+            delivery.AimType == TypeOfAim.ProgrammeAim;
 
         public bool IsQualifyingAim(ILearningDelivery delivery) =>
             delivery.LearnStartDate > LastInviableDate;
 
         public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus eStatus) =>
-            It.IsOutOfRange(eStatus?.EmpStat, TypeOfEmploymentStatus.NotKnownProvided);
+            eStatus?.EmpStat != TypeOfEmploymentStatus.NotKnownProvided;
 
         public ILearnerEmploymentStatus GetQualifyingEmploymentStatus(ILearner learner, ILearningDelivery delivery) =>
             learner.LearnerEmploymentStatuses
@@ -67,9 +61,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

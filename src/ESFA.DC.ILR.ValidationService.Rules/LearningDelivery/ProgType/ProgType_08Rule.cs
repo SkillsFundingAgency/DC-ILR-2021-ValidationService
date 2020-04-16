@@ -2,7 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -19,9 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public ProgType_08Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
             _messageHandler = validationErrorHandler;
         }
 
@@ -29,13 +26,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .NullSafeWhere(x => It.IsInRange(x.ProgTypeNullable, TypeOfLearningProgramme.Traineeship) && It.IsInRange(x.AimType, TypeOfAim.ProgrammeAim))
+                .NullSafeWhere(x => x.ProgTypeNullable == TypeOfLearningProgramme.Traineeship && x.AimType == TypeOfAim.ProgrammeAim)
                 .ForEach(x =>
                 {
                     var failedValidation = !ConditionMet(x);
@@ -49,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return It.Has(thisDelivery) && It.Has(thisDelivery.LearnActEndDateNullable)
+            return thisDelivery != null && thisDelivery.LearnActEndDateNullable.HasValue
                 ? TypeOfLearningProgramme.WithinMaxmimumTrainingDuration(thisDelivery.LearnStartDate, thisDelivery.LearnActEndDateNullable.Value)
                 : true;
         }

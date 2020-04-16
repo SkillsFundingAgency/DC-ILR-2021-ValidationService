@@ -2,7 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +22,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public EmpStat_11Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
+            
+                
 
             _messageHandler = validationErrorHandler;
         }
@@ -33,13 +33,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         public DateTime LastInviableDate => new DateTime(2014, 07, 31);
 
         public bool InTraining(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool IsViableStart(ILearningDelivery delivery) =>
             delivery.LearnStartDate > LastInviableDate;
 
         public bool HasQualifyingFunding(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.FundModel, TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.Other16To19);
+           delivery.FundModel == TypeOfFunding.Age16To19ExcludingApprenticeships
+           || delivery.FundModel == TypeOfFunding.Other16To19;
 
         public bool HasAQualifyingEmploymentStatus(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> usingEmployments) =>
             usingEmployments
@@ -59,8 +60,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
+            
+                
 
             if (HasQualifyingHours(GetQualifyingHours(objectToValidate)))
             {

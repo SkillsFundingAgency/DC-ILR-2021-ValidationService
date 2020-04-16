@@ -53,5 +53,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
             return dateResult;
         }
+
+        public bool IsDateBetween(DateTime candidate, DateTime min, DateTime max, bool includeBoundaries = true)
+        {
+            return includeBoundaries
+               ? candidate >= min && candidate <= max
+               : candidate > min && candidate < max;
+        }
+           
     }
 }

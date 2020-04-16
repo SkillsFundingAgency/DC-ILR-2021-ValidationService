@@ -5,7 +5,7 @@ using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 {
@@ -20,9 +20,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public ProgType_03Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
             _messageHandler = validationErrorHandler;
         }
 
@@ -30,13 +27,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .NullSafeWhere(x => It.Has(x.ProgTypeNullable))
+                .NullSafeWhere(x => x.ProgTypeNullable.HasValue)
                 .ForEach(x =>
                 {
                     var failedValidation = !ConditionMet(x);
@@ -50,8 +44,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return It.Has(thisDelivery)
-                ? It.Has(thisDelivery.ProgTypeNullable) && TypeOfLearningProgramme.AsASet.Contains((int)thisDelivery.ProgTypeNullable)
+            return thisDelivery != null
+                ? thisDelivery.ProgTypeNullable.HasValue && TypeOfLearningProgramme.TypeOfLearningProgrammesCollection.Contains((int)thisDelivery.ProgTypeNullable)
                 : true;
         }
 

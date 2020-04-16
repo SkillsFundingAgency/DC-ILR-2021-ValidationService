@@ -12,97 +12,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 {
     public class LearnDelFAMType_01RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_01Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("LearnDelFAMType_01", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(LearnDelFAMType_01Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Condition met with null financial record returns true.
-        /// </summary>
         [Fact]
         public void ConditionMetWithNullFinancialRecordReturnsTrue()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.ConditionMet(null);
 
-            // assert
             Assert.True(result);
         }
 
-        /// <summary>
-        /// Condition met with fam record meets expectation.
-        /// </summary>
-        /// <param name="famType">Type of the fam.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(Monitoring.Delivery.Types.ApprenticeshipContract, false)]
         [InlineData(Monitoring.Delivery.Types.AdvancedLearnerLoan, false)]
@@ -115,25 +44,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData(Monitoring.Delivery.Types.SourceOfFunding, true)]
         public void ConditionMetWithFAMRecordMeetsExpectation(string famType, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockFAM = new Mock<ILearningDeliveryFAM>();
             mockFAM
                 .SetupGet(x => x.LearnDelFAMType)
                 .Returns(famType);
 
-            // act
             var result = sut.ConditionMet(mockFAM.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Determines whether [is funded meets expectation] [(for) the specified candidate].
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(TypeOfFunding.AdultSkills, true)]
         [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, true)]
@@ -145,25 +66,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData(TypeOfFunding.OtherAdult, true)]
         public void IsFundedMeetsExpectation(int candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.FundModel)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsFunded(mockDelivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="fundingModel">The funding model.</param>
-        /// <param name="candidates">The candidates.</param>
         [Theory]
         [InlineData(TypeOfFunding.CommunityLearning, Monitoring.Delivery.Types.ApprenticeshipContract, Monitoring.Delivery.Types.CommunityLearningProvision, Monitoring.Delivery.Types.HouseholdSituation, Monitoring.Delivery.Types.LearningSupportFunding)]
         [InlineData(TypeOfFunding.EuropeanSocialFund, Monitoring.Delivery.Types.ApprenticeshipContract, Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding, Monitoring.Delivery.Types.CommunityLearningProvision, Monitoring.Delivery.Types.Learning, Monitoring.Delivery.Types.LearningSupportFunding, Monitoring.Delivery.Types.Restart)]
@@ -175,7 +88,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData(TypeOfFunding.EuropeanSocialFund, Monitoring.Delivery.Types.AdvancedLearnerLoan, Monitoring.Delivery.Types.HouseholdSituation, Monitoring.Delivery.Types.Learning, Monitoring.Delivery.Types.LearningSupportFunding, Monitoring.Delivery.Types.Restart)]
         public void InvalidItemRaisesValidationMessage(int fundingModel, params string[] candidates)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var records = new List<ILearningDeliveryFAM>();
@@ -217,18 +129,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var sut = new LearnDelFAMType_01Rule(mockHandler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             mockHandler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise a validation message.
-        /// </summary>
-        /// <param name="fundingModel">The funding model.</param>
-        /// <param name="candidates">The candidates.</param>
         [Theory]
         [InlineData(TypeOfFunding.CommunityLearning, Monitoring.Delivery.Types.ApprenticeshipContract, Monitoring.Delivery.Types.CommunityLearningProvision, Monitoring.Delivery.Types.HouseholdSituation, Monitoring.Delivery.Types.LearningSupportFunding, Monitoring.Delivery.Types.SourceOfFunding)]
         [InlineData(TypeOfFunding.EuropeanSocialFund, Monitoring.Delivery.Types.ApprenticeshipContract, Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding, Monitoring.Delivery.Types.CommunityLearningProvision, Monitoring.Delivery.Types.Learning, Monitoring.Delivery.Types.LearningSupportFunding, Monitoring.Delivery.Types.Restart, Monitoring.Delivery.Types.SourceOfFunding)]
@@ -244,7 +149,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData(TypeOfFunding.NotFundedByESFA, Monitoring.Delivery.Types.ApprenticeshipContract, Monitoring.Delivery.Types.AdvancedLearnerLoan, Monitoring.Delivery.Types.HouseholdSituation, Monitoring.Delivery.Types.Learning, Monitoring.Delivery.Types.LearningSupportFunding, Monitoring.Delivery.Types.Restart)]
         public void ValidItemDoesNotRaiseAValidationMessage(int fundingModel, params string[] candidates)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var records = new List<ILearningDeliveryFAM>();
@@ -281,17 +185,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var sut = new LearnDelFAMType_01Rule(mockHandler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             mockHandler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public LearnDelFAMType_01Rule NewRule()
         {
             var mock = new Mock<IValidationErrorHandler>();

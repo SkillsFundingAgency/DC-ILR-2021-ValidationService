@@ -3,9 +3,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.EDRS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -13,82 +11,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
 {
     public class EmpId_01RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange
-            var edrsData = new Mock<IEmployersDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new EmpId_01Rule(null, edrsData.Object));
-        }
-
-        [Fact]
-        public void NewRuleWithNullDataProviderThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new EmpId_01Rule(handler.Object, null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("EmpId_01", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(RuleNameConstants.EmpId_01, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Is invalid domain item meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(null, false)]
         [InlineData(999999999, false)]
@@ -97,7 +29,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
         [InlineData(2, true)]
         public void IsNotValidMeetsExpectation(int? candidate, bool expectation)
         {
-            // arrange
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var edrsData = new Mock<IEmployersDataService>(MockBehavior.Strict);
             edrsData
@@ -111,23 +42,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .SetupGet(x => x.EmpIdNullable)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsNotValid(candidate);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
         public void InvalidItemRaisesValidationMessage(int? candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var status = new Mock<ILearnerEmploymentStatus>();
@@ -159,7 +83,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                     candidate))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            // the crux of the test runs on the return value from this call
             var edrsData = new Mock<IEmployersDataService>(MockBehavior.Strict);
             edrsData
                 .Setup(x => x.IsValid(candidate))
@@ -167,24 +90,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
 
             var sut = new EmpId_01Rule(handler.Object, edrsData.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             edrsData.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
         public void ValidItemDoesNotRaiseValidationMessage(int? candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var status = new Mock<ILearnerEmploymentStatus>();
@@ -202,7 +118,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            // the crux of the test runs on the return value from this call
             var edrsData = new Mock<IEmployersDataService>(MockBehavior.Strict);
             edrsData
                 .Setup(x => x.IsValid(candidate))
@@ -210,21 +125,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
 
             var sut = new EmpId_01Rule(handler.Object, edrsData.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             edrsData.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item with empty employments does not raise validation message.
-        /// </summary>
         [Fact]
         public void ValidItemWithEmptyEmploymentsDoesNotRaiseValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var statii = new List<ILearnerEmploymentStatus>();
@@ -242,21 +151,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
 
             var sut = new EmpId_01Rule(handler.Object, edrsData.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             edrsData.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item with null employments does not raise validation message.
-        /// </summary>
         [Fact]
         public void ValidItemWithNullEmploymentsDoesNotRaiseValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var mockLearner = new Mock<ILearner>();
@@ -269,18 +172,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
 
             var sut = new EmpId_01Rule(handler.Object, edrsData.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             edrsData.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public EmpId_01Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

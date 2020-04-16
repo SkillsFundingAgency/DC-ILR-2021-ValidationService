@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -12,82 +11,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
 {
     public class ESMType_01RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange / act / assert
-            Assert.Throws<ArgumentNullException>(() => new ESMType_01Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("ESMType_01", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(ESMType_01Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Is invalid domain item meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor0To10HourPW, false)]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor11To20HoursPW, false)]
@@ -129,7 +62,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData("SEM2", true)]
         public void IsInvalidDomainItemMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<IEmploymentStatusMonitoring>();
             mockItem
@@ -139,17 +71,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(candidate.Substring(3)));
 
-            // act
             var result = sut.IsInvalidDomainItem(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData("BSI0")]
         [InlineData("BSI5")]
@@ -167,7 +93,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData("SEM2")]
         public void InvalidItemRaisesValidationMessage(string candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var monitor = new Mock<IEmploymentStatusMonitoring>();
@@ -219,17 +144,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
 
             var sut = new ESMType_01Rule(handler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor0To10HourPW)]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor11To20HoursPW)]
@@ -257,7 +176,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData(Monitoring.EmploymentStatus.UnemployedForLessThan6M)]
         public void ValidItemDoesNotRaiseValidationMessage(string candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var monitor = new Mock<IEmploymentStatusMonitoring>();
@@ -291,20 +209,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
 
             var sut = new ESMType_01Rule(handler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item with empty employments does not raise validation message.
-        /// </summary>
         [Fact]
         public void ValidItemWithEmptyEmploymentsDoesNotRaiseValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var statii = new List<ILearnerEmploymentStatus>();
@@ -321,20 +233,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
 
             var sut = new ESMType_01Rule(handler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item with null employments does not raise validation message.
-        /// </summary>
         [Fact]
         public void ValidItemWithNullEmploymentsDoesNotRaiseValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var mockLearner = new Mock<ILearner>();
@@ -346,17 +252,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
 
             var sut = new ESMType_01Rule(handler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public ESMType_01Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

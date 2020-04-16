@@ -2,7 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -19,28 +19,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public ProgType_07Rule(IValidationErrorHandler validationErrorHandler)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-
             _messageHandler = validationErrorHandler;
         }
 
         public string RuleName => Name;
 
         public bool IsTrainee(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.ProgTypeNullable, TypeOfLearningProgramme.Traineeship);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            It.IsInRange(delivery.AimType, TypeOfAim.ProgrammeAim);
+            delivery.AimType == TypeOfAim.ProgrammeAim;
 
         public bool IsViable(ILearningDelivery delivery) =>
             TypeOfLearningProgramme.IsViableApprenticeship(delivery.LearnStartDate);
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
@@ -58,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
-            return It.Has(thisDelivery)
+            return thisDelivery != null
                 ? thisDelivery.LearnStartDate > DateTime.MinValue
                     && TypeOfLearningProgramme.WithinMaxmimumTrainingDuration(thisDelivery.LearnStartDate, thisDelivery.LearnPlanEndDate)
                 : true;

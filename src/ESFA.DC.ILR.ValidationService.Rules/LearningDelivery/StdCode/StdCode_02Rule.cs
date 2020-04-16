@@ -3,7 +3,7 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 
@@ -24,11 +24,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.StdCode
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(larsData)
-                .AsGuard<ArgumentNullException>(nameof(larsData));
-
             _messageHandler = validationErrorHandler;
             _larsData = larsData;
         }
@@ -39,16 +34,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.StdCode
             _larsData.ContainsStandardFor(delivery.StdCodeNullable.Value);
 
         public bool HasStandardCode(ILearningDelivery delivery) =>
-            It.Has(delivery.StdCodeNullable);
+            delivery.StdCodeNullable.HasValue;
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             HasStandardCode(delivery) && !IsValidStandardCode(delivery);
 
         public void Validate(ILearner objectToValidate)
         {
-            It.IsNull(objectToValidate)
-                .AsGuard<ArgumentNullException>(nameof(objectToValidate));
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries

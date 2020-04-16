@@ -5,7 +5,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,22 +26,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_64)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
-            It.IsNull(commonOps)
-                .AsGuard<ArgumentNullException>(nameof(commonOps));
-            It.IsNull(larsDataService)
-                .AsGuard<ArgumentNullException>(nameof(larsDataService));
-
             _check = commonOps;
             _larsData = larsDataService;
         }
 
         public void Validate(ILearner theLearner)
         {
-            It.IsNull(theLearner)
-                .AsGuard<ArgumentNullException>(nameof(theLearner));
-
             var learnRefNumber = theLearner.LearnRefNumber;
 
             theLearner.LearningDeliveries
@@ -72,18 +62,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 .Any(x => IsEnglishOrMathBasicSkill(x) && IsValueCurrent(theDelivery, x));
 
         public bool HasABasicSkillType(ILARSAnnualValue theValue) =>
-            It.Has(theValue.BasicSkillsType);
+            theValue.BasicSkillsType.HasValue;
 
         public bool IsEnglishOrMathBasicSkill(ILARSAnnualValue theValue) =>
-            TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills.Contains((int)theValue.BasicSkillsType);
+            TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills.Contains(theValue.BasicSkillsType.Value);
 
         public bool IsValueCurrent(ILearningDelivery theDelivery, ILARSAnnualValue theValue) =>
-            theValue.IsCurrent(theDelivery.LearnStartDate);
+            _larsData.IsCurrentAndNotWithdrawn(theValue, theDelivery.LearnStartDate);
 
         public bool HasQualifyingCommonComponent(ILearningDelivery theDelivery)
         {
             var larsDelivery = _larsData.GetDeliveryFor(theDelivery.LearnAimRef);
-            return It.Has(larsDelivery) && IsBritishSignLanguage(larsDelivery);
+            return larsDelivery != null && IsBritishSignLanguage(larsDelivery);
         }
 
         public bool IsBritishSignLanguage(ILARSLearningDelivery theDelivery) =>
@@ -93,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _check.CheckDeliveryFAMs(theDelivery, IsApprenticeshipContract);
 
         public bool IsApprenticeshipContract(ILearningDeliveryFAM theMonitor) =>
-            It.IsInRange(theMonitor.LearnDelFAMType, Monitoring.Delivery.Types.ApprenticeshipContract);
+            theMonitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.ApprenticeshipContract);
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
             HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
