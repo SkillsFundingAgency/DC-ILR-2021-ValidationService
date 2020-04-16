@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-
 using System;
 using System.Collections.Generic;
 
@@ -21,11 +20,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             IProvideRuleCommonOperations commonOperations)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_07)
         {
-            
-                
-            
-                
-
             _check = commonOperations;
         }
 
@@ -35,9 +29,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 
         public void Validate(ILearner thisLearner)
         {
-            
-                
-
             if (!HasQualifyingLearningHours(GetLearningHoursTotal(thisLearner)))
             {
                 return;

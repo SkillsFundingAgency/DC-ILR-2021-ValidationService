@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
         public string RuleName => Name;
 
         public bool IsFunded(ILearningDelivery delivery) =>
-            TypeOfFunding.AsAFundedSet.Contains(delivery.FundModel);
+            TypeOfFunding.TypeOfFundingCollection.Contains(delivery.FundModel);
 
         public bool IsTargetApprenticeship(ILearningDelivery delivery) =>
             delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;

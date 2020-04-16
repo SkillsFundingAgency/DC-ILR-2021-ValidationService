@@ -6,7 +6,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-
 using System;
 using System.Collections.Generic;
 
@@ -14,7 +13,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 {
     public class EmpStat_01Rule : AbstractRule, IRule<ILearner>
     {
-        public const string MessagePropertyName = PropertyNameConstants.EmpStat;
         public HashSet<int> _fundModels = new HashSet<int>
         {
             TypeOfFunding.AdultSkills,
@@ -104,9 +102,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public void Validate(ILearner objectToValidate)
         {
-            
-                
-
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
@@ -119,7 +114,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(ILearner learner, ILearningDelivery thisDelivery) => new[]
         {
-            BuildErrorMessageParameter(MessagePropertyName, "(missing)"),
+            BuildErrorMessageParameter(PropertyNameConstants.EmpStat, "(missing)"),
             BuildErrorMessageParameter(PropertyNameConstants.FundModel, thisDelivery.FundModel),
             BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, thisDelivery.LearnStartDate),
             BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, learner.DateOfBirthNullable)
