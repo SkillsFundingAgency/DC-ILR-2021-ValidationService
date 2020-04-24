@@ -15,24 +15,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
     public class UKPRN_08Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IFileDataService _fileDataService;
-
         private readonly IAcademicYearDataService _academicYearDataService;
-
-        private readonly IProvideRuleCommonOperations _check;
-
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IFCSDataService _fcsDataService;
 
         public UKPRN_08Rule(
             IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
             IAcademicYearDataService academicYearDataService,
-            IProvideRuleCommonOperations commonOperations,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IFCSDataService fcsDataService)
             : base(validationErrorHandler, RuleNameConstants.UKPRN_08)
         {
             _fileDataService = fileDataService;
             _academicYearDataService = academicYearDataService;
-            _check = commonOperations;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _fcsDataService = fcsDataService;
         }
 
@@ -63,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public bool IsNotValid(ILearningDelivery thisDelivery)
         {
             return !IsExcluded(thisDelivery)
-                && _check.IsLoansBursary(thisDelivery)
+                && _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(thisDelivery?.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ALB)
                 && !HasFundingRelationship(thisDelivery);
         }
 

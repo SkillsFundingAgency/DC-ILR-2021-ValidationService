@@ -11,15 +11,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
 
         bool IsRestart(ILearningDelivery delivery);
 
-        bool IsAdvancedLearnerLoan(ILearningDelivery delivery);
-
-        bool IsLoansBursary(ILearningDelivery thisDelivery);
-
         bool IsLearnerInCustody(ILearningDelivery delivery);
 
         bool IsSteelWorkerRedundancyTraining(ILearningDelivery delivery);
-
-        bool IsReleasedOnTemporaryLicence(ILearningDelivery delivery);
 
         bool InApprenticeship(ILearningDelivery delivery);
 
@@ -34,8 +28,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
         bool HasQualifyingFunding(ILearningDelivery delivery, params int[] desiredFundings);
 
         bool HasQualifyingStart(ILearningDelivery delivery, DateTime minStart, DateTime? maxStart = null);
-
-        bool HasQualifyingStart(ILearnerEmploymentStatus employment, DateTime minStart, DateTime? maxStart = null);
 
         ILearnerEmploymentStatus GetEmploymentStatusOn(DateTime? thisStartDate, IReadOnlyCollection<ILearnerEmploymentStatus> usingSources);
     }

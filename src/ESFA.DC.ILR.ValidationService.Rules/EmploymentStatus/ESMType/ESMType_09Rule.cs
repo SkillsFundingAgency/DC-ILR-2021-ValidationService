@@ -9,23 +9,22 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 {
-    public class ESMType_09Rule :
-        IRule<ILearner>
+    public class ESMType_09Rule : IRule<ILearner>
     {
         public const string MessagePropertyName = "ESMType";
-
         public const string Name = RuleNameConstants.ESMType_09;
-
         private readonly IValidationErrorHandler _messageHandler;
-
         private readonly IProvideRuleCommonOperations _check;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public ESMType_09Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations)
+            IProvideRuleCommonOperations check,
+            IDateTimeQueryService dateTimeQueryService)
         {
             _messageHandler = validationErrorHandler;
-            _check = commonOperations;
+            _check = check;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public static DateTime FirstViableDate => new DateTime(2013, 08, 01);
@@ -55,9 +54,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public bool IsNotValid(ILearnerEmploymentStatus employmentStatus, DateTime? lastViabledate) =>
             lastViabledate.HasValue
-                && _check.HasQualifyingStart(employmentStatus, FirstViableDate, lastViabledate)
-                && IsQualifyingEmployment(employmentStatus)
-                && !HasQualifyingIndicator(employmentStatus);
+            && employmentStatus != null
+            && _dateTimeQueryService.IsDateBetween(employmentStatus.DateEmpStatApp, FirstViableDate, lastViabledate ?? DateTime.MaxValue)
+            && IsQualifyingEmployment(employmentStatus)
+            && !HasQualifyingIndicator(employmentStatus);
 
         public void Validate(ILearner objectToValidate)
         {

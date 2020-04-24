@@ -43,66 +43,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         }
 
         [Theory]
-        [InlineData(Monitoring.Delivery.Types.AdvancedLearnerLoan, true)]
-        [InlineData(Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.ApprenticeshipContract, false)]
-        [InlineData(Monitoring.Delivery.Types.CommunityLearningProvision, false)]
-        [InlineData(Monitoring.Delivery.Types.EligibilityForEnhancedApprenticeshipFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.FamilyEnglishMathsAndLanguage, false)]
-        [InlineData(Monitoring.Delivery.Types.FullOrCoFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.HEMonitoring, false)]
-        [InlineData(Monitoring.Delivery.Types.HouseholdSituation, false)]
-        [InlineData(Monitoring.Delivery.Types.Learning, false)]
-        [InlineData(Monitoring.Delivery.Types.LearningSupportFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.NationalSkillsAcademy, false)]
-        [InlineData(Monitoring.Delivery.Types.PercentageOfOnlineDelivery, false)]
-        [InlineData(Monitoring.Delivery.Types.Restart, false)]
-        [InlineData(Monitoring.Delivery.Types.SourceOfFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.WorkProgrammeParticipation, false)]
-        public void IsAdvancedLearnerLoanMeetsExpectation(string candidate, bool expectation)
-        {
-            var sut = NewService();
-            var mockDelivery = new Mock<ILearningDeliveryFAM>();
-            mockDelivery
-                .SetupGet(y => y.LearnDelFAMType)
-                .Returns(candidate);
-
-            var result = sut.IsAdvancedLearnerLoan(mockDelivery.Object);
-
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
-        [InlineData(Monitoring.Delivery.Types.AdvancedLearnerLoan, false)]
-        [InlineData(Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding, true)]
-        [InlineData(Monitoring.Delivery.Types.ApprenticeshipContract, false)]
-        [InlineData(Monitoring.Delivery.Types.CommunityLearningProvision, false)]
-        [InlineData(Monitoring.Delivery.Types.EligibilityForEnhancedApprenticeshipFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.FamilyEnglishMathsAndLanguage, false)]
-        [InlineData(Monitoring.Delivery.Types.FullOrCoFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.HEMonitoring, false)]
-        [InlineData(Monitoring.Delivery.Types.HouseholdSituation, false)]
-        [InlineData(Monitoring.Delivery.Types.Learning, false)]
-        [InlineData(Monitoring.Delivery.Types.LearningSupportFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.NationalSkillsAcademy, false)]
-        [InlineData(Monitoring.Delivery.Types.PercentageOfOnlineDelivery, false)]
-        [InlineData(Monitoring.Delivery.Types.Restart, false)]
-        [InlineData(Monitoring.Delivery.Types.SourceOfFunding, false)]
-        [InlineData(Monitoring.Delivery.Types.WorkProgrammeParticipation, false)]
-        public void IsLoansBursaryMeetsExpectation(string candidate, bool expectation)
-        {
-            var sut = NewService();
-            var mockDelivery = new Mock<ILearningDeliveryFAM>();
-            mockDelivery
-                .SetupGet(y => y.LearnDelFAMType)
-                .Returns(candidate);
-
-            var result = sut.IsLoansBursary(mockDelivery.Object);
-
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
         [InlineData(Monitoring.Delivery.OLASSOffendersInCustody, true)]
         [InlineData(Monitoring.Delivery.FullyFundedLearningAim, false)]
         [InlineData(Monitoring.Delivery.CoFundedLearningAim, false)]
@@ -316,35 +256,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
                 .Returns(expectation);
 
             var result = NewService(dateTimeQueryService: dateTimeQueryService.Object).HasQualifyingStart(mockDelivery.Object, startDate, endDate);
-
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
-        [InlineData("2016-02-28", "2016-03-01", "2016-03-10", false)]
-        [InlineData("2016-02-28", "2016-03-01", null, false)]
-        [InlineData("2016-02-28", "2016-02-28", "2016-03-01", true)]
-        [InlineData("2016-02-28", "2016-02-27", "2016-03-01", true)]
-        [InlineData("2016-02-28", "2016-02-28", null, true)]
-        [InlineData("2016-02-28", "2016-02-27", null, true)]
-        public void Employment_HasQualifyingStartMeetsExpectation(string candidate, string start, string end, bool expectation)
-        {
-            var mockEmpStatus = new Mock<ILearnerEmploymentStatus>();
-            mockEmpStatus
-                .SetupGet(y => y.DateEmpStatApp)
-                .Returns(DateTime.Parse(candidate));
-
-            var startDate = DateTime.Parse(start);
-            var endDate = string.IsNullOrWhiteSpace(end)
-                ? (DateTime?)null
-                : DateTime.Parse(end);
-
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
-            dateTimeQueryService
-                .Setup(x => x.IsDateBetween(mockEmpStatus.Object.DateEmpStatApp, startDate, endDate ?? DateTime.MaxValue, true))
-                .Returns(expectation);
-
-            var result = NewService(dateTimeQueryService: dateTimeQueryService.Object).HasQualifyingStart(mockEmpStatus.Object, startDate, endDate);
 
             Assert.Equal(expectation, result);
         }
