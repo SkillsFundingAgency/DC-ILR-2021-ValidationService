@@ -32,18 +32,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         public bool IsRestart(ILearningDelivery delivery) =>
             CheckDeliveryFAMs(delivery, IsRestart);
 
-        public bool IsAdvancedLearnerLoan(ILearningDeliveryFAM monitor) =>
-            monitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.AdvancedLearnerLoan);
-
-        public bool IsAdvancedLearnerLoan(ILearningDelivery delivery) =>
-            CheckDeliveryFAMs(delivery, IsAdvancedLearnerLoan);
-
-        public bool IsLoansBursary(ILearningDeliveryFAM monitor) =>
-            monitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.AdvancedLearnerLoansBursaryFunding);
-
-        public bool IsLoansBursary(ILearningDelivery thisDelivery) =>
-            CheckDeliveryFAMs(thisDelivery, IsLoansBursary);
-
         public bool IsLearnerInCustody(ILearningDeliveryFAM monitor) =>
            Monitoring.Delivery.OLASSOffendersInCustody.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
@@ -58,9 +46,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
         public bool IsReleasedOnTemporaryLicence(ILearningDeliveryFAM monitor) =>
             Monitoring.Delivery.ReleasedOnTemporaryLicence.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
-
-        public bool IsReleasedOnTemporaryLicence(ILearningDelivery delivery) =>
-            CheckDeliveryFAMs(delivery, IsReleasedOnTemporaryLicence);
 
         public bool InApprenticeship(ILearningDelivery delivery) =>
             _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
@@ -83,10 +68,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         public bool HasQualifyingStart(ILearningDelivery delivery, DateTime minStart, DateTime? maxStart = null) =>
             delivery != null
             && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, minStart, maxStart ?? DateTime.MaxValue);
-
-        public bool HasQualifyingStart(ILearnerEmploymentStatus employment, DateTime minStart, DateTime? maxStart = null) =>
-            employment != null
-            && _dateTimeQueryService.IsDateBetween(employment.DateEmpStatApp, minStart, maxStart ?? DateTime.MaxValue);
 
         public ILearnerEmploymentStatus GetEmploymentStatusOn(DateTime? thisStartDate, IReadOnlyCollection<ILearnerEmploymentStatus> usingSources) =>
             usingSources

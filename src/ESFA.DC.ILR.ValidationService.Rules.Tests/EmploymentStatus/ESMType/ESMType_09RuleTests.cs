@@ -1,11 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
@@ -225,16 +225,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             common
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, ESMType_09Rule.FirstViableDate, null))
                 .Returns(true);
-            common
-                .Setup(x => x.HasQualifyingStart(status.Object, ESMType_09Rule.FirstViableDate, learnStart))
+
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(status.Object.DateEmpStatApp, ESMType_12Rule.FirstViableDate, learnStart, true))
                 .Returns(true);
 
-            var sut = new ESMType_09Rule(handler.Object, common.Object);
-
-            sut.Validate(mockLearner.Object);
+            NewRule(handler.Object, common.Object, dateTimeQS.Object).Validate(mockLearner.Object);
 
             handler.VerifyAll();
             common.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         [Theory]
@@ -309,26 +310,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Setup(x => x.InAProgramme(mockDelivery.Object))
                 .Returns(true);
             common
-                .Setup(x => x.HasQualifyingStart(status.Object, ESMType_09Rule.FirstViableDate, learnStart))
-                .Returns(true);
-            common
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, ESMType_09Rule.FirstViableDate, null))
                 .Returns(true);
 
-            var sut = new ESMType_09Rule(handler.Object, common.Object);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(status.Object.DateEmpStatApp, ESMType_12Rule.FirstViableDate, learnStart, true))
+                .Returns(true);
 
-            sut.Validate(mockLearner.Object);
+            NewRule(handler.Object, common.Object, dateTimeQS.Object).Validate(mockLearner.Object);
 
             handler.VerifyAll();
             common.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
-        public ESMType_09Rule NewRule()
+        public ESMType_09Rule NewRule(
+            IValidationErrorHandler handler = null,
+            IProvideRuleCommonOperations common = null,
+            IDateTimeQueryService dateTimeQueryService = null)
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            return new ESMType_09Rule(handler.Object, common.Object);
+            return new ESMType_09Rule(handler, common, dateTimeQueryService);
         }
     }
 }
