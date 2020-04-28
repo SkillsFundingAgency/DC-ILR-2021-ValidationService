@@ -7,37 +7,36 @@ using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
-    public class LearnAimRef_78Rule :
-        IRule<ILearner>
+    public class LearnAimRef_78Rule : IRule<ILearner>
     {
         public const string Name = RuleNameConstants.LearnAimRef_78;
 
         private readonly IValidationErrorHandler _messageHandler;
-
         private readonly ILARSDataService _larsData;
-
         private readonly IProvideRuleCommonOperations _check;
-
         private readonly IFileDataService _fileData;
-
         private readonly IOrganisationDataService _organisationData;
+        private readonly IDerivedData_07Rule _dd07;
 
         public LearnAimRef_78Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
             IProvideRuleCommonOperations commonChecks,
             IFileDataService fileData,
-            IOrganisationDataService organisationData)
+            IOrganisationDataService organisationData,
+            IDerivedData_07Rule dd07)
         {
             _messageHandler = validationErrorHandler;
             _larsData = larsData;
             _check = commonChecks;
             _fileData = fileData;
             _organisationData = organisationData;
+            _dd07 = dd07;
         }
 
         public static DateTime FirstViableDate => new DateTime(2016, 08, 01);
@@ -81,7 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             _check.IsRestart(delivery)
             || _check.IsLearnerInCustody(delivery)
             || _check.IsSteelWorkerRedundancyTraining(delivery)
-            || _check.InApprenticeship(delivery)
+            || _dd07.IsApprenticeship(delivery.ProgTypeNullable)
             || IsSpecialistDesignatedCollege();
 
         public bool IsNotValid(ILearningDelivery delivery) =>

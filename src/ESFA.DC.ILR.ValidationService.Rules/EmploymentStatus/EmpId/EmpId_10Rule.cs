@@ -5,22 +5,24 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 {
-    public class EmpId_10Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class EmpId_10Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IProvideRuleCommonOperations _check;
+        private readonly IDerivedData_07Rule _dd07;
 
         public EmpId_10Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations)
+            IProvideRuleCommonOperations commonOperations,
+            IDerivedData_07Rule dd07)
             : base(validationErrorHandler, RuleNameConstants.EmpId_10)
         {
             _check = commonOperations;
+            _dd07 = dd07;
         }
 
         public void Validate(ILearner thisLearner)
@@ -39,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             && HasDisqualifyingEmployerID(thisEmployment);
 
         public bool IsPrimaryLearningAim(ILearningDelivery thisDelivery) =>
-            _check.InApprenticeship(thisDelivery)
+            _dd07.IsApprenticeship(thisDelivery.ProgTypeNullable)
             && thisDelivery.AimType == TypeOfAim.ProgrammeAim;
 
         public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus thisEmployment) =>

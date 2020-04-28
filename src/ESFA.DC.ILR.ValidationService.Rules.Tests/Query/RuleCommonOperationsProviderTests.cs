@@ -1,6 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
@@ -130,27 +129,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void InApprenticeshipMeetsExpectation(bool expectation)
-        {
-            var mockItem = new Mock<ILearningDelivery>();
-
-            var derivedData07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            derivedData07
-                .Setup(x => x.IsApprenticeship(null))
-                .Returns(expectation);
-
-            var sut = NewService(derivedData07.Object);
-
-            var result = sut.InApprenticeship(mockItem.Object);
-
-            derivedData07.VerifyAll();
-
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
         [InlineData(TypeOfFunding.AdultSkills, TypeOfFunding.AdultSkills, true)]
         [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.AdultSkills, false)]
         [InlineData(TypeOfFunding.CommunityLearning, TypeOfFunding.AdultSkills, false)]
@@ -233,11 +211,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             Assert.Equal(expectedDate, result.DateEmpStatApp);
         }
 
-        private RuleCommonOperationsProvider NewService(
-            IDerivedData_07Rule dd07 = null,
-            IDateTimeQueryService dateTimeQueryService = null)
+        private RuleCommonOperationsProvider NewService(IDateTimeQueryService dateTimeQueryService = null)
         {
-            return new RuleCommonOperationsProvider(dd07, dateTimeQueryService);
+            return new RuleCommonOperationsProvider(dateTimeQueryService);
         }
     }
 }

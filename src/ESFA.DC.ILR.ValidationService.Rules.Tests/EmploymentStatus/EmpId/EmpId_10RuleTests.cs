@@ -2,6 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
@@ -36,11 +37,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InApprenticeship(mockDelivery.Object))
-                .Returns(isApprenctice);
 
-            var sut = new EmpId_10Rule(handler.Object, commonOps.Object);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(isApprenctice);
+
+            var sut = new EmpId_10Rule(handler.Object, commonOps.Object, dd07.Object);
 
             var result = sut.IsPrimaryLearningAim(mockDelivery.Object);
 
@@ -48,6 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
 
             handler.VerifyAll();
             commonOps.VerifyAll();
+            dd07.VerifyAll();
         }
 
         [Theory]
@@ -139,16 +142,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             commonOps
                 .Setup(x => x.GetEmploymentStatusOn(testDate, statii))
                 .Returns(status.Object);
-            commonOps
-                .Setup(x => x.InApprenticeship(mockDelivery.Object))
-                .Returns(true);
 
-            var sut = new EmpId_10Rule(handler.Object, commonOps.Object);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(true);
+
+            var sut = new EmpId_10Rule(handler.Object, commonOps.Object, dd07.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             commonOps.VerifyAll();
+            dd07.VerifyAll();
         }
 
         [Fact]
@@ -195,24 +200,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             commonOps
                 .Setup(x => x.GetEmploymentStatusOn(testDate, statii))
                 .Returns(status.Object);
-            commonOps
-                .Setup(x => x.InApprenticeship(mockDelivery.Object))
-                .Returns(true);
 
-            var sut = new EmpId_10Rule(handler.Object, commonOps.Object);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(true);
+
+            var sut = new EmpId_10Rule(handler.Object, commonOps.Object, dd07.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             commonOps.VerifyAll();
+            dd07.VerifyAll();
         }
 
         public EmpId_10Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
 
-            return new EmpId_10Rule(handler.Object, commonOps.Object);
+            return new EmpId_10Rule(handler.Object, commonOps.Object, dd07.Object);
         }
     }
 }
