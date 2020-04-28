@@ -18,17 +18,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         private readonly ILARSDataService _larsData;
         private readonly IProvideRuleCommonOperations _check;
         private readonly IDerivedData_07Rule _dd07;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public LearnAimRef_84Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
             IProvideRuleCommonOperations commonChecks,
-            IDerivedData_07Rule dd07)
+            IDerivedData_07Rule dd07,
+            IDateTimeQueryService dateTimeQueryService)
         {
             _messageHandler = validationErrorHandler;
             _larsData = larsData;
             _check = commonChecks;
             _dd07 = dd07;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public static DateTime FirstViableDate => new DateTime(2017, 08, 01);
@@ -58,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool PassesRestrictions(ILearningDelivery delivery) =>
             _check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)
-                && _check.HasQualifyingStart(delivery, FirstViableDate)
+                && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue)
                 && HasQualifyingNotionalNVQ(delivery);
 
         public bool IsExcluded(ILearningDelivery delivery) =>

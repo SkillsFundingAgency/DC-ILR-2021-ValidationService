@@ -32,9 +32,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             ddRule22
                 .Setup(x => x.GetLatestLearningStartForESFContract(null, null))
                 .Returns((DateTime?)null);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnStartDate_15Rule(handler.Object, ddRule22.Object, commonOps.Object);
+            var sut = new LearnStartDate_15Rule(handler.Object, ddRule22.Object, dateTimeQS.Object);
 
             var result = sut.GetStartFor(null, null);
 
@@ -42,7 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             handler.VerifyAll();
             ddRule22.VerifyAll();
-            commonOps.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         [Theory]
@@ -59,12 +59,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var ddRule22 = new Mock<IDerivedData_22Rule>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(delivery.Object.LearnStartDate, testDate, DateTime.MaxValue, true))
                 .Returns(expectation);
 
-            var sut = new LearnStartDate_15Rule(handler.Object, ddRule22.Object, commonOps.Object);
+            var sut = new LearnStartDate_15Rule(handler.Object, ddRule22.Object, dateTimeQS.Object);
 
             var result = sut.HasQualifyingStart(delivery.Object, testDate);
 
@@ -72,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             handler.VerifyAll();
             ddRule22.VerifyAll();
-            commonOps.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         [Theory]
@@ -114,18 +114,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.GetLatestLearningStartForESFContract(delivery.Object, deliveries))
                 .Returns(testDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(delivery.Object.LearnStartDate, testDate, DateTime.MaxValue, true))
                 .Returns(false);
 
-            var sut = new LearnStartDate_15Rule(handler.Object, ddRule22.Object, commonOps.Object);
+            var sut = new LearnStartDate_15Rule(handler.Object, ddRule22.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             ddRule22.VerifyAll();
-            commonOps.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         [Theory]
@@ -162,27 +162,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.GetLatestLearningStartForESFContract(delivery.Object, deliveries))
                 .Returns(testDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(delivery.Object.LearnStartDate, testDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new LearnStartDate_15Rule(handler.Object, ddRule22.Object, commonOps.Object);
+            var sut = new LearnStartDate_15Rule(handler.Object, ddRule22.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             ddRule22.VerifyAll();
-            commonOps.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         public LearnStartDate_15Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var ddRule22 = new Mock<IDerivedData_22Rule>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new LearnStartDate_15Rule(handler.Object, ddRule22.Object, commonOps.Object);
+            return new LearnStartDate_15Rule(handler.Object, ddRule22.Object, dateTimeQS.Object);
         }
     }
 }

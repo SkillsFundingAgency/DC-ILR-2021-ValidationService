@@ -79,7 +79,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_79Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+
+            var sut = new LearnAimRef_79Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object, dateTimeQS.Object);
 
             var result = sut.HasQualifyingNotionalNVQ(mockDelivery.Object);
 
@@ -156,18 +158,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks
                 .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
-                .Returns(true);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_79Rule.FirstViableDate, null))
-                .Returns(true);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             dd07
                 .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(false);
 
-            var sut = new LearnAimRef_79Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_79Rule.FirstViableDate, DateTime.MaxValue, true))
+                .Returns(true);
+
+            var sut = new LearnAimRef_79Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -231,18 +232,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks
                 .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
-                .Returns(true);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_79Rule.FirstViableDate, null))
-                .Returns(true);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             dd07
                 .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(false);
 
-            var sut = new LearnAimRef_79Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_79Rule.FirstViableDate, DateTime.MaxValue, true))
+                .Returns(true);
+
+            var sut = new LearnAimRef_79Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -258,8 +258,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new LearnAimRef_79Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object);
+            return new LearnAimRef_79Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object, dateTimeQS.Object);
         }
     }
 }

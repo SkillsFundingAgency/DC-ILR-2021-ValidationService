@@ -191,17 +191,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", LearnAimRef_87Rule.FirstViableDate))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_87Rule.FirstViableDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_87Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new LearnAimRef_87Rule(handler.Object, commonChecks.Object);
+            var sut = new LearnAimRef_87Rule(handler.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         [Theory]
@@ -234,25 +234,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_87Rule.FirstViableDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_87Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new LearnAimRef_87Rule(handler.Object, commonChecks.Object);
+            var sut = new LearnAimRef_87Rule(handler.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         public LearnAimRef_87Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new LearnAimRef_87Rule(handler.Object, commonChecks.Object);
+            return new LearnAimRef_87Rule(handler.Object, dateTimeQS.Object);
         }
     }
 }

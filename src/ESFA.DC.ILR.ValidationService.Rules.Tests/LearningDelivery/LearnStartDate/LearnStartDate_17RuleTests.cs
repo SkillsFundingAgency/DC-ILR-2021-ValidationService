@@ -44,8 +44,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(new List<ILARSStandardValidity>());
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object);
+            var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object, dateTimeQS.Object);
 
             var result = sut.GetStandardPeriodsOfValidityFor(delivery.Object);
 
@@ -83,11 +84,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(delivery.Object.LearnStartDate, testDate, DateTime.MaxValue, true))
                 .Returns(expectation);
 
-            var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object);
+            var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object, dateTimeQS.Object);
 
             var result = sut.HasQualifyingStart(delivery.Object, validities);
 
@@ -106,8 +108,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object);
+            var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object, dateTimeQS.Object);
 
             var result = sut.HasQualifyingStart(delivery.Object, null);
 
@@ -190,11 +193,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
 
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(delivery.Object.LearnStartDate, testDate, DateTime.MaxValue, true))
                 .Returns(false);
 
-            var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object);
+            var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -259,11 +263,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
+
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(delivery.Object.LearnStartDate, testDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object);
+            var sut = new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -277,8 +283,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object);
+            return new LearnStartDate_17Rule(handler.Object, larsData.Object, commonOps.Object, dateTimeQS.Object);
         }
     }
 }

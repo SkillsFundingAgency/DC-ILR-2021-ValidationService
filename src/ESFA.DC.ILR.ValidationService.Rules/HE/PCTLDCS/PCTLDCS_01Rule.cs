@@ -10,22 +10,19 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.HE.PCTLDCS
 {
-    public class PCTLDCS_01Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class PCTLDCS_01Rule : AbstractRule, IRule<ILearner>
     {
         private readonly ILARSDataService _larsData;
-
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public PCTLDCS_01Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
-            IProvideRuleCommonOperations commonChecks)
+            IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.PCTLDCS_01)
         {
             _larsData = larsData;
-            _check = commonChecks;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public static DateTime FirstViableDate => new DateTime(2009, 08, 01);
@@ -37,9 +34,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.PCTLDCS
             deliveryHE != null && deliveryHE.PCTLDCSNullable == null;
 
         public bool IsNotValid(ILearningDelivery delivery) =>
-            _check.HasQualifyingStart(delivery, FirstViableDate)
-                && HasKnownLDCSCode(delivery)
-                && HasQualifyingPCTLDCSNull(delivery.LearningDeliveryHEEntity);
+            _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue)
+            && HasKnownLDCSCode(delivery)
+            && HasQualifyingPCTLDCSNull(delivery.LearningDeliveryHEEntity);
 
         public void Validate(ILearner objectToValidate)
         {

@@ -1,10 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
@@ -121,38 +118,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             Assert.Equal(expectation, result);
         }
 
-        [Theory]
-        [InlineData("2016-02-28", "2016-03-01", "2016-03-10", false)]
-        [InlineData("2016-02-28", "2016-03-01", null, false)]
-        [InlineData("2016-02-28", "2016-02-28", "2016-03-01", true)]
-        [InlineData("2016-02-28", "2016-02-27", "2016-03-01", true)]
-        [InlineData("2016-02-28", "2016-02-28", null, true)]
-        [InlineData("2016-02-28", "2016-02-27", null, true)]
-        public void Delivery_HasQualifyingStartMeetsExpectation(string candidate, string start, string end, bool expectation)
+        private RuleCommonOperationsProvider NewService()
         {
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnStartDate)
-                .Returns(DateTime.Parse(candidate));
-
-            var startDate = DateTime.Parse(start);
-            var endDate = string.IsNullOrWhiteSpace(end)
-                ? (DateTime?)null
-                : DateTime.Parse(end);
-
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
-            dateTimeQueryService
-                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, startDate, endDate ?? DateTime.MaxValue, true))
-                .Returns(expectation);
-
-            var result = NewService(dateTimeQueryService: dateTimeQueryService.Object).HasQualifyingStart(mockDelivery.Object, startDate, endDate);
-
-            Assert.Equal(expectation, result);
-        }
-
-        private RuleCommonOperationsProvider NewService(IDateTimeQueryService dateTimeQueryService = null)
-        {
-            return new RuleCommonOperationsProvider(dateTimeQueryService);
+            return new RuleCommonOperationsProvider();
         }
     }
 }

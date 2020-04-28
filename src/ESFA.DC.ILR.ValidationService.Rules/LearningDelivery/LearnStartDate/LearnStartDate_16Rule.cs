@@ -10,22 +10,19 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
-    public class LearnStartDate_16Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnStartDate_16Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IFCSDataService _contracts;
-
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public LearnStartDate_16Rule(
             IValidationErrorHandler validationErrorHandler,
             IFCSDataService fcsData,
-            IProvideRuleCommonOperations commonOperations)
+            IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnStartDate_16)
         {
             _contracts = fcsData;
-            _check = commonOperations;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public IFcsContractAllocation GetAllocationFor(ILearningDelivery thisDelivery) =>
@@ -34,13 +31,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         public bool HasQualifyingStart(ILearningDelivery thisDelivery, IFcsContractAllocation allocation) =>
             allocation != null
             && allocation.StartDate.HasValue
-            && _check.HasQualifyingStart(thisDelivery, allocation.StartDate.Value);
+            && _dateTimeQueryService.IsDateBetween(thisDelivery.LearnStartDate, allocation.StartDate.Value, DateTime.MaxValue);
 
         public bool HasQualifyingAim(ILearningDelivery thisDelivery) =>
             thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment);
 
         public bool HasQualifyingModel(ILearningDelivery thisDelivery) =>
-            _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.EuropeanSocialFund);
+            thisDelivery.FundModel == TypeOfFunding.EuropeanSocialFund;
 
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
             HasQualifyingModel(thisDelivery)
@@ -51,7 +48,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         {
            var learnRefNumber = objectToValidate.LearnRefNumber;
 
-            objectToValidate.LearningDeliveries
+           objectToValidate.LearningDeliveries
                 .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));
         }
 

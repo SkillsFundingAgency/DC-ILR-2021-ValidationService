@@ -25,27 +25,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        [InlineData(70, true)]
+        [InlineData(35, false)]
+        public void HasQualifyingModelMeetsExpectation(int fundModel, bool expectation)
         {
             var mockItem = new Mock<ILearningDelivery>();
+            mockItem
+                .Setup(x => x.FundModel).Returns(fundModel);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockItem.Object, 70))
-                .Returns(expectation);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, commonOps.Object);
-
+            var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, dateTimeQS.Object);
             var result = sut.HasQualifyingModel(mockItem.Object);
 
             Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
         }
 
         [Theory]
@@ -95,12 +92,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
+
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(delivery.Object.LearnStartDate, testDate, DateTime.MaxValue, true))
                 .Returns(expectation);
 
-            var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, commonOps.Object);
+            var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, dateTimeQS.Object);
 
             var result = sut.HasQualifyingStart(delivery.Object, allocation.Object);
 
@@ -108,7 +106,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             handler.VerifyAll();
             fcsData.VerifyAll();
-            commonOps.VerifyAll();
+            dateTimeQS.VerifyAll();
 
             allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
         }
@@ -120,9 +118,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, commonOps.Object);
+            var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, dateTimeQS.Object);
 
             var result = sut.HasQualifyingStart(delivery.Object, null);
 
@@ -130,7 +128,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             handler.VerifyAll();
             fcsData.VerifyAll();
-            commonOps.VerifyAll();
         }
 
         [Theory]
@@ -194,21 +191,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.GetContractAllocationFor(contractRef))
                 .Returns(allocation.Object);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 70))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(delivery.Object.LearnStartDate, testDate, DateTime.MaxValue, true))
                 .Returns(false);
 
-            var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, commonOps.Object);
+            var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             fcsData.VerifyAll();
-            commonOps.VerifyAll();
 
             allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
         }
@@ -236,6 +229,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             delivery
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(testDate);
+            delivery
+                .SetupGet(x => x.FundModel)
+                .Returns(70);
 
             var allocation = new Mock<IFcsContractAllocation>();
             allocation
@@ -259,24 +255,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Setup(x => x.GetContractAllocationFor(contractRef))
                 .Returns(allocation.Object);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 70))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(delivery.Object.LearnStartDate, testDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, commonOps.Object);
+            var sut = new LearnStartDate_16Rule(handler.Object, fcsData.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             fcsData.VerifyAll();
-            commonOps.VerifyAll();
 
             allocation.VerifyGet(x => x.StartDate, Times.AtLeastOnce);
         }
@@ -285,9 +274,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new LearnStartDate_16Rule(handler.Object, fcsData.Object, commonOps.Object);
+            return new LearnStartDate_16Rule(handler.Object, fcsData.Object, dateTimeQS.Object);
         }
     }
 }
