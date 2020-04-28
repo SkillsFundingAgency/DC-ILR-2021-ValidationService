@@ -60,18 +60,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsProgrameAimMeetsExpectation(bool expectation)
+        [InlineData(3, false)]
+        [InlineData(1, true)]
+        public void IsProgrameAimMeetsExpectation(int aimType, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.AimType)
+                .Returns(aimType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(expectation);
-
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
 
             var sut = new LearnDelFAMType_64Rule(handler.Object, commonOps.Object, larsData.Object);
@@ -86,18 +85,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsComponentAimMeetsExpectation(bool expectation)
+        [InlineData(1, false)]
+        [InlineData(3, true)]
+        public void IsComponentAimMeetsExpectation(int aimType, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.AimType)
+                .Returns(aimType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsComponentOfAProgram(delivery.Object))
-                .Returns(expectation);
-
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
 
             var sut = new LearnDelFAMType_64Rule(handler.Object, commonOps.Object, larsData.Object);
@@ -475,12 +473,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             commonOps
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 36))
                 .Returns(true);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.IsComponentOfAProgram(delivery.Object))
-                .Returns(true);
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
@@ -544,12 +536,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 36))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.IsComponentOfAProgram(delivery.Object))
                 .Returns(true);
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);

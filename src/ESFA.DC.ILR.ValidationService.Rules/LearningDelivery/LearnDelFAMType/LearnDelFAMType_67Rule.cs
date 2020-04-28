@@ -48,7 +48,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _check.HasQualifyingFunding(theDelivery, TypeOfFunding.ApprenticeshipsFrom1May2017);
 
         public bool IsComponentAim(ILearningDelivery theDelivery) =>
-            _check.IsComponentOfAProgram(theDelivery);
+            theDelivery.AimType == TypeOfAim.ComponentAimInAProgramme;
 
         public bool HasQualifyingBasicSkillsType(ILearningDelivery theDelivery) =>
             _larsData

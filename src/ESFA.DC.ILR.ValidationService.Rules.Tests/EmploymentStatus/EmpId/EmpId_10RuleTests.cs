@@ -24,29 +24,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
         }
 
         [Theory]
-        [InlineData(true, false, false)]
-        [InlineData(false, true, false)]
-        [InlineData(true, true, true)]
-        public void IsApprenticeshipMeetsExpectation(bool isApprenctice, bool isProgramAim, bool expectation)
+        [InlineData(true, 2, false)]
+        [InlineData(false, 1, false)]
+        [InlineData(true, 1, true)]
+        public void IsApprenticeshipMeetsExpectation(bool isApprenctice, int aimType, bool expectation)
         {
-            var mockItem = new Mock<ILearningDelivery>();
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .Setup(x => x.AimType)
+                .Returns(aimType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.InApprenticeship(mockItem.Object))
+                .Setup(x => x.InApprenticeship(mockDelivery.Object))
                 .Returns(isApprenctice);
-
-            if (isApprenctice)
-            {
-                commonOps
-                    .Setup(x => x.InAProgramme(mockItem.Object))
-                    .Returns(isProgramAim);
-            }
 
             var sut = new EmpId_10Rule(handler.Object, commonOps.Object);
 
-            var result = sut.IsPrimaryLearningAim(mockItem.Object);
+            var result = sut.IsPrimaryLearningAim(mockDelivery.Object);
 
             Assert.Equal(expectation, result);
 
@@ -109,6 +105,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(testDate);
+            mockDelivery
+                .SetupGet(y => y.AimType)
+                .Returns(1);
 
             var deliveries = new ILearningDelivery[] { mockDelivery.Object };
 
@@ -143,9 +142,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             commonOps
                 .Setup(x => x.InApprenticeship(mockDelivery.Object))
                 .Returns(true);
-            commonOps
-                .Setup(x => x.InAProgramme(mockDelivery.Object))
-                .Returns(true);
 
             var sut = new EmpId_10Rule(handler.Object, commonOps.Object);
 
@@ -176,6 +172,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(testDate);
+            mockDelivery
+                .SetupGet(y => y.AimType)
+                .Returns(1);
 
             var deliveries = new ILearningDelivery[] { mockDelivery.Object };
 
@@ -198,9 +197,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .Returns(status.Object);
             commonOps
                 .Setup(x => x.InApprenticeship(mockDelivery.Object))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.InAProgramme(mockDelivery.Object))
                 .Returns(true);
 
             var sut = new EmpId_10Rule(handler.Object, commonOps.Object);

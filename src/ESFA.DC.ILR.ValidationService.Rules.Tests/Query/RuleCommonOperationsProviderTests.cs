@@ -151,65 +151,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         }
 
         [Theory]
-        [InlineData(TypeOfAim.ProgrammeAim, true)]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, false)]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, false)]
-        [InlineData(TypeOfAim.CoreAim16To19ExcludingApprenticeships, false)]
-        public void InAProgrammeMeetsExpectation(int candidate, bool expectation)
-        {
-            var sut = NewService();
-            var mockItem = new Mock<ILearningDelivery>();
-            mockItem
-                .SetupGet(y => y.AimType)
-                .Returns(candidate);
-
-            var result = sut.InAProgramme(mockItem.Object);
-
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, false)]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, true)]
-        [InlineData(TypeOfAim.CoreAim16To19ExcludingApprenticeships, false)]
-        [InlineData(TypeOfAim.ProgrammeAim, false)]
-        public void IsComponentOfAProgramMeetsExpectation(int candidate, bool expectation)
-        {
-            var sut = NewService();
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.AimType)
-                .Returns(candidate);
-
-            var result = sut.IsComponentOfAProgram(mockDelivery.Object);
-
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, false)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.Traineeship, true)]
-        public void IsTraineeshipMeetsExpectation(int candidate, bool expectation)
-        {
-            var sut = NewService();
-            var mockItem = new Mock<ILearningDelivery>(MockBehavior.Strict);
-            mockItem
-                .SetupGet(y => y.ProgTypeNullable)
-                .Returns(candidate);
-
-            var result = sut.IsTraineeship(mockItem.Object);
-
-            Assert.Equal(expectation, result);
-            mockItem.VerifyAll();
-        }
-
-        [Theory]
         [InlineData(TypeOfFunding.AdultSkills, TypeOfFunding.AdultSkills, true)]
         [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.AdultSkills, false)]
         [InlineData(TypeOfFunding.CommunityLearning, TypeOfFunding.AdultSkills, false)]

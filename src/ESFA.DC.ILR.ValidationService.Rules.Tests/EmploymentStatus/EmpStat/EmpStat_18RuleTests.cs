@@ -63,15 +63,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         public void IsQualifyingPrimaryLearningAimNotTraineeReturnsFalse()
         {
             var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(x => x.ProgTypeNullable)
+                .Returns(TypeOfLearningProgramme.Traineeship);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, DateTime.Parse("2018-07-31")))
                 .Returns(true);
-            commonchecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(false);
 
             var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);
 
@@ -87,18 +87,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         public void IsQualifyingPrimaryLearningAimWithWrongAimTypeReturnsFalse()
         {
             var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(x => x.AimType)
+                .Returns(TypeOfAim.AimNotPartOfAProgramme);
+            mockDelivery
+                .SetupGet(x => x.ProgTypeNullable)
+                .Returns(TypeOfLearningProgramme.Traineeship);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, DateTime.Parse("2018-07-31")))
                 .Returns(true);
-            commonchecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(true);
-            commonchecks
-                .Setup(x => x.InAProgramme(mockDelivery.Object))
-                .Returns(false);
 
             var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);
 
@@ -114,17 +114,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         public void IsQualifyingPrimaryLearningAimPassingChecksReturnsTrue()
         {
             var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(x => x.AimType)
+                .Returns(TypeOfAim.ProgrammeAim);
+            mockDelivery
+                .SetupGet(x => x.ProgTypeNullable)
+                .Returns(TypeOfLearningProgramme.Traineeship);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, DateTime.Parse("2018-07-31")))
-                .Returns(true);
-            commonchecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(true);
-            commonchecks
-                .Setup(x => x.InAProgramme(mockDelivery.Object))
                 .Returns(true);
 
             var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);
@@ -292,12 +292,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, EmpStat_18Rule.OldCodeMonitoringThresholdDate))
                 .Returns(true);
-            commonchecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(true);
-            commonchecks
-                .Setup(x => x.InAProgramme(mockDelivery.Object))
-                .Returns(true);
 
             var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);
 
@@ -389,12 +383,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(mockStatus.Object);
             commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, EmpStat_18Rule.OldCodeMonitoringThresholdDate))
-                .Returns(true);
-            commonchecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(true);
-            commonchecks
-                .Setup(x => x.InAProgramme(mockDelivery.Object))
                 .Returns(true);
 
             var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);

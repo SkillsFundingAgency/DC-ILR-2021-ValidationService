@@ -89,17 +89,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsTraineeshipMeetsExpectation(bool expectation)
+        [InlineData(25, false)]
+        [InlineData(24, true)]
+        public void IsTraineeshipMeetsExpectation(int? progType, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+               .SetupGet(y => y.ProgTypeNullable)
+               .Returns(progType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsTraineeship(delivery.Object))
-                .Returns(expectation);
 
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             fileData
@@ -298,9 +298,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             commonOps
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 25))
                 .Returns(true);
-            commonOps
-                .Setup(x => x.IsTraineeship(delivery.Object))
-                .Returns(true);
 
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             fileData
@@ -366,9 +363,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 25))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.IsTraineeship(delivery.Object))
                 .Returns(true);
 
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);

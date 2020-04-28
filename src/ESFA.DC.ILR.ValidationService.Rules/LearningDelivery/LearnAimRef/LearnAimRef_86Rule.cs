@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public bool IsNotValid(ILearningDelivery delivery) =>
             _check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)
             && !_check.IsSteelWorkerRedundancyTraining(delivery)
-            && !_check.IsTraineeship(delivery)
+            && delivery.AimType != TypeOfAim.ProgrammeAim
             && IsWorkExperience(delivery);
 
         public void Validate(ILearner objectToValidate)

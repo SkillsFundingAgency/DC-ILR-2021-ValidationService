@@ -49,8 +49,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         public bool IsQualifyingPrimaryLearningAim(ILearningDelivery thisDelivery) =>
             thisDelivery != null
             && _check.HasQualifyingStart(thisDelivery, DateTime.MinValue, OldCodeMonitoringThresholdDate)
-            && _check.IsTraineeship(thisDelivery)
-            && _check.InAProgramme(thisDelivery);
+            && thisDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
+            && thisDelivery.AimType == TypeOfAim.ProgrammeAim;
 
         public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus thisEmployment) =>
             thisEmployment != null

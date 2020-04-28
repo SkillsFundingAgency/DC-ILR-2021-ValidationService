@@ -57,10 +57,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             _check.HasQualifyingFunding(theDelivery, TypeOfFunding.OtherAdult);
 
         public bool IsProgrammeAim(ILearningDelivery theDelivery) =>
-            _check.InAProgramme(theDelivery);
+            theDelivery.AimType == TypeOfAim.ProgrammeAim;
 
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
-            _check.IsStandardApprenticeship(theDelivery);
+            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool HasStandardCode(ILearningDelivery theDelivery) =>
             theDelivery.StdCodeNullable.HasValue;

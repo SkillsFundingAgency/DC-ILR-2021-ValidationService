@@ -175,6 +175,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(learnStart);
+            mockDelivery
+                .SetupGet(x => x.AimType)
+                .Returns(1);
 
             var deliveries = new List<ILearningDelivery>
             {
@@ -218,9 +221,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             common
                 .Setup(x => x.InApprenticeship(mockDelivery.Object))
-                .Returns(true);
-            common
-                .Setup(x => x.InAProgramme(mockDelivery.Object))
                 .Returns(true);
             common
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, ESMType_09Rule.FirstViableDate, null))
@@ -283,6 +283,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(learnStart);
+            mockDelivery
+                .SetupGet(x => x.AimType)
+                .Returns(1);
 
             var deliveries = new List<ILearningDelivery>
             {
@@ -305,9 +308,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             common
                 .Setup(x => x.InApprenticeship(mockDelivery.Object))
-                .Returns(true);
-            common
-                .Setup(x => x.InAProgramme(mockDelivery.Object))
                 .Returns(true);
             common
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, ESMType_09Rule.FirstViableDate, null))

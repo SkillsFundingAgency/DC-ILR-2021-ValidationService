@@ -130,6 +130,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             mockDelivery
                 .SetupGet(x => x.AimSeqNumber)
                 .Returns(AimSeqNumber);
+            mockDelivery
+              .SetupGet(x => x.AimType)
+              .Returns(1);
+            mockDelivery
+              .SetupGet(x => x.ProgTypeNullable)
+              .Returns(24);
             deliveries.Add(mockDelivery.Object);
 
             var esmType = candidate.Substring(0, 3);
@@ -175,12 +181,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonchecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(true);
-            commonchecks
-                .Setup(x => x.InAProgramme(mockDelivery.Object))
-                .Returns(true);
             commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, EmpStat_19Rule.NewCodeMonitoringThresholdDate, null))
                 .Returns(true);
@@ -231,6 +231,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(x => x.AimSeqNumber)
                 .Returns(AimSeqNumber);
             deliveries.Add(mockDelivery.Object);
+            mockDelivery
+              .SetupGet(x => x.AimType)
+              .Returns(1);
+            mockDelivery
+              .SetupGet(x => x.ProgTypeNullable)
+              .Returns(24);
+            deliveries.Add(mockDelivery.Object);
 
             var esmType = candidate.Substring(0, 3);
             var esmCode = int.Parse(candidate.Substring(3));
@@ -266,12 +273,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonchecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(true);
-            commonchecks
-                .Setup(x => x.InAProgramme(mockDelivery.Object))
-                .Returns(true);
             commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, EmpStat_19Rule.NewCodeMonitoringThresholdDate, null))
                 .Returns(true);

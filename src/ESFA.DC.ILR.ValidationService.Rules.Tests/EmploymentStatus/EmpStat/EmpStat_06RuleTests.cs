@@ -59,21 +59,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void IsExcludedMeetsExpectation(bool expectation)
+        [InlineData(24, true)]
+        [InlineData(25, false)]
+        public void IsExcludedMeetsExpectation(int? progType, bool expectation)
         {
-            var mockItem = new Mock<ILearningDelivery>();
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+              .SetupGet(y => y.ProgTypeNullable)
+              .Returns(progType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsTraineeship(mockItem.Object))
-                .Returns(expectation);
 
             var sut = new EmpStat_06Rule(handler.Object, commonOps.Object);
 
-            var result = sut.IsExcluded(mockItem.Object);
+            var result = sut.IsExcluded(mockDelivery.Object);
 
             Assert.Equal(expectation, result);
 
@@ -163,6 +163,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(testDate);
+            mockDelivery
+              .SetupGet(y => y.ProgTypeNullable)
+              .Returns(25);
 
             var deliveries = new ILearningDelivery[] { mockDelivery.Object };
 
@@ -203,9 +206,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             commonOps
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.Parse("2013-08-01"), DateTime.Parse("2014-07-31")))
                 .Returns(true);
-            commonOps
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(false);
 
             var sut = new EmpStat_06Rule(handler.Object, commonOps.Object);
 
@@ -230,6 +230,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(testDate);
+            mockDelivery
+               .SetupGet(y => y.ProgTypeNullable)
+               .Returns(25);
 
             var deliveries = new ILearningDelivery[] { mockDelivery.Object };
 
@@ -256,9 +259,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             commonOps
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.Parse("2013-08-01"), DateTime.Parse("2014-07-31")))
                 .Returns(true);
-            commonOps
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(false);
 
             var sut = new EmpStat_06Rule(handler.Object, commonOps.Object);
 
