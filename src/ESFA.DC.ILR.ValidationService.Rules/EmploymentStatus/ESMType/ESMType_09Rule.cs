@@ -5,6 +5,7 @@ using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
@@ -16,15 +17,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         private readonly IValidationErrorHandler _messageHandler;
         private readonly IProvideRuleCommonOperations _check;
         private readonly IDateTimeQueryService _dateTimeQueryService;
+        private readonly IDerivedData_07Rule _dd07;
 
         public ESMType_09Rule(
             IValidationErrorHandler validationErrorHandler,
             IProvideRuleCommonOperations check,
-            IDateTimeQueryService dateTimeQueryService)
+            IDateTimeQueryService dateTimeQueryService,
+            IDerivedData_07Rule dd07)
         {
             _messageHandler = validationErrorHandler;
             _check = check;
             _dateTimeQueryService = dateTimeQueryService;
+            _dd07 = dd07;
         }
 
         public static DateTime FirstViableDate => new DateTime(2013, 08, 01);
@@ -39,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
                 .LearnStartDate;
 
         public bool IsACandidate(ILearningDelivery delivery) =>
-            _check.InApprenticeship(delivery)
+            _dd07.IsApprenticeship(delivery.ProgTypeNullable)
                 && delivery.AimType == TypeOfAim.ProgrammeAim
                 && _check.HasQualifyingStart(delivery, FirstViableDate);
 

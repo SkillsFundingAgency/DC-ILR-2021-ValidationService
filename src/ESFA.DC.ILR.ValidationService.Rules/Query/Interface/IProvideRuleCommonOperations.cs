@@ -15,8 +15,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
 
         bool IsSteelWorkerRedundancyTraining(ILearningDelivery delivery);
 
-        bool InApprenticeship(ILearningDelivery delivery);
-
         bool HasQualifyingFunding(ILearningDelivery delivery, params int[] desiredFundings);
 
         bool HasQualifyingStart(ILearningDelivery delivery, DateTime minStart, DateTime? maxStart = null);

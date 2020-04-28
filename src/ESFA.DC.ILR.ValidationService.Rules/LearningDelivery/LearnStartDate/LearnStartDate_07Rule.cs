@@ -12,28 +12,29 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
-    public class LearnStartDate_07Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnStartDate_07Rule : AbstractRule, IRule<ILearner>
     {
         private readonly HashSet<int> _fwkCommonComponents = new HashSet<int>(TypeOfLARSCommonComponent.CommonComponents);
         private readonly IDerivedData_04Rule _derivedData04;
         private readonly ILARSDataService _larsData;
         private readonly IProvideRuleCommonOperations _check;
         private readonly IDateTimeQueryService _dateTimeQueryService;
+        private readonly IDerivedData_07Rule _dd07;
 
         public LearnStartDate_07Rule(
             IValidationErrorHandler validationErrorHandler,
             IDerivedData_04Rule derivedData04,
             ILARSDataService larsData,
             IProvideRuleCommonOperations commonOperations,
-            IDateTimeQueryService dateTimeQueryService)
+            IDateTimeQueryService dateTimeQueryService,
+            IDerivedData_07Rule dd07)
                 : base(validationErrorHandler, RuleNameConstants.LearnStartDate_07)
         {
             _derivedData04 = derivedData04;
             _larsData = larsData;
             _check = commonOperations;
             _dateTimeQueryService = dateTimeQueryService;
+            _dd07 = dd07;
         }
 
         public void Validate(ILearner theLearner)
@@ -83,7 +84,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             theDelivery.AimType == TypeOfAim.ComponentAimInAProgramme;
 
         public bool IsApprenticeship(ILearningDelivery theDelivery) =>
-            _check.InApprenticeship(theDelivery);
+            _dd07.IsApprenticeship(theDelivery.ProgTypeNullable);
 
         public bool HasEarliestStart(DateTime? earliestStart) =>
             earliestStart.HasValue;

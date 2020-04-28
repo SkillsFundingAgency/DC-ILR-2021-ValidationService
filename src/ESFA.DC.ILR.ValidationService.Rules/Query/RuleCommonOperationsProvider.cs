@@ -9,17 +9,12 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Query
 {
-    public class RuleCommonOperationsProvider :
-        IProvideRuleCommonOperations
+    public class RuleCommonOperationsProvider : IProvideRuleCommonOperations
     {
-        private readonly IDerivedData_07Rule _derivedData07;
         private readonly IDateTimeQueryService _dateTimeQueryService;
 
-        public RuleCommonOperationsProvider(
-            IDerivedData_07Rule derivedData07,
-            IDateTimeQueryService dateTimeQueryService)
+        public RuleCommonOperationsProvider(IDateTimeQueryService dateTimeQueryService)
         {
-            _derivedData07 = derivedData07;
             _dateTimeQueryService = dateTimeQueryService;
         }
 
@@ -46,9 +41,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
         public bool IsReleasedOnTemporaryLicence(ILearningDeliveryFAM monitor) =>
             Monitoring.Delivery.ReleasedOnTemporaryLicence.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
-
-        public bool InApprenticeship(ILearningDelivery delivery) =>
-            _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
 
         public bool HasQualifyingFunding(ILearningDelivery delivery, params int[] desiredFundings) =>
            desiredFundings.Contains(delivery.FundModel);

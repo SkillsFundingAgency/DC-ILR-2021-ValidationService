@@ -5,29 +5,30 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
-    public class LearnAimRef_84Rule :
-        IRule<ILearner>
+    public class LearnAimRef_84Rule : IRule<ILearner>
     {
         public const string Name = RuleNameConstants.LearnAimRef_84;
 
         private readonly IValidationErrorHandler _messageHandler;
-
         private readonly ILARSDataService _larsData;
-
         private readonly IProvideRuleCommonOperations _check;
+        private readonly IDerivedData_07Rule _dd07;
 
         public LearnAimRef_84Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
-            IProvideRuleCommonOperations commonChecks)
+            IProvideRuleCommonOperations commonChecks,
+            IDerivedData_07Rule dd07)
         {
             _messageHandler = validationErrorHandler;
             _larsData = larsData;
             _check = commonChecks;
+            _dd07 = dd07;
         }
 
         public static DateTime FirstViableDate => new DateTime(2017, 08, 01);
@@ -64,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             _check.IsRestart(delivery)
             || _check.IsLearnerInCustody(delivery)
             || _check.IsSteelWorkerRedundancyTraining(delivery)
-            || _check.InApprenticeship(delivery);
+            || _dd07.IsApprenticeship(delivery.ProgTypeNullable);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             !IsExcluded(delivery)

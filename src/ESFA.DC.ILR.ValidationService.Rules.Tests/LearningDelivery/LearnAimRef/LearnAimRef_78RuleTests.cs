@@ -4,6 +4,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
@@ -61,7 +62,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.LegalOrgTypeMatchForUkprn(ukprn, "USDC"))
                 .Returns(expectation);
 
-            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+
+            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
 
             var result = sut.IsSpecialistDesignatedCollege();
 
@@ -70,6 +73,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks.VerifyAll();
             fileData.VerifyAll();
             orgData.VerifyAll();
+            dd07.VerifyAll();
 
             Assert.Equal(expectation, result);
         }
@@ -121,8 +125,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             var orgData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object);
+            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
 
             var result = sut.HasQualifyingNotionalNVQ(mockDelivery.Object);
 
@@ -131,6 +136,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks.VerifyAll();
             fileData.VerifyAll();
             orgData.VerifyAll();
+            dd07.VerifyAll();
 
             Assert.False(result);
         }
@@ -176,8 +182,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             var orgData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object);
+            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
 
             var result = sut.HasQualifyingCategory(mockDelivery.Object);
 
@@ -186,6 +193,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks.VerifyAll();
             fileData.VerifyAll();
             orgData.VerifyAll();
+            dd07.VerifyAll();
 
             Assert.False(result);
         }
@@ -265,9 +273,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
                 .Returns(false);
             commonChecks
-                .Setup(x => x.InApprenticeship(mockDelivery.Object))
-                .Returns(false);
-            commonChecks
                 .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
                 .Returns(true);
             commonChecks
@@ -284,7 +289,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.LegalOrgTypeMatchForUkprn(1004, "USDC"))
                 .Returns(false);
 
-            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(false);
+
+            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -293,6 +302,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks.VerifyAll();
             fileData.VerifyAll();
             orgData.VerifyAll();
+            dd07.VerifyAll();
         }
 
         [Fact]
@@ -359,9 +369,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
                 .Returns(false);
             commonChecks
-                .Setup(x => x.InApprenticeship(mockDelivery.Object))
-                .Returns(false);
-            commonChecks
                 .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
                 .Returns(true);
             commonChecks
@@ -378,7 +385,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.LegalOrgTypeMatchForUkprn(1004, "USDC"))
                 .Returns(false);
 
-            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(false);
+
+            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -387,6 +398,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks.VerifyAll();
             fileData.VerifyAll();
             orgData.VerifyAll();
+            dd07.VerifyAll();
         }
 
         public LearnAimRef_78Rule NewRule()
@@ -396,8 +408,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             var orgData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
 
-            return new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object);
+            return new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
         }
     }
 }

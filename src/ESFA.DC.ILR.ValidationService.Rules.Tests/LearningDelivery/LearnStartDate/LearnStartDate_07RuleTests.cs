@@ -363,16 +363,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.InApprenticeship(delivery.Object))
-                .Returns(true);
-            commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock.Setup(x => x.IsDateBetween(testDate, DateTime.MinValue, frameworkAim.Object.EndDate.Value, true)).Returns(false);
 
-            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(delivery.Object.ProgTypeNullable)).Returns(true);
+
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object, dd07.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -380,6 +381,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             ddRule04.VerifyAll();
             larsData.VerifyAll();
             commonOps.VerifyAll();
+            dd07.VerifyAll();
         }
 
         [Theory]
@@ -463,16 +465,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.InApprenticeship(delivery.Object))
-                .Returns(true);
-            commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock.Setup(x => x.IsDateBetween(testDate, DateTime.MinValue, frameworkAim.Object.EndDate.Value, true)).Returns(true);
 
-            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(delivery.Object.ProgTypeNullable)).Returns(true);
+
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object, dd07.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -480,6 +483,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             ddRule04.VerifyAll();
             larsData.VerifyAll();
             commonOps.VerifyAll();
+            dd07.VerifyAll();
         }
 
         [Fact]
@@ -578,16 +582,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.InApprenticeship(delivery.Object))
-                .Returns(true);
-            commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock.Setup(x => x.IsDateBetween(testDate, DateTime.MinValue, frameworkAim.Object.EndDate.Value, true)).Returns(false);
 
-            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(delivery.Object.ProgTypeNullable)).Returns(true);
+
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object, dd07.Object);
 
             sut.Validate(learner.Object);
 
@@ -595,6 +600,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             ddRule04.VerifyAll();
             larsData.VerifyAll();
             commonOps.VerifyAll();
+            dd07.VerifyAll();
         }
 
         [Theory]
@@ -674,16 +680,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.InApprenticeship(delivery.Object))
-                .Returns(true);
-            commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock.Setup(x => x.IsDateBetween(testDate, DateTime.MinValue, frameworkAim.Object.EndDate.Value, true)).Returns(true);
 
-            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(delivery.Object.ProgTypeNullable)).Returns(true);
+
+            var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object, dateTimeQueryServiceMock.Object, dd07.Object);
 
             sut.Validate(learner.Object);
 
@@ -691,6 +698,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             ddRule04.VerifyAll();
             larsData.VerifyAll();
             commonOps.VerifyAll();
+            dd07.VerifyAll();
         }
 
         public DateTime? GetNullableDate(string candidate) =>
@@ -701,14 +709,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             IDerivedData_04Rule ddRule04 = null,
             ILARSDataService larsData = null,
             IProvideRuleCommonOperations commonOps = null,
-            IDateTimeQueryService dateTimeQueryService = null)
+            IDateTimeQueryService dateTimeQueryService = null,
+            IDerivedData_07Rule dd07 = null)
         {
             return new LearnStartDate_07Rule(
                 handler,
                 ddRule04,
                 larsData,
                 commonOps,
-                dateTimeQueryService);
+                dateTimeQueryService,
+                dd07);
         }
     }
 }
