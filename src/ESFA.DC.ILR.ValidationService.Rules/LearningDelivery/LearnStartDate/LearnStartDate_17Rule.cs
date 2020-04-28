@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
@@ -36,8 +35,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
             !_check.IsRestart(thisDelivery)
-            && _check.IsStandardApprenticeship(thisDelivery)
-            && _check.InAProgramme(thisDelivery)
+            && thisDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
+            && thisDelivery.AimType == TypeOfAim.ProgrammeAim
             && thisDelivery.StdCodeNullable.HasValue
             && !HasQualifyingStart(thisDelivery, GetStandardPeriodsOfValidityFor(thisDelivery));
 

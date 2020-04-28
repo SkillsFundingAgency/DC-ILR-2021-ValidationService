@@ -21,7 +21,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public LearnDelFAMType_63Rule(
             IValidationErrorHandler validationErrorHandler,
-             IProvideRuleCommonOperations commonOps,
+            IProvideRuleCommonOperations commonOps,
             ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_63)
         {
@@ -52,10 +52,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _check.HasQualifyingFunding(theDelivery, TypeOfFunding.ApprenticeshipsFrom1May2017);
 
         public bool IsProgrameAim(ILearningDelivery theDelivery) =>
-            _check.InAProgramme(theDelivery);
+            theDelivery.AimType == TypeOfAim.ProgrammeAim;
 
         public bool IsComponentAim(ILearningDelivery theDelivery) =>
-            _check.IsComponentOfAProgram(theDelivery);
+            theDelivery.AimType == TypeOfAim.ComponentAimInAProgramme;
 
         public bool HasQualifyingBasicSkillsType(ILearningDelivery theDelivery) =>
             _larsData

@@ -40,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 
         public bool IsPrimaryLearningAim(ILearningDelivery thisDelivery) =>
             _check.InApprenticeship(thisDelivery)
-            && _check.InAProgramme(thisDelivery);
+            && thisDelivery.AimType == TypeOfAim.ProgrammeAim;
 
         public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus thisEmployment) =>
             thisEmployment != null

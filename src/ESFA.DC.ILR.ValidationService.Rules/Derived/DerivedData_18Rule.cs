@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
-    public class DerivedData_18Rule :
-        IDerivedData_18Rule
+    public class DerivedData_18Rule : IDerivedData_18Rule
     {
-        private readonly IProvideRuleCommonOperations _check;
-
-        public DerivedData_18Rule(IProvideRuleCommonOperations commonOperations)
+        public DerivedData_18Rule()
         {
-            _check = commonOperations;
         }
 
         public bool HasMatchingStandardCode(ILearningDelivery delivery, ILearningDelivery candidate) =>
@@ -24,8 +20,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             && delivery.StdCodeNullable == candidate.StdCodeNullable;
 
         public bool HasRestrictionsMatch(ILearningDelivery candidate, ILearningDelivery andDelivery) =>
-            _check.IsStandardApprenticeship(candidate)
-                && _check.InAProgramme(candidate)
+            candidate.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
+                && candidate.AimType == TypeOfAim.ProgrammeAim
                 && HasMatchingStandardCode(candidate, andDelivery);
 
         public DateTime? GetApprenticeshipStandardProgrammeStartDateFor(ILearningDelivery thisDelivery, IReadOnlyCollection<ILearningDelivery> usingSources)

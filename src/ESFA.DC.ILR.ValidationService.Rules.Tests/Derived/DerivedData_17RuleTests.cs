@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Derived;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -36,16 +35,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsProgrameAimMeetsExpectation(bool expectation)
+        [InlineData(2, false)]
+        [InlineData(1, true)]
+        public void IsProgrameAimMeetsExpectation(int aimType, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+               .SetupGet(x => x.AimType)
+               .Returns(aimType);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(expectation);
 
             var result = NewRule(commonOps: commonOps.Object).IsProgrameAim(delivery.Object);
 
@@ -54,16 +53,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsStandardApprenticeshipMeetsExpectation(bool expectation)
+        [InlineData(24, false)]
+        [InlineData(25, true)]
+        public void IsStandardApprenticeshipMeetsExpectation(int? progType, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+               .SetupGet(x => x.ProgTypeNullable)
+               .Returns(progType);
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
-                .Returns(expectation);
 
             var result = NewRule(commonOps: commonOps.Object).IsStandardApprenticeship(delivery.Object);
 

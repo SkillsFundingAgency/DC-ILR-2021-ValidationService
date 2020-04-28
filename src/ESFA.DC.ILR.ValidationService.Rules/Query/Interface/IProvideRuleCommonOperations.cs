@@ -17,14 +17,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
 
         bool InApprenticeship(ILearningDelivery delivery);
 
-        bool InAProgramme(ILearningDelivery delivery);
-
-        bool IsComponentOfAProgram(ILearningDelivery delivery);
-
-        bool IsTraineeship(ILearningDelivery delivery);
-
-        bool IsStandardApprenticeship(ILearningDelivery delivery);
-
         bool HasQualifyingFunding(ILearningDelivery delivery, params int[] desiredFundings);
 
         bool HasQualifyingStart(ILearningDelivery delivery, DateTime minStart, DateTime? maxStart = null);

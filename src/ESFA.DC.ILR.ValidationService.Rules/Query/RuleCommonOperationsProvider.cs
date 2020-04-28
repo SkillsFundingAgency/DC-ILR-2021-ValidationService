@@ -50,18 +50,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         public bool InApprenticeship(ILearningDelivery delivery) =>
             _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
 
-        public bool InAProgramme(ILearningDelivery delivery) =>
-            delivery.AimType == TypeOfAim.ProgrammeAim;
-
-        public bool IsComponentOfAProgram(ILearningDelivery delivery) =>
-            delivery.AimType == TypeOfAim.ComponentAimInAProgramme;
-
-        public bool IsTraineeship(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
-
-        public bool IsStandardApprenticeship(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
-
         public bool HasQualifyingFunding(ILearningDelivery delivery, params int[] desiredFundings) =>
            desiredFundings.Contains(delivery.FundModel);
 

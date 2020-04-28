@@ -4,7 +4,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -94,9 +93,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
                 .Returns(false);
             commonChecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(false);
-            commonChecks
                 .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
                 .Returns(true);
 
@@ -114,6 +110,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             const string learnRefNumber = "123456789X";
 
             var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+               .SetupGet(y => y.ProgTypeNullable)
+               .Returns(24);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -132,9 +131,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks
                 .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(true);
             commonChecks
                 .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
                 .Returns(true);

@@ -58,19 +58,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void IsStandardApprenticeshipMeetsExpectation(bool expectation)
+        [InlineData(25, true)]
+        [InlineData(1, false)]
+        public void IsStandardApprenticeshipMeetsExpectation(int? progType, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(x => x.ProgTypeNullable)
+                .Returns(progType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var ddRule04 = new Mock<IDerivedData_04Rule>(MockBehavior.Strict);
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
-                .Returns(expectation);
 
             var sut = NewRule(handler.Object, ddRule04.Object, larsData.Object, commonOps.Object);
 
@@ -284,7 +284,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             delivery
                 .SetupGet(x => x.LearnAimRef)
                 .Returns(learnAimRef);
-
+            delivery
+               .SetupGet(x => x.AimType)
+               .Returns(3);
             delivery
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(2);
@@ -361,16 +363,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsComponentOfAProgram(delivery.Object))
-                .Returns(true);
-            commonOps
                 .Setup(x => x.InApprenticeship(delivery.Object))
                 .Returns(true);
             commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
@@ -403,7 +399,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             delivery
                 .SetupGet(x => x.LearnAimRef)
                 .Returns(learnAimRef);
-
+            delivery
+               .SetupGet(x => x.AimType)
+               .Returns(3);
             delivery
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(2);
@@ -465,16 +463,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsComponentOfAProgram(delivery.Object))
-                .Returns(true);
-            commonOps
                 .Setup(x => x.InApprenticeship(delivery.Object))
                 .Returns(true);
             commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
@@ -586,16 +578,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsComponentOfAProgram(delivery.Object))
-                .Returns(true);
-            commonOps
                 .Setup(x => x.InApprenticeship(delivery.Object))
                 .Returns(true);
             commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
@@ -625,7 +611,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             delivery
                 .SetupGet(x => x.LearnAimRef)
                 .Returns(learnAimRef);
-
+            delivery
+               .SetupGet(x => x.AimType)
+               .Returns(3);
             delivery
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(2);
@@ -686,16 +674,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
 
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
-                .Setup(x => x.IsComponentOfAProgram(delivery.Object))
-                .Returns(true);
-            commonOps
                 .Setup(x => x.InApprenticeship(delivery.Object))
                 .Returns(true);
             commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(false);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();

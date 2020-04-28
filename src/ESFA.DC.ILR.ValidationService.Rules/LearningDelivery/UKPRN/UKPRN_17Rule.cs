@@ -21,7 +21,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         private readonly HashSet<string> _fundingStreams = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { FundingStreamPeriodCodeConstants.C16_18TRN1920 };
 
-    public UKPRN_17Rule(
+        public UKPRN_17Rule(
             IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
             IProvideRuleCommonOperations commonOps,
@@ -53,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             _check.HasQualifyingFunding(theDelivery, TypeOfFunding.Age16To19ExcludingApprenticeships);
 
         public bool IsTraineeship(ILearningDelivery theDelivery) =>
-            _check.IsTraineeship(theDelivery);
+            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool HasQualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
             Monitoring.Delivery.ESFAAdultFunding.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");

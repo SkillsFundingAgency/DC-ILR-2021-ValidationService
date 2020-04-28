@@ -126,8 +126,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         public void InvalidItemRaisesValidationMessage(int stdCode, string candidate)
         {
             const string learnRefNumber = "123456789X";
-            const int aimType = 13;
-            const int progType = 17;
+            const int aimType = 1;
+            const int progType = 25;
 
             var testDate = DateTime.Parse(candidate);
 
@@ -189,12 +189,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(true);
 
             commonOps
                 .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
@@ -217,8 +211,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         public void ValidItemDoesNotRaiseValidationMessage(int stdCode, string candidate)
         {
             const string learnRefNumber = "123456789X";
-            const int aimType = 13;
-            const int progType = 17;
+            const int aimType = 1;
+            const int progType = 25;
 
             var testDate = DateTime.Parse(candidate);
 
@@ -265,13 +259,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             commonOps
                 .Setup(x => x.IsRestart(delivery.Object))
                 .Returns(false);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(true);
-
             commonOps
                 .Setup(x => x.HasQualifyingStart(delivery.Object, testDate, null))
                 .Returns(true);

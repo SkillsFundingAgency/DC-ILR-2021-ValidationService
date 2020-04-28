@@ -55,17 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 ? (DateTime?)null
                 : DateTime.Parse(expectation);
 
-            var service = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            service
-                .Setup(x => x.IsStandardApprenticeship(Moq.It.IsAny<ILearningDelivery>()))
-                .Returns(true);
-            service
-                .Setup(x => x.InAProgramme(Moq.It.IsAny<ILearningDelivery>()))
-                .Returns(true);
-
-            var sut = new DerivedData_18Rule(service.Object);
-
-            var result = sut.GetApprenticeshipStandardProgrammeStartDateFor(delivery, GetTestDeliveries());
+            var result = NewRule().GetApprenticeshipStandardProgrammeStartDateFor(delivery, GetTestDeliveries());
 
             Assert.Equal(expectedDate, result);
         }
@@ -104,9 +94,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
         public DerivedData_18Rule NewRule()
         {
-            var service = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            return new DerivedData_18Rule(service.Object);
+            return new DerivedData_18Rule();
         }
     }
 }

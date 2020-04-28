@@ -66,7 +66,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
                 || IsCommonComponent(GetLARSLearningDeliveryFor(theDelivery));
 
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
-            _check.IsStandardApprenticeship(theDelivery);
+            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool IsRestart(ILearningDelivery theDelivery) =>
             _check.IsRestart(theDelivery);
@@ -80,7 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             && _fwkCommonComponents.Contains(larsDelivery.FrameworkCommonComponent.Value);
 
         public bool IsComponentAim(ILearningDelivery theDelivery) =>
-            _check.IsComponentOfAProgram(theDelivery);
+            theDelivery.AimType == TypeOfAim.ComponentAimInAProgramme;
 
         public bool IsApprenticeship(ILearningDelivery theDelivery) =>
             _check.InApprenticeship(theDelivery);

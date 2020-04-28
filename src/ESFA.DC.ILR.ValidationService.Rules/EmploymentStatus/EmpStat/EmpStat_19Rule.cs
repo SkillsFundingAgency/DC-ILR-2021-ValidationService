@@ -47,9 +47,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         }
 
         public bool IsRestrictionMatch(ILearningDelivery delivery) =>
-            _check.IsTraineeship(delivery)
-                && _check.InAProgramme(delivery)
-                && _check.HasQualifyingStart(delivery, NewCodeMonitoringThresholdDate);
+            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
+            && delivery.AimType == TypeOfAim.ProgrammeAim
+            && _check.HasQualifyingStart(delivery, NewCodeMonitoringThresholdDate);
 
         public void Validate(ILearner objectToValidate)
         {

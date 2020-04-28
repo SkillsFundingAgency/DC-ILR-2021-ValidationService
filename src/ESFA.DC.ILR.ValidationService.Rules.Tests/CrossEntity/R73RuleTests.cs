@@ -49,17 +49,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsProgrammeAimMeetsExpectation(bool expectation)
+        [InlineData(25, false)]
+        [InlineData(1, true)]
+        public void IsProgrammeAimMeetsExpectation(int aimType, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                   .SetupGet(x => x.AimType)
+                   .Returns(aimType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(expectation);
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
 
             var sut = new R73Rule(handler.Object, commonOps.Object, derivedData.Object);
@@ -74,17 +74,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsStandardApprenticeshipMeetsExpectation(bool expectation)
+        [InlineData(1, false)]
+        [InlineData(25, true)]
+        public void IsStandardApprenticeshipMeetsExpectation(int? progType, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                   .SetupGet(x => x.ProgTypeNullable)
+                   .Returns(progType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
-                .Returns(expectation);
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
 
             var sut = new R73Rule(handler.Object, commonOps.Object, derivedData.Object);
@@ -349,6 +349,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             delivery
                 .SetupGet(x => x.AppFinRecords)
                 .Returns(records);
+            delivery
+                   .SetupGet(x => x.AimType)
+                   .Returns(1);
+            delivery
+                   .SetupGet(x => x.ProgTypeNullable)
+                   .Returns(25);
 
             var deliveries = new ILearningDelivery[] { delivery.Object };
 
@@ -379,12 +385,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 81))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(true);
 
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
@@ -434,6 +434,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             delivery
                 .SetupGet(x => x.AppFinRecords)
                 .Returns(records);
+            delivery
+                  .SetupGet(x => x.AimType)
+                  .Returns(1);
+            delivery
+                   .SetupGet(x => x.ProgTypeNullable)
+                   .Returns(25);
 
             var deliveries = new ILearningDelivery[] { delivery.Object };
 
@@ -450,12 +456,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonOps
                 .Setup(x => x.HasQualifyingFunding(delivery.Object, 81))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
                 .Returns(true);
 
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
