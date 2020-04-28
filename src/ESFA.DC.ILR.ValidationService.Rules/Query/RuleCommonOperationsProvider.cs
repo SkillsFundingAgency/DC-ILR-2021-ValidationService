@@ -37,9 +37,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         public bool IsSteelWorkerRedundancyTraining(ILearningDelivery delivery) =>
             CheckDeliveryFAMs(delivery, IsSteelWorkerRedundancyTraining);
 
-        public bool IsReleasedOnTemporaryLicence(ILearningDeliveryFAM monitor) =>
-            Monitoring.Delivery.ReleasedOnTemporaryLicence.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
-
         public bool HasQualifyingFunding(ILearningDelivery delivery, params int[] desiredFundings) =>
            desiredFundings.Contains(delivery.FundModel);
 

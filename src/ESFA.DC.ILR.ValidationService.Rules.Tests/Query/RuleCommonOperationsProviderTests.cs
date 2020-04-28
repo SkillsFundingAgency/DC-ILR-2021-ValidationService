@@ -100,35 +100,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         }
 
         [Theory]
-        [InlineData(Monitoring.Delivery.OLASSOffendersInCustody, false)]
-        [InlineData(Monitoring.Delivery.FullyFundedLearningAim, false)]
-        [InlineData(Monitoring.Delivery.CoFundedLearningAim, false)]
-        [InlineData(Monitoring.Delivery.InReceiptOfLowWages, false)]
-        [InlineData(Monitoring.Delivery.MandationToSkillsTraining, false)]
-        [InlineData(Monitoring.Delivery.ReleasedOnTemporaryLicence, true)]
-        [InlineData(Monitoring.Delivery.SteelIndustriesRedundancyTraining, false)]
-        [InlineData(Monitoring.Delivery.ESFA16To19Funding, false)]
-        [InlineData(Monitoring.Delivery.ESFAAdultFunding, false)]
-        [InlineData(Monitoring.Delivery.HigherEducationFundingCouncilEngland, false)]
-        [InlineData(Monitoring.Delivery.LocalAuthorityCommunityLearningFunds, false)]
-        [InlineData(Monitoring.Delivery.FinancedByAdvancedLearnerLoans, false)]
-        public void IsReleasedOnTemporaryLicenceMeetsExpectation(string candidate, bool expectation)
-        {
-            var sut = NewService();
-            var mockItem = new Mock<ILearningDeliveryFAM>();
-            mockItem
-                .SetupGet(y => y.LearnDelFAMType)
-                .Returns(candidate.Substring(0, 3));
-            mockItem
-                .SetupGet(y => y.LearnDelFAMCode)
-                .Returns(candidate.Substring(3));
-
-            var result = sut.IsReleasedOnTemporaryLicence(mockItem.Object);
-
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
         [InlineData(TypeOfFunding.AdultSkills, TypeOfFunding.AdultSkills, true)]
         [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.AdultSkills, false)]
         [InlineData(TypeOfFunding.CommunityLearning, TypeOfFunding.AdultSkills, false)]
