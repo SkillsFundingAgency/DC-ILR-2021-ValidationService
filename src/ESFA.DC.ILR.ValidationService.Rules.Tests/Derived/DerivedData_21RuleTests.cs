@@ -72,12 +72,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 }
             };
 
-            var providerRuleMock = new Mock<IProvideRuleCommonOperations>();
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>();
+            lEmpQS.Setup(x => x.LearnerEmploymentStatusForDate(testLearner.LearnerEmploymentStatuses, learnStartDate)).Returns(testLearnerEmploymentStatus);
 
-            providerRuleMock.Setup(x => x.GetEmploymentStatusOn(learnStartDate, testLearner.LearnerEmploymentStatuses)).Returns(testLearnerEmploymentStatus);
-            providerRuleMock.Setup(x => x.HasQualifyingFunding(learninDelivery, 35)).Returns(true);
-
-            NewRule(providerRuleMock.Object).IsAdultFundedUnemployedWithOtherStateBenefits(learninDelivery, testLearner).Should().BeTrue();
+            NewRule(lEmpQS.Object).IsAdultFundedUnemployedWithOtherStateBenefits(learninDelivery, testLearner).Should().BeTrue();
         }
 
         [Theory]
@@ -100,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         {
             DateTime learnStartDate = new DateTime(2016, 08, 01);
 
-            var learninDelivery = new TestLearningDelivery()
+            var learningDelivery = new TestLearningDelivery()
             {
                 AimSeqNumber = 1001,
                 CompStatus = 1,
@@ -120,13 +118,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             {
                 EmpStat = empStatus,
                 EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
-                        {
-                            new TestEmploymentStatusMonitoring()
-                            {
-                                ESMType = eSMType,
-                                ESMCode = eSMCode
-                            }
-                        }
+                {
+                    new TestEmploymentStatusMonitoring()
+                    {
+                        ESMType = eSMType,
+                        ESMCode = eSMCode
+                    }
+                }
             };
 
             var testLearner = new TestLearner()
@@ -138,16 +136,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 },
                 LearningDeliveries = new TestLearningDelivery[]
                 {
-                    learninDelivery
+                    learningDelivery
                 }
             };
 
-            var providerRuleMock = new Mock<IProvideRuleCommonOperations>();
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>();
+            lEmpQS.Setup(x => x.LearnerEmploymentStatusForDate(testLearner.LearnerEmploymentStatuses, learnStartDate)).Returns(testLearnerEmploymentStatus);
 
-            providerRuleMock.Setup(x => x.GetEmploymentStatusOn(learnStartDate, testLearner.LearnerEmploymentStatuses)).Returns(testLearnerEmploymentStatus);
-            providerRuleMock.Setup(x => x.HasQualifyingFunding(learninDelivery, fundModel)).Returns(fundModelExpecedResult);
-
-            NewRule(providerRuleMock.Object).IsAdultFundedUnemployedWithOtherStateBenefits(learninDelivery, testLearner).Should().BeFalse();
+            NewRule(lEmpQS.Object).IsAdultFundedUnemployedWithOtherStateBenefits(learningDelivery, testLearner).Should().BeFalse();
         }
 
         [Theory]
@@ -304,11 +300,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             mockItem.VerifyAll();
         }
 
-        public DerivedData_21Rule NewRule(IProvideRuleCommonOperations commonOperations = null)
+        public DerivedData_21Rule NewRule(ILearnerEmploymentStatusQueryService lEmpQS = null)
         {
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            return new DerivedData_21Rule(commonOperations == null ? commonOps.Object : commonOperations);
+            return new DerivedData_21Rule(lEmpQS ?? Mock.Of<ILearnerEmploymentStatusQueryService>());
         }
     }
 }

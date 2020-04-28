@@ -9,18 +9,19 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 {
-    public class EmpStat_06Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class EmpStat_06Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
         public EmpStat_06Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations)
+            IProvideRuleCommonOperations commonOperations,
+            ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_06)
         {
             _check = commonOperations;
+            _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
         public static DateTime FirstViableDate => new DateTime(2013, 08, 01);
@@ -55,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             candidate < PlannedTotalQualifyingHours;
 
         public ILearnerEmploymentStatus GetEmploymentStatusOn(DateTime thisDate, IReadOnlyCollection<ILearnerEmploymentStatus> fromEmployments) =>
-            _check.GetEmploymentStatusOn(thisDate, fromEmployments);
+            _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(fromEmployments, thisDate);
 
         public bool IsNotValid(ILearningDelivery thisDelivery, ILearnerEmploymentStatus thisEmployment) =>
             !IsExcluded(thisDelivery)

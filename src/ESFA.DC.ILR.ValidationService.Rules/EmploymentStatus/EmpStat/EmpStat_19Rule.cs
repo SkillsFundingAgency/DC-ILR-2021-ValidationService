@@ -9,9 +9,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 {
-    public class EmpStat_19Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class EmpStat_19Rule : AbstractRule, IRule<ILearner>
     {
         private readonly HashSet<string> _esmTypeCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -20,19 +18,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         };
 
         private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
         public EmpStat_19Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations)
+            IProvideRuleCommonOperations commonOperations,
+            ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_19)
         {
             _check = commonOperations;
+            _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
         public static DateTime NewCodeMonitoringThresholdDate => new DateTime(2018, 08, 01);
 
         public ILearnerEmploymentStatus GetEmploymentStatusOn(DateTime thisDate, IReadOnlyCollection<ILearnerEmploymentStatus> usingEmployments) =>
-            _check.GetEmploymentStatusOn(thisDate, usingEmployments);
+            _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(usingEmployments, thisDate);
 
         public bool HasADisqualifyingMonitorStatus(IEmploymentStatusMonitoring monitor) =>
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.EmploymentIntensityIndicator)

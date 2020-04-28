@@ -234,9 +234,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
         public DerivedData_28Rule NewRule()
         {
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            return new DerivedData_28Rule(commonOps.Object);
+            return new DerivedData_28Rule(lEmpQS.Object);
         }
     }
 }

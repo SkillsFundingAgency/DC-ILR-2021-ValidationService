@@ -8,8 +8,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
-    public class DerivedData_28Rule :
-        IDerivedData_28Rule
+    public class DerivedData_28Rule : IDerivedData_28Rule
     {
         private readonly HashSet<int> _employmentStatusesTypes = new HashSet<int>
         {
@@ -26,11 +25,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             Monitoring.EmploymentStatus.EmployedFor11To20HoursPW
         };
 
-        private IProvideRuleCommonOperations _check;
+        private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
-        public DerivedData_28Rule(IProvideRuleCommonOperations commonOperations)
+        public DerivedData_28Rule(ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
         {
-            _check = commonOperations;
+            _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
         public bool InReceiptOfEmploymentSupport(IEmploymentStatusMonitoring employmentMonitoring)
@@ -114,9 +113,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                         otherwise set to N
              */
 
-            var employment = _check.GetEmploymentStatusOn(thisDelivery.LearnStartDate, forThisCandidate.LearnerEmploymentStatuses);
+            var employment = _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(forThisCandidate.LearnerEmploymentStatuses, thisDelivery.LearnStartDate);
 
-            return _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.AdultSkills)
+            return thisDelivery.FundModel == TypeOfFunding.AdultSkills
                 && employment != null
                 && (IsValidWithEmploymentSupport(employment)
                 || IsNotEmployedWithBenefits(employment)
