@@ -20,15 +20,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         };
 
         private readonly IValidationErrorHandler _messageHandler;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
-        private readonly IProvideRuleCommonOperations _check;
-
-        public LearnAimRef_87Rule(
-            IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonChecks)
+        public LearnAimRef_87Rule(IValidationErrorHandler validationErrorHandler, IDateTimeQueryService dateTimeQueryService)
         {
             _messageHandler = validationErrorHandler;
-            _check = commonChecks;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public static DateTime FirstViableDate => new DateTime(2017, 08, 01);
@@ -39,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             DisqualifyingAims.Any(x => delivery.LearnAimRef.CaseInsensitiveStartsWith(x));
 
         public bool IsNotValid(ILearningDelivery delivery) =>
-            _check.HasQualifyingStart(delivery, FirstViableDate)
+            _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue)
             && HasDisqualifyingVocationalAim(delivery);
 
         public void Validate(ILearner objectToValidate)

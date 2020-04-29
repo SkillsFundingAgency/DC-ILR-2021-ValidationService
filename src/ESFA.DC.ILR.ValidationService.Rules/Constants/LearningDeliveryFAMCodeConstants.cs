@@ -13,7 +13,7 @@
         public const string SOF_MCAGLA_TVCA = "114";
         public const string SOF_MCAGLA_CPCA = "115";
         public const string SOF_MCAGLA_London = "116";
-        public const string SOF_Unassigned_117 = "117";
+        public const string SOF_MCAGLA_NTCA = "117";
         public const string SOF_Unassigned_118 = "118";
         public const string SOF_Unassigned_119 = "119";
         public const string SOF_Unassigned_120 = "120";

@@ -15,18 +15,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public const string MessagePropertyName = "ESMType";
         public const string Name = RuleNameConstants.ESMType_09;
         private readonly IValidationErrorHandler _messageHandler;
-        private readonly IProvideRuleCommonOperations _check;
         private readonly IDateTimeQueryService _dateTimeQueryService;
         private readonly IDerivedData_07Rule _dd07;
 
         public ESMType_09Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations check,
             IDateTimeQueryService dateTimeQueryService,
             IDerivedData_07Rule dd07)
         {
             _messageHandler = validationErrorHandler;
-            _check = check;
             _dateTimeQueryService = dateTimeQueryService;
             _dd07 = dd07;
         }
@@ -45,7 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public bool IsACandidate(ILearningDelivery delivery) =>
             _dd07.IsApprenticeship(delivery.ProgTypeNullable)
                 && delivery.AimType == TypeOfAim.ProgrammeAim
-                && _check.HasQualifyingStart(delivery, FirstViableDate);
+                && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue);
 
         public bool IsQualifyingEmployment(ILearnerEmploymentStatus employmentStatus) =>
             employmentStatus.EmpStat == TypeOfEmploymentStatus.InPaidEmployment;

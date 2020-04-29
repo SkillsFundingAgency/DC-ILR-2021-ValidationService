@@ -53,28 +53,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void HasQualifyingFundingMeetsExpectation(bool expectation)
+        [InlineData(25, true)]
+        [InlineData(82, true)]
+        [InlineData(35, false)]
+        public void HasQualifyingFundingMeetsExpectation(int fundModel, bool expectation)
         {
-            var mockItem = new Mock<ILearningDelivery>();
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(y => y.FundModel)
+                .Returns(fundModel);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockItem.Object, 25, 82))
-                .Returns(expectation);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            var sut = new EmpStat_07Rule(handler.Object, commonOps.Object, lEmpQS.Object);
+            var sut = new EmpStat_07Rule(handler.Object, dateTimeQS.Object, lEmpQS.Object);
 
-            var result = sut.HasQualifyingFunding(mockItem.Object);
+            var result = sut.HasQualifyingFunding(mockDelivery.Object);
 
             Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         [Theory]
@@ -85,21 +86,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             var mockItem = new Mock<ILearningDelivery>();
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(mockItem.Object, DateTime.MinValue, DateTime.Parse("2013-07-31")))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockItem.Object.LearnStartDate, DateTime.MinValue, DateTime.Parse("2013-07-31"), true))
                 .Returns(expectation);
 
             var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            var sut = new EmpStat_07Rule(handler.Object, commonOps.Object, lEmpQS.Object);
+            var sut = new EmpStat_07Rule(handler.Object, dateTimeQS.Object, lEmpQS.Object);
 
             var result = sut.HasQualifyingStart(mockItem.Object);
 
             Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         [Fact]
@@ -138,6 +139,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(testDate);
+            mockDelivery
+                .SetupGet(y => y.FundModel)
+                .Returns(25);
 
             var deliveries = new ILearningDelivery[] { mockDelivery.Object };
 
@@ -165,12 +169,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testDate)))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 25, 82))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, DateTime.Parse("2013-07-31")))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, DateTime.MinValue, DateTime.Parse("2013-07-31"), true))
                 .Returns(true);
 
             var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
@@ -178,12 +179,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                .Setup(x => x.LearnerEmploymentStatusForDate(employmentStatuses, testDate))
                .Returns((ILearnerEmploymentStatus)null);
 
-            var sut = new EmpStat_07Rule(handler.Object, commonOps.Object, lEmpQS.Object);
+            var sut = new EmpStat_07Rule(handler.Object, dateTimeQS.Object, lEmpQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         [Fact]
@@ -201,6 +202,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(testDate);
+            mockDelivery
+                .SetupGet(y => y.FundModel)
+                .Returns(25);
 
             var deliveries = new ILearningDelivery[] { mockDelivery.Object };
 
@@ -217,12 +221,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 25, 82))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, DateTime.Parse("2013-07-31")))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, DateTime.MinValue, DateTime.Parse("2013-07-31"), true))
                 .Returns(true);
 
             var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
@@ -230,21 +231,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                .Setup(x => x.LearnerEmploymentStatusForDate(employmentStatuses, testDate))
                .Returns(status.Object);
 
-            var sut = new EmpStat_07Rule(handler.Object, commonOps.Object, lEmpQS.Object);
+            var sut = new EmpStat_07Rule(handler.Object, dateTimeQS.Object, lEmpQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         public EmpStat_07Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
             var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            return new EmpStat_07Rule(handler.Object, commonOps.Object, lEmpQS.Object);
+            return new EmpStat_07Rule(handler.Object, dateTimeQS.Object, lEmpQS.Object);
         }
     }
 }

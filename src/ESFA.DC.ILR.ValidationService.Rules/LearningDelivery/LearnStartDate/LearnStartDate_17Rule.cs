@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
@@ -9,29 +10,29 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
-    public class LearnStartDate_17Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnStartDate_17Rule : AbstractRule, IRule<ILearner>
     {
         private readonly ILARSDataService _larsData;
-
         private readonly IProvideRuleCommonOperations _check;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public LearnStartDate_17Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
-            IProvideRuleCommonOperations commonOperations)
+            IProvideRuleCommonOperations commonOperations,
+            IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnStartDate_17)
         {
             _larsData = larsData;
             _check = commonOperations;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public IReadOnlyCollection<ILARSStandardValidity> GetStandardPeriodsOfValidityFor(ILearningDelivery thisDelivery) =>
             _larsData.GetStandardValiditiesFor(thisDelivery.StdCodeNullable.Value);
 
         public bool HasQualifyingStart(ILearningDelivery thisDelivery, IReadOnlyCollection<ILARSStandardValidity> allocations) =>
-            allocations.NullSafeAny(x => _check.HasQualifyingStart(thisDelivery, x.StartDate));
+            allocations.NullSafeAny(x => _dateTimeQueryService.IsDateBetween(thisDelivery.LearnStartDate, x.StartDate, DateTime.MaxValue));
 
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
             !_check.IsRestart(thisDelivery)

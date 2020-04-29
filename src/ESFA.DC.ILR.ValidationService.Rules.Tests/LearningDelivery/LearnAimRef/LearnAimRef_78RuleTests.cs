@@ -63,8 +63,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(expectation);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
+            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object, dateTimeQS.Object);
 
             var result = sut.IsSpecialistDesignatedCollege();
 
@@ -126,8 +127,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             var orgData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
+            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object, dateTimeQS.Object);
 
             var result = sut.HasQualifyingNotionalNVQ(mockDelivery.Object);
 
@@ -183,8 +185,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             var orgData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
+            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object, dateTimeQS.Object);
 
             var result = sut.HasQualifyingCategory(mockDelivery.Object);
 
@@ -272,12 +275,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks
                 .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
-                .Returns(true);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_78Rule.FirstViableDate, LearnAimRef_78Rule.LastViableDate))
-                .Returns(true);
 
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             fileData
@@ -293,7 +290,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             dd07
                 .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(false);
 
-            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_78Rule.FirstViableDate, LearnAimRef_78Rule.LastViableDate, true))
+                .Returns(true);
+
+            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -368,12 +370,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks
                 .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
-                .Returns(true);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_78Rule.FirstViableDate, LearnAimRef_78Rule.LastViableDate))
-                .Returns(true);
 
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             fileData
@@ -389,7 +385,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             dd07
                 .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(false);
 
-            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_78Rule.FirstViableDate, LearnAimRef_78Rule.LastViableDate, true))
+                .Returns(true);
+
+            var sut = new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -409,8 +410,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             var orgData = new Mock<IOrganisationDataService>(MockBehavior.Strict);
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object);
+            return new LearnAimRef_78Rule(handler.Object, service.Object, commonChecks.Object, fileData.Object, orgData.Object, dd07.Object, dateTimeQS.Object);
         }
     }
 }

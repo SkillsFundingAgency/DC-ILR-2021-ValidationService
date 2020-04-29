@@ -9,13 +9,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 {
     public class RuleCommonOperationsProvider : IProvideRuleCommonOperations
     {
-        private readonly IDateTimeQueryService _dateTimeQueryService;
-
-        public RuleCommonOperationsProvider(IDateTimeQueryService dateTimeQueryService)
-        {
-            _dateTimeQueryService = dateTimeQueryService;
-        }
-
         public bool CheckDeliveryFAMs(ILearningDelivery delivery, Func<ILearningDeliveryFAM, bool> matchCondition) =>
             delivery.LearningDeliveryFAMs.NullSafeAny(matchCondition);
 
@@ -39,9 +32,5 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
         public bool HasQualifyingFunding(ILearningDelivery delivery, params int[] desiredFundings) =>
            desiredFundings.Contains(delivery.FundModel);
-
-        public bool HasQualifyingStart(ILearningDelivery delivery, DateTime minStart, DateTime? maxStart = null) =>
-            delivery != null
-            && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, minStart, maxStart ?? DateTime.MaxValue);
     }
 }

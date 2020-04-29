@@ -17,16 +17,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             Monitoring.EmploymentStatus.EmployedFor11To20HoursPW
         };
 
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
         private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
         public EmpStat_19Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations,
+            IDateTimeQueryService dateTimeQueryService,
             ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_19)
         {
-            _check = commonOperations;
+            _dateTimeQueryService = dateTimeQueryService;
             _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         public bool IsRestrictionMatch(ILearningDelivery delivery) =>
             delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
             && delivery.AimType == TypeOfAim.ProgrammeAim
-            && _check.HasQualifyingStart(delivery, NewCodeMonitoringThresholdDate);
+            && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, NewCodeMonitoringThresholdDate, DateTime.MaxValue);
 
         public void Validate(ILearner objectToValidate)
         {

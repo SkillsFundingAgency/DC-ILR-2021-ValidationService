@@ -12,13 +12,11 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
-    public class UKPRN_10Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class UKPRN_10Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IProvideRuleCommonOperations _check;
-
         private readonly IFCSDataService _fcsData;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
         private readonly HashSet<string> _fundingStreams = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -31,7 +29,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             IFileDataService fileDataService,
             IAcademicYearDataService academicYearDataService,
             IProvideRuleCommonOperations commonOps,
-            IFCSDataService fcsDataService)
+            IFCSDataService fcsDataService,
+            IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.UKPRN_10)
         {
             FirstViableStart = new DateTime(2017, 05, 01);
@@ -40,6 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
             _check = commonOps;
             _fcsData = fcsDataService;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public DateTime FirstViableStart { get; }
@@ -70,10 +70,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             AcademicYearStartDate > theDelivery.LearnActEndDateNullable;
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.ApprenticeshipsFrom1May2017);
+            theDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
 
         public bool HasQualifyingStart(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingStart(theDelivery, FirstViableStart);
+            _dateTimeQueryService.IsDateBetween(theDelivery.LearnStartDate, FirstViableStart, DateTime.MaxValue);
 
         public bool HasQualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
             Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");

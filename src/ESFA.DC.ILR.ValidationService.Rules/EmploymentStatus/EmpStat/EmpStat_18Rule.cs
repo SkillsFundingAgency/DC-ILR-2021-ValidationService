@@ -11,16 +11,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 {
     public class EmpStat_18Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
         private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
         public EmpStat_18Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations,
+            IDateTimeQueryService dateTimeQueryService,
             ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_18)
         {
-            _check = commonOperations;
+            _dateTimeQueryService = dateTimeQueryService;
             _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
@@ -49,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public bool IsQualifyingPrimaryLearningAim(ILearningDelivery thisDelivery) =>
             thisDelivery != null
-            && _check.HasQualifyingStart(thisDelivery, DateTime.MinValue, OldCodeMonitoringThresholdDate)
+            && _dateTimeQueryService.IsDateBetween(thisDelivery.LearnStartDate, DateTime.MinValue, OldCodeMonitoringThresholdDate)
             && thisDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
             && thisDelivery.AimType == TypeOfAim.ProgrammeAim;
 

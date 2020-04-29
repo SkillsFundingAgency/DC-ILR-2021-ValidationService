@@ -13,22 +13,31 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
     public class LearnAimRef_81Rule : IRule<ILearner>
     {
         public const string Name = RuleNameConstants.LearnAimRef_81;
+        private readonly HashSet<int> _fundModels = new HashSet<int>
+        {
+            TypeOfFunding.AdultSkills,
+            TypeOfFunding.OtherAdult,
+            TypeOfFunding.EuropeanSocialFund
+        };
 
         private readonly IValidationErrorHandler _messageHandler;
         private readonly ILARSDataService _larsData;
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
         private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public LearnAimRef_81Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
-            IProvideRuleCommonOperations commonChecks,
-            ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
+            IDateTimeQueryService dateTimeQueryService,
+            ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
         {
             _messageHandler = validationErrorHandler;
             _larsData = larsData;
-            _check = commonChecks;
+            _dateTimeQueryService = dateTimeQueryService;
             _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
         public static DateTime FirstViableDate => new DateTime(2016, 08, 01);
@@ -57,12 +66,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
              Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit.CaseInsensitiveEquals($"{monitor.ESMType}{monitor.ESMCode}");
 
         public bool IsExcluded(ILearningDelivery delivery) =>
-            _check.IsSteelWorkerRedundancyTraining(delivery);
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                delivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy);
 
         public bool IsNotValid(ILearningDelivery delivery, ILearner learner) =>
             !IsExcluded(delivery)
-            && _check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills, TypeOfFunding.OtherAdult, TypeOfFunding.EuropeanSocialFund)
-            && _check.HasQualifyingStart(delivery, FirstViableDate)
+            && _fundModels.Contains(delivery.FundModel)
+            && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue)
             && InReceiptOfAnotherStateBenefit(delivery, learner)
             && HasDisqualifyingLearningCategory(delivery);
 
@@ -84,7 +96,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 _messageHandler.BuildErrorMessageParameter(nameof(thisDelivery.LearnAimRef), thisDelivery.LearnAimRef),
                 _messageHandler.BuildErrorMessageParameter(nameof(thisDelivery.LearnStartDate), thisDelivery.LearnStartDate),
                 _messageHandler.BuildErrorMessageParameter(nameof(thisDelivery.FundModel), thisDelivery.FundModel)
-        };
+            };
 
             _messageHandler.Handle(RuleName, learnRefNumber, thisDelivery.AimSeqNumber, parameters);
         }

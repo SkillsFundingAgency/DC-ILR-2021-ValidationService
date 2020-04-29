@@ -67,16 +67,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.GetCategoriesFor(candidate))
                 .Returns(new List<ILARSLearningCategory>());
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
             var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object, lEmpQS.Object);
+            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, dateTimeQS.Object, lEmpQS.Object, learningDeliveryFAMQS.Object);
 
             var result = sut.HasDisqualifyingLearningCategory(mockDelivery.Object);
 
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
 
             Assert.False(result);
         }
@@ -159,15 +160,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.EmploymentStatusMonitorings)
                 .Returns(monitors);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
-                .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills, TypeOfFunding.OtherAdult, TypeOfFunding.EuropeanSocialFund))
-                .Returns(true);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_81Rule.FirstViableDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_81Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
             var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
@@ -175,13 +170,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                .Setup(x => x.LearnerEmploymentStatusForDate(It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>(), testDate))
                .Returns(mockEmployment.Object);
 
-            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object, lEmpQS.Object);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(mockDelivery.Object.LearningDeliveryFAMs, "LDM", "347"))
+                .Returns(false);
+
+            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, dateTimeQS.Object, lEmpQS.Object, learningDeliveryFAMQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         [Fact]
@@ -242,15 +242,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .SetupGet(y => y.EmploymentStatusMonitorings)
                 .Returns(monitors);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
-                .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills, TypeOfFunding.OtherAdult, TypeOfFunding.EuropeanSocialFund))
-                .Returns(true);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_81Rule.FirstViableDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_81Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
             var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
@@ -258,23 +252,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                .Setup(x => x.LearnerEmploymentStatusForDate(It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>(), testDate))
                .Returns(mockEmployment.Object);
 
-            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object, lEmpQS.Object);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(mockDelivery.Object.LearningDeliveryFAMs, "LDM", "347"))
+                .Returns(false);
+
+            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, dateTimeQS.Object, lEmpQS.Object, learningDeliveryFAMQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         public LearnAimRef_81Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
             var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            return new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object, lEmpQS.Object);
+            return new LearnAimRef_81Rule(handler.Object, service.Object, dateTimeQS.Object, lEmpQS.Object, learningDeliveryFAMQS.Object);
         }
     }
 }

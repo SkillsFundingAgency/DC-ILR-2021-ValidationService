@@ -11,16 +11,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 {
     public class EmpStat_07Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly HashSet<int> _fundModels = new HashSet<int>
+        {
+            TypeOfFunding.Age16To19ExcludingApprenticeships,
+            TypeOfFunding.Other16To19
+        };
+
+        private readonly IDateTimeQueryService _dateTimeQueryService;
         private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
         public EmpStat_07Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations,
+            IDateTimeQueryService dateTimeQueryService,
             ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_07)
         {
-            _check = commonOperations;
+            _dateTimeQueryService = dateTimeQueryService;
             _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
@@ -62,10 +68,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             && !HasQualifyingEmployment(thisEmployment);
 
         public bool HasQualifyingFunding(ILearningDelivery thisDelivery) =>
-            _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.Other16To19);
+            _fundModels.Contains(thisDelivery.FundModel);
 
         public bool HasQualifyingStart(ILearningDelivery thisDelivery) =>
-            _check.HasQualifyingStart(thisDelivery, DateTime.MinValue, LastViableDate);
+            _dateTimeQueryService.IsDateBetween(thisDelivery.LearnStartDate, DateTime.MinValue, LastViableDate);
 
         public bool HasQualifyingEmployment(ILearnerEmploymentStatus thisEmployment) =>
             thisEmployment != null;

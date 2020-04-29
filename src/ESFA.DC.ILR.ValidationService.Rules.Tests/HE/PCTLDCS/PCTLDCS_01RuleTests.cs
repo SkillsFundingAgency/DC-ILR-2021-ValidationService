@@ -52,15 +52,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Setup(x => x.HasKnownLearnDirectClassSystemCode3For(candidate))
                 .Returns(expectation);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, commonChecks.Object);
+            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, dateTimeQS.Object);
 
             var result = sut.HasKnownLDCSCode(mockDelivery.Object);
 
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
 
             Assert.Equal(expectation, result);
         }
@@ -163,18 +163,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Setup(x => x.HasKnownLearnDirectClassSystemCode3For(learnAimRef))
                 .Returns(true);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, PCTLDCS_01Rule.FirstViableDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, PCTLDCS_01Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, commonChecks.Object);
+            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         [Fact]
@@ -222,27 +222,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Setup(x => x.HasKnownLearnDirectClassSystemCode3For(learnAimRef))
                 .Returns(true);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, PCTLDCS_01Rule.FirstViableDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, PCTLDCS_01Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, commonChecks.Object);
+            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
         public PCTLDCS_01Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new PCTLDCS_01Rule(handler.Object, service.Object, commonChecks.Object);
+            return new PCTLDCS_01Rule(handler.Object, service.Object, dateTimeQS.Object);
         }
     }
 }

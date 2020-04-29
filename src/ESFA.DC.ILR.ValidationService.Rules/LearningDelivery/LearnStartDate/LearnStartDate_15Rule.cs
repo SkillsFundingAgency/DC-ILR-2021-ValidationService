@@ -10,22 +10,19 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
-    public class LearnStartDate_15Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnStartDate_15Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IDerivedData_22Rule _derivedData22;
-
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public LearnStartDate_15Rule(
             IValidationErrorHandler validationErrorHandler,
             IDerivedData_22Rule derivedData22,
-            IProvideRuleCommonOperations commonOperations)
+            IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnStartDate_15)
         {
             _derivedData22 = derivedData22;
-            _check = commonOperations;
+            _dateTimeQueryService = dateTimeQueryService;
         }
 
         public DateTime? GetStartFor(ILearningDelivery thisDelivery, IReadOnlyCollection<ILearningDelivery> usingSources) =>
@@ -33,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         public bool HasQualifyingStart(ILearningDelivery thisDelivery, DateTime? requiredStart) =>
             !requiredStart.HasValue
-            || _check.HasQualifyingStart(thisDelivery, requiredStart.Value);
+            || _dateTimeQueryService.IsDateBetween(thisDelivery.LearnStartDate, requiredStart.Value, DateTime.MaxValue);
 
         public bool IsNotValid(ILearningDelivery thisDelivery, IReadOnlyCollection<ILearningDelivery> usingSources) =>
             !HasQualifyingStart(thisDelivery, GetStartFor(thisDelivery, usingSources));
