@@ -9,22 +9,19 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
-    public class LearnDelFAMType_06Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnDelFAMType_06Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IProvideLookupDetails _lookupDetails;
-
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public LearnDelFAMType_06Rule(
             IValidationErrorHandler validationErrorHandler,
             IProvideLookupDetails lookupDetails,
-            IProvideRuleCommonOperations commonOperations)
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_06)
         {
             _lookupDetails = lookupDetails;
-            _check = commonOperations;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
         public void Validate(ILearner thisLearner)
@@ -34,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         }
 
         public bool IsQualifyingDelivery(ILearningDelivery thisDelivery) =>
-            !_check.IsRestart(thisDelivery);
+            !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(thisDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);
 
         public void CheckDeliveryFAMs(ILearningDelivery learningDelivery, Action<ILearningDeliveryFAM> raiseMessage)
         {

@@ -28,20 +28,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         private readonly IValidationErrorHandler _messageHandler;
         private readonly ILARSDataService _larsData;
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IDerivedData_07Rule _dd07;
         private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public LearnAimRef_85Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
-            IProvideRuleCommonOperations commonChecks,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IDerivedData_07Rule dd07,
             IDateTimeQueryService dateTimeQueryService)
         {
             _messageHandler = validationErrorHandler;
             _larsData = larsData;
-            _check = commonChecks;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _dd07 = dd07;
             _dateTimeQueryService = dateTimeQueryService;
         }
@@ -66,7 +66,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue);
 
         public bool IsExcluded(ILearningDelivery delivery) =>
-            _check.IsRestart(delivery)
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(delivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)
             || _dd07.IsApprenticeship(delivery.ProgTypeNullable);
 
         public bool IsNotValid(ILearningDelivery delivery) =>

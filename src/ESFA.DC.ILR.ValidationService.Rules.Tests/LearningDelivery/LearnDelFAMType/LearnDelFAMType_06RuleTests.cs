@@ -33,14 +33,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var lookups = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsRestart(delivery.Object))
-                .Returns(!expectation);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    delivery.Object.LearningDeliveryFAMs,
+                    "RES"))
+                .Returns(expectation);
 
-            var sut = new LearnDelFAMType_06Rule(handler.Object, lookups.Object, commonOps.Object);
+            var sut = new LearnDelFAMType_06Rule(handler.Object, lookups.Object, learningDeliveryFAMQS.Object);
 
-            var result = sut.IsQualifyingDelivery(delivery.Object);
+            var result = !sut.IsQualifyingDelivery(delivery.Object);
 
             Assert.Equal(expectation, result);
 
@@ -55,8 +57,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var lookups = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var sut = new LearnDelFAMType_06Rule(handler.Object, lookups.Object, commonOps.Object);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            var sut = new LearnDelFAMType_06Rule(handler.Object, lookups.Object, learningDeliveryFAMQS.Object);
 
             sut.CheckDeliveryFAMs(delivery.Object, x => { });
 
@@ -87,9 +89,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.IsVaguelyCurrent(TypeOfLimitedLifeLookup.LearnDelFAMType, candidate, referenceDate))
                 .Returns(!expectation);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnDelFAMType_06Rule(handler.Object, lookups.Object, commonOps.Object);
+            var sut = new LearnDelFAMType_06Rule(handler.Object, lookups.Object, learningDeliveryFAMQS.Object);
 
             var result = sut.IsNotCurrent(monitor.Object, referenceDate);
 
@@ -158,12 +160,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.IsVaguelyCurrent(TypeOfLimitedLifeLookup.LearnDelFAMType, candidate, referenceDate))
                 .Returns(false);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsRestart(mockDelivery.Object))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "RES"))
                 .Returns(false);
 
-            var sut = new LearnDelFAMType_06Rule(handler.Object, lookups.Object, commonOps.Object);
+            var sut = new LearnDelFAMType_06Rule(handler.Object, lookups.Object, learningDeliveryFAMQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -221,12 +225,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.IsVaguelyCurrent(TypeOfLimitedLifeLookup.LearnDelFAMType, candidate, referenceDate))
                 .Returns(true);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsRestart(mockDelivery.Object))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "RES"))
                 .Returns(false);
 
-            var sut = new LearnDelFAMType_06Rule(handler.Object, lookups.Object, commonOps.Object);
+            var sut = new LearnDelFAMType_06Rule(handler.Object, lookups.Object, learningDeliveryFAMQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -238,9 +244,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var lookups = new Mock<IProvideLookupDetails>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            return new LearnDelFAMType_06Rule(handler.Object, lookups.Object, commonOps.Object);
+            return new LearnDelFAMType_06Rule(handler.Object, lookups.Object, learningDeliveryFAMQS.Object);
         }
     }
 }

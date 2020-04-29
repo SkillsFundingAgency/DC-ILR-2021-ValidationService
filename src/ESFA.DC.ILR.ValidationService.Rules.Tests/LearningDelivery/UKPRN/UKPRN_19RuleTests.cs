@@ -73,7 +73,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [InlineData("SOF", "116", false)]
         public void IsAdultEducationBudgetsMeetsExpectation(string famType, string famCode, bool expectation)
         {
-            var sut = NewRule();
             var fam = new Mock<ILearningDeliveryFAM>();
             fam
                 .SetupGet(y => y.LearnDelFAMType)
@@ -82,7 +81,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .SetupGet(y => y.LearnDelFAMCode)
                 .Returns(famCode);
 
-            var result = sut.IsAdultEducationBudgets(fam.Object);
+            var fams = new List<ILearningDeliveryFAM>
+            {
+                fam.Object
+            };
+
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(y => y.LearningDeliveryFAMs)
+                .Returns(fams);
+
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   mockDelivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "357"))
+               .Returns(expectation);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var fcsDataService = new Mock<IFCSDataService>(MockBehavior.Strict);
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
+
+            var result = new UKPRN_19Rule(handler.Object, fileData.Object, learningDeliveryFAMQS.Object, fcsDataService.Object).IsAdultEducationBudgets(mockDelivery.Object);
 
             Assert.Equal(expectation, result);
         }
@@ -95,35 +119,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        [InlineData(35, true)]
+        [InlineData(25, false)]
+        public void HasQualifyingModelMeetsExpectation(int fundModel, bool expectation)
         {
             var mockItem = new Mock<ILearningDelivery>();
+            mockItem.Setup(x => x.FundModel).Returns(fundModel);
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(mockItem.Object, 35))
-                .Returns(expectation);
-
-            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
-            fileData
-                .Setup(x => x.UKPRN())
-                .Returns(TestProviderID);
-
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-
-            var sut = new UKPRN_19Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
-
-            var result = sut.HasQualifyingModel(mockItem.Object);
-
-            Assert.Equal(expectation, result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            fileData.VerifyAll();
-            fcsData.VerifyAll();
+            Assert.Equal(NewRule().HasQualifyingModel(mockItem.Object), expectation);
         }
 
         [Theory]
@@ -148,7 +151,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [InlineData("SOF", "116", false)]
         public void IsESFAAdultFundingMeetsExpectation(string famType, string famCode, bool expectation)
         {
-            var sut = NewRule();
             var fam = new Mock<ILearningDeliveryFAM>();
             fam
                 .SetupGet(y => y.LearnDelFAMType)
@@ -157,39 +159,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .SetupGet(y => y.LearnDelFAMCode)
                 .Returns(famCode);
 
-            var result = sut.IsESFAAdultFunding(fam.Object);
+            var fams = new List<ILearningDeliveryFAM>
+            {
+                fam.Object
+            };
 
-            Assert.Equal(expectation, result);
-        }
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(y => y.LearningDeliveryFAMs)
+                .Returns(fams);
 
-        [Fact]
-        public void HasQualifyingMonitorWithNullFAMsReturnsFalse()
-        {
-            var mockItem = new Mock<ILearningDelivery>();
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   mockDelivery.Object.LearningDeliveryFAMs,
+                   "SOF",
+                   "105"))
+               .Returns(expectation);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(mockItem.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
-                .Returns(false);
-
+            var fcsDataService = new Mock<IFCSDataService>(MockBehavior.Strict);
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             fileData
                 .Setup(x => x.UKPRN())
                 .Returns(TestProviderID);
 
-            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+            var result = new UKPRN_19Rule(handler.Object, fileData.Object, learningDeliveryFAMQS.Object, fcsDataService.Object).IsESFAAdultFunding(mockDelivery.Object);
 
-            var sut = new UKPRN_19Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
-
-            var result = sut.HasQualifyingMonitor(mockItem.Object, sut.IsAdultEducationBudgets);
-
-            Assert.False(result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            fileData.VerifyAll();
-            fcsData.VerifyAll();
+            Assert.Equal(expectation, result);
         }
 
         [Theory]
@@ -215,7 +212,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         public void HasFundingRelationshipMeetsExpectation(string candidate, bool expectation)
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             fileData
@@ -232,14 +229,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.GetContractAllocationsFor(TestProviderID))
                 .Returns(new IFcsContractAllocation[] { allocation.Object });
 
-            var sut = new UKPRN_19Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
+            var sut = new UKPRN_19Rule(handler.Object, fileData.Object, learningDeliveryFAMQS.Object, fcsData.Object);
 
             var result = sut.HasDisQualifyingFundingRelationship(x => true);
 
             Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
             fileData.VerifyAll();
             fcsData.VerifyAll();
         }
@@ -315,11 +312,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMCode", "357"))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
-                .Returns(true);
-
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             fileData
                 .Setup(x => x.UKPRN())
@@ -338,19 +330,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.GetContractAllocationsFor(TestProviderID))
                 .Returns(new IFcsContractAllocation[] { allocation.Object });
 
-            var sut = new UKPRN_19Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "SOF",
+                   "105"))
+               .Returns(true);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "357"))
+               .Returns(true);
 
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsAdultEducationBudgets))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsESFAAdultFunding))
-                .Returns(true);
+            var sut = new UKPRN_19Rule(handler.Object, fileData.Object, learningDeliveryFAMQS.Object, fcsData.Object);
 
             sut.Validate(learner.Object);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
             fileData.VerifyAll();
             fcsData.VerifyAll();
         }
@@ -382,10 +381,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35))
-                .Returns(true);
 
             var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
             fileData
@@ -405,19 +400,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.GetContractAllocationsFor(TestProviderID))
                 .Returns(new IFcsContractAllocation[] { allocation.Object });
 
-            var sut = new UKPRN_19Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "SOF",
+                   "105"))
+               .Returns(true);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "357"))
+               .Returns(true);
 
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsAdultEducationBudgets))
-                .Returns(true);
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsESFAAdultFunding))
-                .Returns(true);
+            var sut = new UKPRN_19Rule(handler.Object, fileData.Object, learningDeliveryFAMQS.Object, fcsData.Object);
 
             sut.Validate(learner.Object);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
             fileData.VerifyAll();
             fcsData.VerifyAll();
         }
@@ -430,10 +432,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.UKPRN())
                 .Returns(TestProviderID);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
 
-            return new UKPRN_19Rule(handler.Object, fileData.Object, commonOps.Object, fcsData.Object);
+            return new UKPRN_19Rule(handler.Object, fileData.Object, learningDeliveryFAMQS.Object, fcsData.Object);
         }
     }
 }

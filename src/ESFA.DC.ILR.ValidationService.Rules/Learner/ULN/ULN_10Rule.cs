@@ -11,31 +11,27 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
 {
-    public class ULN_10Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class ULN_10Rule : AbstractRule, IRule<ILearner>
     {
         public const int MinimumCourseDuration = 5;
-
         public const int RuleLeniencyPeriod = 60;
 
         private readonly IDateTimeQueryService _dateTimeQuery;
-
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public ULN_10Rule(
             IValidationErrorHandler validationErrorHandler,
             IAcademicYearDataService academicDataQueryService,
             IDateTimeQueryService dateTimeQueryService,
             IFileDataService fileDataService,
-            IProvideRuleCommonOperations commonOps)
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
             : base(validationErrorHandler, RuleNameConstants.ULN_10)
         {
             FilePreparationDate = fileDataService.FilePreparationDate();
             FirstJanuary = academicDataQueryService.JanuaryFirst();
 
             _dateTimeQuery = dateTimeQueryService;
-            _check = commonOps;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
         public DateTime FilePreparationDate { get; }
@@ -73,16 +69,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             IsLearnerInCustody(theDelivery);
 
         public bool IsLearnerInCustody(ILearningDelivery theDelivery) =>
-            _check.IsLearnerInCustody(theDelivery);
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                theDelivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_OLASS);
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.NotFundedByESFA);
-
-        public bool IsHigherEducationFundingCouncilEngland(ILearningDeliveryFAM theMonitor) =>
-             Monitoring.Delivery.HigherEducationFundingCouncilEngland.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
+            theDelivery.FundModel == TypeOfFunding.NotFundedByESFA;
 
         public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
-            _check.CheckDeliveryFAMs(theDelivery, IsHigherEducationFundingCouncilEngland);
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                theDelivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.SOF,
+                LearningDeliveryFAMCodeConstants.SOF_HEFCE);
 
         public bool HasQualifyingPlannedDuration(ILearningDelivery theDelivery) =>
             _dateTimeQuery.DaysBetween(theDelivery.LearnStartDate, theDelivery.LearnPlanEndDate) >= MinimumCourseDuration;

@@ -11,29 +11,36 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
 {
-    public class ULN_06Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class ULN_06Rule : AbstractRule, IRule<ILearner>
     {
         public const int MinimumCourseDuration = 5;
         public const int RuleLeniencyPeriod = 60;
+        private readonly HashSet<int> _fundModels = new HashSet<int>
+        {
+            TypeOfFunding.Age16To19ExcludingApprenticeships,
+            TypeOfFunding.AdultSkills,
+            TypeOfFunding.ApprenticeshipsFrom1May2017,
+            TypeOfFunding.EuropeanSocialFund,
+            TypeOfFunding.OtherAdult,
+            TypeOfFunding.Other16To19
+        };
 
         private readonly IDateTimeQueryService _dateTimeQuery;
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public ULN_06Rule(
             IValidationErrorHandler validationErrorHandler,
             IAcademicYearDataService academicDataQueryService,
             IDateTimeQueryService dateTimeQueryService,
             IFileDataService fileDataService,
-            IProvideRuleCommonOperations commonOps)
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
             : base(validationErrorHandler, RuleNameConstants.ULN_06)
         {
             FilePreparationDate = fileDataService.FilePreparationDate();
             FirstJanuary = academicDataQueryService.JanuaryFirst();
 
             _dateTimeQuery = dateTimeQueryService;
-            _check = commonOps;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
         public DateTime FilePreparationDate { get; }
@@ -72,34 +79,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             || IsLevyFundedApprenticeship(theDelivery);
 
         public bool IsLearnerInCustody(ILearningDelivery theDelivery) =>
-            _check.IsLearnerInCustody(theDelivery);
-
-        public bool IsLevyFundedApprenticeship(ILearningDeliveryFAM theMonitor) =>
-            Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                theDelivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_OLASS);
 
         public bool IsLevyFundedApprenticeship(ILearningDelivery theDelivery) =>
-            _check.CheckDeliveryFAMs(theDelivery, IsLevyFundedApprenticeship);
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                theDelivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.ACT,
+                LearningDeliveryFAMCodeConstants.ACT_ContractEmployer);
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(
-                theDelivery,
-                TypeOfFunding.Age16To19ExcludingApprenticeships,
-                TypeOfFunding.AdultSkills,
-                TypeOfFunding.ApprenticeshipsFrom1May2017,
-                TypeOfFunding.EuropeanSocialFund,
-                TypeOfFunding.OtherAdult,
-                TypeOfFunding.Other16To19);
+            _fundModels.Contains(theDelivery.FundModel);
 
         public bool IsNotFundedByESFA(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(
-                theDelivery,
-                TypeOfFunding.NotFundedByESFA);
-
-        public bool IsFinancedByAdvancedLearnerLoans(ILearningDeliveryFAM theMonitor) =>
-            Monitoring.Delivery.FinancedByAdvancedLearnerLoans.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
+            theDelivery.FundModel == TypeOfFunding.NotFundedByESFA;
 
         public bool HasAdvancedLearnerLoan(ILearningDelivery theDelivery) =>
-            _check.CheckDeliveryFAMs(theDelivery, IsFinancedByAdvancedLearnerLoans);
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                theDelivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.ADL,
+                LearningDeliveryFAMCodeConstants.ADL_Code);
 
         public bool HasQualifyingPlannedDuration(ILearningDelivery theDelivery) =>
             _dateTimeQuery.DaysBetween(theDelivery.LearnStartDate, theDelivery.LearnPlanEndDate) >= MinimumCourseDuration;

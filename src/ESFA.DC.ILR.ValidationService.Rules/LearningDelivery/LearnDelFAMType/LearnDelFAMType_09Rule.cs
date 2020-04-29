@@ -9,18 +9,25 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
-    public class LearnDelFAMType_09Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnDelFAMType_09Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly HashSet<int> _fundModels = new HashSet<int>
+        {
+            TypeOfFunding.CommunityLearning,
+            TypeOfFunding.AdultSkills,
+            TypeOfFunding.ApprenticeshipsFrom1May2017,
+            TypeOfFunding.EuropeanSocialFund,
+            TypeOfFunding.OtherAdult
+        };
+
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public LearnDelFAMType_09Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations)
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_09)
         {
-            _check = commonOperations;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
         public static DateTime FirstInviableDate => new DateTime(2019, 08, 01);
@@ -28,21 +35,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool HasQualifyingStart(ILearningDelivery theDelivery) =>
             theDelivery.LearnStartDate < FirstInviableDate;
 
-        public bool HasDisqualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
-            theMonitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.SourceOfFunding)
-            && !Monitoring.Delivery.ESFAAdultFunding.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
-
         public bool HasDisqualifyingMonitor(ILearningDelivery theDelivery) =>
-            _check.CheckDeliveryFAMs(theDelivery, HasDisqualifyingMonitor);
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.SOF)
+            && !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                theDelivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.SOF,
+                LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
 
         public bool HasQualifyingFunding(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(
-                theDelivery,
-                TypeOfFunding.CommunityLearning,
-                TypeOfFunding.AdultSkills,
-                TypeOfFunding.ApprenticeshipsFrom1May2017,
-                TypeOfFunding.EuropeanSocialFund,
-                TypeOfFunding.OtherAdult);
+            _fundModels.Contains(theDelivery.FundModel);
 
         public bool IsNotValid(ILearningDelivery theDelivery) =>
             HasQualifyingStart(theDelivery)

@@ -18,7 +18,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         private readonly IValidationErrorHandler _messageHandler;
         private readonly ILARSDataService _larsData;
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IFileDataService _fileData;
         private readonly IOrganisationDataService _organisationData;
         private readonly IDerivedData_07Rule _dd07;
@@ -27,7 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public LearnAimRef_78Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
-            IProvideRuleCommonOperations commonChecks,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IFileDataService fileData,
             IOrganisationDataService organisationData,
             IDerivedData_07Rule dd07,
@@ -35,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         {
             _messageHandler = validationErrorHandler;
             _larsData = larsData;
-            _check = commonChecks;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _fileData = fileData;
             _organisationData = organisationData;
             _dd07 = dd07;
@@ -80,9 +80,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             && HasQualifyingNotionalNVQ(delivery);
 
         public bool IsExcluded(ILearningDelivery delivery) =>
-            _check.IsRestart(delivery)
-            || _check.IsLearnerInCustody(delivery)
-            || _check.IsSteelWorkerRedundancyTraining(delivery)
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(
+                delivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.RES)
+            || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                delivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_OLASS)
+            || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                delivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)
             || _dd07.IsApprenticeship(delivery.ProgTypeNullable)
             || IsSpecialistDesignatedCollege();
 
