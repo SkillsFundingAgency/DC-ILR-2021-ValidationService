@@ -12,14 +12,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
 {
     public class LearningDeliveryFAMQueryServiceTests
     {
-        [Fact]
-        public void HasAnyLearningDeliveryFAMCodesForType_True()
+        [Theory]
+        [InlineData("TypeTwo", "CodeOne")]
+        [InlineData("TypeTwo", "CodeThree")]
+        [InlineData("TypeTWO", "CodeThree")]
+        [InlineData("TypeTwo", "CodeTHREE")]
+        public void HasAnyLearningDeliveryFAMCodesForType_True(string famType, string famCode)
         {
             var learningDeliveryFAMs = new TestLearningDeliveryFAM[]
             {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "TypeOne", LearnDelFAMCode = "CodeOne" },
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "TypeTwo", LearnDelFAMCode = "CodeTwo" },
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "TypeTwo", LearnDelFAMCode = "CodeThree" },
+                new TestLearningDeliveryFAM() { LearnDelFAMType = famType, LearnDelFAMCode = famCode },
             };
 
             var codes = new string[] { "CodeOne", "CodeThree" };

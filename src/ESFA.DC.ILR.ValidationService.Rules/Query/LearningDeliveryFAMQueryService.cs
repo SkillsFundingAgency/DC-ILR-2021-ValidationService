@@ -62,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                 return null;
             }
 
-            return learningDeliveryFams?.Where(fam => HasFamType(fam, famType) && famCodes.Contains(fam.LearnDelFAMCode));
+            return learningDeliveryFams?.Where(fam => HasFamType(fam, famType) && famCodes.Any(fc => HasFamCode(fam, fc)));
         }
 
         public IEnumerable<ILearningDeliveryFAM> GetOverLappingLearningDeliveryFAMsForType(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams, string famType)
