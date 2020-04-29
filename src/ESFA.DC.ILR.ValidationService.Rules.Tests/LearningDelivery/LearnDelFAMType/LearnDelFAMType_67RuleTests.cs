@@ -35,21 +35,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        [InlineData(36, true)]
+        [InlineData(35, false)]
+        public void HasQualifyingModelMeetsExpectation(int fundModel, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery.Setup(x => x.FundModel).Returns(fundModel);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 36))
-                .Returns(expectation);
-
-            var result = NewRule(commonOps: commonOps.Object).HasQualifyingModel(delivery.Object);
+            var result = NewRule().HasQualifyingModel(delivery.Object);
 
             Assert.Equal(expectation, result);
-            commonOps.VerifyAll();
         }
 
         [Theory]
@@ -62,11 +57,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
              .SetupGet(x => x.AimType)
              .Returns(aimType);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var result = NewRule(commonOps: commonOps.Object).IsComponentAim(delivery.Object);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            var result = NewRule(learningDeliveryFAMQS: learningDeliveryFAMQS.Object).IsComponentAim(delivery.Object);
 
             Assert.Equal(expectation, result);
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         [Fact]
@@ -79,21 +74,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
                 .Setup(x => x.GetAnnualValuesFor(learnAimRef))
                 .Returns(new ILARSAnnualValue[] { });
 
-            var sut = NewRule(handler.Object, commonOps.Object, larsData.Object);
+            var sut = NewRule(handler.Object, learningDeliveryFAMQS.Object, larsData.Object);
 
             var result = sut.HasQualifyingBasicSkillsType(delivery.Object);
 
             Assert.False(result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
             larsData.VerifyAll();
         }
 
@@ -247,7 +242,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
             var larsAim = new Mock<ILARSLearningDelivery>();
 
@@ -256,14 +251,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.GetDeliveryFor(learnAimRef))
                 .Returns(larsAim.Object);
 
-            var sut = NewRule(handler.Object, commonOps.Object, larsData.Object);
+            var sut = NewRule(handler.Object, learningDeliveryFAMQS.Object, larsData.Object);
 
             var result = sut.GetLarsAim(delivery.Object);
 
             Assert.Equal(larsAim.Object, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
             larsData.VerifyAll();
         }
 
@@ -315,30 +310,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             Assert.Equal(expectation, result);
         }
 
-        [Fact]
-        public void HasDisqualifyingMonitorWithNullFAMsReturnsFalse()
-        {
-            var delivery = new Mock<ILearningDelivery>();
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
-                .Returns(false);
-
-            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            var sut = NewRule(handler.Object, commonOps.Object, larsData.Object);
-
-            var result = sut.HasDisqualifyingMonitor(delivery.Object);
-
-            Assert.False(result);
-
-            handler.VerifyAll();
-            commonOps.VerifyAll();
-            larsData.VerifyAll();
-        }
-
         [Theory]
         [InlineData("ACT1", Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer)]
         [InlineData("ACT2", Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithESFA)]
@@ -370,7 +341,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData("SOF", "116", false)]
         public void IsLearningSupportFundingMeetsExpectation(string famType, string famCode, bool expectation)
         {
-            var sut = NewRule();
             var fam = new Mock<ILearningDeliveryFAM>();
             fam
                 .SetupGet(y => y.LearnDelFAMType)
@@ -379,7 +349,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(y => y.LearnDelFAMCode)
                 .Returns(famCode);
 
-            var result = sut.IsLearningSupportFunding(fam.Object);
+            var fams = new List<ILearningDeliveryFAM>
+            {
+                fam.Object
+            };
+
+            var mockDelivery = new Mock<ILearningDelivery>();
+            mockDelivery
+                .SetupGet(y => y.LearningDeliveryFAMs)
+                .Returns(fams);
+
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMType(
+                   mockDelivery.Object.LearningDeliveryFAMs,
+                   "LSF"))
+               .Returns(expectation);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
+
+            var sut = new LearnDelFAMType_67Rule(handler.Object, learningDeliveryFAMQS.Object, larsData.Object);
+            var result = sut.IsLearningSupportFunding(mockDelivery.Object);
 
             Assert.Equal(expectation, result);
         }
@@ -427,10 +418,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMType", "LSF"))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 36))
-                .Returns(true);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "LSF"))
+               .Returns(true);
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
@@ -446,16 +439,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.GetDeliveryFor(LearnAimRef))
                 .Returns(larsDelivery.Object);
 
-            var sut = NewRule(handler.Object, commonOps.Object, larsData.Object);
-
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsLearningSupportFunding))
-                .Returns(true);
+            var sut = NewRule(handler.Object, learningDeliveryFAMQS.Object, larsData.Object);
 
             sut.Validate(learner.Object);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
             larsData.VerifyAll();
         }
 
@@ -491,10 +480,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 36))
-                .Returns(true);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "LSF"))
+               .Returns(false);
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
@@ -510,25 +501,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.GetDeliveryFor(LearnAimRef))
                 .Returns(larsDelivery.Object);
 
-            var sut = NewRule(handler.Object, commonOps.Object, larsData.Object);
-
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsLearningSupportFunding))
-                .Returns(false);
+            var sut = NewRule(handler.Object, learningDeliveryFAMQS.Object, larsData.Object);
 
             sut.Validate(learner.Object);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
             larsData.VerifyAll();
         }
 
         public LearnDelFAMType_67Rule NewRule(
          IValidationErrorHandler handler = null,
-         IProvideRuleCommonOperations commonOps = null,
+         ILearningDeliveryFAMQueryService learningDeliveryFAMQS = null,
          ILARSDataService larsData = null)
         {
-            return new LearnDelFAMType_67Rule(handler, commonOps, larsData);
+            return new LearnDelFAMType_67Rule(handler, learningDeliveryFAMQS, larsData);
         }
     }
 }

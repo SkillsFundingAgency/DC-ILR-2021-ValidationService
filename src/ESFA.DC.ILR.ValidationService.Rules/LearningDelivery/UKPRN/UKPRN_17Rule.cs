@@ -11,12 +11,9 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
-    public class UKPRN_17Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class UKPRN_17Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _check;
-
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IFCSDataService _fcsData;
 
         private readonly HashSet<string> _fundingStreams = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { FundingStreamPeriodCodeConstants.C16_18TRN1920 };
@@ -24,12 +21,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public UKPRN_17Rule(
             IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
-            IProvideRuleCommonOperations commonOps,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IFCSDataService fcsDataService)
             : base(validationErrorHandler, RuleNameConstants.UKPRN_17)
         {
             ProviderUKPRN = fileDataService.UKPRN();
-            _check = commonOps;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _fcsData = fcsDataService;
         }
 
@@ -46,20 +43,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public bool IsNotValid(ILearningDelivery theDelivery) =>
             HasQualifyingModel(theDelivery)
                 && IsTraineeship(theDelivery)
-                && HasQualifyingMonitor(theDelivery)
+                && IsESFAAdultFunding(theDelivery)
                 && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.Age16To19ExcludingApprenticeships);
+            theDelivery.FundModel == TypeOfFunding.Age16To19ExcludingApprenticeships;
 
         public bool IsTraineeship(ILearningDelivery theDelivery) =>
             theDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
-        public bool HasQualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
-            Monitoring.Delivery.ESFAAdultFunding.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
-
-        public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
-            _check.CheckDeliveryFAMs(theDelivery, HasQualifyingMonitor);
+        public bool IsESFAAdultFunding(ILearningDelivery theDelivery) =>
+             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                 theDelivery.LearningDeliveryFAMs,
+                 LearningDeliveryFAMTypeConstants.SOF,
+                 LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
 
         public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate) =>
             _fcsData

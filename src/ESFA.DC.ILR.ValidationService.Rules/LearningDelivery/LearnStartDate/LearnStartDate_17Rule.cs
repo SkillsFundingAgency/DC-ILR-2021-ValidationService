@@ -13,18 +13,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
     public class LearnStartDate_17Rule : AbstractRule, IRule<ILearner>
     {
         private readonly ILARSDataService _larsData;
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public LearnStartDate_17Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
-            IProvideRuleCommonOperations commonOperations,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnStartDate_17)
         {
             _larsData = larsData;
-            _check = commonOperations;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _dateTimeQueryService = dateTimeQueryService;
         }
 
@@ -35,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             allocations.NullSafeAny(x => _dateTimeQueryService.IsDateBetween(thisDelivery.LearnStartDate, x.StartDate, DateTime.MaxValue));
 
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
-            !_check.IsRestart(thisDelivery)
+            !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(thisDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)
             && thisDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
             && thisDelivery.AimType == TypeOfAim.ProgrammeAim
             && thisDelivery.StdCodeNullable.HasValue

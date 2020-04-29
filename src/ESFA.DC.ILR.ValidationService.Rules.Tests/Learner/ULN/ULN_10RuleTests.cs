@@ -93,9 +93,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(DateTime.Parse(candidate));
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
 
             var result = sut.IsOutsideQualifyingPeriod();
 
@@ -105,7 +105,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             academicYear.VerifyAll();
             dateTime.VerifyAll();
             fileData.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         [Fact]
@@ -150,12 +150,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(TestPreparationDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsLearnerInCustody(delivery.Object))
-                .Returns(expectation);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                 .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "034"))
+                   .Returns(expectation);
 
-            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
 
             var result = sut.IsLearnerInCustody(delivery.Object);
 
@@ -165,7 +168,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             academicYear.VerifyAll();
             dateTime.VerifyAll();
             fileData.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         [Theory]
@@ -176,11 +179,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        [InlineData(99, true)]
+        [InlineData(35, false)]
+        public void HasQualifyingModelMeetsExpectation(int fundModel, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .Setup(x => x.FundModel)
+                .Returns(fundModel);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
@@ -196,12 +202,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(TestPreparationDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 99))
-                .Returns(expectation);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
 
             var result = sut.HasQualifyingModel(delivery.Object);
 
@@ -211,7 +214,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             academicYear.VerifyAll();
             dateTime.VerifyAll();
             fileData.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         [Theory]
@@ -220,41 +223,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
         public void MonitoringCodeMeetsExpectation(string expectation, string candidate)
         {
             Assert.Equal(expectation, candidate);
-        }
-
-        [Theory]
-        [InlineData("ACT", "1", false)]
-        [InlineData("LDM", "034", false)]
-        [InlineData("FFI", "1", false)]
-        [InlineData("FFI", "2", false)]
-        [InlineData("LDM", "363", false)]
-        [InlineData("LDM", "318", false)]
-        [InlineData("LDM", "328", false)]
-        [InlineData("LDM", "347", false)]
-        [InlineData("SOF", "1", true)]
-        [InlineData("SOF", "107", false)]
-        [InlineData("SOF", "105", false)]
-        [InlineData("SOF", "110", false)]
-        [InlineData("SOF", "111", false)]
-        [InlineData("SOF", "112", false)]
-        [InlineData("SOF", "113", false)]
-        [InlineData("SOF", "114", false)]
-        [InlineData("SOF", "115", false)]
-        [InlineData("SOF", "116", false)]
-        public void IsHigherEducationFundingCouncilEnglandMeetsExpectation(string famType, string famCode, bool expectation)
-        {
-            var sut = NewRule();
-            var fam = new Mock<ILearningDeliveryFAM>();
-            fam
-                .SetupGet(y => y.LearnDelFAMType)
-                .Returns(famType);
-            fam
-                .SetupGet(y => y.LearnDelFAMCode)
-                .Returns(famCode);
-
-            var result = sut.IsHigherEducationFundingCouncilEngland(fam.Object);
-
-            Assert.Equal(expectation, result);
         }
 
         [Theory]
@@ -278,12 +246,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(TestPreparationDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, It.IsAny<Func<ILearningDeliveryFAM, bool>>()))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                  delivery.Object.LearningDeliveryFAMs,
+                  "SOF",
+                  "1"))
                 .Returns(expectation);
 
-            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
 
             var result = sut.HasQualifyingMonitor(delivery.Object);
 
@@ -293,7 +264,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             academicYear.VerifyAll();
             dateTime.VerifyAll();
             fileData.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         [Theory]
@@ -324,9 +295,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(TestPreparationDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
 
             var result = sut.HasQualifyingPlannedDuration(delivery.Object);
 
@@ -336,7 +307,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             academicYear.VerifyAll();
             dateTime.VerifyAll();
             fileData.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         [Theory]
@@ -364,9 +335,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(TestPreparationDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
 
             var result = sut.HasActualEndDate(delivery.Object);
 
@@ -376,7 +347,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             academicYear.VerifyAll();
             dateTime.VerifyAll();
             fileData.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         [Theory]
@@ -410,9 +381,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(TestPreparationDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
 
             var result = sut.HasQualifyingActualDuration(delivery.Object);
 
@@ -422,7 +393,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             academicYear.VerifyAll();
             dateTime.VerifyAll();
             fileData.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         [Theory]
@@ -450,9 +421,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(TestPreparationDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
 
             var result = sut.IsOutsideLeniencyPeriod(delivery.Object);
 
@@ -462,7 +433,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             academicYear.VerifyAll();
             dateTime.VerifyAll();
             fileData.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         public DateTime? GetNullableDate(string candidate) =>
@@ -540,19 +511,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(TestPreparationDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsLearnerInCustody(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 99))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                 .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "034"))
+                 .Returns(false);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                  delivery.Object.LearningDeliveryFAMs,
+                  "SOF",
+                  "1"))
                 .Returns(true);
 
-            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
-
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsHigherEducationFundingCouncilEngland))
-                .Returns(true);
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
 
             sut.Validate(learner.Object);
 
@@ -560,7 +533,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             academicYear.VerifyAll();
             dateTime.VerifyAll();
             fileData.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         [Fact]
@@ -615,19 +588,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(TestPreparationDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsLearnerInCustody(delivery.Object))
-                .Returns(false);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 99))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                 .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "034"))
+                 .Returns(false);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                  delivery.Object.LearningDeliveryFAMs,
+                  "SOF",
+                  "1"))
                 .Returns(true);
 
-            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
-
-            commonOps
-                .Setup(x => x.CheckDeliveryFAMs(delivery.Object, sut.IsHigherEducationFundingCouncilEngland))
-                .Returns(true);
+            var sut = new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
 
             sut.Validate(learner.Object);
 
@@ -635,7 +610,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             academicYear.VerifyAll();
             dateTime.VerifyAll();
             fileData.VerifyAll();
-            commonOps.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         public ULN_10Rule NewRule()
@@ -654,9 +629,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
                 .Setup(x => x.FilePreparationDate())
                 .Returns(TestPreparationDate);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            return new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, commonOps.Object);
+            return new ULN_10Rule(handler.Object, academicYear.Object, dateTime.Object, fileData.Object, learningDeliveryFAMQS.Object);
         }
     }
 }

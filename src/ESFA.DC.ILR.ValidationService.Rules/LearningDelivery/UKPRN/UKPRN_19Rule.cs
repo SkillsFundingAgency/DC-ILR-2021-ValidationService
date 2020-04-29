@@ -11,12 +11,9 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
-    public class UKPRN_19Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class UKPRN_19Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _check;
-
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IFCSDataService _fcsData;
 
         private readonly HashSet<string> _fundingStreams = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -28,12 +25,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public UKPRN_19Rule(
             IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
-            IProvideRuleCommonOperations commonOps,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IFCSDataService fcsDataService)
             : base(validationErrorHandler, RuleNameConstants.UKPRN_19)
         {
             ProviderUKPRN = fileDataService.UKPRN();
-            _check = commonOps;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _fcsData = fcsDataService;
         }
 
@@ -49,21 +46,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         public bool IsNotValid(ILearningDelivery theDelivery) =>
             HasQualifyingModel(theDelivery)
-                && HasQualifyingMonitor(theDelivery, IsESFAAdultFunding)
-                && HasQualifyingMonitor(theDelivery, IsAdultEducationBudgets)
+                && IsESFAAdultFunding(theDelivery)
+                && IsAdultEducationBudgets(theDelivery)
                 && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
 
-        public bool IsAdultEducationBudgets(ILearningDeliveryFAM theMonitor) =>
-            Monitoring.Delivery.AdultEducationBudgets.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
+        public bool IsAdultEducationBudgets(ILearningDelivery theDelivery) =>
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                theDelivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_ProcuredAdultEducationBudget);
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.AdultSkills);
+            theDelivery.FundModel == TypeOfFunding.AdultSkills;
 
-        public bool IsESFAAdultFunding(ILearningDeliveryFAM theMonitor) =>
-            Monitoring.Delivery.ESFAAdultFunding.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
-
-        public bool HasQualifyingMonitor(ILearningDelivery theDelivery, Func<ILearningDeliveryFAM, bool> docheck) =>
-            _check.CheckDeliveryFAMs(theDelivery, docheck);
+        public bool IsESFAAdultFunding(ILearningDelivery theDelivery) =>
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                theDelivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.SOF,
+                LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
 
         public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate) =>
             _fcsData

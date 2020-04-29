@@ -88,20 +88,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.BuildErrorMessageParameter("FundModel", TypeOfFunding.AdultSkills))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "LDM",
+                    "347"))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
-                .Returns(true);
 
-            var sut = new LearnAimRef_86Rule(handler.Object, commonChecks.Object);
+            var sut = new LearnAimRef_86Rule(handler.Object, learningDeliveryFAMQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            commonChecks.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         [Fact]
@@ -113,6 +113,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             mockDelivery
                .SetupGet(y => y.ProgTypeNullable)
                .Returns(24);
+            mockDelivery
+               .SetupGet(y => y.FundModel)
+               .Returns(35);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -127,28 +130,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "LDM",
+                    "347"))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
-                .Returns(true);
 
-            var sut = new LearnAimRef_86Rule(handler.Object, commonChecks.Object);
+            var sut = new LearnAimRef_86Rule(handler.Object, learningDeliveryFAMQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            commonChecks.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
         }
 
         public LearnAimRef_86Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
-            return new LearnAimRef_86Rule(handler.Object, commonChecks.Object);
+            return new LearnAimRef_86Rule(handler.Object, learningDeliveryFAMQS.Object);
         }
     }
 }

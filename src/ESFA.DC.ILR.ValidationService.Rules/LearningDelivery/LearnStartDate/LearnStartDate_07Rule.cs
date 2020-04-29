@@ -17,7 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         private readonly HashSet<int> _fwkCommonComponents = new HashSet<int>(TypeOfLARSCommonComponent.CommonComponents);
         private readonly IDerivedData_04Rule _derivedData04;
         private readonly ILARSDataService _larsData;
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IDateTimeQueryService _dateTimeQueryService;
         private readonly IDerivedData_07Rule _dd07;
 
@@ -25,14 +25,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             IValidationErrorHandler validationErrorHandler,
             IDerivedData_04Rule derivedData04,
             ILARSDataService larsData,
-            IProvideRuleCommonOperations commonOperations,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IDateTimeQueryService dateTimeQueryService,
             IDerivedData_07Rule dd07)
                 : base(validationErrorHandler, RuleNameConstants.LearnStartDate_07)
         {
             _derivedData04 = derivedData04;
             _larsData = larsData;
-            _check = commonOperations;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _dateTimeQueryService = dateTimeQueryService;
             _dd07 = dd07;
         }
@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool IsRestart(ILearningDelivery theDelivery) =>
-            _check.IsRestart(theDelivery);
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);
 
         public ILARSLearningDelivery GetLARSLearningDeliveryFor(ILearningDelivery theDelivery) =>
             _larsData.GetDeliveryFor(theDelivery.LearnAimRef);

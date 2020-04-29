@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
     public class UKPRN_10Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IFCSDataService _fcsData;
         private readonly IDateTimeQueryService _dateTimeQueryService;
 
@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
             IAcademicYearDataService academicYearDataService,
-            IProvideRuleCommonOperations commonOps,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IFCSDataService fcsDataService,
             IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.UKPRN_10)
@@ -37,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             AcademicYearStartDate = academicYearDataService.Start();
             ProviderUKPRN = fileDataService.UKPRN();
 
-            _check = commonOps;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _fcsData = fcsDataService;
             _dateTimeQueryService = dateTimeQueryService;
         }
@@ -75,11 +75,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public bool HasQualifyingStart(ILearningDelivery theDelivery) =>
             _dateTimeQueryService.IsDateBetween(theDelivery.LearnStartDate, FirstViableStart, DateTime.MaxValue);
 
-        public bool HasQualifyingMonitor(ILearningDeliveryFAM theMonitor) =>
-            Monitoring.Delivery.ApprenticeshipFundedThroughAContractForServicesWithEmployer.CaseInsensitiveEquals($"{theMonitor.LearnDelFAMType}{theMonitor.LearnDelFAMCode}");
-
         public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
-            _check.CheckDeliveryFAMs(theDelivery, HasQualifyingMonitor);
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                theDelivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.ACT,
+                LearningDeliveryFAMCodeConstants.ACT_ContractEmployer);
 
         public bool HasFundingRelationship() =>
             _fcsData

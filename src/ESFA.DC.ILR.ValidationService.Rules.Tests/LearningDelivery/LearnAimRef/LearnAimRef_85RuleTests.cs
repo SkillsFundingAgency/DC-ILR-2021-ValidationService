@@ -76,11 +76,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.GetDeliveryFor(candidate))
                 .Returns((ILARSLearningDelivery)null);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object, dateTimeQS.Object);
+            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, learningDeliveryFAMQS.Object, dd07.Object, dateTimeQS.Object);
 
             var result = sut.HasDisqualifyingNotionalNVQ(mockDelivery.Object);
 
@@ -88,7 +88,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
             dd07.VerifyAll();
         }
 
@@ -160,9 +160,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.GetDeliveryFor(learnAimRef))
                 .Returns(mockLars.Object);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.IsRestart(mockDelivery.Object))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "RES"))
                 .Returns(false);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
@@ -174,13 +176,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_85Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object, dateTimeQS.Object);
+            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, learningDeliveryFAMQS.Object, dd07.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
             dd07.VerifyAll();
         }
 
@@ -238,9 +240,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.GetDeliveryFor(learnAimRef))
                 .Returns(mockLars.Object);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.IsRestart(mockDelivery.Object))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "RES"))
                 .Returns(false);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
@@ -252,13 +256,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_85Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object, dateTimeQS.Object);
+            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, learningDeliveryFAMQS.Object, dd07.Object, dateTimeQS.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
             dd07.VerifyAll();
         }
 
@@ -266,11 +270,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new LearnAimRef_85Rule(handler.Object, service.Object, commonChecks.Object, dd07.Object, dateTimeQS.Object);
+            return new LearnAimRef_85Rule(handler.Object, service.Object, learningDeliveryFAMQS.Object, dd07.Object, dateTimeQS.Object);
         }
     }
 }

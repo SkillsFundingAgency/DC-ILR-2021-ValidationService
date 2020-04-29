@@ -11,21 +11,19 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
-    public class LearnDelFAMType_63Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnDelFAMType_63Rule : AbstractRule, IRule<ILearner>
     {
         private readonly HashSet<int> _basicSkillsList = new HashSet<int>(TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly ILARSDataService _larsData;
 
         public LearnDelFAMType_63Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOps,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_63)
         {
-            _check = commonOps;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _larsData = larsDataService;
         }
 
@@ -39,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool IsNotValid(ILearningDelivery theDelivery) =>
             !IsExcluded(theDelivery)
-                && HasQualifyingMonitor(theDelivery);
+                && IsApprenticeshipContract(theDelivery);
 
         public bool IsExcluded(ILearningDelivery theDelivery) =>
             HasQualifyingModel(theDelivery)
@@ -49,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                     || HasQualifyingCommonComponent(theDelivery))));
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.ApprenticeshipsFrom1May2017);
+            theDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
 
         public bool IsProgrameAim(ILearningDelivery theDelivery) =>
             theDelivery.AimType == TypeOfAim.ProgrammeAim;
@@ -81,11 +79,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsBritishSignLanguage(ILARSLearningDelivery theDelivery) =>
             theDelivery.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
 
-        public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
-            _check.CheckDeliveryFAMs(theDelivery, IsApprenticeshipContract);
-
-        public bool IsApprenticeshipContract(ILearningDeliveryFAM theMonitor) =>
-            theMonitor.LearnDelFAMType.CaseInsensitiveEquals(Monitoring.Delivery.Types.ApprenticeshipContract);
+        public bool IsApprenticeshipContract(ILearningDelivery theDelivery) =>
+           _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT);
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
             HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));

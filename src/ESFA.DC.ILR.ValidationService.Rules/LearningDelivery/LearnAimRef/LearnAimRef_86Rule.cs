@@ -7,21 +7,19 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
-    public class LearnAimRef_86Rule :
-        IRule<ILearner>
+    public class LearnAimRef_86Rule : IRule<ILearner>
     {
         public const string Name = RuleNameConstants.LearnAimRef_86;
 
         private readonly IValidationErrorHandler _messageHandler;
-
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public LearnAimRef_86Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonChecks)
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
         {
             _messageHandler = validationErrorHandler;
-            _check = commonChecks;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
         public string RuleName => Name;
@@ -30,8 +28,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             delivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.WorkExperience);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
-            _check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)
-            && !_check.IsSteelWorkerRedundancyTraining(delivery)
+            delivery.FundModel == TypeOfFunding.AdultSkills
+            && !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                delivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)
             && delivery.AimType != TypeOfAim.ProgrammeAim
             && IsWorkExperience(delivery);
 
