@@ -3,7 +3,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -70,19 +69,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
             mockDelivery
                .SetupGet(x => x.ProgTypeNullable)
                .Returns(25);
+            mockDelivery
+                .SetupGet(y => y.FundModel)
+                .Returns(36);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            common
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.ApprenticeshipsFrom1May2017))
-                .Returns(true);
 
-            var sut = new Outcome_04Rule(handler.Object, common.Object);
+            var sut = new Outcome_04Rule(handler.Object);
 
             var result = sut.IsExcluded(mockDelivery.Object);
 
             handler.VerifyAll();
-            common.VerifyAll();
 
             Assert.True(result);
         }
@@ -131,14 +128,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                 .Setup(x => x.BuildErrorMessageParameter("Outcome", candidate))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            var sut = new Outcome_04Rule(handler.Object, common.Object);
+            var sut = new Outcome_04Rule(handler.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            common.VerifyAll();
         }
 
         [Theory]
@@ -172,22 +166,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                 .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            var sut = new Outcome_04Rule(handler.Object, common.Object);
+            var sut = new Outcome_04Rule(handler.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            common.VerifyAll();
         }
 
         public Outcome_04Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            return new Outcome_04Rule(handler.Object, common.Object);
+            return new Outcome_04Rule(handler.Object);
         }
     }
 }

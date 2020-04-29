@@ -7,27 +7,20 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
-    public class R72Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class R72Rule : AbstractRule, IRule<ILearner>
     {
         public const int ThresholdProportion = 3;
-
-        private readonly IProvideRuleCommonOperations _check;
 
         private readonly IDerivedData_17Rule _derivedData17;
 
         public R72Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOps,
             IDerivedData_17Rule dd17)
             : base(validationErrorHandler, RuleNameConstants.R72)
         {
-            _check = commonOps;
             _derivedData17 = dd17;
         }
 
@@ -54,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 && HasStandardCode(theDelivery);
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.OtherAdult);
+           theDelivery.FundModel == TypeOfFunding.OtherAdult;
 
         public bool IsProgrammeAim(ILearningDelivery theDelivery) =>
             theDelivery.AimType == TypeOfAim.ProgrammeAim;

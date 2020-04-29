@@ -3,9 +3,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.CrossEntity;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -24,27 +22,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        [InlineData(70, false)]
+        [InlineData(81, true)]
+        public void HasQualifyingModelMeetsExpectation(int fundModel, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(fundModel);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 81))
-                .Returns(expectation);
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
 
-            var sut = new R73Rule(handler.Object, commonOps.Object, derivedData.Object);
+            var sut = new R73Rule(handler.Object, derivedData.Object);
 
             var result = sut.HasQualifyingModel(delivery.Object);
 
             Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
             derivedData.VerifyAll();
         }
 
@@ -59,17 +55,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                    .Returns(aimType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
 
-            var sut = new R73Rule(handler.Object, commonOps.Object, derivedData.Object);
+            var sut = new R73Rule(handler.Object, derivedData.Object);
 
             var result = sut.IsProgrammeAim(delivery.Object);
 
             Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
             derivedData.VerifyAll();
         }
 
@@ -84,17 +78,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                    .Returns(progType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
 
-            var sut = new R73Rule(handler.Object, commonOps.Object, derivedData.Object);
+            var sut = new R73Rule(handler.Object, derivedData.Object);
 
             var result = sut.IsStandardApprenticeship(delivery.Object);
 
             Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
             derivedData.VerifyAll();
         }
 
@@ -255,20 +247,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var deliveries = new ILearningDelivery[] { };
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
             derivedData
                 .Setup(x => x.IsTNPMoreThanContributionCapFor(candidate, deliveries))
                 .Returns(expectation);
 
-            var sut = new R73Rule(handler.Object, commonOps.Object, derivedData.Object);
+            var sut = new R73Rule(handler.Object, derivedData.Object);
 
             var result = sut.IsTNPMoreThanContributionCapFor(candidate, deliveries);
 
             Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
             derivedData.VerifyAll();
         }
 
@@ -282,20 +273,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var deliveries = new ILearningDelivery[] { };
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
             derivedData
                 .Setup(x => x.GetTotalTNPPriceFor(deliveries))
                 .Returns(expectation);
 
-            var sut = new R73Rule(handler.Object, commonOps.Object, derivedData.Object);
+            var sut = new R73Rule(handler.Object, derivedData.Object);
 
             var result = sut.GetTotalTNPPriceFor(deliveries);
 
             Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
             derivedData.VerifyAll();
         }
 
@@ -350,11 +340,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .SetupGet(x => x.AppFinRecords)
                 .Returns(records);
             delivery
-                   .SetupGet(x => x.AimType)
-                   .Returns(1);
+                .SetupGet(x => x.AimType)
+                .Returns(1);
             delivery
-                   .SetupGet(x => x.ProgTypeNullable)
-                   .Returns(25);
+                 .SetupGet(x => x.ProgTypeNullable)
+                 .Returns(25);
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(81);
 
             var deliveries = new ILearningDelivery[] { delivery.Object };
 
@@ -382,11 +375,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Setup(x => x.BuildErrorMessageParameter("StdCode", testStdCode))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 81))
-                .Returns(true);
-
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
             derivedData
                 .Setup(x => x.IsTNPMoreThanContributionCapFor(testStdCode, Moq.It.IsAny<IReadOnlyCollection<ILearningDelivery>>()))
@@ -398,12 +386,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Setup(x => x.GetFundingContributionCapFor(testStdCode, Moq.It.IsAny<IReadOnlyCollection<ILearningDelivery>>()))
                 .Returns(fundingCap);
 
-            var sut = new R73Rule(handler.Object, commonOps.Object, derivedData.Object);
+            var sut = new R73Rule(handler.Object, derivedData.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
             derivedData.VerifyAll();
         }
 
@@ -435,11 +422,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .SetupGet(x => x.AppFinRecords)
                 .Returns(records);
             delivery
-                  .SetupGet(x => x.AimType)
-                  .Returns(1);
+                .SetupGet(x => x.AimType)
+                .Returns(1);
             delivery
-                   .SetupGet(x => x.ProgTypeNullable)
-                   .Returns(25);
+                .SetupGet(y => y.FundModel)
+                .Returns(81);
+            delivery
+                .SetupGet(x => x.ProgTypeNullable)
+                .Returns(25);
 
             var deliveries = new ILearningDelivery[] { delivery.Object };
 
@@ -453,11 +443,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 81))
-                .Returns(true);
-
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
             derivedData
                 .Setup(x => x.IsTNPMoreThanContributionCapFor(testStdCode, Moq.It.IsAny<IReadOnlyCollection<ILearningDelivery>>()))
@@ -469,22 +454,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 .Setup(x => x.GetFundingContributionCapFor(testStdCode, Moq.It.IsAny<IReadOnlyCollection<ILearningDelivery>>()))
                 .Returns(fundingCap);
 
-            var sut = new R73Rule(handler.Object, commonOps.Object, derivedData.Object);
+            var sut = new R73Rule(handler.Object, derivedData.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
             derivedData.VerifyAll();
         }
 
         public R73Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var derivedData = new Mock<IDerivedData_17Rule>(MockBehavior.Strict);
 
-            return new R73Rule(handler.Object, commonOps.Object, derivedData.Object);
+            return new R73Rule(handler.Object, derivedData.Object);
         }
     }
 }

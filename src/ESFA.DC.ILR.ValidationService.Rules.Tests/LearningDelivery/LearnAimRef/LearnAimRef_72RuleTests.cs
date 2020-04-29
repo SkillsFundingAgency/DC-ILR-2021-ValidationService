@@ -4,9 +4,7 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -42,14 +40,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var mockReturn = new Mock<ILARSLearningDelivery>();
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
                 .Setup(x => x.GetDeliveryFor(candidate))
                 .Returns(mockReturn.Object);
 
-            var sut = new LearnAimRef_72Rule(handler.Object, commonOps.Object, fcsData.Object, larsData.Object);
+            var sut = new LearnAimRef_72Rule(handler.Object, fcsData.Object, larsData.Object);
 
             // act
             var result = sut.GetLARSLearningDeliveryFor(mockItem.Object);
@@ -58,7 +55,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Equal(mockReturn.Object, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
             fcsData.VerifyAll();
             larsData.VerifyAll();
         }
@@ -76,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(candidate);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             fcsData
                 .Setup(x => x.GetEligibilityRuleSectorSubjectAreaLevelsFor(candidate))
@@ -84,7 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_72Rule(handler.Object, commonOps.Object, fcsData.Object, larsData.Object);
+            var sut = new LearnAimRef_72Rule(handler.Object, fcsData.Object, larsData.Object);
 
             // act
             var result = sut.GetSubjectAreaLevelsFor(mockItem.Object);
@@ -93,7 +89,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             Assert.Empty(result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
             fcsData.VerifyAll();
             larsData.VerifyAll();
         }
@@ -276,11 +271,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.BuildErrorMessageParameter("ConRefNumber", ContractRefNumber))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 70)) // TypeOfFunding.EuropeanSocialFund
-                .Returns(true);
-
             var eligibilityItem = new Mock<IEsfEligibilityRuleSectorSubjectAreaLevel>();
             eligibilityItem
                 .SetupGet(x => x.MinLevelCode)
@@ -288,6 +278,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             eligibilityItem
                 .SetupGet(x => x.MaxLevelCode)
                 .Returns(max);
+
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             fcsData
                 .Setup(x => x.GetEligibilityRuleSectorSubjectAreaLevelsFor(ContractRefNumber))
@@ -303,14 +294,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.GetDeliveryFor(AimRefNumber))
                 .Returns(larsItem.Object);
 
-            var sut = new LearnAimRef_72Rule(handler.Object, commonOps.Object, fcsData.Object, larsData.Object);
+            var sut = new LearnAimRef_72Rule(handler.Object, fcsData.Object, larsData.Object);
 
             // act
             sut.Validate(mockLearner.Object);
 
             // assert
             handler.VerifyAll();
-            commonOps.VerifyAll();
             fcsData.VerifyAll();
             larsData.VerifyAll();
         }
@@ -349,10 +339,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 70)) // TypeOfFunding.EuropeanSocialFund
-                .Returns(true);
 
             var eligibilityItem = new Mock<IEsfEligibilityRuleSectorSubjectAreaLevel>();
             eligibilityItem
@@ -378,14 +364,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.GetDeliveryFor(AimRefNumber))
                 .Returns(larsItem.Object);
 
-            var sut = new LearnAimRef_72Rule(handler.Object, commonOps.Object, fcsData.Object, larsData.Object);
+            var sut = new LearnAimRef_72Rule(handler.Object, fcsData.Object, larsData.Object);
 
             // act
             sut.Validate(mockLearner.Object);
 
             // assert
             handler.VerifyAll();
-            commonOps.VerifyAll();
             fcsData.VerifyAll();
             larsData.VerifyAll();
         }
@@ -393,11 +378,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         public LearnAimRef_72Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
 
-            return new LearnAimRef_72Rule(handler.Object, commonOps.Object, fcsData.Object, larsData.Object);
+            return new LearnAimRef_72Rule(handler.Object, fcsData.Object, larsData.Object);
         }
     }
 }

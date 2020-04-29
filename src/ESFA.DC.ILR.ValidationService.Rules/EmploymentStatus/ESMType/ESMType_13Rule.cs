@@ -7,28 +7,22 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 {
-    public class ESMType_13Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class ESMType_13Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _check;
         private readonly IFCSDataService _fcsData;
         private readonly IDerivedData_25Rule _ddrule25;
 
         public ESMType_13Rule(
             IValidationErrorHandler validationErrorHandler,
             IDerivedData_25Rule ddrule25,
-            IFCSDataService fcsData,
-            IProvideRuleCommonOperations commonOperations)
+            IFCSDataService fcsData)
             : base(validationErrorHandler, RuleNameConstants.ESMType_13)
         {
             _ddrule25 = ddrule25;
             _fcsData = fcsData;
-            _check = commonOperations;
         }
 
         public IEsfEligibilityRule GetEligibilityRuleFor(ILearningDelivery thisDelivery) =>
@@ -55,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             HasDisqualifyingLOUIndicator(GetEligibilityRuleFor(thisDelivery), derivedRuleAction());
 
         public bool IsNotValid(ILearningDelivery thisDelivery, Func<int?> derivedRuleAction) =>
-            _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.EuropeanSocialFund)
+            thisDelivery.FundModel == TypeOfFunding.EuropeanSocialFund
                 && HasDisqualifyingLOUIndicator(thisDelivery, derivedRuleAction);
 
         public void Validate(ILearner thisLearner)
