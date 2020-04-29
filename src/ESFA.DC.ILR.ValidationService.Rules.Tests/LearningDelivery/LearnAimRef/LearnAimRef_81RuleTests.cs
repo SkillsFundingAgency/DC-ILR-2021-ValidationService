@@ -68,8 +68,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(new List<ILARSLearningCategory>());
 
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object);
+            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object, lEmpQS.Object);
 
             var result = sut.HasDisqualifyingLearningCategory(mockDelivery.Object);
 
@@ -168,11 +169,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_81Rule.FirstViableDate, null))
                 .Returns(true);
-            commonChecks
-                .Setup(x => x.GetEmploymentStatusOn(testDate, Moq.It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()))
-                .Returns(mockEmployment.Object);
 
-            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+               .Setup(x => x.LearnerEmploymentStatusForDate(It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>(), testDate))
+               .Returns(mockEmployment.Object);
+
+            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object, lEmpQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -249,11 +252,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             commonChecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_81Rule.FirstViableDate, null))
                 .Returns(true);
-            commonChecks
-                .Setup(x => x.GetEmploymentStatusOn(testDate, Moq.It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()))
-                .Returns(mockEmployment.Object);
 
-            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+               .Setup(x => x.LearnerEmploymentStatusForDate(It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>(), testDate))
+               .Returns(mockEmployment.Object);
+
+            var sut = new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object, lEmpQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -267,8 +272,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            return new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object);
+            return new LearnAimRef_81Rule(handler.Object, service.Object, commonChecks.Object, lEmpQS.Object);
         }
     }
 }

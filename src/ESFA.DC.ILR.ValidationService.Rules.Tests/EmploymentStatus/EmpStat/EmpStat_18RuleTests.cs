@@ -49,7 +49,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, EmpStat_18Rule.OldCodeMonitoringThresholdDate))
                 .Returns(false);
 
-            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+
+            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
 
             var result = sut.IsQualifyingPrimaryLearningAim(mockDelivery.Object);
 
@@ -73,7 +75,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, DateTime.Parse("2018-07-31")))
                 .Returns(true);
 
-            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+
+            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
 
             var result = sut.IsQualifyingPrimaryLearningAim(mockDelivery.Object);
 
@@ -100,7 +104,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, DateTime.Parse("2018-07-31")))
                 .Returns(true);
 
-            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+
+            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
 
             var result = sut.IsQualifyingPrimaryLearningAim(mockDelivery.Object);
 
@@ -127,7 +133,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, DateTime.Parse("2018-07-31")))
                 .Returns(true);
 
-            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+
+            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
 
             var result = sut.IsQualifyingPrimaryLearningAim(mockDelivery.Object);
 
@@ -262,7 +270,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(y => y.EmploymentStatusMonitorings)
                 .Returns(monitors);
 
-            var statii = new ILearnerEmploymentStatus[] { mockStatus.Object };
+            var employmentStatuses = new ILearnerEmploymentStatus[] { mockStatus.Object };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -273,7 +281,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(deliveries);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii);
+                .Returns(employmentStatuses);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -287,13 +295,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonchecks
-                .Setup(x => x.GetEmploymentStatusOn(testDate, statii))
-                .Returns(mockStatus.Object);
-            commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, EmpStat_18Rule.OldCodeMonitoringThresholdDate))
                 .Returns(true);
 
-            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+               .Setup(x => x.LearnerEmploymentStatusForDate(employmentStatuses, testDate))
+               .Returns(mockStatus.Object);
+
+            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -363,7 +373,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(y => y.EmploymentStatusMonitorings)
                 .Returns(monitors);
 
-            var statii = new ILearnerEmploymentStatus[] { mockStatus.Object };
+            var employmentStatuses = new ILearnerEmploymentStatus[] { mockStatus.Object };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -374,18 +384,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(deliveries);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii);
+                .Returns(employmentStatuses);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             commonchecks
-                .Setup(x => x.GetEmploymentStatusOn(testDate, statii))
-                .Returns(mockStatus.Object);
-            commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, DateTime.MinValue, EmpStat_18Rule.OldCodeMonitoringThresholdDate))
                 .Returns(true);
 
-            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+               .Setup(x => x.LearnerEmploymentStatusForDate(employmentStatuses, testDate))
+               .Returns(mockStatus.Object);
+
+            var sut = new EmpStat_18Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -396,8 +408,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            return new EmpStat_18Rule(handler.Object, commonchecks.Object);
+            return new EmpStat_18Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Query
@@ -39,20 +37,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         public bool IsSteelWorkerRedundancyTraining(ILearningDelivery delivery) =>
             CheckDeliveryFAMs(delivery, IsSteelWorkerRedundancyTraining);
 
-        public bool IsReleasedOnTemporaryLicence(ILearningDeliveryFAM monitor) =>
-            Monitoring.Delivery.ReleasedOnTemporaryLicence.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
-
         public bool HasQualifyingFunding(ILearningDelivery delivery, params int[] desiredFundings) =>
            desiredFundings.Contains(delivery.FundModel);
 
         public bool HasQualifyingStart(ILearningDelivery delivery, DateTime minStart, DateTime? maxStart = null) =>
             delivery != null
             && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, minStart, maxStart ?? DateTime.MaxValue);
-
-        public ILearnerEmploymentStatus GetEmploymentStatusOn(DateTime? thisStartDate, IReadOnlyCollection<ILearnerEmploymentStatus> usingSources) =>
-            usingSources
-                .NullSafeWhere(x => x.DateEmpStatApp <= thisStartDate)
-                .OrderByDescending(x => x.DateEmpStatApp)
-                .FirstOrDefault();
     }
 }

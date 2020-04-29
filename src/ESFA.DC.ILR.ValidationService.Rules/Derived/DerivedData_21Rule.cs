@@ -10,11 +10,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
     public class DerivedData_21Rule :
         IDerivedData_21Rule
     {
-        private IProvideRuleCommonOperations _check;
+        private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
-        public DerivedData_21Rule(IProvideRuleCommonOperations commonOperations)
+        public DerivedData_21Rule(ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
         {
-            _check = commonOperations;
+            _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
         public bool IsNotEmployed(ILearnerEmploymentStatus candidate) =>
@@ -69,9 +69,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                        otherwise set to N
             */
 
-            var employment = _check.GetEmploymentStatusOn(thisDelivery.LearnStartDate, forThisCandidate.LearnerEmploymentStatuses);
+            var employment = _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(forThisCandidate.LearnerEmploymentStatuses, thisDelivery.LearnStartDate);
 
-            return _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.AdultSkills)
+            return thisDelivery.FundModel == TypeOfFunding.AdultSkills
                 && employment != null
                 && IsNotEmployed(employment)
                 && (InReceiptOfBenefits(employment)

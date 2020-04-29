@@ -9,18 +9,19 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 {
-    public class EmpStat_18Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class EmpStat_18Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
         public EmpStat_18Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations)
+            IProvideRuleCommonOperations commonOperations,
+            ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_18)
         {
             _check = commonOperations;
+            _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
         public static DateTime OldCodeMonitoringThresholdDate => new DateTime(2018, 07, 31);
@@ -44,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         }
 
         public ILearnerEmploymentStatus GetEmploymentStatusOn(DateTime thisDate, IReadOnlyCollection<ILearnerEmploymentStatus> fromEmployments) =>
-            _check.GetEmploymentStatusOn(thisDate, fromEmployments);
+            _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(fromEmployments, thisDate);
 
         public bool IsQualifyingPrimaryLearningAim(ILearningDelivery thisDelivery) =>
             thisDelivery != null

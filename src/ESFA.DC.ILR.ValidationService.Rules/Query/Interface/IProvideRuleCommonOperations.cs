@@ -18,7 +18,5 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
         bool HasQualifyingFunding(ILearningDelivery delivery, params int[] desiredFundings);
 
         bool HasQualifyingStart(ILearningDelivery delivery, DateTime minStart, DateTime? maxStart = null);
-
-        ILearnerEmploymentStatus GetEmploymentStatusOn(DateTime? thisStartDate, IReadOnlyCollection<ILearnerEmploymentStatus> usingSources);
     }
 }

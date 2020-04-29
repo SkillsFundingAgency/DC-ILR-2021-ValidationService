@@ -40,11 +40,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var employments = new List<ILearnerEmploymentStatus>();
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonchecks
-                .Setup(x => x.GetEmploymentStatusOn(testDate, employments))
-                .Returns((ILearnerEmploymentStatus)null);
 
-            var sut = new EmpStat_19Rule(handler.Object, commonchecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+               .Setup(x => x.LearnerEmploymentStatusForDate(employments, testDate))
+               .Returns((ILearnerEmploymentStatus)null);
+
+            var sut = new EmpStat_19Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
 
             var result = sut.GetEmploymentStatusOn(testDate, employments);
 
@@ -99,8 +101,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            var sut = new EmpStat_19Rule(handler.Object, commonchecks.Object);
+            var sut = new EmpStat_19Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
 
             sut.CheckEmploymentStatus(null, null);
 
@@ -184,11 +187,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, EmpStat_19Rule.NewCodeMonitoringThresholdDate, null))
                 .Returns(true);
-            commonchecks
-                .Setup(x => x.GetEmploymentStatusOn(testDate, Moq.It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()))
-                .Returns(mockStatus.Object);
 
-            var sut = new EmpStat_19Rule(handler.Object, commonchecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+               .Setup(x => x.LearnerEmploymentStatusForDate(It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>(), testDate))
+               .Returns(mockStatus.Object);
+
+            var sut = new EmpStat_19Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -276,11 +281,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             commonchecks
                 .Setup(x => x.HasQualifyingStart(mockDelivery.Object, EmpStat_19Rule.NewCodeMonitoringThresholdDate, null))
                 .Returns(true);
-            commonchecks
-                .Setup(x => x.GetEmploymentStatusOn(testDate, Moq.It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()))
-                .Returns(mockStatus.Object);
 
-            var sut = new EmpStat_19Rule(handler.Object, commonchecks.Object);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+               .Setup(x => x.LearnerEmploymentStatusForDate(It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>(), testDate))
+               .Returns(mockStatus.Object);
+
+            var sut = new EmpStat_19Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -292,8 +299,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var commonchecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            return new EmpStat_19Rule(handler.Object, commonchecks.Object);
+            return new EmpStat_19Rule(handler.Object, commonchecks.Object, lEmpQS.Object);
         }
     }
 }

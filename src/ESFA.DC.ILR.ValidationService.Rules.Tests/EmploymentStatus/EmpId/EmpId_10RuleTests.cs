@@ -36,20 +36,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .Returns(aimType);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             dd07
                 .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(isApprenctice);
 
-            var sut = new EmpId_10Rule(handler.Object, commonOps.Object, dd07.Object);
+            var sut = new EmpId_10Rule(handler.Object, lEmpQS.Object, dd07.Object);
 
             var result = sut.IsPrimaryLearningAim(mockDelivery.Object);
 
             Assert.Equal(expectation, result);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            lEmpQS.VerifyAll();
             dd07.VerifyAll();
         }
 
@@ -102,7 +102,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .SetupGet(x => x.EmpStat)
                 .Returns(TypeOfEmploymentStatus.InPaidEmployment);
 
-            var statii = new ILearnerEmploymentStatus[] { status.Object };
+            var employmentStatuses = new ILearnerEmploymentStatus[] { status.Object };
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
@@ -123,7 +123,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .Returns(deliveries);
             mockLearner
                 .SetupGet(y => y.LearnerEmploymentStatuses)
-                .Returns(statii);
+                .Returns(employmentStatuses);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -138,21 +138,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testDate)))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.GetEmploymentStatusOn(testDate, statii))
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+                .Setup(x => x.LearnerEmploymentStatusForDate(employmentStatuses, testDate))
                 .Returns(status.Object);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             dd07
                 .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(true);
 
-            var sut = new EmpId_10Rule(handler.Object, commonOps.Object, dd07.Object);
+            var sut = new EmpId_10Rule(handler.Object, lEmpQS.Object, dd07.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            lEmpQS.VerifyAll();
             dd07.VerifyAll();
         }
 
@@ -171,7 +171,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .SetupGet(x => x.EmpStat)
                 .Returns(TypeOfEmploymentStatus.InPaidEmployment);
 
-            var statii = new ILearnerEmploymentStatus[] { status.Object };
+            var employmentStatuses = new ILearnerEmploymentStatus[] { status.Object };
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
@@ -192,35 +192,35 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .Returns(deliveries);
             mockLearner
                 .SetupGet(y => y.LearnerEmploymentStatuses)
-                .Returns(statii);
+                .Returns(employmentStatuses);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.GetEmploymentStatusOn(testDate, statii))
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+                .Setup(x => x.LearnerEmploymentStatusForDate(employmentStatuses, testDate))
                 .Returns(status.Object);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             dd07
                 .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(true);
 
-            var sut = new EmpId_10Rule(handler.Object, commonOps.Object, dd07.Object);
+            var sut = new EmpId_10Rule(handler.Object, lEmpQS.Object, dd07.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
-            commonOps.VerifyAll();
+            lEmpQS.VerifyAll();
             dd07.VerifyAll();
         }
 
         public EmpId_10Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
 
-            return new EmpId_10Rule(handler.Object, commonOps.Object, dd07.Object);
+            return new EmpId_10Rule(handler.Object, lEmpQS.Object, dd07.Object);
         }
     }
 }

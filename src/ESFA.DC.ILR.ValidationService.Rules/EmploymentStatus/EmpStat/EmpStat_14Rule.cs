@@ -10,22 +10,19 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 {
-    public class EmpStat_14Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class EmpStat_14Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IFCSDataService _fcsData;
-
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
         public EmpStat_14Rule(
             IValidationErrorHandler validationErrorHandler,
             IFCSDataService fcsData,
-            IProvideRuleCommonOperations commonOperations)
+            ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_14)
         {
             _fcsData = fcsData;
-            _check = commonOperations;
+            _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
         public ILearningDelivery GetQualifyingdAimOn(IReadOnlyCollection<ILearningDelivery> usingSources) =>
@@ -65,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             }
 
             var fromEmployments = objectToValidate.LearnerEmploymentStatuses.ToReadOnlyCollection();
-            var employment = _check.GetEmploymentStatusOn(qualifyingAim.LearnStartDate, fromEmployments);
+            var employment = _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(fromEmployments, qualifyingAim.LearnStartDate);
 
             if (employment == null)
             {

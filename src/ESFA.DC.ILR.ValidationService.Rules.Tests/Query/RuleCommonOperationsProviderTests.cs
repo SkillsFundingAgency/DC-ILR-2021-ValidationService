@@ -100,35 +100,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         }
 
         [Theory]
-        [InlineData(Monitoring.Delivery.OLASSOffendersInCustody, false)]
-        [InlineData(Monitoring.Delivery.FullyFundedLearningAim, false)]
-        [InlineData(Monitoring.Delivery.CoFundedLearningAim, false)]
-        [InlineData(Monitoring.Delivery.InReceiptOfLowWages, false)]
-        [InlineData(Monitoring.Delivery.MandationToSkillsTraining, false)]
-        [InlineData(Monitoring.Delivery.ReleasedOnTemporaryLicence, true)]
-        [InlineData(Monitoring.Delivery.SteelIndustriesRedundancyTraining, false)]
-        [InlineData(Monitoring.Delivery.ESFA16To19Funding, false)]
-        [InlineData(Monitoring.Delivery.ESFAAdultFunding, false)]
-        [InlineData(Monitoring.Delivery.HigherEducationFundingCouncilEngland, false)]
-        [InlineData(Monitoring.Delivery.LocalAuthorityCommunityLearningFunds, false)]
-        [InlineData(Monitoring.Delivery.FinancedByAdvancedLearnerLoans, false)]
-        public void IsReleasedOnTemporaryLicenceMeetsExpectation(string candidate, bool expectation)
-        {
-            var sut = NewService();
-            var mockItem = new Mock<ILearningDeliveryFAM>();
-            mockItem
-                .SetupGet(y => y.LearnDelFAMType)
-                .Returns(candidate.Substring(0, 3));
-            mockItem
-                .SetupGet(y => y.LearnDelFAMCode)
-                .Returns(candidate.Substring(3));
-
-            var result = sut.IsReleasedOnTemporaryLicence(mockItem.Object);
-
-            Assert.Equal(expectation, result);
-        }
-
-        [Theory]
         [InlineData(TypeOfFunding.AdultSkills, TypeOfFunding.AdultSkills, true)]
         [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfFunding.AdultSkills, false)]
         [InlineData(TypeOfFunding.CommunityLearning, TypeOfFunding.AdultSkills, false)]
@@ -177,38 +148,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             var result = NewService(dateTimeQueryService: dateTimeQueryService.Object).HasQualifyingStart(mockDelivery.Object, startDate, endDate);
 
             Assert.Equal(expectation, result);
-        }
-
-        [Theory]
-        [InlineData("2018-09-11", "2018-09-04", "2014-08-01", "2018-09-04", "2016-02-11", "2017-06-09")]
-        [InlineData("2018-09-11", "2018-09-11", "2014-08-01", "2018-09-11", "2016-02-11", "2017-06-09")]
-        [InlineData("2017-12-31", "2017-12-30", "2015-12-31", "2017-12-30", "2014-12-31", "2017-10-16")]
-        [InlineData("2017-12-31", "2017-12-30", "2015-12-31", "2017-12-30", "2018-01-01", "2014-12-31", "2017-10-16")]
-        [InlineData("2018-07-01", "2018-06-30", "2018-06-30", "2014-05-11", "2014-07-12")]
-        [InlineData("2018-07-01", "2014-07-12", "2018-08-30", "2018-07-16", "2014-05-11", "2014-07-12")]
-        [InlineData("2016-11-17", "2016-11-17", "2016-11-17")]
-        [InlineData("2016-11-17", "2016-11-17", "2016-11-07", "2016-11-18", "2016-11-17")]
-        public void GetEmploymentStatusOnMeetsExpectation(string candidate, string expectation, params string[] starts)
-        {
-            var sut = NewService();
-            var learnDate = DateTime.Parse(candidate);
-            var expectedDate = DateTime.Parse(expectation);
-
-            var employments = new List<ILearnerEmploymentStatus>();
-
-            foreach (var start in starts)
-            {
-                var mockItem = new Mock<ILearnerEmploymentStatus>();
-                mockItem
-                    .SetupGet(y => y.DateEmpStatApp)
-                    .Returns(DateTime.Parse(start));
-
-                employments.Add(mockItem.Object);
-            }
-
-            var result = sut.GetEmploymentStatusOn(learnDate, employments);
-
-            Assert.Equal(expectedDate, result.DateEmpStatApp);
         }
 
         private RuleCommonOperationsProvider NewService(IDateTimeQueryService dateTimeQueryService = null)

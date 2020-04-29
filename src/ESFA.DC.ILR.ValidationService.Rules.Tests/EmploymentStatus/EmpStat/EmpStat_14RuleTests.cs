@@ -75,9 +75,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, commonOps.Object);
+            var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, lEmpQS.Object);
 
             var result = sut.GetQualifyingdAimOn(deliveries);
 
@@ -95,9 +95,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             fcsData
                 .Setup(x => x.GetEligibilityRuleEmploymentStatusesFor(null))
                 .Returns((IReadOnlyCollection<IEsfEligibilityRuleEmploymentStatus>)null);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, commonOps.Object);
+            var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, lEmpQS.Object);
 
             var result = sut.GetEligibilityRulesFor(null);
 
@@ -192,7 +192,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(x => x.EmpStat)
                 .Returns(candidate);
 
-            var statii = new ILearnerEmploymentStatus[] { mockStatus.Object };
+            var employmentStatuses = new ILearnerEmploymentStatus[] { mockStatus.Object };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -203,7 +203,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(deliveries);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii);
+                .Returns(employmentStatuses);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -218,20 +218,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testDate)))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var employmentStatuses = new List<IEsfEligibilityRuleEmploymentStatus>();
-            eligibilities.ForEach(x => employmentStatuses.Add(GetEligibility(x)));
+            var esfEmploymentStatuses = new List<IEsfEligibilityRuleEmploymentStatus>();
+            eligibilities.ForEach(x => esfEmploymentStatuses.Add(GetEligibility(x)));
 
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             fcsData
                 .Setup(x => x.GetEligibilityRuleEmploymentStatusesFor(conRefNumber))
-                .Returns(employmentStatuses);
+                .Returns(esfEmploymentStatuses);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.GetEmploymentStatusOn(testDate, statii))
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+                .Setup(x => x.LearnerEmploymentStatusForDate(employmentStatuses, testDate))
                 .Returns(mockStatus.Object);
 
-            var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, commonOps.Object);
+            var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, lEmpQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -262,7 +262,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .SetupGet(x => x.EmpStat)
                 .Returns(candidate);
 
-            var statii = new ILearnerEmploymentStatus[] { mockStatus.Object };
+            var employmentStatuses = new ILearnerEmploymentStatus[] { mockStatus.Object };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -273,24 +273,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(deliveries);
             mockLearner
                 .SetupGet(x => x.LearnerEmploymentStatuses)
-                .Returns(statii);
+                .Returns(employmentStatuses);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            var employmentStatuses = new List<IEsfEligibilityRuleEmploymentStatus>();
-            eligibilities.ForEach(x => employmentStatuses.Add(GetEligibility(x)));
+            var esfEmploymentStatuses = new List<IEsfEligibilityRuleEmploymentStatus>();
+            eligibilities.ForEach(x => esfEmploymentStatuses.Add(GetEligibility(x)));
 
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             fcsData
                 .Setup(x => x.GetEligibilityRuleEmploymentStatusesFor(conRefNumber))
-                .Returns(employmentStatuses);
+                .Returns(esfEmploymentStatuses);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.GetEmploymentStatusOn(testDate, statii))
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
+            lEmpQS
+                .Setup(x => x.LearnerEmploymentStatusForDate(employmentStatuses, testDate))
                 .Returns(mockStatus.Object);
 
-            var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, commonOps.Object);
+            var sut = new EmpStat_14Rule(handler.Object, fcsData.Object, lEmpQS.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -341,9 +341,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
 
-            return new EmpStat_14Rule(handler.Object, fcsData.Object, commonOps.Object);
+            return new EmpStat_14Rule(handler.Object, fcsData.Object, lEmpQS.Object);
         }
     }
 }

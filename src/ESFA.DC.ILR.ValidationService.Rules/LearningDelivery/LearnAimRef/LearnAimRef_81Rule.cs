@@ -10,25 +10,25 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
-    public class LearnAimRef_81Rule :
-        IRule<ILearner>
+    public class LearnAimRef_81Rule : IRule<ILearner>
     {
         public const string Name = RuleNameConstants.LearnAimRef_81;
 
         private readonly IValidationErrorHandler _messageHandler;
-
         private readonly ILARSDataService _larsData;
-
         private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
         public LearnAimRef_81Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsData,
-            IProvideRuleCommonOperations commonChecks)
+            IProvideRuleCommonOperations commonChecks,
+            ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
         {
             _messageHandler = validationErrorHandler;
             _larsData = larsData;
             _check = commonChecks;
+            _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
         public static DateTime FirstViableDate => new DateTime(2016, 08, 01);
@@ -47,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool InReceiptOfAnotherStateBenefit(ILearningDelivery delivery, ILearner learner)
         {
-            var candidate = _check.GetEmploymentStatusOn(delivery.LearnStartDate, learner.LearnerEmploymentStatuses);
+            var candidate = _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(learner.LearnerEmploymentStatuses, delivery.LearnStartDate);
 
             var esms = candidate?.EmploymentStatusMonitorings.ToReadOnlyCollection();
             return esms.NullSafeAny(InReceiptOfAnotherStateBenefit);

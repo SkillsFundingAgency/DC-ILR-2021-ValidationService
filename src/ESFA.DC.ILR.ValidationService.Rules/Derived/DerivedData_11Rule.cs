@@ -8,8 +8,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
-    public class DerivedData_11Rule :
-        IDerivedData_11Rule
+    public class DerivedData_11Rule : IDerivedData_11Rule
     {
         private readonly HashSet<string> _employmentStatuses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -19,16 +18,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance
         };
 
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
-        public DerivedData_11Rule(IProvideRuleCommonOperations commonOps)
+        public DerivedData_11Rule(ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService)
         {
-            _check = commonOps;
+            _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
         }
 
         public bool InReceiptOfBenefits(IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatus, DateTime startDate)
         {
-            var candidate = _check.GetEmploymentStatusOn(startDate, learnerEmploymentStatus);
+            var candidate = _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(learnerEmploymentStatus, startDate);
 
             return InReceiptOfBenefits(candidate?.EmploymentStatusMonitorings);
         }
@@ -54,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                         otherwise set to N
              */
 
-            return _check.HasQualifyingFunding(delivery, TypeOfFunding.AdultSkills)
+            return delivery.FundModel == TypeOfFunding.AdultSkills
                 && InReceiptOfBenefits(employments, delivery.LearnStartDate);
         }
     }

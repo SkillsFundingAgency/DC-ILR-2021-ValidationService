@@ -12,16 +12,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 {
     public class EmpId_10Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
         private readonly IDerivedData_07Rule _dd07;
 
         public EmpId_10Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations,
+            ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService,
             IDerivedData_07Rule dd07)
             : base(validationErrorHandler, RuleNameConstants.EmpId_10)
         {
-            _check = commonOperations;
+            _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
             _dd07 = dd07;
         }
 
@@ -52,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             !thisEmployment.EmpIdNullable.HasValue;
 
         public ILearnerEmploymentStatus GetEmploymentStatusOn(DateTime thisDate, IReadOnlyCollection<ILearnerEmploymentStatus> fromEmployments) =>
-            _check.GetEmploymentStatusOn(thisDate, fromEmployments);
+            _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(fromEmployments, thisDate);
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)
         {
