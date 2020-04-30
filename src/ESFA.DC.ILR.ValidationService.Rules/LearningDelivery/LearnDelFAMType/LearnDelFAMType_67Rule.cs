@@ -68,7 +68,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             theLarsAim != null && IsBritishSignLanguage(theLarsAim);
 
         public bool IsBritishSignLanguage(ILARSLearningDelivery theDelivery) =>
-            theDelivery.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
+            theDelivery.FrameworkCommonComponent == LARSCommonComponents.BritishSignLanguage;
 
         public bool IsLearningSupportFunding(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LSF);

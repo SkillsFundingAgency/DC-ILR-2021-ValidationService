@@ -74,8 +74,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool FrameworkComponentTypeFilter(string learnAimRef) =>
              _larsData.GetFrameworkAimsFor(learnAimRef)?.Any(a =>
-                    a.FrameworkComponentType == TypeOfLARSCommonComponent.Apprenticeship.CompetencyElement
-                    || a.FrameworkComponentType == TypeOfLARSCommonComponent.Apprenticeship.MainAimOrTechnicalCertificate)
+                    a.FrameworkComponentType == LARSCommonComponents.Apprenticeship.CompetencyElement
+                    || a.FrameworkComponentType == LARSCommonComponents.Apprenticeship.MainAimOrTechnicalCertificate)
                 ?? false;
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>

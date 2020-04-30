@@ -353,7 +353,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var larsDelivery = new Mock<ILARSLearningDelivery>();
             larsDelivery
                 .SetupGet(x => x.FrameworkCommonComponent)
-                .Returns(TypeOfLARSCommonComponent.Unknown);
+                .Returns(LARSCommonComponents.Unknown);
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
@@ -457,7 +457,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var larsDelivery = new Mock<ILARSLearningDelivery>();
             larsDelivery
                 .SetupGet(x => x.FrameworkCommonComponent)
-                .Returns(TypeOfLARSCommonComponent.Unknown);
+                .Returns(LARSCommonComponents.Unknown);
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
@@ -576,7 +576,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var larsDelivery = new Mock<ILARSLearningDelivery>();
             larsDelivery
                 .SetupGet(x => x.FrameworkCommonComponent)
-                .Returns(TypeOfLARSCommonComponent.NotApplicable);
+                .Returns(LARSCommonComponents.NotApplicable);
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData
@@ -676,7 +676,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             var larsDelivery = new Mock<ILARSLearningDelivery>();
             larsDelivery
                 .SetupGet(x => x.FrameworkCommonComponent)
-                .Returns(TypeOfLARSCommonComponent.Unknown);
+                .Returns(LARSCommonComponents.Unknown);
 
             var larsData = new Mock<ILARSDataService>(MockBehavior.Strict);
             larsData

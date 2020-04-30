@@ -73,7 +73,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         }
 
         public bool IsBritishSignLanguage(ILARSLearningDelivery theDelivery) =>
-            theDelivery.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
+            theDelivery.FrameworkCommonComponent == LARSCommonComponents.BritishSignLanguage;
 
         public bool IsApprenticeshipContract(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT);

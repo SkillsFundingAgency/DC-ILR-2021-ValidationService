@@ -296,7 +296,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(20, TypeOfLARSCommonComponent.BritishSignLanguage)]
+        [InlineData(20, LARSCommonComponents.BritishSignLanguage)]
         public void TypeOfLARSCommonComponentMeetsExpectation(int candidate, int expectation)
         {
             Assert.Equal(expectation, candidate);

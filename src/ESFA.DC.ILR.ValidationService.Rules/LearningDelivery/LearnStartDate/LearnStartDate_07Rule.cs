@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
     public class LearnStartDate_07Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly HashSet<int> _fwkCommonComponents = new HashSet<int>(TypeOfLARSCommonComponent.CommonComponents);
+        private readonly HashSet<int> _fwkCommonComponents = new HashSet<int>(LARSCommonComponents.CommonComponents);
         private readonly IDerivedData_04Rule _derivedData04;
         private readonly ILARSDataService _larsData;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
