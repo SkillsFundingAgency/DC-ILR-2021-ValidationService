@@ -5,6 +5,7 @@ using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.HE.TYPEYR;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
@@ -25,16 +26,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TYPEYR
         {
             var learnStartDate = new DateTime(2018, 01, 01);
             DateTime? learnActEndDate = new DateTime(2018, 01, 06);
-            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock
+            var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnStartDate, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2018, 08, 01));
 
-            academicYearDataServiceMock
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnActEndDate.Value, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2018, 08, 01));
 
-            NewRule(academicYearDataService: academicYearDataServiceMock.Object).ConditionMetLearningDelivery(learnStartDate, learnActEndDate).Should().BeTrue();
+            NewRule(academicYearQueryService: academicYearQueryServiceMock.Object).ConditionMetLearningDelivery(learnStartDate, learnActEndDate).Should().BeTrue();
         }
 
         [Fact]
@@ -42,16 +43,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TYPEYR
         {
             var learnStartDate = new DateTime(2017, 01, 01);
             DateTime? learnActEndDate = new DateTime(2018, 01, 06);
-            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock
+            var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnStartDate, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
-            academicYearDataServiceMock
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnActEndDate.Value, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2018, 08, 01));
 
-            NewRule(academicYearDataService: academicYearDataServiceMock.Object).ConditionMetLearningDelivery(learnStartDate, learnActEndDate).Should().BeFalse();
+            NewRule(academicYearQueryService: academicYearQueryServiceMock.Object).ConditionMetLearningDelivery(learnStartDate, learnActEndDate).Should().BeFalse();
         }
 
         [Theory]
@@ -85,18 +86,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TYPEYR
                 }
             };
 
-            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock
+            var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnStartDate, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
-            academicYearDataServiceMock
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnActEndDate.Value, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2018, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object, academicYearDataServiceMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, academicYearQueryServiceMock.Object).Validate(learner);
             }
         }
 
@@ -122,18 +123,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TYPEYR
                 }
             };
 
-            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock
+            var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnStartDate, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
-            academicYearDataServiceMock
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnActEndDate.Value, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object, academicYearDataServiceMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, academicYearQueryServiceMock.Object).Validate(learner);
             }
         }
 
@@ -179,18 +180,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TYPEYR
                 }
             };
 
-            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock
+            var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnStartDate, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
-            academicYearDataServiceMock
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnActEndDate.Value, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object, academicYearDataServiceMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, academicYearQueryServiceMock.Object).Validate(learner);
             }
         }
 
@@ -216,18 +217,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TYPEYR
                 }
             };
 
-            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock
+            var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnStartDate, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
-            academicYearDataServiceMock
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnActEndDate.Value, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object, academicYearDataServiceMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, academicYearQueryServiceMock.Object).Validate(learner);
             }
         }
 
@@ -273,18 +274,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TYPEYR
                 }
             };
 
-            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock
+            var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnStartDate, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
-            academicYearDataServiceMock
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnActEndDate.Value, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object, academicYearDataServiceMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, academicYearQueryServiceMock.Object).Validate(learner);
             }
         }
 
@@ -306,18 +307,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TYPEYR
                 }
             };
 
-            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock
+            var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnStartDate, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
-            academicYearDataServiceMock
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(learnActEndDate.Value, AcademicYearDates.Commencement))
                 .Returns(new DateTime(2017, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object, academicYearDataServiceMock.Object).Validate(learner);
+                NewRule(validationErrorHandlerMock.Object, academicYearQueryServiceMock.Object).Validate(learner);
             }
         }
 
@@ -352,9 +353,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.TYPEYR
 
         private TYPEYR_02Rule NewRule(
             IValidationErrorHandler validationErrorHandler = null,
-            IAcademicYearDataService academicYearDataService = null)
+            IAcademicYearQueryService academicYearQueryService = null)
         {
-            return new TYPEYR_02Rule(validationErrorHandler, academicYearDataService);
+            return new TYPEYR_02Rule(validationErrorHandler, academicYearQueryService);
         }
     }
 }
