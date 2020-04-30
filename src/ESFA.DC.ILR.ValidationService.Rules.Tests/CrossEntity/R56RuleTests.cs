@@ -66,8 +66,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 1,
-                        FundModel = TypeOfFunding.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        FundModel = FundModels.NotFundedByESFA,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = new DateTime(2018, 10, 10),
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
@@ -78,7 +78,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 2,
                         FundModel = 35,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
                         PwayCodeNullable = 3,
@@ -105,8 +105,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 1,
-                        FundModel = TypeOfFunding.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        FundModel = FundModels.NotFundedByESFA,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = null,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
@@ -116,8 +116,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 2,
-                        FundModel = TypeOfFunding.NotFundedByESFA,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        FundModel = FundModels.NotFundedByESFA,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
                         PwayCodeNullable = 3,
@@ -144,8 +144,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 1,
-                        FundModel = TypeOfFunding.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        FundModel = FundModels.NotFundedByESFA,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = null,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
@@ -155,8 +155,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 2,
-                        FundModel = TypeOfFunding.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        FundModel = FundModels.NotFundedByESFA,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = null,
                         ProgTypeNullable = 23,
                         FworkCodeNullable = 24,
@@ -167,7 +167,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 3,
                         FundModel = 35,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
                         PwayCodeNullable = 3,
@@ -176,8 +176,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 4,
-                        FundModel = TypeOfFunding.NotFundedByESFA,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        FundModel = FundModels.NotFundedByESFA,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
                         PwayCodeNullable = 3,
@@ -195,17 +195,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, null, null, null, null)]
-        [InlineData(TypeOfFunding.AdultSkills, null, null, null, null)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, null, null, null, null)]
-        [InlineData(TypeOfFunding.CommunityLearning, null, null, null, null)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, null, null, null, null)]
-        [InlineData(TypeOfFunding.Other16To19, null, null, null, null)]
-        [InlineData(TypeOfFunding.OtherAdult, null, null, null, null)]
-        [InlineData(TypeOfFunding.AdultSkills, 1, null, null, null)]
-        [InlineData(TypeOfFunding.AdultSkills, 1, 2, null, null)]
-        [InlineData(TypeOfFunding.AdultSkills, 1, 2, 3, null)]
-        [InlineData(TypeOfFunding.AdultSkills, null, null, null, 100)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, null, null, null, null)]
+        [InlineData(FundModels.AdultSkills, null, null, null, null)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, null, null, null, null)]
+        [InlineData(FundModels.CommunityLearning, null, null, null, null)]
+        [InlineData(FundModels.EuropeanSocialFund, null, null, null, null)]
+        [InlineData(FundModels.Other16To19, null, null, null, null)]
+        [InlineData(FundModels.OtherAdult, null, null, null, null)]
+        [InlineData(FundModels.AdultSkills, 1, null, null, null)]
+        [InlineData(FundModels.AdultSkills, 1, 2, null, null)]
+        [InlineData(FundModels.AdultSkills, 1, 2, 3, null)]
+        [InlineData(FundModels.AdultSkills, null, null, null, 100)]
         public void Validate_Fail(int fundModel, int? progType, int? frameworkCode, int? pathwayCode, int? standardCode)
         {
             var testLearner = new TestLearner()
@@ -216,8 +216,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 1,
-                        FundModel = TypeOfFunding.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        FundModel = FundModels.NotFundedByESFA,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = null,
                         ProgTypeNullable = progType,
                         FworkCodeNullable = frameworkCode,
@@ -228,7 +228,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 2,
                         FundModel = fundModel,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = progType,
                         FworkCodeNullable = frameworkCode,
                         PwayCodeNullable = pathwayCode,
@@ -238,7 +238,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 3,
                         FundModel = fundModel,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         ProgTypeNullable = progType,
                         FworkCodeNullable = frameworkCode,
                         PwayCodeNullable = pathwayCode,
@@ -256,17 +256,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, null, null, null, null)]
-        [InlineData(TypeOfFunding.AdultSkills, null, null, null, null)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, null, null, null, null)]
-        [InlineData(TypeOfFunding.CommunityLearning, null, null, null, null)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, null, null, null, null)]
-        [InlineData(TypeOfFunding.Other16To19, null, null, null, null)]
-        [InlineData(TypeOfFunding.OtherAdult, null, null, null, null)]
-        [InlineData(TypeOfFunding.AdultSkills, 1, null, null, null)]
-        [InlineData(TypeOfFunding.AdultSkills, 1, 2, null, null)]
-        [InlineData(TypeOfFunding.AdultSkills, 1, 2, 3, null)]
-        [InlineData(TypeOfFunding.AdultSkills, null, null, null, 100)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, null, null, null, null)]
+        [InlineData(FundModels.AdultSkills, null, null, null, null)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, null, null, null, null)]
+        [InlineData(FundModels.CommunityLearning, null, null, null, null)]
+        [InlineData(FundModels.EuropeanSocialFund, null, null, null, null)]
+        [InlineData(FundModels.Other16To19, null, null, null, null)]
+        [InlineData(FundModels.OtherAdult, null, null, null, null)]
+        [InlineData(FundModels.AdultSkills, 1, null, null, null)]
+        [InlineData(FundModels.AdultSkills, 1, 2, null, null)]
+        [InlineData(FundModels.AdultSkills, 1, 2, 3, null)]
+        [InlineData(FundModels.AdultSkills, null, null, null, 100)]
         public void Validate_Pass_MismatchCourse(int fundModel, int? progType, int? frameworkCode, int? pathwayCode, int? standardCode)
         {
             var testLearner = new TestLearner()
@@ -277,8 +277,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 1,
-                        FundModel = TypeOfFunding.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        FundModel = FundModels.NotFundedByESFA,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = null,
                         ProgTypeNullable = progType,
                         FworkCodeNullable = frameworkCode,
@@ -289,7 +289,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 2,
                         FundModel = fundModel,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = progType.HasValue ? progType + 1 : 1,
                         FworkCodeNullable = frameworkCode.HasValue ? frameworkCode + 1 : 2,
                         PwayCodeNullable = pathwayCode.HasValue ? pathwayCode + 1 : 3,
@@ -299,7 +299,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 3,
                         FundModel = fundModel,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         ProgTypeNullable = progType,
                         FworkCodeNullable = frameworkCode,
                         PwayCodeNullable = pathwayCode,
@@ -320,9 +320,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.ComponentAimInAProgramme)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, TypeOfFunding.ApprenticeshipsFrom1May2017)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.ProgType, TypeOfLearningProgramme.AdvancedLevelApprenticeship)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.ComponentAimInAProgramme)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.ApprenticeshipsFrom1May2017)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.ProgType, ProgTypes.AdvancedLevelApprenticeship)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FworkCode, 2)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.PwayCode, 3)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.StdCode, null)).Verifiable();
@@ -331,12 +331,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var learningDelivery = new TestLearningDelivery()
             {
                 LearnAimRef = "101",
-                AimType = TypeOfAim.ComponentAimInAProgramme,
-                ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                AimType = AimTypes.ComponentAimInAProgramme,
+                ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                 FworkCodeNullable = 2,
                 PwayCodeNullable = 3,
                 StdCodeNullable = null,
-                FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                FundModel = FundModels.ApprenticeshipsFrom1May2017,
                 LearnActEndDateNullable = new DateTime(2017, 10, 10)
             };
 

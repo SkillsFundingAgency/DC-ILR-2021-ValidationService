@@ -24,13 +24,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
         public string RuleName => Name;
 
         public bool IsFunded(ILearningDelivery delivery) =>
-            TypeOfFunding.TypeOfFundingCollection.Contains(delivery.FundModel);
+            FundModels.TypeOfFundingCollection.Contains(delivery.FundModel);
 
         public bool IsTargetApprenticeship(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            delivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            delivery.AimType == TypeOfAim.ProgrammeAim;
+            delivery.AimType == AimTypes.ProgrammeAim;
 
         public void Validate(ILearner objectToValidate)
         {

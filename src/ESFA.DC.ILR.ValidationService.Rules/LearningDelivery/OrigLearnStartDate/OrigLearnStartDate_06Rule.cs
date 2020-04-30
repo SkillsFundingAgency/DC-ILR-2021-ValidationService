@@ -13,9 +13,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
     {
         private readonly HashSet<string> larsValidityCategories = new HashSet<string>()
         {
-            TypeOfLARSValidity.AdultSkills,
-            TypeOfLARSValidity.Unemployed,
-            TypeOfLARSValidity.OLASSAdult
+            LARSValidities.AdultSkills,
+            LARSValidities.Unemployed,
+            LARSValidities.OLASSAdult
         };
 
         private readonly IDerivedData_07Rule _dd07;
@@ -69,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.AdultSkills;
+            return fundModel == FundModels.AdultSkills;
         }
 
         public bool LARSConditionMet(DateTime origLearnStartDate, string learnAimRef)

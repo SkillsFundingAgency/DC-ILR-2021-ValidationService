@@ -127,7 +127,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
                     Moq.It.Is<string>(y => y == PropertyNameConstants.LearnAimRef),
-                    TypeOfAim.References.ESFLearnerStartandAssessment))
+                    AimTypes.References.ESFLearnerStartandAssessment))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var mockDDRule22 = new Mock<IDerivedData_22Rule>(MockBehavior.Strict);

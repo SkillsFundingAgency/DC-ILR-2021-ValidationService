@@ -34,7 +34,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         public bool LearningDeliveryHasApprenticeshipStandardType(ILearningDelivery learningDelivery)
         {
             return learningDelivery != null
-                ? learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
+                ? learningDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard
                 : false;
         }
 
@@ -42,7 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         {
             return learningDeliveries?
                 .Where(ld =>
-                ld.AimType == TypeOfAim.ProgrammeAim) ?? new List<ILearningDelivery>();
+                ld.AimType == AimTypes.ProgrammeAim) ?? new List<ILearningDelivery>();
         }
     }
 }

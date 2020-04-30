@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         }
 
         public bool IsQualifyingCategory(ILARSLearningCategory category) =>
-            category.CategoryRef == TypeOfLARSCategory.OnlyForLegalEntitlementAtLevel3;
+            category.CategoryRef == LARSCategories.OnlyForLegalEntitlementAtLevel3;
 
         public bool HasQualifyingCategory(ILearningDelivery delivery)
         {
@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         }
 
         public bool PassesRestrictions(ILearningDelivery delivery) =>
-            delivery.FundModel == TypeOfFunding.AdultSkills
+            delivery.FundModel == FundModels.AdultSkills
                 && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue)
                 && HasQualifyingNotionalNVQ(delivery);
 

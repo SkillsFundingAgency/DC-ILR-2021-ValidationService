@@ -53,13 +53,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             theDelivery.StdCodeNullable == stdCode;
 
         public bool IsProgrameAim(ILearningDelivery theDelivery) =>
-            theDelivery.AimType == TypeOfAim.ProgrammeAim;
+            theDelivery.AimType == AimTypes.ProgrammeAim;
 
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
-            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            theDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.OtherAdult;
+            theDelivery.FundModel == FundModels.OtherAdult;
 
         public int GetTotalTNPPriceFor(IReadOnlyCollection<ILearningDelivery> theDeliveries) =>
             _appFinRecordData.GetTotalTNPPriceForLatestAppFinRecordsForLearning(theDeliveries);

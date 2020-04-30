@@ -43,13 +43,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             && !IsApprenticeshipContract(theDelivery);
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            theDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool IsProgrameAim(ILearningDelivery theDelivery) =>
-            theDelivery.AimType == TypeOfAim.ProgrammeAim;
+            theDelivery.AimType == AimTypes.ProgrammeAim;
 
         public bool IsComponentAim(ILearningDelivery theDelivery) =>
-            theDelivery.AimType == TypeOfAim.ComponentAimInAProgramme;
+            theDelivery.AimType == AimTypes.ComponentAimInAProgramme;
 
         public bool HasQualifyingBasicSkillsType(ILearningDelivery theDelivery) =>
             _larsData
@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             theValue.BasicSkillsType.HasValue;
 
         public bool IsEnglishOrMathBasicSkill(ILARSAnnualValue theValue) =>
-            TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills.Contains(theValue.BasicSkillsType.Value);
+            LARSBasicSkills.AsEnglishAndMathsBasicSkills.Contains(theValue.BasicSkillsType.Value);
 
         public bool IsValueCurrent(ILearningDelivery theDelivery, ILARSAnnualValue theValue) =>
             _larsData.IsCurrentAndNotWithdrawn(theValue, theDelivery.LearnStartDate);
@@ -73,7 +73,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         }
 
         public bool IsBritishSignLanguage(ILARSLearningDelivery theDelivery) =>
-            theDelivery.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
+            theDelivery.FrameworkCommonComponent == LARSCommonComponents.BritishSignLanguage;
 
         public bool IsApprenticeshipContract(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT);

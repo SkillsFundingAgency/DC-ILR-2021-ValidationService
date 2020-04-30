@@ -72,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
             && WithdrawReasonReturnedCondition(withdrawReason)
             && TNPRecordAfterDate(learnActEndDate, aFinDate);
 
-        public bool ApprenticeshipStandardProgrammeCondition(int? progType) => _dd07.IsApprenticeship(progType) && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        public bool ApprenticeshipStandardProgrammeCondition(int? progType) => _dd07.IsApprenticeship(progType) && progType == ProgTypes.ApprenticeshipStandard;
 
         public bool AchDateReturnedCondition(DateTime? achDate) => achDate.HasValue;
 

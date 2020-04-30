@@ -41,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = "ConRef1",
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }
@@ -76,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = "ConRef1",
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }
@@ -114,7 +114,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = null,
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }
@@ -257,7 +257,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = "ConRef1",
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }
@@ -291,7 +291,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }

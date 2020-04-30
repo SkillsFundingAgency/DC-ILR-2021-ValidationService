@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             AcademicYearStartDate > theDelivery.LearnActEndDateNullable;
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            theDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool HasQualifyingStart(ILearningDelivery theDelivery) =>
             _dateTimeQueryService.IsDateBetween(theDelivery.LearnStartDate, FirstViableStart, DateTime.MaxValue);

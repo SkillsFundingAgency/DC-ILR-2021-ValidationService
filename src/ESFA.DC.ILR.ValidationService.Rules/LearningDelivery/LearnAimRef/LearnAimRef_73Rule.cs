@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             if (esfEligibilities.Count > 0 && larsLearningDelivery != null)
             {
                 return
-                    !thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment)
+                    !thisDelivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.ESFLearnerStartandAssessment)
                 && FundModelConditionMet(thisDelivery.FundModel)
                 && HasDisqualifyingSubjectSector(larsLearningDelivery, esfEligibilities);
             }
@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.EuropeanSocialFund;
+            return fundModel == FundModels.EuropeanSocialFund;
         }
 
         public void Validate(ILearner thisLearner)

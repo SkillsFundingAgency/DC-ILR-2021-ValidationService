@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Theory]
-        [InlineData(25, TypeOfFunding.Age16To19ExcludingApprenticeships)]
+        [InlineData(25, FundModels.Age16To19ExcludingApprenticeships)]
         public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
         {
             Assert.Equal(expectation, candidate);
@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Theory]
-        [InlineData(24, TypeOfLearningProgramme.Traineeship)]
+        [InlineData(24, ProgTypes.Traineeship)]
         public void TypeOfProgrammeMeetsExpectation(int expectation, int candidate)
         {
             Assert.Equal(expectation, candidate);

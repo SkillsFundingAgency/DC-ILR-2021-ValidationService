@@ -1,6 +1,6 @@
 ﻿namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 {
-    public static class TypeOfFunding
+    public static class FundModels
     {
         public const int CommunityLearning = 10;
 

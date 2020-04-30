@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         }
 
         public IEnumerable<ILearningDelivery> GetProgrammeAims(IEnumerable<ILearningDelivery> learningDeliveries) =>
-            learningDeliveries.Where(ld => ld.AimType == TypeOfAim.ProgrammeAim);
+            learningDeliveries.Where(ld => ld.AimType == AimTypes.ProgrammeAim);
 
         public bool HasMoreThanOneProgrammeAim(IEnumerable<ILearningDelivery> candidates) =>
             candidates.Count() > 1;

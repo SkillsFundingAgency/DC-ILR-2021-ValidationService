@@ -32,14 +32,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, false)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.Traineeship, true)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship, false)]
+        [InlineData(ProgTypes.ApprenticeshipStandard, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel6, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, false)]
+        [InlineData(ProgTypes.IntermediateLevelApprenticeship, false)]
+        [InlineData(ProgTypes.Traineeship, true)]
         public void InTrainingMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -72,14 +72,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, false)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, true)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, false)]
-        [InlineData(TypeOfFunding.CommunityLearning, false)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, false)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, false)]
-        [InlineData(TypeOfFunding.Other16To19, true)]
-        [InlineData(TypeOfFunding.OtherAdult, false)]
+        [InlineData(FundModels.AdultSkills, false)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, true)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, false)]
+        [InlineData(FundModels.CommunityLearning, false)]
+        [InlineData(FundModels.EuropeanSocialFund, false)]
+        [InlineData(FundModels.NotFundedByESFA, false)]
+        [InlineData(FundModels.Other16To19, true)]
+        [InlineData(FundModels.OtherAdult, false)]
         public void HasQualifyingFundingMeetsExpectation(int funding, bool expectation)
         {
             var sut = NewRule();
@@ -169,10 +169,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, 1, 1, "2014-08-01", 1)]
-        [InlineData(TypeOfFunding.Other16To19, 1, 1, "2014-08-01", 1)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, 1, 1, "2014-08-01", 0)]
-        [InlineData(TypeOfFunding.Other16To19, 1, 1, "2014-08-01", 0)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, 1, 1, "2014-08-01", 1)]
+        [InlineData(FundModels.Other16To19, 1, 1, "2014-08-01", 1)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, 1, 1, "2014-08-01", 0)]
+        [InlineData(FundModels.Other16To19, 1, 1, "2014-08-01", 0)]
         public void InvalidItemRaisesValidationMessage(int fundModel, int? planHours, int? eepHours, string learnStart, int offSet)
         {
             const string LearnRefNumber = "123456789X";
@@ -190,7 +190,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.AimSeqNumber)
                 .Returns(AimSeqNumber);
@@ -230,7 +230,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
                     Moq.It.Is<string>(y => y == EmpStat_11Rule.MessagePropertyName),
-                    TypeOfEmploymentStatus.NotKnownProvided))
+                    EmploymentStatusEmpStats.NotKnownProvided))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
@@ -246,14 +246,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, 340, 200, "2014-08-01", 0)]
-        [InlineData(TypeOfFunding.Other16To19, 340, 200, "2014-08-01", 0)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, 1, 1, "2014-07-31", 0)]
-        [InlineData(TypeOfFunding.Other16To19, 1, 1, "2014-07-31", 0)]
-        [InlineData(TypeOfFunding.AdultSkills, 1, 1, "2014-08-01", 0)]
-        [InlineData(TypeOfFunding.OtherAdult, 1, 1, "2014-08-01", 0)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, 1, 1, "2014-08-01", -1)]
-        [InlineData(TypeOfFunding.Other16To19, 1, 1, "2014-08-01", -1)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, 340, 200, "2014-08-01", 0)]
+        [InlineData(FundModels.Other16To19, 340, 200, "2014-08-01", 0)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, 1, 1, "2014-07-31", 0)]
+        [InlineData(FundModels.Other16To19, 1, 1, "2014-07-31", 0)]
+        [InlineData(FundModels.AdultSkills, 1, 1, "2014-08-01", 0)]
+        [InlineData(FundModels.OtherAdult, 1, 1, "2014-08-01", 0)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, 1, 1, "2014-08-01", -1)]
+        [InlineData(FundModels.Other16To19, 1, 1, "2014-08-01", -1)]
         public void ValidItemDoesNotRaiseValidationMessage(int fundModel, int? planHours, int? eepHours, string learnStart, int offSet)
         {
             const string LearnRefNumber = "123456789X";
@@ -271,7 +271,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.AimSeqNumber)
                 .Returns(AimSeqNumber);

@@ -22,10 +22,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         }
 
         [Theory]
-        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, false)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, false)]
+        [InlineData(EmploymentStatusEmpStats.InPaidEmployment, false)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.NotKnownProvided, false)]
         public void IsQualifyingEmploymentMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -134,7 +134,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(testDate);
             status
                 .SetupGet(x => x.EmpStat)
-                .Returns(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable);
+                .Returns(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable);
             status
                 .SetupGet(x => x.EmploymentStatusMonitorings)
                 .Returns(monitorings);
@@ -165,7 +165,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
                     Moq.It.Is<string>(y => y == "EmpStat"),
-                    TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable))
+                    EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
@@ -223,7 +223,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(testDate);
             status
                 .SetupGet(x => x.EmpStat)
-                .Returns(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable);
+                .Returns(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable);
             status
                 .SetupGet(x => x.EmploymentStatusMonitorings)
                 .Returns(monitorings);

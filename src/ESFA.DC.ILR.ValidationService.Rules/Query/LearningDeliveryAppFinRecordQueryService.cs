@@ -68,12 +68,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                         var aFinCode1Value = GetLatestAppFinRecord(
                             learningDelivery.AppFinRecords,
                             ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice,
-                            TypeOfTNPAFin.TotalTrainingPrice)?.AFinAmount;
+                            ApprenticeshipFinancialRecord.PaymentRecordCodes.TrainingPayment)?.AFinAmount;
 
                         var aFinCode2Value = GetLatestAppFinRecord(
                             learningDelivery.AppFinRecords,
                             ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice,
-                            TypeOfTNPAFin.TotalAssessmentPrice)?.AFinAmount;
+                            ApprenticeshipFinancialRecord.PaymentRecordCodes.AssessmentPayment)?.AFinAmount;
 
                         total += aFinCode1Value.GetValueOrDefault() + aFinCode2Value.GetValueOrDefault();
                     }

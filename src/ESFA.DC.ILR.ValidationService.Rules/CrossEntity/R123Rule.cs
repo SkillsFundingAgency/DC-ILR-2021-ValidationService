@@ -52,9 +52,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                    && FAMDateConditionMet(learningDelivery.LearningDeliveryFAMs);
         }
 
-        public bool FundModelConditionMet(int fundModel) => fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+        public bool FundModelConditionMet(int fundModel) => fundModel == FundModels.ApprenticeshipsFrom1May2017;
 
-        public bool ProgTypeConditionMet(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        public bool ProgTypeConditionMet(int? progType) => progType == ProgTypes.ApprenticeshipStandard;
 
         public bool CompStatusConditionMet(int compStatus) => compStatus == CompletionState.IsOngoing;
 

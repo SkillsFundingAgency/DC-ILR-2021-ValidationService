@@ -32,14 +32,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, false)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.Traineeship, true)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship, false)]
+        [InlineData(ProgTypes.ApprenticeshipStandard, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel6, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, false)]
+        [InlineData(ProgTypes.IntermediateLevelApprenticeship, false)]
+        [InlineData(ProgTypes.Traineeship, true)]
         public void InTrainingMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -72,10 +72,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfAim.ProgrammeAim, true)]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, false)]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, false)]
-        [InlineData(TypeOfAim.CoreAim16To19ExcludingApprenticeships, false)]
+        [InlineData(AimTypes.ProgrammeAim, true)]
+        [InlineData(AimTypes.AimNotPartOfAProgramme, false)]
+        [InlineData(AimTypes.ComponentAimInAProgramme, false)]
+        [InlineData(AimTypes.CoreAim16To19ExcludingApprenticeships, false)]
         public void IsInAProgrammeMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -90,10 +90,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, true)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, false)]
+        [InlineData(EmploymentStatusEmpStats.InPaidEmployment, true)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.NotKnownProvided, false)]
         public void HasAQualifyingEmploymentStatusMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -165,10 +165,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(DateTime.Today);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.Traineeship);
+                .Returns(ProgTypes.Traineeship);
             mockDelivery
                 .SetupGet(x => x.AimSeqNumber)
                 .Returns(AimSeqNumber);
@@ -177,7 +177,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockEmpStat = new Mock<ILearnerEmploymentStatus>();
             mockEmpStat
                 .SetupGet(x => x.EmpStat)
-                .Returns(TypeOfEmploymentStatus.NotKnownProvided);
+                .Returns(EmploymentStatusEmpStats.NotKnownProvided);
 
             var statii = new List<ILearnerEmploymentStatus>
             {
@@ -205,7 +205,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
                     Moq.It.Is<string>(y => y == EmpStat_17Rule.MessagePropertyName),
-                    TypeOfEmploymentStatus.NotKnownProvided))
+                    EmploymentStatusEmpStats.NotKnownProvided))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
@@ -233,10 +233,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(DateTime.Today);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.Traineeship);
+                .Returns(ProgTypes.Traineeship);
             mockDelivery
                 .SetupGet(x => x.AimSeqNumber)
                 .Returns(AimSeqNumber);
@@ -250,7 +250,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(DateTime.Today.AddDays(-1));
             mockStatus
                 .SetupGet(y => y.EmpStat)
-                .Returns(TypeOfEmploymentStatus.InPaidEmployment);
+                .Returns(EmploymentStatusEmpStats.InPaidEmployment);
             statii.Add(mockStatus.Object);
 
             var mockLearner = new Mock<ILearner>();

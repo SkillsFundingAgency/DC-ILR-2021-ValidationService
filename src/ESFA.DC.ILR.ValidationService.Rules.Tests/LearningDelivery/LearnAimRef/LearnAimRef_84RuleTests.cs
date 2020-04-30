@@ -94,10 +94,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(TypeOfLARSCategory.LegalEntitlementLevel2, false)]
-        [InlineData(TypeOfLARSCategory.OnlyForLegalEntitlementAtLevel3, true)]
-        [InlineData(TypeOfLARSCategory.WorkPlacementSFAFunded, false)]
-        [InlineData(TypeOfLARSCategory.WorkPreparationSFATraineeships, false)]
+        [InlineData(LARSCategories.LegalEntitlementLevel2, false)]
+        [InlineData(LARSCategories.OnlyForLegalEntitlementAtLevel3, true)]
+        [InlineData(LARSCategories.WorkPlacementSFAFunded, false)]
+        [InlineData(LARSCategories.WorkPreparationSFATraineeships, false)]
         [InlineData(36, false)]
         [InlineData(39, false)]
         public void IsQualifyingCategoryMeetsExpectation(int category, bool expectation)
@@ -164,7 +164,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -187,13 +187,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", testDate))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
-                .Setup(x => x.BuildErrorMessageParameter("FundModel", TypeOfFunding.AdultSkills))
+                .Setup(x => x.BuildErrorMessageParameter("FundModel", FundModels.AdultSkills))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var mockCategory = new Mock<ILARSLearningCategory>();
             mockCategory
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.LegalEntitlementLevel2);
+                .Returns(LARSCategories.LegalEntitlementLevel2);
 
             var larsCategories = new List<ILARSLearningCategory>();
             larsCategories.Add(mockCategory.Object);
@@ -266,7 +266,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -284,7 +284,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var mockCategory = new Mock<ILARSLearningCategory>();
             mockCategory
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.OnlyForLegalEntitlementAtLevel3);
+                .Returns(LARSCategories.OnlyForLegalEntitlementAtLevel3);
 
             var larsCategories = new List<ILARSLearningCategory>();
             larsCategories.Add(mockCategory.Object);

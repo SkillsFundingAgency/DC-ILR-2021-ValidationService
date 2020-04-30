@@ -20,9 +20,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.NotFundedByESFA, true)]
-        [InlineData(TypeOfFunding.CommunityLearning, true)]
-        [InlineData(TypeOfFunding.AdultSkills, false)]
+        [InlineData(FundModels.NotFundedByESFA, true)]
+        [InlineData(FundModels.CommunityLearning, true)]
+        [InlineData(FundModels.AdultSkills, false)]
         public void FundModelConditionMetMeetsExpectation(int fundModel, bool expectation)
         {
             NewRule().FundModelConditionMet(fundModel).Should().Be(expectation);
@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void ConditionMet_True()
         {
-            var fundModel = TypeOfFunding.NotFundedByESFA;
+            var fundModel = FundModels.NotFundedByESFA;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.FLN;
 
             NewRule().ConditionMet(fundModel, learnDelFamType).Should().BeTrue();
@@ -52,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void ConditionMet_False_InvalidFundModel()
         {
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.FLN;
 
             NewRule().ConditionMet(fundModel, learnDelFamType).Should().BeFalse();
@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void ConditionMet_False_InvalidFAMType()
         {
-            var fundModel = TypeOfFunding.NotFundedByESFA;
+            var fundModel = FundModels.NotFundedByESFA;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ADL;
 
             NewRule().ConditionMet(fundModel, learnDelFamType).Should().BeFalse();
@@ -76,11 +76,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.AdultSkills
+                        FundModel = FundModels.AdultSkills
                     },
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearningDeliveryFAMs = new List<ILearningDeliveryFAM>()
                         {
                             new TestLearningDeliveryFAM()
@@ -111,11 +111,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017
                     },
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.AdultSkills,
+                        FundModel = FundModels.AdultSkills,
                         LearningDeliveryFAMs = new List<ILearningDeliveryFAM>()
                         {
                             new TestLearningDeliveryFAM()
@@ -160,7 +160,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.AdultSkills
+                        FundModel = FundModels.AdultSkills
                     }
                 }
             };

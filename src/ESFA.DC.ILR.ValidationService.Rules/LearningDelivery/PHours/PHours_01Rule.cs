@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours
 
         private readonly IEnumerable<int> _fundModels = new HashSet<int>()
         {
-            TypeOfFunding.ApprenticeshipsFrom1May2017
+            FundModels.ApprenticeshipsFrom1May2017
         };
 
         public PHours_01Rule(IValidationErrorHandler validationErrorHandler)

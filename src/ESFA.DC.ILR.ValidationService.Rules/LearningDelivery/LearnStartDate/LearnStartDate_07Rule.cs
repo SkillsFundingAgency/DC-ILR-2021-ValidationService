@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
     public class LearnStartDate_07Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly HashSet<int> _fwkCommonComponents = new HashSet<int>(TypeOfLARSCommonComponent.CommonComponents);
+        private readonly HashSet<int> _fwkCommonComponents = new HashSet<int>(LARSCommonComponents.CommonComponents);
         private readonly IDerivedData_04Rule _derivedData04;
         private readonly ILARSDataService _larsData;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
                 || IsCommonComponent(GetLARSLearningDeliveryFor(theDelivery));
 
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
-            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            theDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
 
         public bool IsRestart(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);
@@ -81,7 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             && _fwkCommonComponents.Contains(larsDelivery.FrameworkCommonComponent.Value);
 
         public bool IsComponentAim(ILearningDelivery theDelivery) =>
-            theDelivery.AimType == TypeOfAim.ComponentAimInAProgramme;
+            theDelivery.AimType == AimTypes.ComponentAimInAProgramme;
 
         public bool IsApprenticeship(ILearningDelivery theDelivery) =>
             _dd07.IsApprenticeship(theDelivery.ProgTypeNullable);

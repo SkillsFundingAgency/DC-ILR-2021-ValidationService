@@ -53,18 +53,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
 
         public bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ProgrammeAim;
+            return aimType == AimTypes.ProgrammeAim;
         }
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            return fundModel == FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public bool ProgTypeConditionMet(int? progType)
         {
             return progType.HasValue
-                    && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+                    && progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public bool LearnActEndDateConditionMet(DateTime? learnActEndDate)

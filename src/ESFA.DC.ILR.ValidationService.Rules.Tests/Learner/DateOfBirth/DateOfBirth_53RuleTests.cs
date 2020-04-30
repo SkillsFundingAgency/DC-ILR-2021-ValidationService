@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void FundModelConditionMet_True()
         {
-            NewRule().FundModelConditionMet(TypeOfFunding.ApprenticeshipsFrom1May2017).Should().BeTrue();
+            NewRule().FundModelConditionMet(FundModels.ApprenticeshipsFrom1May2017).Should().BeTrue();
         }
 
         [Fact]
@@ -203,7 +203,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var learningDelivery = new TestLearningDelivery
             {
-                FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                FundModel = FundModels.ApprenticeshipsFrom1May2017,
                 ProgTypeNullable = 2,
                 AimType = 1,
                 CompStatus = 2,

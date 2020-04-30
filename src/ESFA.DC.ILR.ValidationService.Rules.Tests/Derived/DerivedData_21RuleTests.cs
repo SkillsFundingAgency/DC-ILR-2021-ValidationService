@@ -147,10 +147,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, false)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, false)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.InPaidEmployment, false)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.NotKnownProvided, false)]
         public void IsNotEmployedMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();

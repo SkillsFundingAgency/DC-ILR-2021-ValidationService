@@ -13,13 +13,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
     {
         private readonly IEnumerable<int?> _apprenticeshipProgTypes = new HashSet<int?>()
         {
-            TypeOfLearningProgramme.AdvancedLevelApprenticeship,
-            TypeOfLearningProgramme.IntermediateLevelApprenticeship,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel4,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel5,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel6,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus,
-            TypeOfLearningProgramme.ApprenticeshipStandard
+            ProgTypes.AdvancedLevelApprenticeship,
+            ProgTypes.IntermediateLevelApprenticeship,
+            ProgTypes.HigherApprenticeshipLevel4,
+            ProgTypes.HigherApprenticeshipLevel5,
+            ProgTypes.HigherApprenticeshipLevel6,
+            ProgTypes.HigherApprenticeshipLevel7Plus,
+            ProgTypes.ApprenticeshipStandard
         };
 
         public R68Rule(IValidationErrorHandler validationErrorHandler)
@@ -73,8 +73,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool IsApprenticeshipProgrammeAim(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.AimType == TypeOfAim.ProgrammeAim
-                   && learningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+            return learningDelivery.AimType == AimTypes.ProgrammeAim
+                   && learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017
                    && _apprenticeshipProgTypes.Contains(learningDelivery.ProgTypeNullable);
         }
 

@@ -23,13 +23,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         [Fact]
         public void FundModelConditionMet_False()
         {
-            NewRule().FundModelConditionMet(TypeOfFunding.AdultSkills).Should().BeFalse();
+            NewRule().FundModelConditionMet(FundModels.AdultSkills).Should().BeFalse();
         }
 
         [Fact]
         public void FundModelConditionMet_True()
         {
-            NewRule().FundModelConditionMet(TypeOfFunding.EuropeanSocialFund).Should().BeTrue();
+            NewRule().FundModelConditionMet(FundModels.EuropeanSocialFund).Should().BeTrue();
         }
 
         [Theory]
@@ -126,13 +126,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, ValidationConstants.ZESF0001, "ESF223456", "12.1", "13.1")]
-        [InlineData(TypeOfFunding.AdultSkills, ValidationConstants.ZESF0001, "ESF223456", "12.1", "15.1")]
-        [InlineData(TypeOfFunding.AdultSkills, ValidationConstants.ZESF0001, "ESF223456", "15.1", "13.1")]
-        [InlineData(TypeOfFunding.AdultSkills, ValidationConstants.ZESF0001, "ESF223456", "15.1", null)]
-        [InlineData(TypeOfFunding.AdultSkills, ValidationConstants.ZESF0001, "ESF223456", null, "13.1")]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, ValidationConstants.ZESF0001, "ESF223456", null, "13.1")]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, "ZESF0002", "ESF223456", null, "13.1")]
+        [InlineData(FundModels.AdultSkills, ValidationConstants.ZESF0001, "ESF223456", "12.1", "13.1")]
+        [InlineData(FundModels.AdultSkills, ValidationConstants.ZESF0001, "ESF223456", "12.1", "15.1")]
+        [InlineData(FundModels.AdultSkills, ValidationConstants.ZESF0001, "ESF223456", "15.1", "13.1")]
+        [InlineData(FundModels.AdultSkills, ValidationConstants.ZESF0001, "ESF223456", "15.1", null)]
+        [InlineData(FundModels.AdultSkills, ValidationConstants.ZESF0001, "ESF223456", null, "13.1")]
+        [InlineData(FundModels.EuropeanSocialFund, ValidationConstants.ZESF0001, "ESF223456", null, "13.1")]
+        [InlineData(FundModels.EuropeanSocialFund, "ZESF0002", "ESF223456", null, "13.1")]
         public void ConditionMet_False(int fundModel, string conRefNumber, string learnAimRef, string sectorSubjectArea1, string sectorSubjectArea2)
         {
             var esfEligibilityRuleSectorSubjectAreaLevels = new IEsfEligibilityRuleSectorSubjectAreaLevel[]
@@ -202,7 +202,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             NewRule(
                 fCSDataService: fcsDataServiceMock.Object,
                 lARSDataService: larsDataServiceMock.Object)
-                .ConditionMet(TypeOfFunding.EuropeanSocialFund, conRefNumber, learnAimRef).Should().BeTrue();
+                .ConditionMet(FundModels.EuropeanSocialFund, conRefNumber, learnAimRef).Should().BeTrue();
         }
 
         [Fact]
@@ -219,7 +219,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                     {
                         LearnAimRef = learnAimRef,
                         ConRefNumber = conRefNumber,
-                        FundModel = TypeOfFunding.EuropeanSocialFund
+                        FundModel = FundModels.EuropeanSocialFund
                     }
                 }
             };
@@ -270,7 +270,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                     {
                         LearnAimRef = learnAimRef,
                         ConRefNumber = conRefNumber,
-                        FundModel = TypeOfFunding.AdultSkills
+                        FundModel = FundModels.AdultSkills
                     }
                 }
             };
@@ -313,10 +313,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.FundModel, TypeOfFunding.EuropeanSocialFund)).Verifiable();
+            validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.EuropeanSocialFund)).Verifiable();
             validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, "ESF-123456")).Verifiable();
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(TypeOfFunding.EuropeanSocialFund, "ESF-123456");
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(FundModels.EuropeanSocialFund, "ESF-123456");
 
             validationErrorHandlerMock.Verify();
         }

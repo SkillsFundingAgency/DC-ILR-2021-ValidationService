@@ -15,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         private readonly IDerivedData_07Rule _dd07;
         private readonly IDateTimeQueryService _dateTimeQueryService;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
-        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { TypeOfFunding.ApprenticeshipsFrom1May2017 };
+        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { FundModels.ApprenticeshipsFrom1May2017 };
         private readonly DateTime _mayFirst2017 = new DateTime(2017, 5, 1);
 
         public DateOfBirth_53Rule(
@@ -86,13 +86,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool DD07ConditionMet(int? progType)
         {
             return progType.HasValue
-                && progType != TypeOfLearningProgramme.ApprenticeshipStandard
+                && progType != ProgTypes.ApprenticeshipStandard
                 && _dd07.IsApprenticeship(progType);
         }
 
         public bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ProgrammeAim;
+            return aimType == AimTypes.ProgrammeAim;
         }
 
         public bool LearnActEndDateConditionMet(DateTime learnStartDate, DateTime? learnActEndDate)

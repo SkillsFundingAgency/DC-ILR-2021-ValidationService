@@ -134,7 +134,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
 
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);

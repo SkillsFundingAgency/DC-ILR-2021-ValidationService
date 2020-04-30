@@ -54,10 +54,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
         }
 
         [Theory]
-        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, true)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, false)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, false)]
-        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, false)]
+        [InlineData(EmploymentStatusEmpStats.InPaidEmployment, true)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable, false)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable, false)]
+        [InlineData(EmploymentStatusEmpStats.NotKnownProvided, false)]
         public void HasQualifyingEmploymentStatusMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -100,7 +100,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .Returns(testDate);
             status
                 .SetupGet(x => x.EmpStat)
-                .Returns(TypeOfEmploymentStatus.InPaidEmployment);
+                .Returns(EmploymentStatusEmpStats.InPaidEmployment);
 
             var employmentStatuses = new ILearnerEmploymentStatus[] { status.Object };
 
@@ -132,7 +132,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .Setup(x => x.BuildErrorMessageParameter("EmpId", "(missing)"))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
-                .Setup(x => x.BuildErrorMessageParameter("EmpStat", TypeOfEmploymentStatus.InPaidEmployment))
+                .Setup(x => x.BuildErrorMessageParameter("EmpStat", EmploymentStatusEmpStats.InPaidEmployment))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
                 .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", AbstractRule.AsRequiredCultureDate(testDate)))
@@ -169,7 +169,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpId
                 .Returns(10004);
             status
                 .SetupGet(x => x.EmpStat)
-                .Returns(TypeOfEmploymentStatus.InPaidEmployment);
+                .Returns(EmploymentStatusEmpStats.InPaidEmployment);
 
             var employmentStatuses = new ILearnerEmploymentStatus[] { status.Object };
 

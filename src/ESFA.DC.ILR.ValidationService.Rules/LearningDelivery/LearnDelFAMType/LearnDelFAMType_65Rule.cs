@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_65Rule : AbstractRule, IRule<ILearner>
     {
-        private const int FundingModel = TypeOfFunding.AdultSkills;
+        private const int FundingModel = FundModels.AdultSkills;
 
         private const int MinAge = 19;
         private const int MaxAge = 23;

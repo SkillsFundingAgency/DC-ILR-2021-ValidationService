@@ -42,11 +42,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 
         public bool IsPrimaryLearningAim(ILearningDelivery thisDelivery) =>
             _dd07.IsApprenticeship(thisDelivery.ProgTypeNullable)
-            && thisDelivery.AimType == TypeOfAim.ProgrammeAim;
+            && thisDelivery.AimType == AimTypes.ProgrammeAim;
 
         public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus thisEmployment) =>
             thisEmployment != null
-                && thisEmployment.EmpStat == TypeOfEmploymentStatus.InPaidEmployment;
+                && thisEmployment.EmpStat == EmploymentStatusEmpStats.InPaidEmployment;
 
         public bool HasDisqualifyingEmployerID(ILearnerEmploymentStatus thisEmployment) =>
             !thisEmployment.EmpIdNullable.HasValue;
@@ -64,7 +64,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             return new[]
             {
                 BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, thisDelivery.LearnStartDate),
-                BuildErrorMessageParameter(PropertyNameConstants.EmpStat, TypeOfEmploymentStatus.InPaidEmployment),
+                BuildErrorMessageParameter(PropertyNameConstants.EmpStat, EmploymentStatusEmpStats.InPaidEmployment),
                 BuildErrorMessageParameter(PropertyNameConstants.EmpId, "(missing)")
             };
         }

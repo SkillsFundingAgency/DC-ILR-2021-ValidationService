@@ -29,16 +29,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills)]
-        [InlineData(TypeOfFunding.OtherAdult)]
+        [InlineData(FundModels.AdultSkills)]
+        [InlineData(FundModels.OtherAdult)]
         public void FundModelConditionMet_False(int fundModel)
         {
             NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.EuropeanSocialFund)]
-        [InlineData(TypeOfFunding.CommunityLearning)]
+        [InlineData(FundModels.EuropeanSocialFund)]
+        [InlineData(FundModels.CommunityLearning)]
         public void FundModelConditionMet_True(int fundModel)
         {
             NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
@@ -103,7 +103,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         LearnAimRef = "50023408",
                         LearningDeliveryHEEntity =
                             new TestLearningDeliveryHE()
@@ -135,7 +135,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         LearnAimRef = "50023408",
                         LearningDeliveryHEEntity = new TestLearningDeliveryHE()
                             {
@@ -144,7 +144,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                     },
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.CommunityLearning,
+                        FundModel = FundModels.CommunityLearning,
                         LearnAimRef = "50023409",
                         LearningDeliveryHEEntity = new TestLearningDeliveryHE()
                             {

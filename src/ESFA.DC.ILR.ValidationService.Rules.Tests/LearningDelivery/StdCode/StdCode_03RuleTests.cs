@@ -40,14 +40,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
 
         [Theory]
         [InlineData(null, false)]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, true)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, false)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.Traineeship, false)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship, false)]
+        [InlineData(ProgTypes.ApprenticeshipStandard, true)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel6, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, false)]
+        [InlineData(ProgTypes.IntermediateLevelApprenticeship, false)]
+        [InlineData(ProgTypes.Traineeship, false)]
         public void IsQualifyingLearningProgrammeMeetsExpectation(int? candidate, bool expectation)
         {
             var sut = NewRule();
@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.AdvancedLevelApprenticeship);
+                .Returns(ProgTypes.AdvancedLevelApprenticeship);
             mockDelivery
                 .SetupGet(x => x.StdCodeNullable)
                 .Returns(3);
@@ -103,7 +103,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
                     Moq.It.Is<string>(y => y == PropertyNameConstants.ProgType),
-                    TypeOfLearningProgramme.AdvancedLevelApprenticeship))
+                    ProgTypes.AdvancedLevelApprenticeship))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var sut = new StdCode_03Rule(handler.Object);
@@ -121,7 +121,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.StdCode
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.AdvancedLevelApprenticeship);
+                .Returns(ProgTypes.AdvancedLevelApprenticeship);
 
             var deliveries = new List<ILearningDelivery>
             {

@@ -26,7 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AimType
 
         public bool ConditionMet(int aimType, int fundModel)
         {
-            return aimType == 5 && fundModel != TypeOfFunding.Age16To19ExcludingApprenticeships && fundModel != TypeOfFunding.Other16To19;
+            return aimType == 5 && fundModel != FundModels.Age16To19ExcludingApprenticeships && fundModel != FundModels.Other16To19;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, int fundModel)

@@ -87,7 +87,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool IsBasicSkillsLearner(ILARSAnnualValue monitor) =>
            monitor.BasicSkillsType.HasValue
-           && TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills.Contains(monitor.BasicSkillsType.Value);
+           && LARSBasicSkills.AsEnglishAndMathsBasicSkills.Contains(monitor.BasicSkillsType.Value);
 
         public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearningDelivery thisDelivery, ILearner forCandidate) =>
             _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, forCandidate);
@@ -108,7 +108,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             candidate.LearningDeliveries.NullSafeAny(matchCondition);
 
         public bool IsAdultFunding(ILearningDelivery delivery) =>
-           delivery.FundModel == TypeOfFunding.AdultSkills;
+           delivery.FundModel == FundModels.AdultSkills;
 
         public bool IsViableStart(ILearningDelivery delivery) =>
             delivery.LearnStartDate > LastInviableDate;

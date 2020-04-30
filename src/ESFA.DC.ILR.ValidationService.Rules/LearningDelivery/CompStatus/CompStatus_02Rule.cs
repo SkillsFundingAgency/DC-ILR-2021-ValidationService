@@ -44,12 +44,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel != TypeOfFunding.ApprenticeshipsFrom1May2017;
+            return fundModel != FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public bool ProgTypeConditionMet(int? progType)
         {
-            return progType != TypeOfLearningProgramme.ApprenticeshipStandard;
+            return progType != ProgTypes.ApprenticeshipStandard;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int compStatus, DateTime? learnActEndDate)

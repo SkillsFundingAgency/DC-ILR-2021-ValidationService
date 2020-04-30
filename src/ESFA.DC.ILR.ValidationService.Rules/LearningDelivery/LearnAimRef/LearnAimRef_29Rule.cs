@@ -27,7 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool ConditionMet(string learnAimRef, int fundModel)
         {
-            return learnAimRef.CaseInsensitiveEquals(ValidationConstants.ZESF0001) && fundModel != TypeOfFunding.EuropeanSocialFund;
+            return learnAimRef.CaseInsensitiveEquals(ValidationConstants.ZESF0001) && fundModel != FundModels.EuropeanSocialFund;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string learnAimRef, int fundModel)

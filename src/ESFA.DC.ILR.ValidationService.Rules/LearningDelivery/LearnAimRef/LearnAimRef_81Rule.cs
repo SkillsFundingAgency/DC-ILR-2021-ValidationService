@@ -15,9 +15,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public const string Name = RuleNameConstants.LearnAimRef_81;
         private readonly HashSet<int> _fundModels = new HashSet<int>
         {
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.OtherAdult,
-            TypeOfFunding.EuropeanSocialFund
+            FundModels.AdultSkills,
+            FundModels.OtherAdult,
+            FundModels.EuropeanSocialFund
         };
 
         private readonly IValidationErrorHandler _messageHandler;
@@ -45,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public string RuleName => Name;
 
         public bool HasDisqualifyingLearningCategory(ILARSLearningCategory category) =>
-            category.CategoryRef == TypeOfLARSCategory.LicenseToPractice;
+            category.CategoryRef == LARSCategories.LicenseToPractice;
 
         public bool HasDisqualifyingLearningCategory(ILearningDelivery delivery)
         {

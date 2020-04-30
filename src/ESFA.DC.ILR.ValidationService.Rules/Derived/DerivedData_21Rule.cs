@@ -18,8 +18,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool IsNotEmployed(ILearnerEmploymentStatus candidate) =>
-            candidate?.EmpStat == TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
-            || candidate?.EmpStat == TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable;
+            candidate?.EmpStat == EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable
+            || candidate?.EmpStat == EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable;
 
         public bool InReceiptOfAnotherBenefit(IEmploymentStatusMonitoring employmentMonitoring) =>
             Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit.CaseInsensitiveEquals($"{employmentMonitoring.ESMType}{employmentMonitoring.ESMCode}");
@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
             var employment = _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(forThisCandidate.LearnerEmploymentStatuses, thisDelivery.LearnStartDate);
 
-            return thisDelivery.FundModel == TypeOfFunding.AdultSkills
+            return thisDelivery.FundModel == FundModels.AdultSkills
                 && employment != null
                 && IsNotEmployed(employment)
                 && (InReceiptOfBenefits(employment)

@@ -15,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         private readonly IFCSDataService _fcsDataService;
         private readonly IAcademicYearDataService _academicYearDataService;
         private readonly IAcademicYearQueryService _academicYearQueryService;
-        private readonly int _fundModel = TypeOfFunding.EuropeanSocialFund;
+        private readonly int _fundModel = FundModels.EuropeanSocialFund;
         private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
             FundingStreamPeriodCodeConstants.ESF1420

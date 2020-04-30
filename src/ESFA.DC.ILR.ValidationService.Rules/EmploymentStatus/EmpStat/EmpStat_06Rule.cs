@@ -13,8 +13,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
     {
         private readonly HashSet<int> _fundModels = new HashSet<int>
         {
-            TypeOfFunding.Age16To19ExcludingApprenticeships,
-            TypeOfFunding.Other16To19
+            FundModels.Age16To19ExcludingApprenticeships,
+            FundModels.Other16To19
         };
 
         private readonly IDateTimeQueryService _dateTimeQueryService;
@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             && !HasQualifyingEmployment(thisEmployment);
 
         public bool IsExcluded(ILearningDelivery thisDelivery) =>
-            thisDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
+            thisDelivery.ProgTypeNullable == ProgTypes.Traineeship;
 
         public bool HasQualifyingFunding(ILearningDelivery thisDelivery) =>
             _fundModels.Contains(thisDelivery.FundModel);

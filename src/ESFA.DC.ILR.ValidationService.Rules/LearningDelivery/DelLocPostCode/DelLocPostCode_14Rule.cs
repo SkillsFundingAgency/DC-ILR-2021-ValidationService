@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 {
     public class DelLocPostCode_14Rule : AbstractRule, IRule<ILearner>
     {
-        private const int FundModel = TypeOfFunding.EuropeanSocialFund;
+        private const int FundModel = FundModels.EuropeanSocialFund;
 
         private readonly IFCSDataService _fcsDataService;
         private readonly IPostcodesDataService _postcodeService;
@@ -80,7 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
             fundModel == FundModel;
 
         public bool ConditionMetLearnAimRef(string learnAimRef) =>
-            !learnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment);
+            !learnAimRef.CaseInsensitiveEquals(AimTypes.References.ESFLearnerStartandAssessment);
 
         public bool ConditionMetTemporaryPostcode(string postcode) =>
             !postcode.CaseInsensitiveEquals(ValidationConstants.TemporaryPostCode);

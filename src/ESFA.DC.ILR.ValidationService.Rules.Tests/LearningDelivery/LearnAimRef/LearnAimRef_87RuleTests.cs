@@ -87,9 +87,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         [InlineData("z9ope14A", true)]
         [InlineData("x9ope15B", false)]
         [InlineData("x9ope14A", false)]
-        [InlineData(TypeOfAim.References.IndustryPlacement, false)]
-        [InlineData(TypeOfAim.References.SupportedInternship16To19, false)]
-        [InlineData(TypeOfAim.References.WorkExperience, false)]
+        [InlineData(AimTypes.References.IndustryPlacement, false)]
+        [InlineData(AimTypes.References.SupportedInternship16To19, false)]
+        [InlineData(AimTypes.References.WorkExperience, false)]
         public void HasDisqualifyingVocationalAimMeetsExpectation(string candidate, bool expectation)
         {
             var sut = NewRule();
@@ -207,9 +207,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         [Theory]
         [InlineData("x9ope15B")]
         [InlineData("x9ope14A")]
-        [InlineData(TypeOfAim.References.IndustryPlacement)]
-        [InlineData(TypeOfAim.References.SupportedInternship16To19)]
-        [InlineData(TypeOfAim.References.WorkExperience)]
+        [InlineData(AimTypes.References.IndustryPlacement)]
+        [InlineData(AimTypes.References.SupportedInternship16To19)]
+        [InlineData(AimTypes.References.WorkExperience)]
         public void ValidItemDoesNotRaiseValidationMessage(string candidate)
         {
             const string learnRefNumber = "123456789X";

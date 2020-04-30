@@ -10,7 +10,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AddHours
 {
     public class AddHours_01Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { TypeOfFunding.AdultSkills, TypeOfFunding.ApprenticeshipsFrom1May2017, TypeOfFunding.OtherAdult };
+        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { FundModels.AdultSkills, FundModels.ApprenticeshipsFrom1May2017, FundModels.OtherAdult };
         private readonly DateTime _learnStartDate = new DateTime(2015, 8, 1);
 
         public AddHours_01Rule(IValidationErrorHandler validationErrorHandler)

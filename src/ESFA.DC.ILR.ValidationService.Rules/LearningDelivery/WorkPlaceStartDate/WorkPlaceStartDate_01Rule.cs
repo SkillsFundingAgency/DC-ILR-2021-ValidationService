@@ -11,7 +11,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDat
     public class WorkPlaceStartDate_01Rule :
         AbstractRule, IRule<ILearner>
     {
-        private readonly HashSet<string> _workPlacementAims = new HashSet<string>(TypeOfAim.References.AsWorkPlacementCodes, StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _workPlacementAims = new HashSet<string>(AimTypes.References.AsWorkPlacementCodes, StringComparer.OrdinalIgnoreCase);
 
         public WorkPlaceStartDate_01Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.WorkPlaceStartDate_01)

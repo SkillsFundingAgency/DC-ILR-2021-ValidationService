@@ -14,10 +14,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public const string Name = RuleNameConstants.R107;
         private readonly HashSet<int> _fundModels = new HashSet<int>
         {
-            TypeOfFunding.Age16To19ExcludingApprenticeships,
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.EuropeanSocialFund,
-            TypeOfFunding.OtherAdult
+            FundModels.Age16To19ExcludingApprenticeships,
+            FundModels.AdultSkills,
+            FundModels.EuropeanSocialFund,
+            FundModels.OtherAdult
         };
 
         private readonly IValidationErrorHandler _messageHandler;
@@ -73,8 +73,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 && learner.LearningDeliveries.All(HasCompletedCourse);
 
         public bool InTraining(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
-            || delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            delivery.ProgTypeNullable == ProgTypes.Traineeship
+            || delivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
 
         public bool InTraining(ILearner learner) =>
             learner.LearningDeliveries.NullSafeAny(InTraining);

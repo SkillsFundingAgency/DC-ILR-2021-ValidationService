@@ -61,12 +61,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ExclusionConditionMet(int fundModel, int? progType)
         {
-            return FundModelConditionMet(fundModel) && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+            return FundModelConditionMet(fundModel) && progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            return fundModel == FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? learnActEndDateNullable, string learnDelFAMType, DateTime? learnDelFAMDateTo)

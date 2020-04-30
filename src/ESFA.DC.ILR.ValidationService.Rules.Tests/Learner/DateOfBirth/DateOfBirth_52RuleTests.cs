@@ -27,9 +27,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 12, 02);
             var learnPlanEndDate = new DateTime(2018, 08, 01);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
-            var aimType = TypeOfAim.ProgrammeAim;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
+            var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
@@ -55,8 +55,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
-            var aimType = TypeOfAim.ProgrammeAim;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
+            var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
@@ -81,8 +81,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
             var fundModel = 0;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
-            var aimType = TypeOfAim.ProgrammeAim;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
+            var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
@@ -106,9 +106,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2016, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
-            var aimType = TypeOfAim.ProgrammeAim;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
+            var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
@@ -132,9 +132,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
             var progType = 0;
-            var aimType = TypeOfAim.ProgrammeAim;
+            var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(false);
@@ -158,8 +158,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var aimType = 0;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -184,9 +184,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2018, 08, 01);
             var learnPlanEndDate = new DateTime(2019, 08, 02);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
-            var aimType = TypeOfAim.ProgrammeAim;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
+            var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
@@ -212,9 +212,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2018, 08, 01);
             var learnPlanEndDate = new DateTime(2019, 08, 12);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
-            var aimType = TypeOfAim.ProgrammeAim;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
+            var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock.Setup(dm => dm.IsApprenticeship(progType)).Returns(true);
@@ -240,7 +240,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
 
             var learner = new TestLearner
             {
@@ -250,9 +250,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     {
                         LearnStartDate = learnStartDate,
                         LearnPlanEndDate = learnPlanEndDate,
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         ProgTypeNullable = progType,
-                        AimType = TypeOfAim.ProgrammeAim
+                        AimType = AimTypes.ProgrammeAim
                     }
                 }
             };
@@ -279,7 +279,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
 
             var learner = new TestLearner
             {
@@ -289,9 +289,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     {
                         LearnStartDate = learnStartDate,
                         LearnPlanEndDate = learnPlanEndDate,
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         ProgTypeNullable = progType,
-                        AimType = TypeOfAim.ProgrammeAim
+                        AimType = AimTypes.ProgrammeAim
                     }
                 }
             };

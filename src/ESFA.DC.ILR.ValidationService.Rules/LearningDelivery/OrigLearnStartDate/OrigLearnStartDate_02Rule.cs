@@ -20,10 +20,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
 
         private readonly HashSet<int> fundModels = new HashSet<int>
         {
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.ApprenticeshipsFrom1May2017,
-            TypeOfFunding.OtherAdult,
-            TypeOfFunding.NotFundedByESFA
+            FundModels.AdultSkills,
+            FundModels.ApprenticeshipsFrom1May2017,
+            FundModels.OtherAdult,
+            FundModels.NotFundedByESFA
         };
 
         public OrigLearnStartDate_02Rule(IDateTimeQueryService dateTimeQueryService, IValidationErrorHandler validationErrorHandler)

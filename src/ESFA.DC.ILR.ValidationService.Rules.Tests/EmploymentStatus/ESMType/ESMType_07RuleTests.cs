@@ -22,10 +22,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         }
 
         [Theory]
-        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, true)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, false)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, false)]
-        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, false)]
+        [InlineData(EmploymentStatusEmpStats.InPaidEmployment, true)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable, false)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable, false)]
+        [InlineData(EmploymentStatusEmpStats.NotKnownProvided, false)]
         public void IsQualifyingEmploymentMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -122,9 +122,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         }
 
         [Theory]
-        [InlineData(Monitoring.EmploymentStatus.SelfEmployed, TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable)]
-        [InlineData(Monitoring.EmploymentStatus.SelfEmployed, TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable)]
-        [InlineData(Monitoring.EmploymentStatus.SelfEmployed, TypeOfEmploymentStatus.NotKnownProvided)]
+        [InlineData(Monitoring.EmploymentStatus.SelfEmployed, EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable)]
+        [InlineData(Monitoring.EmploymentStatus.SelfEmployed, EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable)]
+        [InlineData(Monitoring.EmploymentStatus.SelfEmployed, EmploymentStatusEmpStats.NotKnownProvided)]
         public void InvalidItemRaisesValidationMessage(string monitorValue, int empStatus)
         {
             const string LearnRefNumber = "123456789X";
@@ -185,7 +185,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         }
 
         [Theory]
-        [InlineData(Monitoring.EmploymentStatus.SelfEmployed, TypeOfEmploymentStatus.InPaidEmployment)]
+        [InlineData(Monitoring.EmploymentStatus.SelfEmployed, EmploymentStatusEmpStats.InPaidEmployment)]
         public void ValidItemDoesNotRaiseValidationMessage(string monitorValue, int empStatus)
         {
             const string LearnRefNumber = "123456789X";

@@ -129,7 +129,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
             mockDelivery
                 .SetupGet(x => x.LearningDeliveryHEEntity)
                 .Returns(mockHE.Object);
@@ -199,7 +199,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
             mockDelivery
                 .SetupGet(x => x.LearningDeliveryHEEntity)
                 .Returns(mockHE.Object);

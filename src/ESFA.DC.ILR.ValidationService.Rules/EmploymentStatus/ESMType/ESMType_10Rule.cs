@@ -25,8 +25,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public string RuleName => Name;
 
         public bool IsQualifyingEmployment(ILearnerEmploymentStatus employmentStatus) =>
-            employmentStatus.EmpStat == TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
-            || employmentStatus.EmpStat == TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable;
+            employmentStatus.EmpStat == EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable
+            || employmentStatus.EmpStat == EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable;
 
         public bool HasDisqualifyingIndicator(IEmploymentStatusMonitoring monitor) =>
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.LengthOfEmployment);

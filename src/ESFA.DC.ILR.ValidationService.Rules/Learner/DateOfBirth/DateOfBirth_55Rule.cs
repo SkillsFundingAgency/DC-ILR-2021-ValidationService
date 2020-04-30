@@ -21,11 +21,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         private readonly string[] _learnAimRefTypes =
         {
-            TypeOfLARSLearnAimRef.GCEALevel,
-            TypeOfLARSLearnAimRef.GCEA2Level,
-            TypeOfLARSLearnAimRef.GCEAppliedALevel,
-            TypeOfLARSLearnAimRef.GCEAppliedALevelDoubleAward,
-            TypeOfLARSLearnAimRef.GCEALevelWithGCEAdvancedSubsidiary
+            LARSLearnAimRefTypes.GCEALevel,
+            LARSLearnAimRefTypes.GCEA2Level,
+            LARSLearnAimRefTypes.GCEAppliedALevel,
+            LARSLearnAimRefTypes.GCEAppliedALevelDoubleAward,
+            LARSLearnAimRefTypes.GCEALevelWithGCEAdvancedSubsidiary
         };
 
         private readonly string[] _notionalNvqLevels =
@@ -85,7 +85,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool ConditionMet(int fundModel, int? progType, DateTime learnStartDate, DateTime dateOfBirth, string learnAimRef, IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
             return !Excluded(progType, learningDeliveryFams, learnAimRef)
-                   && fundModel == TypeOfFunding.AdultSkills
+                   && fundModel == FundModels.AdultSkills
                    && learnStartDate >= _firstAugust2017
                    && _dateTimeQueryService.YearsBetween(dateOfBirth, learnStartDate) >= 24
                    && _larsDataService.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(learnAimRef, _notionalNvqLevels);

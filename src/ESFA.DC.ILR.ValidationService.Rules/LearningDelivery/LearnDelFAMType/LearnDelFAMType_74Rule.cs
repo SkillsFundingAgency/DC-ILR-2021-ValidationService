@@ -13,9 +13,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     {
         private readonly HashSet<int> _fundModelsAppsAndEsf = new HashSet<int>
         {
-            TypeOfFunding.ApprenticeshipsFrom1May2017,
-            TypeOfFunding.EuropeanSocialFund,
-            TypeOfFunding.OtherAdult
+            FundModels.ApprenticeshipsFrom1May2017,
+            FundModels.EuropeanSocialFund,
+            FundModels.OtherAdult
         };
 
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _fundModelsAppsAndEsf.Contains(fundModel);
 
         public bool HasTraineeshipFunding(int fundModel, int? progType) =>
-            fundModel == TypeOfFunding.AdultSkills
+            fundModel == FundModels.AdultSkills
             && progType.HasValue;
 
         public bool ConditionMet(ILearningDelivery theDelivery) =>

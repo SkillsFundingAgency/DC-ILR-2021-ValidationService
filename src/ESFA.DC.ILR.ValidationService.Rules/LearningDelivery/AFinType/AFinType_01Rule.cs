@@ -55,17 +55,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.OtherAdult;
+            return fundModel == FundModels.OtherAdult;
         }
 
         public bool ProgTypeConditionMet(int? progType)
         {
-            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+            return progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ProgrammeAim;
+            return aimType == AimTypes.ProgrammeAim;
         }
 
         public bool AppFinConditionMet(IEnumerable<IAppFinRecord> appFinRecords)

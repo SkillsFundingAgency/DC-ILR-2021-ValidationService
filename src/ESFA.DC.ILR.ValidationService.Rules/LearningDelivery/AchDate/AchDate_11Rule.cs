@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
         private readonly IAcademicYearDataService _academicYearDataService;
         private readonly HashSet<long> _fundModels = new HashSet<long>
         {
-            TypeOfFunding.ApprenticeshipsFrom1May2017
+            FundModels.ApprenticeshipsFrom1May2017
         };
 
         public AchDate_11Rule(IAcademicYearDataService academicYearDataService, IValidationErrorHandler validationErrorHandler)
@@ -62,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
 
         public virtual bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ProgrammeAim;
+            return aimType == AimTypes.ProgrammeAim;
         }
 
         public virtual bool FundModelConditionMet(int fundModel)
@@ -72,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
 
         public virtual bool ProgTypeConditionMet(int? progType)
         {
-            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+            return progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public virtual bool LearnActEndDateConditionMet(DateTime? learnActEndDate)

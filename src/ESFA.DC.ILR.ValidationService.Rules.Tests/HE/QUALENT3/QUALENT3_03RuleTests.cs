@@ -57,7 +57,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.QUALENT3
         }
 
         [Theory]
-        [InlineData(TypeOfQualEnt3.CambridgePreUDiploma31072013, "2019/01/01")]
+        [InlineData(QualEnt3s.CambridgePreUDiploma31072013, "2019/01/01")]
         [InlineData("Q1", "2019/01/01")]
         public void LearningDeliveryHEConditionMet_False(string qualent3, string learnStartDateString)
         {
@@ -71,8 +71,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.QUALENT3
         }
 
         [Theory]
-        [InlineData(TypeOfQualEnt3.CambridgePreUDiploma31072013, "2013/01/01")]
-        [InlineData(TypeOfQualEnt3.CertificateAtLevelMPostgraduateCertificate, "2019/01/01")]
+        [InlineData(QualEnt3s.CambridgePreUDiploma31072013, "2013/01/01")]
+        [InlineData(QualEnt3s.CertificateAtLevelMPostgraduateCertificate, "2019/01/01")]
         public void LearningDeliveryHEConditionMet_True(string qualent3, string learnStartDateString)
         {
             DateTime learnStartDate = DateTime.Parse(learnStartDateString);
@@ -85,7 +85,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.QUALENT3
         }
 
         [Theory]
-        [InlineData(TypeOfQualEnt3.CambridgePreUDiploma31072013, "2019/01/01")]
+        [InlineData(QualEnt3s.CambridgePreUDiploma31072013, "2019/01/01")]
         [InlineData("Q1", "2019/01/01")]
         public void ConditionMet_False(string qualent3, string learnStartDateString)
         {
@@ -111,8 +111,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.QUALENT3
         }
 
         [Theory]
-        [InlineData(TypeOfQualEnt3.CambridgePreUDiploma31072013, "2013/01/01")]
-        [InlineData(TypeOfQualEnt3.CertificateAtLevelMPostgraduateCertificate, "2019/01/01")]
+        [InlineData(QualEnt3s.CambridgePreUDiploma31072013, "2013/01/01")]
+        [InlineData(QualEnt3s.CertificateAtLevelMPostgraduateCertificate, "2019/01/01")]
         public void ConditionMet_True(string qualent3, string learnStartDateString)
         {
             DateTime learnStartDate = DateTime.Parse(learnStartDateString);
@@ -156,7 +156,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.QUALENT3
                         LearnStartDate = new DateTime(2019, 01, 01),
                         LearningDeliveryHEEntity = new TestLearningDeliveryHE()
                         {
-                            QUALENT3 = TypeOfQualEnt3.CambridgePreUDiploma31072013
+                            QUALENT3 = QualEnt3s.CambridgePreUDiploma31072013
                         },
                         LearningDeliveryFAMs = testLearningDeliveryFAMs
                     }
@@ -166,7 +166,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.QUALENT3
             var qualent3DataServiceMock = new Mock<IProvideLookupDetails>();
             var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            qualent3DataServiceMock.Setup(q => q.IsCurrent(TypeOfLimitedLifeLookup.QualEnt3, TypeOfQualEnt3.CambridgePreUDiploma31072013, new DateTime(2019, 01, 01))).Returns(true);
+            qualent3DataServiceMock.Setup(q => q.IsCurrent(TypeOfLimitedLifeLookup.QualEnt3, QualEnt3s.CambridgePreUDiploma31072013, new DateTime(2019, 01, 01))).Returns(true);
             learningDeliveryFAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(testLearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)).Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
@@ -198,7 +198,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.QUALENT3
                         LearnStartDate = new DateTime(2013, 01, 01),
                         LearningDeliveryHEEntity = new TestLearningDeliveryHE()
                         {
-                            QUALENT3 = TypeOfQualEnt3.CambridgePreUDiploma31072013
+                            QUALENT3 = QualEnt3s.CambridgePreUDiploma31072013
                         },
                         LearningDeliveryFAMs = testLearningDeliveryFAMs
                     }
@@ -208,7 +208,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.QUALENT3
             var qualent3DataServiceMock = new Mock<IProvideLookupDetails>();
             var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            qualent3DataServiceMock.Setup(q => q.IsCurrent(TypeOfLimitedLifeLookup.QualEnt3, TypeOfQualEnt3.CambridgePreUDiploma31072013, new DateTime(2013, 01, 01))).Returns(false);
+            qualent3DataServiceMock.Setup(q => q.IsCurrent(TypeOfLimitedLifeLookup.QualEnt3, QualEnt3s.CambridgePreUDiploma31072013, new DateTime(2013, 01, 01))).Returns(false);
             learningDeliveryFAMsQueryServiceMock.Setup(f => f.HasLearningDeliveryFAMType(testLearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)).Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
@@ -226,9 +226,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.QUALENT3
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
             validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, "31/07/2013")).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.QUALENT3, TypeOfQualEnt3.CertificateAtLevelMPostgraduateCertificate)).Verifiable();
+            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.QUALENT3, QualEnt3s.CertificateAtLevelMPostgraduateCertificate)).Verifiable();
 
-            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters(new DateTime(2013, 07, 31), TypeOfQualEnt3.CertificateAtLevelMPostgraduateCertificate);
+            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters(new DateTime(2013, 07, 31), QualEnt3s.CertificateAtLevelMPostgraduateCertificate);
 
             validationErrorHandlerMock.Verify();
         }

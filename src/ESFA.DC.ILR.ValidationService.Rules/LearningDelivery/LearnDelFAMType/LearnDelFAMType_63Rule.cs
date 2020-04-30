@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_63Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly HashSet<int> _basicSkillsList = new HashSet<int>(TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
+        private readonly HashSet<int> _basicSkillsList = new HashSet<int>(LARSBasicSkills.AsEnglishAndMathsBasicSkills);
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly ILARSDataService _larsData;
 
@@ -47,13 +47,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                     || HasQualifyingCommonComponent(theDelivery))));
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            theDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool IsProgrameAim(ILearningDelivery theDelivery) =>
-            theDelivery.AimType == TypeOfAim.ProgrammeAim;
+            theDelivery.AimType == AimTypes.ProgrammeAim;
 
         public bool IsComponentAim(ILearningDelivery theDelivery) =>
-            theDelivery.AimType == TypeOfAim.ComponentAimInAProgramme;
+            theDelivery.AimType == AimTypes.ComponentAimInAProgramme;
 
         public bool HasQualifyingBasicSkillsType(ILearningDelivery theDelivery) =>
             _larsData
@@ -77,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         }
 
         public bool IsBritishSignLanguage(ILARSLearningDelivery theDelivery) =>
-            theDelivery.FrameworkCommonComponent == TypeOfLARSCommonComponent.BritishSignLanguage;
+            theDelivery.FrameworkCommonComponent == LARSCommonComponents.BritishSignLanguage;
 
         public bool IsApprenticeshipContract(ILearningDelivery theDelivery) =>
            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT);

@@ -33,14 +33,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
 
         [Theory]
         [InlineData(null, false)]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, true)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, false)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.Traineeship, false)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship, false)]
+        [InlineData(ProgTypes.ApprenticeshipStandard, true)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel6, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, false)]
+        [InlineData(ProgTypes.IntermediateLevelApprenticeship, false)]
+        [InlineData(ProgTypes.Traineeship, false)]
         public void IsTargetApprenticeshipMeetsExpectation(int? candidate, bool expectation)
         {
             var sut = NewRule();
@@ -55,10 +55,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         }
 
         [Theory]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, false)]
-        [InlineData(TypeOfAim.CoreAim16To19ExcludingApprenticeships, false)]
-        [InlineData(TypeOfAim.ProgrammeAim, true)]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, false)]
+        [InlineData(AimTypes.AimNotPartOfAProgramme, false)]
+        [InlineData(AimTypes.CoreAim16To19ExcludingApprenticeships, false)]
+        [InlineData(AimTypes.ProgrammeAim, true)]
+        [InlineData(AimTypes.ComponentAimInAProgramme, false)]
         [InlineData(2, false)]
         public void IsInAProgrammeMeetsExpectation(int candidate, bool expectation)
         {
@@ -74,14 +74,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, true)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, true)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, true)]
-        [InlineData(TypeOfFunding.CommunityLearning, true)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, true)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, false)]
-        [InlineData(TypeOfFunding.Other16To19, true)]
-        [InlineData(TypeOfFunding.OtherAdult, true)]
+        [InlineData(FundModels.AdultSkills, true)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, true)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, true)]
+        [InlineData(FundModels.CommunityLearning, true)]
+        [InlineData(FundModels.EuropeanSocialFund, true)]
+        [InlineData(FundModels.NotFundedByESFA, false)]
+        [InlineData(FundModels.Other16To19, true)]
+        [InlineData(FundModels.OtherAdult, true)]
         public void IsFundedMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -157,13 +157,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
+                .Returns(ProgTypes.ApprenticeshipStandard);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
                 .Returns(records);
@@ -222,13 +222,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
+                .Returns(ProgTypes.ApprenticeshipStandard);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
                 .Returns(records);

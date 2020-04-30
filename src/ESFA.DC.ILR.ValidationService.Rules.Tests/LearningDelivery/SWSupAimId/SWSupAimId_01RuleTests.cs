@@ -31,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.SWSupAimId
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.IndustryPlacement, false)]
+        [InlineData(AimTypes.References.IndustryPlacement, false)]
         [InlineData("550e8400_e29b_41d4_a716_446655440000", true)]
         [InlineData("|550e8400e29b41d4a716446655440000", true)]
         [InlineData("w;oraeijwq rf;oiew ", false)]
@@ -46,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.SWSupAimId
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.IndustryPlacement)]
+        [InlineData(AimTypes.References.IndustryPlacement)]
         [InlineData("w;oraeijwq rf;oiew ")]
         public void InvalidItemRaisesValidationMessage(string candidate)
         {

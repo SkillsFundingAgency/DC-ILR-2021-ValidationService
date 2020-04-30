@@ -46,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool IsApprenticeshipProgramme(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            return learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public IEnumerable<ILearningDeliveryFAM> GetLearningDeliveryFAMsWhereApprenticeshipProgrammeFundedThroughContract(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public bool LearnerNotEmployedOnDate(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime? learningDeliveryFamDateFrom)
         {
             return learningDeliveryFamDateFrom.HasValue
-                && _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(learnerEmploymentStatuses, learningDeliveryFamDateFrom.Value)?.EmpStat != TypeOfEmploymentStatus.InPaidEmployment;
+                && _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(learnerEmploymentStatuses, learningDeliveryFamDateFrom.Value)?.EmpStat != EmploymentStatusEmpStats.InPaidEmployment;
         }
     }
 }

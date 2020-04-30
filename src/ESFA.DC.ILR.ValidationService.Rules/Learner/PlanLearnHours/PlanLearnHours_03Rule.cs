@@ -10,7 +10,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
     {
         private readonly HashSet<long> _fundModels = new HashSet<long>
         {
-            TypeOfFunding.Age16To19ExcludingApprenticeships
+            FundModels.Age16To19ExcludingApprenticeships
         };
 
         public PlanLearnHours_03Rule(IValidationErrorHandler validationErrorHandler)

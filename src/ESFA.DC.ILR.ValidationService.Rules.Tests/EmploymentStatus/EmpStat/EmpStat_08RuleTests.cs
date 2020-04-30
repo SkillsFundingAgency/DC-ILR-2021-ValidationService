@@ -350,7 +350,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                     {
                         AimType = 1,
                         LearnStartDate = learnStartDate,
-                        FundModel = TypeOfFunding.AdultSkills,
+                        FundModel = FundModels.AdultSkills,
                         ProgTypeNullable = 4,
                         LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
                     }
@@ -412,7 +412,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                     {
                         AimType = 1,
                         LearnStartDate = new DateTime(2016, 06, 01),
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         ProgTypeNullable = 23,
                         LearningDeliveryFAMs = learningDeliveryFAMs.ToList()
                     }

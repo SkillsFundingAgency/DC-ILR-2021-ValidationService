@@ -20,8 +20,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             && delivery.StdCodeNullable == candidate.StdCodeNullable;
 
         public bool HasRestrictionsMatch(ILearningDelivery candidate, ILearningDelivery andDelivery) =>
-            candidate.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
-                && candidate.AimType == TypeOfAim.ProgrammeAim
+            candidate.ProgTypeNullable == ProgTypes.ApprenticeshipStandard
+                && candidate.AimType == AimTypes.ProgrammeAim
                 && HasMatchingStandardCode(candidate, andDelivery);
 
         public DateTime? GetApprenticeshipStandardProgrammeStartDateFor(ILearningDelivery thisDelivery, IReadOnlyCollection<ILearningDelivery> usingSources)

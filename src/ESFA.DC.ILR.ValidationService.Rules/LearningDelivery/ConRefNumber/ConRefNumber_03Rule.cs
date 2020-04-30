@@ -11,13 +11,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ConRefNumber
     {
         private readonly IEnumerable<int> _fundModels = new HashSet<int>()
         {
-            TypeOfFunding.Age16To19ExcludingApprenticeships,
-            TypeOfFunding.Other16To19,
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.ApprenticeshipsFrom1May2017,
-            TypeOfFunding.OtherAdult,
-            TypeOfFunding.CommunityLearning,
-            TypeOfFunding.NotFundedByESFA,
+            FundModels.Age16To19ExcludingApprenticeships,
+            FundModels.Other16To19,
+            FundModels.AdultSkills,
+            FundModels.ApprenticeshipsFrom1May2017,
+            FundModels.OtherAdult,
+            FundModels.CommunityLearning,
+            FundModels.NotFundedByESFA,
         };
 
         public ConRefNumber_03Rule(IValidationErrorHandler validationErrorHandler)

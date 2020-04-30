@@ -24,14 +24,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, false)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, false)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, false)]
-        [InlineData(TypeOfFunding.CommunityLearning, false)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, false)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, true)]
-        [InlineData(TypeOfFunding.Other16To19, false)]
-        [InlineData(TypeOfFunding.OtherAdult, false)]
+        [InlineData(FundModels.AdultSkills, false)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, false)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, false)]
+        [InlineData(FundModels.CommunityLearning, false)]
+        [InlineData(FundModels.EuropeanSocialFund, false)]
+        [InlineData(FundModels.NotFundedByESFA, true)]
+        [InlineData(FundModels.Other16To19, false)]
+        [InlineData(FundModels.OtherAdult, false)]
         public void IsExternallyFundedMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -240,7 +240,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.NotFundedByESFA);
+                .Returns(FundModels.NotFundedByESFA);
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryFAMs)
                 .Returns(fams);
@@ -315,7 +315,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.NotFundedByESFA);
+                .Returns(FundModels.NotFundedByESFA);
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryFAMs)
                 .Returns(fams);

@@ -41,15 +41,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public void CheckEmploymentStatus(ILearnerEmploymentStatus thisEmployment, Action<IEmploymentStatusMonitoring> doThisAction)
         {
-            if (thisEmployment != null && thisEmployment.EmpStat == TypeOfEmploymentStatus.InPaidEmployment)
+            if (thisEmployment != null && thisEmployment.EmpStat == EmploymentStatusEmpStats.InPaidEmployment)
             {
                 thisEmployment.EmploymentStatusMonitorings.ForAny(HasADisqualifyingMonitorStatus, doThisAction);
             }
         }
 
         public bool IsRestrictionMatch(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
-            && delivery.AimType == TypeOfAim.ProgrammeAim
+            delivery.ProgTypeNullable == ProgTypes.Traineeship
+            && delivery.AimType == AimTypes.ProgrammeAim
             && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, NewCodeMonitoringThresholdDate, DateTime.MaxValue);
 
         public void Validate(ILearner objectToValidate)

@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.Traineeship)]
+        [InlineData(ProgTypes.Traineeship)]
         [InlineData(null)]
         public void ProgTypeConditionMet_False(int? progType)
         {
@@ -32,11 +32,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel6)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus)]
+        [InlineData(ProgTypes.ApprenticeshipStandard)]
         public void ProgTypeConditionMet_True(int? progType)
         {
             NewRule().ProgTypeConditionMet(progType).Should().BeTrue();
@@ -146,7 +146,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.Traineeship, "ZSF12346")]
+        [InlineData(ProgTypes.Traineeship, "ZSF12346")]
         [InlineData(null, "ZSF12346")]
         public void ConditionMet_False(int? progTypeNullable, string learnAimRef)
         {
@@ -180,11 +180,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4, "ZSF987654")]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5, "ZSF987654")]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6, "ZSF987654")]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, "ZSF987654")]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, "ZSF987654")]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4, "ZSF987654")]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5, "ZSF987654")]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel6, "ZSF987654")]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, "ZSF987654")]
+        [InlineData(ProgTypes.ApprenticeshipStandard, "ZSF987654")]
         public void ConditionMet_True(int? progTypeNullable, string learnAimRef)
         {
             HashSet<int?> englishPrescribedIDs = new HashSet<int?>() { 1, 2 };
@@ -231,7 +231,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        ProgTypeNullable = TypeOfLearningProgramme.HigherApprenticeshipLevel4,
+                        ProgTypeNullable = ProgTypes.HigherApprenticeshipLevel4,
                         LearningDeliveryFAMs = testLearningDeliveryFAMs,
                         LearningDeliveryHEEntity = null
                     }
@@ -289,7 +289,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        ProgTypeNullable = TypeOfLearningProgramme.HigherApprenticeshipLevel4,
+                        ProgTypeNullable = ProgTypes.HigherApprenticeshipLevel4,
                         LearningDeliveryFAMs = testLearningDeliveryFAMs,
                         LearningDeliveryHEEntity = testLearningDeliveryHE
                     }
@@ -348,9 +348,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.ProgType, TypeOfLearningProgramme.HigherApprenticeshipLevel4)).Verifiable();
+            validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.ProgType, ProgTypes.HigherApprenticeshipLevel4)).Verifiable();
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(TypeOfLearningProgramme.HigherApprenticeshipLevel4);
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(ProgTypes.HigherApprenticeshipLevel4);
 
             validationErrorHandlerMock.Verify();
         }

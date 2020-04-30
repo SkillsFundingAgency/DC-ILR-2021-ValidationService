@@ -1,6 +1,6 @@
 ﻿namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 {
-    public static class TypeOfQualEnt3
+    public static class QualEnt3s
     {
         public const string CertificateOfHigherEducation = "C20";
         public const string HigherNationalCertificateIncludingBTECAndSQAEquivalents = "C30";

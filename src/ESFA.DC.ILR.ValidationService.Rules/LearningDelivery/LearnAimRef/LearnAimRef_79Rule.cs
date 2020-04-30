@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             !IsExcluded(delivery)
-            && delivery.FundModel == TypeOfFunding.AdultSkills
+            && delivery.FundModel == FundModels.AdultSkills
             && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue)
             && HasQualifyingNotionalNVQ(delivery);
 

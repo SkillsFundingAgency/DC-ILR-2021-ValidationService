@@ -104,7 +104,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.AdultSkills;
+            return fundModel == FundModels.AdultSkills;
         }
 
         public bool AgeConditionMet(DateTime learnStartDate, DateTime? dateOfBirth)
@@ -152,7 +152,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsLearningDeliveryExcluded(ILearner learner, ILearningDelivery learningDelivery)
         {
             if (learningDelivery.ProgTypeNullable.HasValue &&
-                learningDelivery.ProgTypeNullable.Value == TypeOfLearningProgramme.Traineeship)
+                learningDelivery.ProgTypeNullable.Value == ProgTypes.Traineeship)
             {
                 return true;
             }
@@ -186,7 +186,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             }
 
             if (_larsDataService.BasicSkillsMatchForLearnAimRefAndStartDate(
-                TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills,
+                LARSBasicSkills.AsEnglishAndMathsBasicSkills,
                 learningDelivery.LearnAimRef,
                 learningDelivery.LearnStartDate))
             {

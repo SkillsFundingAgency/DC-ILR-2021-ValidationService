@@ -56,14 +56,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6, false)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, false)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship, false)]
-        [InlineData(TypeOfLearningProgramme.Traineeship, true)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship, false)]
+        [InlineData(ProgTypes.ApprenticeshipStandard, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel6, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, false)]
+        [InlineData(ProgTypes.IntermediateLevelApprenticeship, false)]
+        [InlineData(ProgTypes.Traineeship, true)]
         public void InTrainingMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -78,10 +78,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfAim.ProgrammeAim, true)]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, false)]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, false)]
-        [InlineData(TypeOfAim.CoreAim16To19ExcludingApprenticeships, false)]
+        [InlineData(AimTypes.ProgrammeAim, true)]
+        [InlineData(AimTypes.AimNotPartOfAProgramme, false)]
+        [InlineData(AimTypes.ComponentAimInAProgramme, false)]
+        [InlineData(AimTypes.CoreAim16To19ExcludingApprenticeships, false)]
         public void IsInAProgrammeMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -178,10 +178,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
+                .Returns(ProgTypes.ApprenticeshipStandard);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -225,7 +225,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             mockDDRule07
-                .Setup(x => x.IsApprenticeship(TypeOfLearningProgramme.ApprenticeshipStandard))
+                .Setup(x => x.IsApprenticeship(ProgTypes.ApprenticeshipStandard))
                 .Returns(true);
 
             var sut = new EmpStat_09Rule(handler.Object, mockDDRule07.Object);
@@ -252,10 +252,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
+                .Returns(ProgTypes.ApprenticeshipStandard);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -282,7 +282,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             mockDDRule07
-                .Setup(x => x.IsApprenticeship(TypeOfLearningProgramme.ApprenticeshipStandard))
+                .Setup(x => x.IsApprenticeship(ProgTypes.ApprenticeshipStandard))
                 .Returns(true);
 
             var sut = new EmpStat_09Rule(handler.Object, mockDDRule07.Object);

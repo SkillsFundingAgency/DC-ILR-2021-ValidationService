@@ -45,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             candidate.LearningDeliveries.NullSafeAny(matchCondition);
 
         public bool IsExternallyFunded(ILearningDelivery delivery) =>
-           delivery.FundModel == TypeOfFunding.NotFundedByESFA;
+           delivery.FundModel == FundModels.NotFundedByESFA;
 
         public bool IsHEFCEFunded(ILearningDeliveryFAM monitor) =>
             Monitoring.Delivery.HigherEducationFundingCouncilEngland.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");

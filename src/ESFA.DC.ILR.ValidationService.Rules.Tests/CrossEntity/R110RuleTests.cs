@@ -39,7 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus()
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
+                EmpStat = EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable
             };
 
             var learnerEmploymentStatuses = new List<ILearnerEmploymentStatus>()
@@ -54,7 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearningDeliveryFAMs = learningDeliveryFams
                     }
                 }
@@ -88,7 +88,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus()
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
+                EmpStat = EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable
             };
 
             var learner = new TestLearner
@@ -98,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearningDeliveryFAMs = learningDeliveryFams
                     }
                 }
@@ -119,7 +119,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var learningDelivery = new TestLearningDelivery()
             {
-                FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017
+                FundModel = FundModels.ApprenticeshipsFrom1May2017
             };
 
             NewRule().IsApprenticeshipProgramme(learningDelivery).Should().BeTrue();
@@ -130,7 +130,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var learningDelivery = new TestLearningDelivery()
             {
-                FundModel = TypeOfFunding.AdultSkills
+                FundModel = FundModels.AdultSkills
             };
 
             NewRule().IsApprenticeshipProgramme(learningDelivery).Should().BeFalse();
@@ -217,7 +217,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus()
             {
-                EmpStat = TypeOfEmploymentStatus.InPaidEmployment
+                EmpStat = EmploymentStatusEmpStats.InPaidEmployment
             };
 
             var learningDeliveryFamDateFrom = new DateTime(2018, 1, 1);
@@ -234,7 +234,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus()
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
+                EmpStat = EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable
             };
 
             var learnerEmploymentStatuses = new List<ILearnerEmploymentStatus>()

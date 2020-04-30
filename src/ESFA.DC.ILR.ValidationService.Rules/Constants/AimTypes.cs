@@ -1,6 +1,6 @@
 ﻿namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 {
-    public static class TypeOfAim
+    public static class AimTypes
     {
         public const int ProgrammeAim = 1;
 

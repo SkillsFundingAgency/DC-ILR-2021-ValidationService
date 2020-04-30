@@ -75,7 +75,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         {
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable,
+                EmpStat = EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable,
                 DateEmpStatApp = new DateTime(2018, 8, 1)
             };
 
@@ -100,7 +100,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus
             {
-                EmpStat = TypeOfEmploymentStatus.InPaidEmployment,
+                EmpStat = EmploymentStatusEmpStats.InPaidEmployment,
                 DateEmpStatApp = new DateTime(2018, 8, 1)
             };
 
@@ -178,7 +178,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable,
+                EmpStat = EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable,
                 DateEmpStatApp = new DateTime(2018, 8, 1)
             };
 
@@ -218,7 +218,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable,
+                EmpStat = EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable,
                 DateEmpStatApp = new DateTime(2018, 8, 1)
             };
 
@@ -258,7 +258,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable,
+                EmpStat = EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable,
                 DateEmpStatApp = new DateTime(2018, 8, 1)
             };
 
@@ -328,7 +328,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable,
+                EmpStat = EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable,
                 DateEmpStatApp = new DateTime(2018, 8, 1)
             };
 
@@ -368,7 +368,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable,
+                EmpStat = EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable,
                 DateEmpStatApp = new DateTime(2018, 8, 1)
             };
 
@@ -422,7 +422,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable,
+                EmpStat = EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable,
                 DateEmpStatApp = new DateTime(2018, 8, 1)
             };
 

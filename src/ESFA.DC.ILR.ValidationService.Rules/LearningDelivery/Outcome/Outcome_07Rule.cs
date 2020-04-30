@@ -39,8 +39,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
 
         public bool LearningDeliveryConditionMet(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.AimType == TypeOfAim.ProgrammeAim
-                    && (learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship)
+            return learningDelivery.AimType == AimTypes.ProgrammeAim
+                    && (learningDelivery.ProgTypeNullable == ProgTypes.Traineeship)
                     && (learningDelivery.OutcomeNullable == OutcomeConstants.PartialAchievement || learningDelivery.OutcomeNullable == OutcomeConstants.NoAchievement);
         }
 

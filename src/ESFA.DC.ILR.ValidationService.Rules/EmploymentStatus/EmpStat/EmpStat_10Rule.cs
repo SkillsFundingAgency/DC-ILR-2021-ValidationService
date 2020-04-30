@@ -64,7 +64,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             var parameters = new List<IErrorMessageParameter>
             {
                 _messageHandler.BuildErrorMessageParameter(MessagePropertyName, learnStartDate),
-                _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, TypeOfAim.References.ESFLearnerStartandAssessment)
+                _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, AimTypes.References.ESFLearnerStartandAssessment)
             };
 
             _messageHandler.Handle(RuleName, learnRefNumber, null, parameters);

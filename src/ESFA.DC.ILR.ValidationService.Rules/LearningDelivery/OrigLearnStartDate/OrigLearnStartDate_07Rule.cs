@@ -57,13 +57,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
 
         public bool FundModelConditionMet(int fundModel, int? progType)
         {
-            return fundModel == TypeOfFunding.OtherAdult
-                || (fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017 && progType.HasValue && progType == TypeOfLearningProgramme.ApprenticeshipStandard);
+            return fundModel == FundModels.OtherAdult
+                || (fundModel == FundModels.ApprenticeshipsFrom1May2017 && progType.HasValue && progType == ProgTypes.ApprenticeshipStandard);
         }
 
         public bool LARSConditionMet(DateTime origLearnStartDate, string learnAimRef)
         {
-            return !_larsDataService.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, TypeOfLARSValidity.Any);
+            return !_larsDataService.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.Any);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? origLearnStartDate)

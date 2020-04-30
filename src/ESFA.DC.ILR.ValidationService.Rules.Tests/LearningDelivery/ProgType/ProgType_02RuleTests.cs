@@ -54,7 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, 2, 1)]
+        [InlineData(AimTypes.AimNotPartOfAProgramme, 2, 1)]
         public void InvalidItemRaisesValidationMessage(int aimType, int aimSeqNumber, int? progType)
         {
             const string LearnRefNumber = "123456789X";
@@ -110,13 +110,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData(TypeOfAim.ProgrammeAim, 1, 2)]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, 2, 3)]
-        [InlineData(TypeOfAim.ProgrammeAim, 3, null)]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, 4, null)]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, 5, null)]
-        [InlineData(TypeOfAim.CoreAim16To19ExcludingApprenticeships, 6, 1)]
-        [InlineData(TypeOfAim.CoreAim16To19ExcludingApprenticeships, 7, null)]
+        [InlineData(AimTypes.ProgrammeAim, 1, 2)]
+        [InlineData(AimTypes.ComponentAimInAProgramme, 2, 3)]
+        [InlineData(AimTypes.ProgrammeAim, 3, null)]
+        [InlineData(AimTypes.ComponentAimInAProgramme, 4, null)]
+        [InlineData(AimTypes.AimNotPartOfAProgramme, 5, null)]
+        [InlineData(AimTypes.CoreAim16To19ExcludingApprenticeships, 6, 1)]
+        [InlineData(AimTypes.CoreAim16To19ExcludingApprenticeships, 7, null)]
         public void ValidItemDoesNotRaiseAValidationMessage(int aimType, int aimSeqNumber, int? progType)
         {
             const string LearnRefNumber = "123456789X";

@@ -65,12 +65,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            return fundModel == FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public bool ProgTypeConditionMet(int? progType)
         {
-            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+            return progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public bool LearnActEndDateNotKnown(DateTime? actEndDate)

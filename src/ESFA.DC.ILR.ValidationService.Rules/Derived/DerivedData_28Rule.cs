@@ -12,10 +12,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
     {
         private readonly HashSet<int> _employmentStatusesTypes = new HashSet<int>
         {
-            TypeOfEmploymentStatus.InPaidEmployment,
-            TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable,
-            TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable,
-            TypeOfEmploymentStatus.NotKnownProvided
+            EmploymentStatusEmpStats.InPaidEmployment,
+            EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable,
+            EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable,
+            EmploymentStatusEmpStats.NotKnownProvided
         };
 
         private readonly HashSet<string> _employmentStatuses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -64,8 +64,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             employmentMonitorings.NullSafeAny(InReceiptOfCredits);
 
         public bool IsNotEmployed(ILearnerEmploymentStatus candidate) =>
-            candidate.EmpStat == TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
-                && candidate.EmpStat == TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable;
+            candidate.EmpStat == EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable
+                && candidate.EmpStat == EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable;
 
         public bool IsNotEmployedWithBenefits(ILearnerEmploymentStatus candidate)
         {
@@ -80,7 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             employmentMonitorings.NullSafeAny(IsWorkingShortHours);
 
         public bool IsEmployed(ILearnerEmploymentStatus candidate) =>
-            candidate.EmpStat == TypeOfEmploymentStatus.InPaidEmployment;
+            candidate.EmpStat == EmploymentStatusEmpStats.InPaidEmployment;
 
         public bool IsEmployedWithSupport(ILearnerEmploymentStatus candidate)
         {
@@ -115,7 +115,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
             var employment = _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(forThisCandidate.LearnerEmploymentStatuses, thisDelivery.LearnStartDate);
 
-            return thisDelivery.FundModel == TypeOfFunding.AdultSkills
+            return thisDelivery.FundModel == FundModels.AdultSkills
                 && employment != null
                 && (IsValidWithEmploymentSupport(employment)
                 || IsNotEmployedWithBenefits(employment)

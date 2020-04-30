@@ -339,15 +339,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(TypeOfLARSValidity.CommunityLearning, 10, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.EuropeanSocialFund, 70, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.EFA16To19, 25, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.AdvancedLearnerLoan, 99, true, false, false, false)]
-        [InlineData(TypeOfLARSValidity.Any, 99, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.OLASSAdult, 35, false, true, false, false)]
-        [InlineData(TypeOfLARSValidity.AdultSkills, 35, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.Apprenticeships, 36, false, false, true, false)]
-        [InlineData(TypeOfLARSValidity.Unemployed, 35, false, false, false, true)]
+        [InlineData(LARSValidities.CommunityLearning, 10, false, false, false, false)]
+        [InlineData(LARSValidities.EuropeanSocialFund, 70, false, false, false, false)]
+        [InlineData(LARSValidities.EFA16To19, 25, false, false, false, false)]
+        [InlineData(LARSValidities.AdvancedLearnerLoan, 99, true, false, false, false)]
+        [InlineData(LARSValidities.Any, 99, false, false, false, false)]
+        [InlineData(LARSValidities.OLASSAdult, 35, false, true, false, false)]
+        [InlineData(LARSValidities.AdultSkills, 35, false, false, false, false)]
+        [InlineData(LARSValidities.Apprenticeships, 36, false, false, true, false)]
+        [InlineData(LARSValidities.Unemployed, 35, false, false, false, true)]
         [InlineData(null, 900, false, false, false, false)]
         public void GetValidityCategory(string expectedCategory, int fundModel, bool famTypeMock, bool ldmFamMock, bool dd07Mock, bool dd11Mock)
         {
@@ -376,15 +376,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(TypeOfLARSValidity.CommunityLearning, 10, false, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.EuropeanSocialFund, 70, false, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.EFA16To19, 25, false, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.AdvancedLearnerLoan, 99, true, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.Any, 99, false, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.OLASSAdult, 35, false, true, false, false, false)]
-        [InlineData(TypeOfLARSValidity.AdultSkills, 35, false, false, false, false, false)]
-        [InlineData(TypeOfLARSValidity.Apprenticeships, 36, false, false, true, false, false)]
-        [InlineData(TypeOfLARSValidity.Unemployed, 35, false, false, false, true, false)]
+        [InlineData(LARSValidities.CommunityLearning, 10, false, false, false, false, false)]
+        [InlineData(LARSValidities.EuropeanSocialFund, 70, false, false, false, false, false)]
+        [InlineData(LARSValidities.EFA16To19, 25, false, false, false, false, false)]
+        [InlineData(LARSValidities.AdvancedLearnerLoan, 99, true, false, false, false, false)]
+        [InlineData(LARSValidities.Any, 99, false, false, false, false, false)]
+        [InlineData(LARSValidities.OLASSAdult, 35, false, true, false, false, false)]
+        [InlineData(LARSValidities.AdultSkills, 35, false, false, false, false, false)]
+        [InlineData(LARSValidities.Apprenticeships, 36, false, false, true, false, false)]
+        [InlineData(LARSValidities.Unemployed, 35, false, false, false, true, false)]
         [InlineData(null, 10, false, false, false, false, true)]
         public void Derive(string expectedCategory, int fundModel, bool famTypeMock, bool ldmFamMock, bool dd07Mock, bool dd11Mock, bool resMock)
         {

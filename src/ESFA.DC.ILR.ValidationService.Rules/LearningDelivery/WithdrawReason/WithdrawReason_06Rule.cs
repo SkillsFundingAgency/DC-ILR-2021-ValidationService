@@ -25,7 +25,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WithdrawReason
            delivery.WithdrawReasonNullable == ReasonForWithdrawal.IndustrialPlacementLearnerWithdrew;
 
         public bool HasQualifyingAim(ILearningDelivery delivery) =>
-            delivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.IndustryPlacement);
+            delivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.IndustryPlacement);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             HasWithdrawn(delivery)

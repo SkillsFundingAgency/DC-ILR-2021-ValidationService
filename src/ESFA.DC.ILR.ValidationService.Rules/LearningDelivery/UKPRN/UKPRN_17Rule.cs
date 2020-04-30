@@ -47,10 +47,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.Age16To19ExcludingApprenticeships;
+            theDelivery.FundModel == FundModels.Age16To19ExcludingApprenticeships;
 
         public bool IsTraineeship(ILearningDelivery theDelivery) =>
-            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
+            theDelivery.ProgTypeNullable == ProgTypes.Traineeship;
 
         public bool IsESFAAdultFunding(ILearningDelivery theDelivery) =>
              _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(

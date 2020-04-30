@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FUNDLEV
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         LearnAimRef = "50023408",
                         LearningDeliveryHEEntity = new TestLearningDeliveryHE()
                             {
@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FUNDLEV
                     },
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.CommunityLearning,
+                        FundModel = FundModels.CommunityLearning,
                         LearnAimRef = "50023409",
                         LearningDeliveryHEEntity = new TestLearningDeliveryHE()
                             {
@@ -106,7 +106,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FUNDLEV
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         LearnAimRef = "50023408",
                         LearningDeliveryHEEntity = new TestLearningDeliveryHE()
                             {
@@ -115,7 +115,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.FUNDLEV
                     },
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.CommunityLearning,
+                        FundModel = FundModels.CommunityLearning,
                         LearnAimRef = "50023409",
                         LearningDeliveryHEEntity = new TestLearningDeliveryHE()
                             {

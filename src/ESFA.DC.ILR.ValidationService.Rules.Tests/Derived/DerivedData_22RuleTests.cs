@@ -45,12 +45,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.ESFLearnerStartandAssessment, CompletionState.HasCompleted, true)]
-        [InlineData(TypeOfAim.References.ESFLearnerStartandAssessment, CompletionState.HasTemporarilyWithdrawn, false)]
-        [InlineData(TypeOfAim.References.ESFLearnerStartandAssessment, CompletionState.HasWithdrawn, false)]
-        [InlineData(TypeOfAim.References.ESFLearnerStartandAssessment, CompletionState.IsOngoing, false)]
-        [InlineData(TypeOfAim.References.IndustryPlacement, CompletionState.HasCompleted, false)]
-        [InlineData(TypeOfAim.References.WorkExperience, CompletionState.HasCompleted, false)]
+        [InlineData(AimTypes.References.ESFLearnerStartandAssessment, CompletionState.HasCompleted, true)]
+        [InlineData(AimTypes.References.ESFLearnerStartandAssessment, CompletionState.HasTemporarilyWithdrawn, false)]
+        [InlineData(AimTypes.References.ESFLearnerStartandAssessment, CompletionState.HasWithdrawn, false)]
+        [InlineData(AimTypes.References.ESFLearnerStartandAssessment, CompletionState.IsOngoing, false)]
+        [InlineData(AimTypes.References.IndustryPlacement, CompletionState.HasCompleted, false)]
+        [InlineData(AimTypes.References.WorkExperience, CompletionState.HasCompleted, false)]
         public void IsNotEmployedMeetsExpectation(string aimRef, int completionState, bool expectation)
         {
             var sut = NewRule();
@@ -90,7 +90,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var candidate = new Mock<ILearningDelivery>();
             candidate
                 .SetupGet(x => x.LearnAimRef)
-                .Returns(TypeOfAim.References.ESFLearnerStartandAssessment);
+                .Returns(AimTypes.References.ESFLearnerStartandAssessment);
             candidate
                 .SetupGet(x => x.CompStatus)
                 .Returns(CompletionState.HasCompleted);
@@ -108,7 +108,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
                 del
                     .SetupGet(x => x.LearnAimRef)
-                    .Returns(TypeOfAim.References.ESFLearnerStartandAssessment);
+                    .Returns(AimTypes.References.ESFLearnerStartandAssessment);
                 del
                     .SetupGet(x => x.CompStatus)
                     .Returns(CompletionState.HasCompleted);

@@ -57,7 +57,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 LearningDeliveryFAMCodeConstants.LDM_ProcuredAdultEducationBudget);
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.AdultSkills;
+            theDelivery.FundModel == FundModels.AdultSkills;
 
         public bool IsESFAAdultFunding(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(

@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     {
                         ConRefNumber = testConRefNumber,
                         LearnStartDate = new DateTime(2017, 9, 1),
-                        LearnAimRef = TypeOfAim.References.ESFLearnerStartandAssessment,
+                        LearnAimRef = AimTypes.References.ESFLearnerStartandAssessment,
                         CompStatus = CompletionState.HasCompleted
                     }
                 }
@@ -89,7 +89,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     {
                         ConRefNumber = testConRefNumber,
                         LearnStartDate = new DateTime(2017, 9, 1),
-                        LearnAimRef = TypeOfAim.References.ESFLearnerStartandAssessment,
+                        LearnAimRef = AimTypes.References.ESFLearnerStartandAssessment,
                         CompStatus = CompletionState.HasCompleted
                     }
                 }
@@ -118,7 +118,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     {
                         ConRefNumber = testConRefNumber,
                         LearnStartDate = new DateTime(2017, 9, 1),
-                        LearnAimRef = TypeOfAim.References.WorkExperience,
+                        LearnAimRef = AimTypes.References.WorkExperience,
                         CompStatus = CompletionState.HasCompleted
                     }
                 }
@@ -147,7 +147,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     {
                         ConRefNumber = testConRefNumber,
                         LearnStartDate = new DateTime(2017, 9, 1),
-                        LearnAimRef = TypeOfAim.References.ESFLearnerStartandAssessment,
+                        LearnAimRef = AimTypes.References.ESFLearnerStartandAssessment,
                         CompStatus = CompletionState.IsOngoing
                     }
                 }
@@ -171,7 +171,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     {
                         ConRefNumber = testConRefNumber,
                         LearnStartDate = new DateTime(2017, 9, 1),
-                        LearnAimRef = TypeOfAim.References.ESFLearnerStartandAssessment,
+                        LearnAimRef = AimTypes.References.ESFLearnerStartandAssessment,
                         CompStatus = CompletionState.HasCompleted
                     }
                 }

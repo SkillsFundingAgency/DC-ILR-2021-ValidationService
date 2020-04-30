@@ -45,13 +45,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 && HasStandardCode(theDelivery);
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.OtherAdult;
+            theDelivery.FundModel == FundModels.OtherAdult;
 
         public bool IsProgrammeAim(ILearningDelivery theDelivery) =>
-            theDelivery.AimType == TypeOfAim.ProgrammeAim;
+            theDelivery.AimType == AimTypes.ProgrammeAim;
 
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
-            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            theDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
 
         public bool HasStandardCode(ILearningDelivery theDelivery) =>
             theDelivery.StdCodeNullable.HasValue;
@@ -86,12 +86,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool IsPaymentRequest(IAppFinRecord theRecord) =>
             theRecord.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.PaymentRecord)
-            && (theRecord.AFinCode == TypeOfPMRAFin.TrainingPayment
-            || theRecord.AFinCode == TypeOfPMRAFin.AssessmentPayment);
+            && (theRecord.AFinCode == ApprenticeshipFinancialRecord.PaymentRecordCodes.TrainingPayment
+            || theRecord.AFinCode == ApprenticeshipFinancialRecord.PaymentRecordCodes.AssessmentPayment);
 
         public bool IsProviderReimbursement(IAppFinRecord theRecord) =>
             theRecord.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.PaymentRecord)
-            && theRecord.AFinCode == TypeOfPMRAFin.EmployerPaymentReimbursedByProvider;
+            && theRecord.AFinCode == ApprenticeshipFinancialRecord.PaymentRecordCodes.EmployerPaymentReimbursedByProvider;
 
         public IReadOnlyCollection<ILearningDelivery> GetDeliveriesMatching(IReadOnlyCollection<ILearningDelivery> theDeliveries, Func<ILearningDelivery, bool> hasMatchingStdCode) =>
             theDeliveries
@@ -123,8 +123,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(string learnRefNumber, int stdCode) => new[]
         {
             BuildErrorMessageParameter(PropertyNameConstants.LearnRefNumber, learnRefNumber),
-            BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.ProgrammeAim),
-            BuildErrorMessageParameter(PropertyNameConstants.ProgType, TypeOfLearningProgramme.ApprenticeshipStandard),
+            BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.ProgrammeAim),
+            BuildErrorMessageParameter(PropertyNameConstants.ProgType, ProgTypes.ApprenticeshipStandard),
             BuildErrorMessageParameter(PropertyNameConstants.StdCode, stdCode),
         };
     }

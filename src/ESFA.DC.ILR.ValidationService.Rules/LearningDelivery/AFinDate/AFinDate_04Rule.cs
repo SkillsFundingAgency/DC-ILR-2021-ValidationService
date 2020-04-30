@@ -52,9 +52,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
             && ApprenticeshipFrameworkProgrammeFilter(learningDelivery.ProgTypeNullable, learningDelivery.AimType)
             && LearnActEndDateIsKnown(learningDelivery.LearnActEndDateNullable);
 
-        public bool Exclusion(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        public bool Exclusion(int? progType) => progType == ProgTypes.ApprenticeshipStandard;
 
-        public bool ApprenticeshipFrameworkProgrammeFilter(int? progType, int aimType) => _dd07.IsApprenticeship(progType) && aimType == TypeOfAim.ProgrammeAim;
+        public bool ApprenticeshipFrameworkProgrammeFilter(int? progType, int aimType) => _dd07.IsApprenticeship(progType) && aimType == AimTypes.ProgrammeAim;
 
         public bool LearnActEndDateIsKnown(DateTime? learnActEndDate) => learnActEndDate.HasValue;
 

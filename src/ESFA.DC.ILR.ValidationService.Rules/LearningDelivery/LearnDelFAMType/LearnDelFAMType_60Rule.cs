@@ -104,7 +104,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool IsBasicSkillsLearner(ILARSAnnualValue monitor) =>
             monitor.BasicSkillsType.HasValue
-            && TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills.Contains(monitor.BasicSkillsType.Value);
+            && LARSBasicSkills.AsEnglishAndMathsBasicSkills.Contains(monitor.BasicSkillsType.Value);
 
         public bool IsSteelWorkerRedundancyTraining(ILearningDeliveryFAM monitor) =>
             Monitoring.Delivery.SteelIndustriesRedundancyTraining.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
@@ -119,7 +119,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, LastViableDate);
 
         public bool IsAdultFunding(ILearningDelivery delivery) =>
-            delivery.FundModel == TypeOfFunding.AdultSkills;
+            delivery.FundModel == FundModels.AdultSkills;
 
         public bool IsTargetAgeGroup(ILearner learner, ILearningDelivery delivery) =>
             learner.DateOfBirthNullable.HasValue

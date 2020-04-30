@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .NullSafeWhere(x => x.ProgTypeNullable == TypeOfLearningProgramme.Traineeship && x.AimType == TypeOfAim.ProgrammeAim)
+                .NullSafeWhere(x => x.ProgTypeNullable == ProgTypes.Traineeship && x.AimType == AimTypes.ProgrammeAim)
                 .ForEach(x =>
                 {
                     var failedValidation = !ConditionMet(x);
@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
             return thisDelivery != null && thisDelivery.LearnActEndDateNullable.HasValue
-                ? TypeOfLearningProgramme.WithinMaxmimumTrainingDuration(thisDelivery.LearnStartDate, thisDelivery.LearnActEndDateNullable.Value)
+                ? ProgTypes.WithinMaxmimumTrainingDuration(thisDelivery.LearnStartDate, thisDelivery.LearnActEndDateNullable.Value)
                 : true;
         }
 

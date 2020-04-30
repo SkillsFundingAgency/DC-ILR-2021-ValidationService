@@ -29,14 +29,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         public DateTime LastInviableDate => new DateTime(2014, 07, 31);
 
         public bool InTraining(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
+            delivery.ProgTypeNullable == ProgTypes.Traineeship;
 
         public bool IsViableStart(ILearningDelivery delivery) =>
             delivery.LearnStartDate > LastInviableDate;
 
         public bool HasQualifyingFunding(ILearningDelivery delivery) =>
-           delivery.FundModel == TypeOfFunding.Age16To19ExcludingApprenticeships
-           || delivery.FundModel == TypeOfFunding.Other16To19;
+           delivery.FundModel == FundModels.Age16To19ExcludingApprenticeships
+           || delivery.FundModel == FundModels.Other16To19;
 
         public bool HasAQualifyingEmploymentStatus(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> usingEmployments) =>
             usingEmployments
@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         {
             var parameters = new List<IErrorMessageParameter>
             {
-                _messageHandler.BuildErrorMessageParameter(MessagePropertyName, TypeOfEmploymentStatus.NotKnownProvided),
+                _messageHandler.BuildErrorMessageParameter(MessagePropertyName, EmploymentStatusEmpStats.NotKnownProvided),
                 _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, thisDelivery.LearnStartDate)
             };
 

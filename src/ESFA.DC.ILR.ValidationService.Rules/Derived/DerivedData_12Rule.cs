@@ -33,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         private bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.AdultSkills;
+            return fundModel == FundModels.AdultSkills;
         }
 
         private bool EmploymentStatusMonitoringConditionMet(IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses, ILearningDelivery learningDelivery)

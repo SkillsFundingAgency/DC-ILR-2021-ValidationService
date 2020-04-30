@@ -22,15 +22,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.ESFLearnerStartandAssessment, false)]
-        [InlineData(TypeOfAim.References.IndustryPlacement, false)]
-        [InlineData(TypeOfAim.References.SupportedInternship16To19, false)]
-        [InlineData(TypeOfAim.References.WorkExperience, true)]
-        [InlineData(TypeOfAim.References.WorkPlacement0To49Hours, false)]
-        [InlineData(TypeOfAim.References.WorkPlacement100To199Hours, false)]
-        [InlineData(TypeOfAim.References.WorkPlacement200To499Hours, false)]
-        [InlineData(TypeOfAim.References.WorkPlacement500PlusHours, false)]
-        [InlineData(TypeOfAim.References.WorkPlacement50To99Hours, false)]
+        [InlineData(AimTypes.References.ESFLearnerStartandAssessment, false)]
+        [InlineData(AimTypes.References.IndustryPlacement, false)]
+        [InlineData(AimTypes.References.SupportedInternship16To19, false)]
+        [InlineData(AimTypes.References.WorkExperience, true)]
+        [InlineData(AimTypes.References.WorkPlacement0To49Hours, false)]
+        [InlineData(AimTypes.References.WorkPlacement100To199Hours, false)]
+        [InlineData(AimTypes.References.WorkPlacement200To499Hours, false)]
+        [InlineData(AimTypes.References.WorkPlacement500PlusHours, false)]
+        [InlineData(AimTypes.References.WorkPlacement50To99Hours, false)]
         public void IsWorkExperienceMeetsExpectation(string candidate, bool expectation)
         {
             var sut = NewRule();
@@ -45,10 +45,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship)]
+        [InlineData(ProgTypes.ApprenticeshipStandard)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5)]
         public void InvalidItemRaisesValidationMessage(int candidate)
         {
             const string learnRefNumber = "123456789X";
@@ -56,13 +56,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
                 .Returns(candidate);
             mockDelivery
                 .SetupGet(y => y.LearnAimRef)
-                .Returns(TypeOfAim.References.WorkExperience);
+                .Returns(AimTypes.References.WorkExperience);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -82,10 +82,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.BuildErrorMessageParameter("ProgType", candidate))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnAimRef", TypeOfAim.References.WorkExperience))
+                .Setup(x => x.BuildErrorMessageParameter("LearnAimRef", AimTypes.References.WorkExperience))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
-                .Setup(x => x.BuildErrorMessageParameter("FundModel", TypeOfFunding.AdultSkills))
+                .Setup(x => x.BuildErrorMessageParameter("FundModel", FundModels.AdultSkills))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);

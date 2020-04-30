@@ -62,11 +62,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 .Where(g => g.Count() > 1);
         }
 
-        public bool Exclusion(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        public bool Exclusion(int? progType) => progType == ProgTypes.ApprenticeshipStandard;
 
-        public bool FundModelFilter(int fundModel) => fundModel == TypeOfFunding.AdultSkills || fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+        public bool FundModelFilter(int fundModel) => fundModel == FundModels.AdultSkills || fundModel == FundModels.ApprenticeshipsFrom1May2017;
 
-        public bool AimTypeFilter(int aimType) => aimType == TypeOfAim.ComponentAimInAProgramme;
+        public bool AimTypeFilter(int aimType) => aimType == AimTypes.ComponentAimInAProgramme;
 
         public bool CompStatusFilter(int compStatus) => compStatus == CompletionState.HasCompleted;
 
@@ -74,8 +74,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool FrameworkComponentTypeFilter(string learnAimRef) =>
              _larsData.GetFrameworkAimsFor(learnAimRef)?.Any(a =>
-                    a.FrameworkComponentType == TypeOfLARSCommonComponent.Apprenticeship.CompetencyElement
-                    || a.FrameworkComponentType == TypeOfLARSCommonComponent.Apprenticeship.MainAimOrTechnicalCertificate)
+                    a.FrameworkComponentType == LARSCommonComponents.Apprenticeship.CompetencyElement
+                    || a.FrameworkComponentType == LARSCommonComponents.Apprenticeship.MainAimOrTechnicalCertificate)
                 ?? false;
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>

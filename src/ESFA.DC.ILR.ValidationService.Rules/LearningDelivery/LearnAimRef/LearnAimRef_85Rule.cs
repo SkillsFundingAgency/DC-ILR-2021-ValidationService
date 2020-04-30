@@ -15,15 +15,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public const string Name = RuleNameConstants.LearnAimRef_85;
         private readonly HashSet<int> _attainmentLevels = new HashSet<int>
         {
-            TypeOfPriorAttainment.FullLevel3,
-            TypeOfPriorAttainment.Level4Expired20130731,
-            TypeOfPriorAttainment.Level5AndAboveExpired20130731,
-            TypeOfPriorAttainment.Level4,
-            TypeOfPriorAttainment.Level5,
-            TypeOfPriorAttainment.Level6,
-            TypeOfPriorAttainment.Level7AndAbove,
-            TypeOfPriorAttainment.NotKnown,
-            TypeOfPriorAttainment.OtherLevelNotKnown
+            PriorAttainments.FullLevel3,
+            PriorAttainments.Level4Expired20130731,
+            PriorAttainments.Level5AndAboveExpired20130731,
+            PriorAttainments.Level4,
+            PriorAttainments.Level5,
+            PriorAttainments.Level6,
+            PriorAttainments.Level7AndAbove,
+            PriorAttainments.NotKnown,
+            PriorAttainments.OtherLevelNotKnown
         };
 
         private readonly IValidationErrorHandler _messageHandler;
@@ -62,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         }
 
         public bool PassesRestrictions(ILearningDelivery delivery) =>
-            delivery.FundModel == TypeOfFunding.AdultSkills
+            delivery.FundModel == FundModels.AdultSkills
             && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue);
 
         public bool IsExcluded(ILearningDelivery delivery) =>

@@ -47,26 +47,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                     .Returns(contractCandidates.ElementAt(i));
                 mockDelivery
                     .SetupGet(x => x.LearnAimRef)
-                    .Returns(TypeOfAim.References.ESFLearnerStartandAssessment);
+                    .Returns(AimTypes.References.ESFLearnerStartandAssessment);
                 mockDelivery
                     .SetupGet(x => x.CompStatus)
                     .Returns(CompletionState.HasCompleted);
                 mockDelivery
                     .SetupGet(x => x.FundModel)
-                    .Returns(TypeOfFunding.EuropeanSocialFund);
+                    .Returns(FundModels.EuropeanSocialFund);
                 deliveries.Add(mockDelivery.Object);
             }
 
             var mockItem = new Mock<ILearningDelivery>();
             mockItem
                 .SetupGet(x => x.LearnAimRef)
-                .Returns(TypeOfAim.References.ESFLearnerStartandAssessment);
+                .Returns(AimTypes.References.ESFLearnerStartandAssessment);
             mockItem
                 .SetupGet(x => x.CompStatus)
                 .Returns(CompletionState.HasCompleted);
             mockItem
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.EuropeanSocialFund);
+                .Returns(FundModels.EuropeanSocialFund);
             mockItem
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(testDate);
@@ -313,13 +313,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockItem = new Mock<ILearningDelivery>(MockBehavior.Strict);
             mockItem
                 .SetupGet(x => x.LearnAimRef)
-                .Returns(TypeOfAim.References.ESFLearnerStartandAssessment);
+                .Returns(AimTypes.References.ESFLearnerStartandAssessment);
             mockItem
                 .SetupGet(x => x.CompStatus)
                 .Returns(CompletionState.HasCompleted);
             mockItem
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.EuropeanSocialFund);
+                .Returns(FundModels.EuropeanSocialFund);
             mockItem
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(startDate);

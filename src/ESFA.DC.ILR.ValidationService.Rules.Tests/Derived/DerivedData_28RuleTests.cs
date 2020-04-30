@@ -73,10 +73,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, true)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, true)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.InPaidEmployment, true)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.NotKnownProvided, true)]
         public void HasValidEmploymentStatusMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -215,10 +215,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, false)]
-        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, true)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, false)]
-        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, false)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable, false)]
+        [InlineData(EmploymentStatusEmpStats.InPaidEmployment, true)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable, false)]
+        [InlineData(EmploymentStatusEmpStats.NotKnownProvided, false)]
         public void IsEmployedMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();

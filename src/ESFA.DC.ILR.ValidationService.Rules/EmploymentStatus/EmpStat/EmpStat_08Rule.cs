@@ -16,9 +16,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         private readonly DateTime _augustFirst2014 = new DateTime(2014, 08, 01);
         private readonly IEnumerable<int> _fundModels = new HashSet<int>()
         {
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.OtherAdult,
-            TypeOfFunding.NotFundedByESFA
+            FundModels.AdultSkills,
+            FundModels.OtherAdult,
+            FundModels.NotFundedByESFA
         };
 
         private readonly IDerivedData_07Rule _dd07;
@@ -103,7 +103,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
                 learnStartDate);
 
         public bool DD07ConditionMet(int? progType) => !progType.HasValue
-                || (progType != TypeOfLearningProgramme.Traineeship
+                || (progType != ProgTypes.Traineeship
                     && !_dd07.IsApprenticeship(progType));
 
         public bool LearningDeliveryFAMsConditionMet(
@@ -113,7 +113,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
                 learningDeliveryFAMs,
                 LearningDeliveryFAMTypeConstants.LDM,
                 LearningDeliveryFAMCodeConstants.LDM_OLASS)
-                || (fundModel == TypeOfFunding.NotFundedByESFA
+                || (fundModel == FundModels.NotFundedByESFA
                     && _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
                     learningDeliveryFAMs,
                     LearningDeliveryFAMTypeConstants.SOF,

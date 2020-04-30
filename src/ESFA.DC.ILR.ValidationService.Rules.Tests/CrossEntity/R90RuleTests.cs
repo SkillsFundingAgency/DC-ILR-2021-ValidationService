@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery()
                 {
                     AimSeqNumber = 1,
-                    AimType = TypeOfAim.ComponentAimInAProgramme,
+                    AimType = AimTypes.ComponentAimInAProgramme,
                     LearnActEndDateNullable = null,
                     ProgTypeNullable = progType,
                     FworkCodeNullable = frameworkCode,
@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery()
                 {
                     AimSeqNumber = 2,
-                    AimType = TypeOfAim.ComponentAimInAProgramme,
+                    AimType = AimTypes.ComponentAimInAProgramme,
                     ProgTypeNullable = 7,
                     FworkCodeNullable = 8,
                     PwayCodeNullable = 5,
@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var mainAim = new TestLearningDelivery()
             {
                 AimSeqNumber = 3,
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 ProgTypeNullable = progType,
                 FworkCodeNullable = frameworkCode,
                 PwayCodeNullable = pathwayCode,
@@ -103,7 +103,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery()
                 {
                     AimSeqNumber = 1,
-                    AimType = TypeOfAim.ComponentAimInAProgramme,
+                    AimType = AimTypes.ComponentAimInAProgramme,
                     LearnActEndDateNullable = null,
                     ProgTypeNullable = progType,
                     FworkCodeNullable = frameworkCode,
@@ -113,7 +113,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery()
                 {
                     AimSeqNumber = 2,
-                    AimType = TypeOfAim.ComponentAimInAProgramme,
+                    AimType = AimTypes.ComponentAimInAProgramme,
                     ProgTypeNullable = 7,
                     FworkCodeNullable = 8,
                     PwayCodeNullable = 5,
@@ -124,7 +124,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var mainAim = new TestLearningDelivery()
             {
                 AimSeqNumber = 3,
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 ProgTypeNullable = 99,
                 FworkCodeNullable = 100,
                 PwayCodeNullable = 200,
@@ -147,7 +147,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery()
                 {
                     AimSeqNumber = 2,
-                    AimType = TypeOfAim.ComponentAimInAProgramme,
+                    AimType = AimTypes.ComponentAimInAProgramme,
                     ProgTypeNullable = 99,
                     FworkCodeNullable = 100,
                     PwayCodeNullable = 200,
@@ -160,7 +160,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var mainAim = new TestLearningDelivery()
             {
                 AimSeqNumber = 3,
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 ProgTypeNullable = 99,
                 FworkCodeNullable = 100,
                 PwayCodeNullable = 200,
@@ -182,7 +182,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery()
                 {
                     AimSeqNumber = 2,
-                    AimType = TypeOfAim.ProgrammeAim,
+                    AimType = AimTypes.ProgrammeAim,
                     ProgTypeNullable = 99,
                     FworkCodeNullable = 100,
                     PwayCodeNullable = 200,
@@ -194,7 +194,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var mainAim = new TestLearningDelivery()
             {
                 AimSeqNumber = 3,
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 ProgTypeNullable = 99,
                 FworkCodeNullable = 100,
                 PwayCodeNullable = 200,
@@ -232,7 +232,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 2,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         ProgTypeNullable = 99,
                         FworkCodeNullable = 100,
                         PwayCodeNullable = 200,
@@ -243,7 +243,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 2,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         ProgTypeNullable = 99,
                         FworkCodeNullable = 100,
                         PwayCodeNullable = 200,
@@ -253,7 +253,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 2,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = 99,
                         FworkCodeNullable = 100,
                         PwayCodeNullable = 200,
@@ -278,7 +278,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery()
                 {
                     AimSeqNumber = 2,
-                    AimType = TypeOfAim.ProgrammeAim,
+                    AimType = AimTypes.ProgrammeAim,
                     ProgTypeNullable = 99,
                     FworkCodeNullable = 100,
                     PwayCodeNullable = 200,
@@ -288,7 +288,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 new TestLearningDelivery()
                 {
                     AimSeqNumber = 2,
-                    AimType = TypeOfAim.ComponentAimInAProgramme,
+                    AimType = AimTypes.ComponentAimInAProgramme,
                     ProgTypeNullable = 99,
                     FworkCodeNullable = 100,
                     PwayCodeNullable = 200,
@@ -315,7 +315,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 2,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         ProgTypeNullable = 99,
                         FworkCodeNullable = 100,
                         PwayCodeNullable = 200,
@@ -326,7 +326,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 2,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         StdCodeNullable = 300,
                     }
                 }
@@ -348,7 +348,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 2,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         ProgTypeNullable = 99,
                         FworkCodeNullable = 100,
                         PwayCodeNullable = 200,
@@ -359,7 +359,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         AimSeqNumber = 3,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = 99,
                         FworkCodeNullable = 100,
                         PwayCodeNullable = 200,
@@ -379,7 +379,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.ProgrammeAim)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.ProgrammeAim)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, "10/10/2018")).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, "aimRef")).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.ProgType, 1)).Verifiable();
@@ -389,7 +389,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var learningDelivery = new TestLearningDelivery()
             {
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 LearnActEndDateNullable = new DateTime(2018, 10, 10),
                 LearnAimRef = "aimRef",
                 ProgTypeNullable = 1,

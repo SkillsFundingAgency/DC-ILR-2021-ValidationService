@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.Traineeship);
+                .Returns(ProgTypes.Traineeship);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
@@ -93,10 +93,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.AimNotPartOfAProgramme);
+                .Returns(AimTypes.AimNotPartOfAProgramme);
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.Traineeship);
+                .Returns(ProgTypes.Traineeship);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
@@ -122,10 +122,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.Traineeship);
+                .Returns(ProgTypes.Traineeship);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
@@ -236,10 +236,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.Traineeship);
+                .Returns(ProgTypes.Traineeship);
             mockDelivery
                 .SetupGet(x => x.AimSeqNumber)
                 .Returns(AimSeqNumber);
@@ -265,7 +265,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockStatus
                 .SetupGet(y => y.EmpStat)
-                .Returns(TypeOfEmploymentStatus.InPaidEmployment);
+                .Returns(EmploymentStatusEmpStats.InPaidEmployment);
             mockStatus
                 .SetupGet(y => y.EmploymentStatusMonitorings)
                 .Returns(monitors);
@@ -342,10 +342,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.Traineeship);
+                .Returns(ProgTypes.Traineeship);
             mockDelivery
                 .SetupGet(x => x.AimSeqNumber)
                 .Returns(AimSeqNumber);
@@ -368,7 +368,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockStatus
                 .SetupGet(y => y.EmpStat)
-                .Returns(TypeOfEmploymentStatus.InPaidEmployment);
+                .Returns(EmploymentStatusEmpStats.InPaidEmployment);
             mockStatus
                 .SetupGet(y => y.EmploymentStatusMonitorings)
                 .Returns(monitors);

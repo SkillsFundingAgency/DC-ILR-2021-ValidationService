@@ -27,8 +27,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public ILearningDelivery GetQualifyingdAimOn(IReadOnlyCollection<ILearningDelivery> usingSources) =>
             usingSources
-                .Where(x => x.FundModel == TypeOfFunding.EuropeanSocialFund
-                    && x.LearnAimRef == TypeOfAim.References.ESFLearnerStartandAssessment
+                .Where(x => x.FundModel == FundModels.EuropeanSocialFund
+                    && x.LearnAimRef == AimTypes.References.ESFLearnerStartandAssessment
                     && x.CompStatus == CompletionState.HasCompleted)
                 .OrderByDescending(x => x.LearnStartDate)
                 .FirstOrDefault();

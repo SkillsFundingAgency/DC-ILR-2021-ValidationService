@@ -43,11 +43,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(TypeOfAim.ProgrammeAim, "2018-01-01", TypeOfLearningProgramme.ApprenticeshipStandard, 1, "2018-01-01")]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, "2018-01-10", TypeOfLearningProgramme.ApprenticeshipStandard, 1, "2018-01-01")]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, "2018-01-20", null, null, null)]
-        [InlineData(TypeOfAim.ProgrammeAim, "2019-01-01", TypeOfLearningProgramme.ApprenticeshipStandard, 2, "2019-01-01")]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, "2019-01-10", TypeOfLearningProgramme.ApprenticeshipStandard, 2, "2019-01-01")]
+        [InlineData(AimTypes.ProgrammeAim, "2018-01-01", ProgTypes.ApprenticeshipStandard, 1, "2018-01-01")]
+        [InlineData(AimTypes.ComponentAimInAProgramme, "2018-01-10", ProgTypes.ApprenticeshipStandard, 1, "2018-01-01")]
+        [InlineData(AimTypes.AimNotPartOfAProgramme, "2018-01-20", null, null, null)]
+        [InlineData(AimTypes.ProgrammeAim, "2019-01-01", ProgTypes.ApprenticeshipStandard, 2, "2019-01-01")]
+        [InlineData(AimTypes.ComponentAimInAProgramme, "2019-01-10", ProgTypes.ApprenticeshipStandard, 2, "2019-01-01")]
         public void GetApprenticeshipStandardProgrammeStartDateForMeetsExpectation(int aimType, string learnStartDate, int? progType, int? stdcode, string expectation)
         {
             var delivery = GetTestDelivery(aimType, learnStartDate, progType, stdcode);
@@ -64,11 +64,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         {
             var candidates = new List<ILearningDelivery>();
 
-            candidates.Add(GetTestDelivery(TypeOfAim.ProgrammeAim, "2018-01-01", TypeOfLearningProgramme.ApprenticeshipStandard, 1));
-            candidates.Add(GetTestDelivery(TypeOfAim.ComponentAimInAProgramme, "2018-01-10", TypeOfLearningProgramme.ApprenticeshipStandard, 1));
-            candidates.Add(GetTestDelivery(TypeOfAim.AimNotPartOfAProgramme, "2018-01-20", null, null));
-            candidates.Add(GetTestDelivery(TypeOfAim.ProgrammeAim, "2019-01-01", TypeOfLearningProgramme.ApprenticeshipStandard, 2));
-            candidates.Add(GetTestDelivery(TypeOfAim.ComponentAimInAProgramme, "2019-01-10", TypeOfLearningProgramme.ApprenticeshipStandard, 2));
+            candidates.Add(GetTestDelivery(AimTypes.ProgrammeAim, "2018-01-01", ProgTypes.ApprenticeshipStandard, 1));
+            candidates.Add(GetTestDelivery(AimTypes.ComponentAimInAProgramme, "2018-01-10", ProgTypes.ApprenticeshipStandard, 1));
+            candidates.Add(GetTestDelivery(AimTypes.AimNotPartOfAProgramme, "2018-01-20", null, null));
+            candidates.Add(GetTestDelivery(AimTypes.ProgrammeAim, "2019-01-01", ProgTypes.ApprenticeshipStandard, 2));
+            candidates.Add(GetTestDelivery(AimTypes.ComponentAimInAProgramme, "2019-01-10", ProgTypes.ApprenticeshipStandard, 2));
 
             return candidates;
         }

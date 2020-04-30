@@ -48,7 +48,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TTACCOM
             || !learnerHE.TTACCOMNullable.HasValue;
 
         public bool LearningDeliveryHEConditionMet(ILearningDeliveryHE learningDeliveryHE) =>
-            learningDeliveryHE.MODESTUD == TypeOfMODESTUD.FullTimeAndSandwich;
+            learningDeliveryHE.MODESTUD == MODESTUDs.FullTimeAndSandwich;
 
         public bool LearnStartDateConditionMet(IEnumerable<ILearningDelivery> learningDeliveries) =>
             _dd06.Derive(learningDeliveries) >= _augustFirst2013;
