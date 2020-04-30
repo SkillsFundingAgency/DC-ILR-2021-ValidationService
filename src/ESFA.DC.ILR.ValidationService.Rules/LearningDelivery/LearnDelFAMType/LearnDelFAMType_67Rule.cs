@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             theValue.BasicSkillsType.HasValue;
 
         public bool IsEnglishOrMathBasicSkill(ILARSAnnualValue theValue) =>
-            TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills.Contains(theValue.BasicSkillsType.Value);
+            LARSBasicSkills.AsEnglishAndMathsBasicSkills.Contains(theValue.BasicSkillsType.Value);
 
         public bool IsValueCurrent(ILearningDelivery theDelivery, ILARSAnnualValue theValue) =>
            _larsData.IsCurrentAndNotWithdrawn(theValue, theDelivery.LearnStartDate);

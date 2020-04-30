@@ -11,7 +11,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
     public class R90Rule : AbstractRule, IRule<ILearner>
     {
         private readonly ILARSDataService _larsDataService;
-        private readonly IEnumerable<int> englishOrMathsBasicSkillsTypes = new HashSet<int>(TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
+        private readonly IEnumerable<int> englishOrMathsBasicSkillsTypes = new HashSet<int>(LARSBasicSkills.AsEnglishAndMathsBasicSkills);
 
         public R90Rule(IValidationErrorHandler validationErrorHandler, ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.R90)

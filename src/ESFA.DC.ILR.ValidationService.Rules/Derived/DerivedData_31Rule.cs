@@ -9,7 +9,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
     public class DerivedData_31Rule : IDerivedData_31Rule
     {
-        private readonly IEnumerable<int> _englishOrMathsBasicSkillsTypes = new HashSet<int>(TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
+        private readonly IEnumerable<int> _englishOrMathsBasicSkillsTypes = new HashSet<int>(LARSBasicSkills.AsEnglishAndMathsBasicSkills);
 
         private readonly ILARSDataService _larsDataService;
 

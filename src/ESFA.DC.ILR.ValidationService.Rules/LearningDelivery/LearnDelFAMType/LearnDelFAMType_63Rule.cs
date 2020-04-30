@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_63Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly HashSet<int> _basicSkillsList = new HashSet<int>(TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills);
+        private readonly HashSet<int> _basicSkillsList = new HashSet<int>(LARSBasicSkills.AsEnglishAndMathsBasicSkills);
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly ILARSDataService _larsData;
 

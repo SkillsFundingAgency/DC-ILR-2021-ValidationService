@@ -27,14 +27,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         private readonly HashSet<int?> _componentTypes = new HashSet<int?> { 1, 2, 3 };
         private readonly IEnumerable<int> _basicSkillTypes = new HashSet<int>
         {
-            TypeOfLARSBasicSkill.NotApplicable,
-            TypeOfLARSBasicSkill.Unknown,
-            TypeOfLARSBasicSkill.GCSE_EnglishLanguage,
-            TypeOfLARSBasicSkill.GCSE_Mathematics,
-            TypeOfLARSBasicSkill.FunctionalSkillsMathematics,
-            TypeOfLARSBasicSkill.FunctionalSkillsEnglish,
-            TypeOfLARSBasicSkill.InternationalGCSEEnglishLanguage,
-            TypeOfLARSBasicSkill.InternationalGCSEMathematics
+            LARSBasicSkills.NotApplicable,
+            LARSBasicSkills.Unknown,
+            LARSBasicSkills.GCSE_EnglishLanguage,
+            LARSBasicSkills.GCSE_Mathematics,
+            LARSBasicSkills.FunctionalSkillsMathematics,
+            LARSBasicSkills.FunctionalSkillsEnglish,
+            LARSBasicSkills.InternationalGCSEEnglishLanguage,
+            LARSBasicSkills.InternationalGCSEMathematics
         };
 
         public ProgType_12Rule(
