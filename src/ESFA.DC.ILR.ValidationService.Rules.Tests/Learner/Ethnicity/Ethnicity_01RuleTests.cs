@@ -41,12 +41,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.Ethnicity
         {
             var testLearner = new TestLearner()
             {
-                Ethnicity = TypeOfEthnicity.English_Welsh_Scottish_Northern_Irish_British
+                Ethnicity = 1
             };
 
             var provideLookupDetailsMockup = new Mock<IProvideLookupDetails>();
 
-            provideLookupDetailsMockup.Setup(p => p.Contains(TypeOfIntegerCodedLookup.Ethnicity, TypeOfEthnicity.English_Welsh_Scottish_Northern_Irish_British)).Returns(true);
+            provideLookupDetailsMockup.Setup(p => p.Contains(TypeOfIntegerCodedLookup.Ethnicity, 1)).Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
