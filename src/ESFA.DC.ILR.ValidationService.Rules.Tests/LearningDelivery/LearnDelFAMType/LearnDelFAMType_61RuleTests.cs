@@ -722,7 +722,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockLearner = new Mock<ILearner>();
             mockLearner
                 .SetupGet(x => x.PriorAttainNullable)
-                .Returns(TypeOfPriorAttainment.FullLevel2);
+                .Returns(PriorAttainments.FullLevel2);
             mockLearner
                 .SetupGet(x => x.LearnRefNumber)
                 .Returns(LearnRefNumber);
@@ -910,7 +910,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockLearner = new Mock<ILearner>();
             mockLearner
                 .SetupGet(x => x.PriorAttainNullable)
-                .Returns(TypeOfPriorAttainment.FullLevel3);
+                .Returns(PriorAttainments.FullLevel3);
             mockLearner
                 .SetupGet(x => x.LearnRefNumber)
                 .Returns(LearnRefNumber);

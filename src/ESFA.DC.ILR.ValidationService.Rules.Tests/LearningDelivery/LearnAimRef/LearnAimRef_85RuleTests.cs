@@ -93,15 +93,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(TypeOfPriorAttainment.FullLevel3)]
-        [InlineData(TypeOfPriorAttainment.Level4)]
-        [InlineData(TypeOfPriorAttainment.Level4Expired20130731)]
-        [InlineData(TypeOfPriorAttainment.Level5)]
-        [InlineData(TypeOfPriorAttainment.Level5AndAboveExpired20130731)]
-        [InlineData(TypeOfPriorAttainment.Level6)]
-        [InlineData(TypeOfPriorAttainment.Level7AndAbove)]
-        [InlineData(TypeOfPriorAttainment.OtherLevelNotKnown)]
-        [InlineData(TypeOfPriorAttainment.NotKnown)]
+        [InlineData(PriorAttainments.FullLevel3)]
+        [InlineData(PriorAttainments.Level4)]
+        [InlineData(PriorAttainments.Level4Expired20130731)]
+        [InlineData(PriorAttainments.Level5)]
+        [InlineData(PriorAttainments.Level5AndAboveExpired20130731)]
+        [InlineData(PriorAttainments.Level6)]
+        [InlineData(PriorAttainments.Level7AndAbove)]
+        [InlineData(PriorAttainments.OtherLevelNotKnown)]
+        [InlineData(PriorAttainments.NotKnown)]
         public void InvalidItemRaisesValidationMessage(int candidate)
         {
             const string learnRefNumber = "123456789X";
@@ -187,15 +187,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(TypeOfPriorAttainment.FullLevel3)]
-        [InlineData(TypeOfPriorAttainment.Level4)]
-        [InlineData(TypeOfPriorAttainment.Level4Expired20130731)]
-        [InlineData(TypeOfPriorAttainment.Level5)]
-        [InlineData(TypeOfPriorAttainment.Level5AndAboveExpired20130731)]
-        [InlineData(TypeOfPriorAttainment.Level6)]
-        [InlineData(TypeOfPriorAttainment.Level7AndAbove)]
-        [InlineData(TypeOfPriorAttainment.OtherLevelNotKnown)]
-        [InlineData(TypeOfPriorAttainment.NotKnown)]
+        [InlineData(PriorAttainments.FullLevel3)]
+        [InlineData(PriorAttainments.Level4)]
+        [InlineData(PriorAttainments.Level4Expired20130731)]
+        [InlineData(PriorAttainments.Level5)]
+        [InlineData(PriorAttainments.Level5AndAboveExpired20130731)]
+        [InlineData(PriorAttainments.Level6)]
+        [InlineData(PriorAttainments.Level7AndAbove)]
+        [InlineData(PriorAttainments.OtherLevelNotKnown)]
+        [InlineData(PriorAttainments.NotKnown)]
         public void ValidItemDoesNotRaiseValidationMessage(int candidate)
         {
             const string learnRefNumber = "123456789X";
