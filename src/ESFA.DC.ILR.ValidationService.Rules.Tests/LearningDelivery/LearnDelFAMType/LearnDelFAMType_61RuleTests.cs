@@ -436,9 +436,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfLARSCategory.LegalEntitlementLevel2, false)]
-        [InlineData(TypeOfLARSCategory.WorkPlacementSFAFunded, true)]
-        [InlineData(TypeOfLARSCategory.WorkPreparationSFATraineeships, true)]
+        [InlineData(LARSCategories.LegalEntitlementLevel2, false)]
+        [InlineData(LARSCategories.WorkPlacementSFAFunded, true)]
+        [InlineData(LARSCategories.WorkPreparationSFATraineeships, true)]
         [InlineData(39, true)]
         [InlineData(23, true)]
         public void IsNotEntitledMeetsExpectation(int candidate, bool expectation)
@@ -753,7 +753,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                .Returns(learnAimRef);
             mockCat
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.LicenseToPractice);
+                .Returns(LARSCategories.LicenseToPractice);
 
             var larsCats = new List<ILARSLearningCategory>
             {
@@ -926,7 +926,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockCat = new Mock<ILARSLearningCategory>();
             mockCat
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.LegalEntitlementLevel2);
+                .Returns(LARSCategories.LegalEntitlementLevel2);
 
             var larsCats = new List<ILARSLearningCategory>
             {

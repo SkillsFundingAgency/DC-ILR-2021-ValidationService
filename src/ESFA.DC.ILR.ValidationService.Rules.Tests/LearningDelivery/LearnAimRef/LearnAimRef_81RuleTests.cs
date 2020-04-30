@@ -32,11 +32,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(TypeOfLARSCategory.LegalEntitlementLevel2, false)]
-        [InlineData(TypeOfLARSCategory.LicenseToPractice, true)]
-        [InlineData(TypeOfLARSCategory.OnlyForLegalEntitlementAtLevel3, false)]
-        [InlineData(TypeOfLARSCategory.WorkPlacementSFAFunded, false)]
-        [InlineData(TypeOfLARSCategory.WorkPreparationSFATraineeships, false)]
+        [InlineData(LARSCategories.LegalEntitlementLevel2, false)]
+        [InlineData(LARSCategories.LicenseToPractice, true)]
+        [InlineData(LARSCategories.OnlyForLegalEntitlementAtLevel3, false)]
+        [InlineData(LARSCategories.WorkPlacementSFAFunded, false)]
+        [InlineData(LARSCategories.WorkPreparationSFATraineeships, false)]
         public void HasDisqualifyingLearningCategoryMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -134,7 +134,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var mockLars = new Mock<ILARSLearningCategory>();
             mockLars
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.LicenseToPractice);
+                .Returns(LARSCategories.LicenseToPractice);
 
             var larsItems = new List<ILARSLearningCategory>();
             larsItems.Add(mockLars.Object);

@@ -525,7 +525,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockCat = new Mock<ILARSLearningCategory>();
             mockCat
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.LegalEntitlementLevel2);
+                .Returns(LARSCategories.LegalEntitlementLevel2);
 
             var larsCats = new List<ILARSLearningCategory>();
             larsCats.Add(mockCat.Object);
@@ -681,7 +681,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockCat = new Mock<ILARSLearningCategory>();
             mockCat
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.LegalEntitlementLevel2);
+                .Returns(LARSCategories.LegalEntitlementLevel2);
 
             var larsCats = new List<ILARSLearningCategory>();
             larsCats.Add(mockCat.Object);

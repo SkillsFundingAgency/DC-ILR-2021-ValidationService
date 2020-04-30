@@ -579,7 +579,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                .Returns(learnAimRef);
             mockCat
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.LicenseToPractice);
+                .Returns(LARSCategories.LicenseToPractice);
 
             var larsCats = new List<ILARSLearningCategory>
             {
@@ -772,7 +772,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                .Returns(learnAimRef);
             mockCat
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.LicenseToPractice);
+                .Returns(LARSCategories.LicenseToPractice);
 
             var larsCats = new List<ILARSLearningCategory>
             {

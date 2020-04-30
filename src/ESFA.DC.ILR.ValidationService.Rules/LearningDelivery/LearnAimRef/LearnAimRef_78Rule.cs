@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         }
 
         public bool IsQualifyingCategory(ILARSLearningCategory category) =>
-            category.CategoryRef == TypeOfLARSCategory.OnlyForLegalEntitlementAtLevel3;
+            category.CategoryRef == LARSCategories.OnlyForLegalEntitlementAtLevel3;
 
         public bool HasQualifyingCategory(ILearningDelivery delivery)
         {

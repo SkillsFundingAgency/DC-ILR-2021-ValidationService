@@ -35,8 +35,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(TypeOfLARSCategory.WorkPlacementSFAFunded, true)]
-        [InlineData(TypeOfLARSCategory.WorkPreparationSFATraineeships, true)]
+        [InlineData(LARSCategories.WorkPlacementSFAFunded, true)]
+        [InlineData(LARSCategories.WorkPreparationSFATraineeships, true)]
         [InlineData(1, false)]
         [InlineData(3, false)]
         public void IsWorkExperienceMeetsExpectation(int candidate, bool expectation)
@@ -54,8 +54,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData("asdflaskdfjl", TypeOfLARSCategory.WorkPlacementSFAFunded, true)]
-        [InlineData("eprtyodityp", TypeOfLARSCategory.WorkPreparationSFATraineeships, true)]
+        [InlineData("asdflaskdfjl", LARSCategories.WorkPlacementSFAFunded, true)]
+        [InlineData("eprtyodityp", LARSCategories.WorkPreparationSFATraineeships, true)]
         [InlineData("xcmvzx", 1, false)]
         [InlineData("sfieasfn", 3, false)]
         public void IsWorkExperience2MeetsExpectation(string aimRef, int candidate, bool expectation)

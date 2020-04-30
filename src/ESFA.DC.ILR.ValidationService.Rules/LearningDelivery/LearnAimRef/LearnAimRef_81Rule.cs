@@ -45,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public string RuleName => Name;
 
         public bool HasDisqualifyingLearningCategory(ILARSLearningCategory category) =>
-            category.CategoryRef == TypeOfLARSCategory.LicenseToPractice;
+            category.CategoryRef == LARSCategories.LicenseToPractice;
 
         public bool HasDisqualifyingLearningCategory(ILearningDelivery delivery)
         {
