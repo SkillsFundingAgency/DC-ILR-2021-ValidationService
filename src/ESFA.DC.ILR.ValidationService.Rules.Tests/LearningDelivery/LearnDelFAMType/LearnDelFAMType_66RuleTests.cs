@@ -547,7 +547,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockLARSValidity
                 .SetupGet(x => x.ValidityCategory)
-                .Returns(TypeOfLARSValidity.CommunityLearning);
+                .Returns(LARSValidities.CommunityLearning);
             mockLARSValidity
                 .SetupGet(x => x.LastNewStartDate)
                 .Returns(new DateTime(2018, 08, 01));
@@ -703,7 +703,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockLARSValidity
                 .SetupGet(x => x.ValidityCategory)
-                .Returns(TypeOfLARSValidity.CommunityLearning);
+                .Returns(LARSValidities.CommunityLearning);
             mockLARSValidity
                 .SetupGet(x => x.LastNewStartDate)
                 .Returns(new DateTime(2018, 08, 01));

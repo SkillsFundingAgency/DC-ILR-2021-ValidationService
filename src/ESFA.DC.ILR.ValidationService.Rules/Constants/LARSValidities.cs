@@ -1,6 +1,6 @@
 ﻿namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 {
-    public static class TypeOfLARSValidity
+    public static class LARSValidities
     {
         public const string EFA16To19 = "1619_EFA";
 

@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, TypeOfLARSValidity.AdvancedLearnerLoan))
+                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.AdvancedLearnerLoan))
                 .Returns(false);
 
             NewRule(larsDataServiceMock.Object).LARSConditionMet(origLearnStartDate, learnAimRef).Should().BeTrue();
@@ -74,7 +74,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, TypeOfLARSValidity.AdvancedLearnerLoan))
+                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.AdvancedLearnerLoan))
                 .Returns(true);
 
             NewRule(larsDataServiceMock.Object).LARSConditionMet(origLearnStartDate, learnAimRef).Should().BeFalse();
@@ -94,7 +94,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, TypeOfLARSValidity.AdvancedLearnerLoan))
+                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.AdvancedLearnerLoan))
                 .Returns(false);
 
             var learningDeliveryFams = new List<ILearningDeliveryFAM>
@@ -140,7 +140,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, TypeOfLARSValidity.AdvancedLearnerLoan))
+                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.AdvancedLearnerLoan))
                 .Returns(true);
 
             var famQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
@@ -182,7 +182,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, TypeOfLARSValidity.AdvancedLearnerLoan))
+                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.AdvancedLearnerLoan))
                 .Returns(false);
 
             var famQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
@@ -230,7 +230,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock
-                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, TypeOfLARSValidity.AdvancedLearnerLoan))
+                .Setup(ldsm => ldsm.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.AdvancedLearnerLoan))
                 .Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
