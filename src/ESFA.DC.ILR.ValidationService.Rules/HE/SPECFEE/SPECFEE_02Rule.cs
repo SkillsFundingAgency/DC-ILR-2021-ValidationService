@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.SPECFEE
         {
             return learnStartDate >= _firstAugust2009
                    && modestud == TypeOfMODESTUD.SandwichYearOut
-                   && specfee != TypeOfSPECFEE.SandwichPlacement;
+                   && specfee != SPECFEEs.SandwichPlacement;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, int modestud, int specfee)
