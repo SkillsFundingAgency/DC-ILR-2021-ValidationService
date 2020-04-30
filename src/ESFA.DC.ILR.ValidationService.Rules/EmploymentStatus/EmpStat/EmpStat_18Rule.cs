@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus thisEmployment) =>
             thisEmployment != null
-            && thisEmployment.EmpStat == TypeOfEmploymentStatus.InPaidEmployment;
+            && thisEmployment.EmpStat == EmploymentStatusEmpStats.InPaidEmployment;
 
         public void CheckEmploymentMonitors(ILearnerEmploymentStatus employment, Action<IEmploymentStatusMonitoring> raiseMessage) =>
             employment.EmploymentStatusMonitorings.ForAny(HasDisqualifyingMonitor, raiseMessage);

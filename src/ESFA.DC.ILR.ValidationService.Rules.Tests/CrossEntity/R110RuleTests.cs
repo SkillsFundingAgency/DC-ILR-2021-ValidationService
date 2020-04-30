@@ -39,7 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus()
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
+                EmpStat = EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable
             };
 
             var learnerEmploymentStatuses = new List<ILearnerEmploymentStatus>()
@@ -88,7 +88,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus()
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
+                EmpStat = EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable
             };
 
             var learner = new TestLearner
@@ -217,7 +217,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus()
             {
-                EmpStat = TypeOfEmploymentStatus.InPaidEmployment
+                EmpStat = EmploymentStatusEmpStats.InPaidEmployment
             };
 
             var learningDeliveryFamDateFrom = new DateTime(2018, 1, 1);
@@ -234,7 +234,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var learnerEmploymentStatus = new TestLearnerEmploymentStatus()
             {
-                EmpStat = TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable
+                EmpStat = EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable
             };
 
             var learnerEmploymentStatuses = new List<ILearnerEmploymentStatus>()

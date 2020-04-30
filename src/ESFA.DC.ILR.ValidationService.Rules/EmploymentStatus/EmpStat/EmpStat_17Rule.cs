@@ -36,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             delivery.AimType == AimTypes.ProgrammeAim;
 
         public bool HasAQualifyingEmploymentStatus(ILearnerEmploymentStatus thisEmployment) =>
-               thisEmployment?.EmpStat != TypeOfEmploymentStatus.NotKnownProvided;
+               thisEmployment?.EmpStat != EmploymentStatusEmpStats.NotKnownProvided;
 
         public ILearnerEmploymentStatus GetMatchingEmployment(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> usingEmployments) =>
             usingEmployments?
@@ -64,7 +64,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         {
             var parameters = new List<IErrorMessageParameter>
             {
-                _messageHandler.BuildErrorMessageParameter(MessagePropertyName, TypeOfEmploymentStatus.NotKnownProvided),
+                _messageHandler.BuildErrorMessageParameter(MessagePropertyName, EmploymentStatusEmpStats.NotKnownProvided),
                 _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, thisDelivery.LearnStartDate)
             };
 

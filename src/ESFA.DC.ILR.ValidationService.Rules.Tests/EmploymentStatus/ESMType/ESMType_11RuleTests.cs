@@ -107,7 +107,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(testDate);
             status
                 .SetupGet(x => x.EmpStat)
-                .Returns(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable);
+                .Returns(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable);
             status
                 .SetupGet(x => x.EmploymentStatusMonitorings)
                 .Returns(monitorings);
@@ -176,7 +176,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(testDate);
             status
                 .SetupGet(x => x.EmpStat)
-                .Returns(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable);
+                .Returns(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable);
             status
                 .SetupGet(x => x.EmploymentStatusMonitorings)
                 .Returns(monitorings);

@@ -230,7 +230,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
                     Moq.It.Is<string>(y => y == EmpStat_11Rule.MessagePropertyName),
-                    TypeOfEmploymentStatus.NotKnownProvided))
+                    EmploymentStatusEmpStats.NotKnownProvided))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
                 .Setup(x => x.BuildErrorMessageParameter(

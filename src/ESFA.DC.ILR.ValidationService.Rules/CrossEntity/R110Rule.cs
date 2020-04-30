@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public bool LearnerNotEmployedOnDate(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime? learningDeliveryFamDateFrom)
         {
             return learningDeliveryFamDateFrom.HasValue
-                && _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(learnerEmploymentStatuses, learningDeliveryFamDateFrom.Value)?.EmpStat != TypeOfEmploymentStatus.InPaidEmployment;
+                && _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(learnerEmploymentStatuses, learningDeliveryFamDateFrom.Value)?.EmpStat != EmploymentStatusEmpStats.InPaidEmployment;
         }
     }
 }

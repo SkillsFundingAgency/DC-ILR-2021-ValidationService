@@ -45,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
                 && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue);
 
         public bool IsQualifyingEmployment(ILearnerEmploymentStatus employmentStatus) =>
-            employmentStatus.EmpStat == TypeOfEmploymentStatus.InPaidEmployment;
+            employmentStatus.EmpStat == EmploymentStatusEmpStats.InPaidEmployment;
 
         public bool HasQualifyingIndicator(IEmploymentStatusMonitoring monitor) =>
             monitor.ESMType.CaseInsensitiveEquals(Monitoring.EmploymentStatus.Types.LengthOfEmployment);

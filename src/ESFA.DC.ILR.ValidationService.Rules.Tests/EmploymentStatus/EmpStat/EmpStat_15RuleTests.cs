@@ -93,10 +93,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, true)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, false)]
+        [InlineData(EmploymentStatusEmpStats.InPaidEmployment, true)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.NotKnownProvided, false)]
         public void HasQualifyingEmploymentStatusMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -162,7 +162,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockStatus = new Mock<ILearnerEmploymentStatus>();
             mockStatus
                 .SetupGet(y => y.EmpStat)
-                .Returns(TypeOfEmploymentStatus.NotKnownProvided);
+                .Returns(EmploymentStatusEmpStats.NotKnownProvided);
             mockStatus
                 .SetupGet(y => y.DateEmpStatApp)
                 .Returns(testDate);
@@ -191,7 +191,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
                     Moq.It.Is<string>(y => y == EmpStat_15Rule.MessagePropertyName),
-                    TypeOfEmploymentStatus.NotKnownProvided))
+                    EmploymentStatusEmpStats.NotKnownProvided))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
@@ -236,7 +236,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockStatus = new Mock<ILearnerEmploymentStatus>();
             mockStatus
                 .SetupGet(y => y.EmpStat)
-                .Returns(TypeOfEmploymentStatus.InPaidEmployment);
+                .Returns(EmploymentStatusEmpStats.InPaidEmployment);
             mockStatus
                 .SetupGet(y => y.DateEmpStatApp)
                 .Returns(testDate);

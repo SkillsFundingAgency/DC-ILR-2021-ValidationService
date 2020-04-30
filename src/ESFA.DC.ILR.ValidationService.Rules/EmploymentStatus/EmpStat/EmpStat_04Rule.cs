@@ -49,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
                     continue;
                 }
 
-                if (GetQualifyingEmploymentStatus(learner, latestLearningStart) == TypeOfEmploymentStatus.NotKnownProvided)
+                if (GetQualifyingEmploymentStatus(learner, latestLearningStart) == EmploymentStatusEmpStats.NotKnownProvided)
                 {
                     HandleValidationError(
                         learner.LearnRefNumber,
@@ -69,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.EmpStat, TypeOfEmploymentStatus.NotKnownProvided),
+                BuildErrorMessageParameter(PropertyNameConstants.EmpStat, EmploymentStatusEmpStats.NotKnownProvided),
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModel),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, latestLearningStart)
             };

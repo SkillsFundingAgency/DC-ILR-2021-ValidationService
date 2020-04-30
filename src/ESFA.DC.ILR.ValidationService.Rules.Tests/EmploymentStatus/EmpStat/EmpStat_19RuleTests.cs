@@ -160,7 +160,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockStatus
                 .SetupGet(y => y.EmpStat)
-                .Returns(TypeOfEmploymentStatus.InPaidEmployment);
+                .Returns(EmploymentStatusEmpStats.InPaidEmployment);
             mockStatus
                 .SetupGet(y => y.EmploymentStatusMonitorings)
                 .Returns(monitors);
@@ -263,7 +263,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockStatus
                 .SetupGet(y => y.EmpStat)
-                .Returns(TypeOfEmploymentStatus.InPaidEmployment);
+                .Returns(EmploymentStatusEmpStats.InPaidEmployment);
             mockStatus
                 .SetupGet(y => y.EmploymentStatusMonitorings)
                 .Returns(monitors);

@@ -42,7 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             delivery.LearnStartDate > LastInviableDate;
 
         public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus eStatus) =>
-            eStatus?.EmpStat != TypeOfEmploymentStatus.NotKnownProvided;
+            eStatus?.EmpStat != EmploymentStatusEmpStats.NotKnownProvided;
 
         public ILearnerEmploymentStatus GetQualifyingEmploymentStatus(ILearner learner, ILearningDelivery delivery) =>
             learner.LearnerEmploymentStatuses
@@ -72,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         {
             var parameters = new List<IErrorMessageParameter>
             {
-                _messageHandler.BuildErrorMessageParameter(MessagePropertyName, TypeOfEmploymentStatus.NotKnownProvided),
+                _messageHandler.BuildErrorMessageParameter(MessagePropertyName, EmploymentStatusEmpStats.NotKnownProvided),
                 _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, thisDelivery.LearnStartDate)
             };
 
