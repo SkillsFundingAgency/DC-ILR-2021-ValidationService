@@ -88,11 +88,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool IsPaymentRequest(IAppFinRecord theRecord) =>
             theRecord.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.PaymentRecord)
-            && (theRecord.AFinCode == TypeOfPMRAFin.TrainingPayment || theRecord.AFinCode == TypeOfPMRAFin.AssessmentPayment);
+            && (theRecord.AFinCode == ApprenticeshipFinancialRecord.PaymentRecordCodes.TrainingPayment || theRecord.AFinCode == ApprenticeshipFinancialRecord.PaymentRecordCodes.AssessmentPayment);
 
         public bool IsProviderReimbursement(IAppFinRecord theRecord) =>
             theRecord.AFinType.CaseInsensitiveEquals(ApprenticeshipFinancialRecord.Types.PaymentRecord)
-            && theRecord.AFinCode == TypeOfPMRAFin.EmployerPaymentReimbursedByProvider;
+            && theRecord.AFinCode == ApprenticeshipFinancialRecord.PaymentRecordCodes.EmployerPaymentReimbursedByProvider;
 
         public IReadOnlyCollection<ILearningDelivery> GetDeliveriesMatching(IReadOnlyCollection<ILearningDelivery> theDeliveries, Func<ILearningDelivery, bool> hasMatchingStdCode) =>
             theDeliveries
