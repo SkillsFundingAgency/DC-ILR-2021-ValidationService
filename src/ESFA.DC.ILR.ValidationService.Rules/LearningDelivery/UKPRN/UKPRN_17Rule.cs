@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             theDelivery.FundModel == FundModels.Age16To19ExcludingApprenticeships;
 
         public bool IsTraineeship(ILearningDelivery theDelivery) =>
-            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
+            theDelivery.ProgTypeNullable == ProgTypes.Traineeship;
 
         public bool IsESFAAdultFunding(ILearningDelivery theDelivery) =>
              _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(

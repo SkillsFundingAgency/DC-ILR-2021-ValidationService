@@ -11,8 +11,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
     {
         private readonly DateTime _learnStartDate = new DateTime(2015, 7, 31);
         private readonly int _aimType = AimTypes.ProgrammeAim;
-        private readonly int _progTypeTraineeship = TypeOfLearningProgramme.Traineeship;
-        private readonly int _progTypeApprenticeship = TypeOfLearningProgramme.ApprenticeshipStandard;
+        private readonly int _progTypeTraineeship = ProgTypes.Traineeship;
+        private readonly int _progTypeApprenticeship = ProgTypes.ApprenticeshipStandard;
         private readonly int _fundModelOtherAdult = FundModels.OtherAdult;
         private readonly int _fundModelApprencticeMay2017 = FundModels.ApprenticeshipsFrom1May2017;
 

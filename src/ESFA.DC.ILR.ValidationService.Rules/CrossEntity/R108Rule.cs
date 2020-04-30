@@ -22,8 +22,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         private readonly HashSet<int?> _progTypes = new HashSet<int?>()
         {
-            TypeOfLearningProgramme.Traineeship,
-            TypeOfLearningProgramme.ApprenticeshipStandard
+            ProgTypes.Traineeship,
+            ProgTypes.ApprenticeshipStandard
         };
 
         private readonly IFileDataService _fileDataService;

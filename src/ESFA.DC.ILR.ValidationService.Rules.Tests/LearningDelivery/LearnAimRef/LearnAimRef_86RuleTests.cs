@@ -45,10 +45,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship)]
+        [InlineData(ProgTypes.ApprenticeshipStandard)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5)]
         public void InvalidItemRaisesValidationMessage(int candidate)
         {
             const string learnRefNumber = "123456789X";

@@ -103,7 +103,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
                 learnStartDate);
 
         public bool DD07ConditionMet(int? progType) => !progType.HasValue
-                || (progType != TypeOfLearningProgramme.Traineeship
+                || (progType != ProgTypes.Traineeship
                     && !_dd07.IsApprenticeship(progType));
 
         public bool LearningDeliveryFAMsConditionMet(

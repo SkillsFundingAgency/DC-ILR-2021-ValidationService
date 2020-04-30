@@ -108,13 +108,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship)]
+        [InlineData(ProgTypes.IntermediateLevelApprenticeship)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel6)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus)]
+        [InlineData(ProgTypes.ApprenticeshipStandard)]
         public void DD07ConditionMet_False(int? progType)
         {
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -125,13 +125,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.Traineeship)]
+        [InlineData(ProgTypes.Traineeship)]
         [InlineData(null)]
         public void DD07ConditionMet_True(int? progType)
         {
             var dd07Mock = new Mock<IDerivedData_07Rule>();
 
-            dd07Mock.Setup(d => d.IsApprenticeship(TypeOfLearningProgramme.AdvancedLevelApprenticeship)).Returns(false);
+            dd07Mock.Setup(d => d.IsApprenticeship(ProgTypes.AdvancedLevelApprenticeship)).Returns(false);
 
             NewRule(dD07: dd07Mock.Object).DD07ConditionMet(progType).Should().BeTrue();
         }
@@ -175,9 +175,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(FundModels.CommunityLearning, "", TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(FundModels.Age16To19ExcludingApprenticeships, "50023111", TypeOfLearningProgramme.Traineeship)]
-        [InlineData(FundModels.CommunityLearning, "50023408", TypeOfLearningProgramme.Traineeship)]
+        [InlineData(FundModels.CommunityLearning, "", ProgTypes.ApprenticeshipStandard)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, "50023111", ProgTypes.Traineeship)]
+        [InlineData(FundModels.CommunityLearning, "50023408", ProgTypes.Traineeship)]
         public void ConditionMet_False(int fundModel, string learnAimRef, int? progType)
         {
             var testLearningDeliveryHeEntity = new TestLearningDeliveryHE()
@@ -210,9 +210,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(FundModels.Age16To19ExcludingApprenticeships, "50023408", TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData(FundModels.AdultSkills, "50023408", TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData(FundModels.NotFundedByESFA, "50023408", TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, "50023408", ProgTypes.AdvancedLevelApprenticeship)]
+        [InlineData(FundModels.AdultSkills, "50023408", ProgTypes.AdvancedLevelApprenticeship)]
+        [InlineData(FundModels.NotFundedByESFA, "50023408", ProgTypes.AdvancedLevelApprenticeship)]
         public void ConditionMet_True(int fundModel, string learnAimRef, int? progType)
         {
             var testLearningDeliveryFAMs = new TestLearningDeliveryFAM[]
@@ -230,7 +230,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
 
             learningDeliveryFAMsQueryServiceMock.Setup(s => s.HasLearningDeliveryFAMCodeForType(testLearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, "352")).Returns(false);
             larsDataServiceMock.Setup(l => l.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(learnAimRef, _notionalNVQLevels)).Returns(true);
-            dd07Mock.Setup(d => d.IsApprenticeship(TypeOfLearningProgramme.AdvancedLevelApprenticeship)).Returns(false);
+            dd07Mock.Setup(d => d.IsApprenticeship(ProgTypes.AdvancedLevelApprenticeship)).Returns(false);
 
             NewRule(
                 dD07: dd07Mock.Object,
@@ -258,7 +258,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                     new TestLearningDelivery()
                     {
                         FundModel = FundModels.AdultSkills,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         LearnAimRef = "50023408",
                         LearningDeliveryFAMs = testLearningDeliveryFAMs
                     }
@@ -277,7 +277,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
             organisationDataServiceMock.Setup(o => o.LegalOrgTypeMatchForUkprn(123654321, LegalOrgTypeConstants.ULEA)).Returns(true);
             derivedDataServiceMock.Setup(d => d.IsUKPRNCollegeOrGrantFundedProvider(98756789)).Returns(true);
             larsDataServiceMock.Setup(l => l.NotionalNVQLevelV2MatchForLearnAimRefAndLevels("50023408", _notionalNVQLevels)).Returns(true);
-            dd07Mock.Setup(d => d.IsApprenticeship(TypeOfLearningProgramme.AdvancedLevelApprenticeship)).Returns(false);
+            dd07Mock.Setup(d => d.IsApprenticeship(ProgTypes.AdvancedLevelApprenticeship)).Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
@@ -316,7 +316,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                     new TestLearningDelivery()
                     {
                         FundModel = FundModels.CommunityLearning,
-                        ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                        ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                         LearnAimRef = "50023408",
                         LearningDeliveryFAMs = testLearningDeliveryFAMs,
                         LearningDeliveryHEEntity = testLearningDeliveryHeEntity
@@ -336,7 +336,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
             larsDataServiceMock.Setup(l => l.NotionalNVQLevelV2MatchForLearnAimRefAndLevels("50023411", _notionalNVQLevels)).Returns(false);
             organisationDataServiceMock.Setup(o => o.LegalOrgTypeMatchForUkprn(123654321, LegalOrgTypeConstants.ULEA)).Returns(true);
             derivedDataServiceMock.Setup(d => d.IsUKPRNCollegeOrGrantFundedProvider(98756789)).Returns(true);
-            dd07Mock.Setup(d => d.IsApprenticeship(TypeOfLearningProgramme.ApprenticeshipStandard)).Returns(true);
+            dd07Mock.Setup(d => d.IsApprenticeship(ProgTypes.ApprenticeshipStandard)).Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {

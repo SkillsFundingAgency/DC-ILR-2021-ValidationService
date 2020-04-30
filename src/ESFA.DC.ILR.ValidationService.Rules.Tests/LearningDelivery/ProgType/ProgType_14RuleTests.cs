@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData(AimTypes.References.IndustryPlacement, TypeOfLearningProgramme.Traineeship)]
+        [InlineData(AimTypes.References.IndustryPlacement, ProgTypes.Traineeship)]
         public void InvalidItemRaisesValidationMessage(string aimReference, int typeOfProgramme)
         {
             const string LearnRefNumber = "123456789X";
@@ -95,22 +95,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData("SSER SUR I", TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData("VCMWAPOASFM", TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData("CMASLFDASEJEF", TypeOfLearningProgramme.HigherApprenticeshipLevel4)]
-        [InlineData("CASLFAIWEJ", TypeOfLearningProgramme.HigherApprenticeshipLevel5)]
-        [InlineData("2AAWSFPOASERGK", TypeOfLearningProgramme.HigherApprenticeshipLevel6)]
-        [InlineData("SMAFAIJ", TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus)]
-        [InlineData("sdfaseira", TypeOfLearningProgramme.IntermediateLevelApprenticeship)]
-        [InlineData("cansefaEEfasoeif", TypeOfLearningProgramme.Traineeship)]
-        [InlineData(null, TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData(null, TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(null, TypeOfLearningProgramme.HigherApprenticeshipLevel4)]
-        [InlineData(null, TypeOfLearningProgramme.HigherApprenticeshipLevel5)]
-        [InlineData(null, TypeOfLearningProgramme.HigherApprenticeshipLevel6)]
-        [InlineData(null, TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus)]
-        [InlineData(null, TypeOfLearningProgramme.IntermediateLevelApprenticeship)]
-        [InlineData(null, TypeOfLearningProgramme.Traineeship)]
+        [InlineData("SSER SUR I", ProgTypes.AdvancedLevelApprenticeship)]
+        [InlineData("VCMWAPOASFM", ProgTypes.ApprenticeshipStandard)]
+        [InlineData("CMASLFDASEJEF", ProgTypes.HigherApprenticeshipLevel4)]
+        [InlineData("CASLFAIWEJ", ProgTypes.HigherApprenticeshipLevel5)]
+        [InlineData("2AAWSFPOASERGK", ProgTypes.HigherApprenticeshipLevel6)]
+        [InlineData("SMAFAIJ", ProgTypes.HigherApprenticeshipLevel7Plus)]
+        [InlineData("sdfaseira", ProgTypes.IntermediateLevelApprenticeship)]
+        [InlineData("cansefaEEfasoeif", ProgTypes.Traineeship)]
+        [InlineData(null, ProgTypes.AdvancedLevelApprenticeship)]
+        [InlineData(null, ProgTypes.ApprenticeshipStandard)]
+        [InlineData(null, ProgTypes.HigherApprenticeshipLevel4)]
+        [InlineData(null, ProgTypes.HigherApprenticeshipLevel5)]
+        [InlineData(null, ProgTypes.HigherApprenticeshipLevel6)]
+        [InlineData(null, ProgTypes.HigherApprenticeshipLevel7Plus)]
+        [InlineData(null, ProgTypes.IntermediateLevelApprenticeship)]
+        [InlineData(null, ProgTypes.Traineeship)]
         public void ValidItemDoesNotRaiseAValidationMessage(string aimReference, int typeOfProgramme)
         {
             const string LearnRefNumber = "123456789X";

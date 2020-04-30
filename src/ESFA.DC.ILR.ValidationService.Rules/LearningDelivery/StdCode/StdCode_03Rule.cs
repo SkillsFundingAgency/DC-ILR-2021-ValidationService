@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.StdCode
             delivery.StdCodeNullable.HasValue;
 
         public bool IsQualifyingLearningProgramme(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            delivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             !IsQualifyingLearningProgramme(delivery) && HasStandardCode(delivery);

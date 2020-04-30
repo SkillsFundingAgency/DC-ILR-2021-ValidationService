@@ -52,12 +52,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public virtual bool IsNonFundedApprenticeshipStandard(ILearningDelivery learningDelivery)
         {
             return learningDelivery.FundModel == FundModels.NotFundedByESFA
-                   && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+                   && learningDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
         }
 
         public virtual bool IsCompletedApprenticeshipStandardAim(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
+            return learningDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard
                    && learningDelivery.AimType == AimTypes.ProgrammeAim
                    && learningDelivery.CompStatus == CompletionState.HasCompleted;
         }

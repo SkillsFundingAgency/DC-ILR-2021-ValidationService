@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ExclusionConditionMet(int fundModel, int? progType)
         {
-            return FundModelConditionMet(fundModel) && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+            return FundModelConditionMet(fundModel) && progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public bool FundModelConditionMet(int fundModel)

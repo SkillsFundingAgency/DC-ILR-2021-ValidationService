@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
 
         public bool ExceptionConditionMet(int fundModel, int? progType)
         {
-            return (!progType.HasValue || progType != TypeOfLearningProgramme.ApprenticeshipStandard)
+            return (!progType.HasValue || progType != ProgTypes.ApprenticeshipStandard)
                 && fundModel != FundModels.ApprenticeshipsFrom1May2017;
         }
 

@@ -30,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             delivery.LearnStartDate > LastInviableDate;
 
         public bool InTraining(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
+            delivery.ProgTypeNullable == ProgTypes.Traineeship;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
             delivery.AimType == AimTypes.ProgrammeAim;

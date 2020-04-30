@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
                 || IsCommonComponent(GetLARSLearningDeliveryFor(theDelivery));
 
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
-            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            theDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
 
         public bool IsRestart(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES);

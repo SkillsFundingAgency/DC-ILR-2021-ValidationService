@@ -42,9 +42,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, true, true)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, true, true)]
-        [InlineData(TypeOfLearningProgramme.Traineeship, false, false)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, true, true)]
+        [InlineData(ProgTypes.ApprenticeshipStandard, true, true)]
+        [InlineData(ProgTypes.Traineeship, false, false)]
         public void DD07ConditionMetMeetsExpectation(int progType, bool isApprenticeship, bool expectation)
         {
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -57,7 +57,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ConditionMet_True()
         {
             var fundModel = FundModels.NotFundedByESFA;
-            var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
+            var progType = ProgTypes.ApprenticeshipStandard;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ADL;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ConditionMet_False_InvalidFundModel()
         {
             var fundModel = FundModels.AdultSkills;
-            var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
+            var progType = ProgTypes.ApprenticeshipStandard;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ADL;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -83,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ConditionMet_False_InvalidLearnDelFamType()
         {
             var fundModel = FundModels.NotFundedByESFA;
-            var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
+            var progType = ProgTypes.ApprenticeshipStandard;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ALB;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -96,7 +96,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ConditionMet_False_DD07RuleReturnsFalse()
         {
             var fundModel = FundModels.NotFundedByESFA;
-            var progType = TypeOfLearningProgramme.Traineeship;
+            var progType = ProgTypes.Traineeship;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ADL;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -109,7 +109,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void Validate_Error()
         {
             var fundModel = FundModels.NotFundedByESFA;
-            var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
+            var progType = ProgTypes.ApprenticeshipStandard;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ADL;
 
             var learner = new TestLearner()
@@ -144,7 +144,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void Validate_NoError()
         {
             var fundModel = FundModels.AdultSkills;
-            var progType = TypeOfLearningProgramme.Traineeship;
+            var progType = ProgTypes.Traineeship;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ALB;
 
             var learner = new TestLearner()

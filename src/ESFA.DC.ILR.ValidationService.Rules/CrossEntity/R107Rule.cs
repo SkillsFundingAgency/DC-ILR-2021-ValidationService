@@ -73,8 +73,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 && learner.LearningDeliveries.All(HasCompletedCourse);
 
         public bool InTraining(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
-            || delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            delivery.ProgTypeNullable == ProgTypes.Traineeship
+            || delivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
 
         public bool InTraining(ILearner learner) =>
             learner.LearningDeliveries.NullSafeAny(InTraining);

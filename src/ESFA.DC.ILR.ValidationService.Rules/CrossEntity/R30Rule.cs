@@ -23,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             var groups = objectToValidate.LearningDeliveries
                 .GroupBy(ld => new { ld.ProgTypeNullable, ld.FworkCodeNullable, ld.PwayCodeNullable })
-                .Where(grp => grp.Key.ProgTypeNullable != TypeOfLearningProgramme.ApprenticeshipStandard);
+                .Where(grp => grp.Key.ProgTypeNullable != ProgTypes.ApprenticeshipStandard);
 
             foreach (var group in groups)
             {

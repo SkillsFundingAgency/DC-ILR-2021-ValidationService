@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 {
-    public static class TypeOfLearningProgramme
+    public static class ProgTypes
     {
         public const int AdvancedLevelApprenticeship = 2;
 

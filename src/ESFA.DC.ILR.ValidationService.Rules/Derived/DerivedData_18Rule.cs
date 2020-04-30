@@ -20,7 +20,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             && delivery.StdCodeNullable == candidate.StdCodeNullable;
 
         public bool HasRestrictionsMatch(ILearningDelivery candidate, ILearningDelivery andDelivery) =>
-            candidate.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
+            candidate.ProgTypeNullable == ProgTypes.ApprenticeshipStandard
                 && candidate.AimType == AimTypes.ProgrammeAim
                 && HasMatchingStandardCode(candidate, andDelivery);
 

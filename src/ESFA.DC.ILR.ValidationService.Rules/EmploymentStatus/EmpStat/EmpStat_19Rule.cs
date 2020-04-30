@@ -48,7 +48,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         }
 
         public bool IsRestrictionMatch(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
+            delivery.ProgTypeNullable == ProgTypes.Traineeship
             && delivery.AimType == AimTypes.ProgrammeAim
             && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, NewCodeMonitoringThresholdDate, DateTime.MaxValue);
 

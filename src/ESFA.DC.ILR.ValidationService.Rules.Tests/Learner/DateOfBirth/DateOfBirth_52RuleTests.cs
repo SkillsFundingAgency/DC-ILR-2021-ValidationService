@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learnStartDate = new DateTime(2017, 12, 02);
             var learnPlanEndDate = new DateTime(2018, 08, 01);
             var fundModel = FundModels.ApprenticeshipsFrom1May2017;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -81,7 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
             var fundModel = 0;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -107,7 +107,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learnStartDate = new DateTime(2016, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
             var fundModel = FundModels.ApprenticeshipsFrom1May2017;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -159,7 +159,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
             var fundModel = FundModels.ApprenticeshipsFrom1May2017;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var aimType = 0;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -185,7 +185,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learnStartDate = new DateTime(2018, 08, 01);
             var learnPlanEndDate = new DateTime(2019, 08, 02);
             var fundModel = FundModels.ApprenticeshipsFrom1May2017;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -213,7 +213,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learnStartDate = new DateTime(2018, 08, 01);
             var learnPlanEndDate = new DateTime(2019, 08, 12);
             var fundModel = FundModels.ApprenticeshipsFrom1May2017;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var aimType = AimTypes.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -240,7 +240,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
 
             var learner = new TestLearner
             {
@@ -279,7 +279,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
 
             var learner = new TestLearner
             {

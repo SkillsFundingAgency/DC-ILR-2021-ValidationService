@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
 
         public bool InTraining(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
+            delivery.ProgTypeNullable == ProgTypes.Traineeship;
 
         public bool IsExcluded(ILearningDelivery delivery) =>
             IsLearnerInCustody(delivery)

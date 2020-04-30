@@ -161,7 +161,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsLearningDeliveryExcluded(ILearner learner, ILearningDelivery learningDelivery)
         {
             if (learningDelivery.ProgTypeNullable.HasValue &&
-                learningDelivery.ProgTypeNullable.Value == TypeOfLearningProgramme.Traineeship)
+                learningDelivery.ProgTypeNullable.Value == ProgTypes.Traineeship)
             {
                 return true;
             }

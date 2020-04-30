@@ -84,7 +84,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
                 .Returns(testStartDate);
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.Traineeship);
+                .Returns(ProgTypes.Traineeship);
             mockDelivery
                 .SetupGet(y => y.AimType)
                 .Returns(AimTypes.ProgrammeAim);
@@ -142,7 +142,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
                 .Returns(DateTime.Parse(startDate));
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.Traineeship);
+                .Returns(ProgTypes.Traineeship);
             mockDelivery
                 .SetupGet(y => y.AimType)
                 .Returns(AimTypes.ProgrammeAim);

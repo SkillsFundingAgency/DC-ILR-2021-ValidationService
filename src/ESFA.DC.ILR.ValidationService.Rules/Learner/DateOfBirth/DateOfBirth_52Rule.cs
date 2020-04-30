@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool Excluded(int? progType, IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
-            return (progType.HasValue && progType == TypeOfLearningProgramme.ApprenticeshipStandard) ||
+            return (progType.HasValue && progType == ProgTypes.ApprenticeshipStandard) ||
                    _learningDeliveryFamQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.RES);
         }
     }

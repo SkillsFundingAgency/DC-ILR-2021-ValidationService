@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             theDelivery.AimType == AimTypes.ProgrammeAim;
 
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
-            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            theDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
             theDelivery.FundModel == FundModels.OtherAdult;

@@ -49,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
 
         public bool ProgTypeConditionMet(int? progType)
         {
-            return progType != TypeOfLearningProgramme.ApprenticeshipStandard;
+            return progType != ProgTypes.ApprenticeshipStandard;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int compStatus, DateTime? learnActEndDate)

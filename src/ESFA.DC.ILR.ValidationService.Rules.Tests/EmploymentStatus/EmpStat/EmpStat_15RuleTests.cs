@@ -151,7 +151,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
+                .Returns(ProgTypes.ApprenticeshipStandard);
             mockDelivery
                 .SetupGet(y => y.AimType)
                 .Returns(AimTypes.ProgrammeAim);
@@ -225,7 +225,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
+                .Returns(ProgTypes.ApprenticeshipStandard);
             mockDelivery
                 .SetupGet(y => y.AimType)
                 .Returns(AimTypes.ProgrammeAim);

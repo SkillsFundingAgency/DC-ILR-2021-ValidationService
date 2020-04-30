@@ -131,7 +131,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool ProgTypeConditionMet(int? progType)
         {
-            return progType == TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            return progType == ProgTypes.AdvancedLevelApprenticeship;
         }
 
         public bool FworkCodeConditionMet(int? fworkCode)

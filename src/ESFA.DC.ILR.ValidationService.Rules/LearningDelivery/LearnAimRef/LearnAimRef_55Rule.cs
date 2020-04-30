@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public virtual bool TraineeshipConditionMet(int fundModel, int? progType)
         {
-            return fundModel == FundModels.Age16To19ExcludingApprenticeships && progType == TypeOfLearningProgramme.Traineeship;
+            return fundModel == FundModels.Age16To19ExcludingApprenticeships && progType == ProgTypes.Traineeship;
         }
 
         public virtual bool AimTypeConditionMet(int aimType)

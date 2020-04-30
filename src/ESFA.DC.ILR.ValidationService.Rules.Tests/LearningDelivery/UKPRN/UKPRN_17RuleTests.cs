@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Theory]
-        [InlineData(24, TypeOfLearningProgramme.Traineeship)]
+        [InlineData(24, ProgTypes.Traineeship)]
         public void TypeOfProgrammeMeetsExpectation(int expectation, int candidate)
         {
             Assert.Equal(expectation, candidate);

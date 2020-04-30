@@ -86,7 +86,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(referenceDate);
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
+                .Returns(ProgTypes.ApprenticeshipStandard);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -118,7 +118,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(referenceDate.AddYears(-1));
             var rule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             rule07
-                .Setup(x => x.IsApprenticeship(TypeOfLearningProgramme.ApprenticeshipStandard))
+                .Setup(x => x.IsApprenticeship(ProgTypes.ApprenticeshipStandard))
                 .Returns(true);
 
             var sut = new LearnStartDate_12Rule(handler.Object, service.Object, rule07.Object);
@@ -143,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(referenceDate);
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
+                .Returns(ProgTypes.ApprenticeshipStandard);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -163,7 +163,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                 .Returns(referenceDate.AddYears(-1).AddDays(1));
             var rule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             rule07
-                .Setup(x => x.IsApprenticeship(TypeOfLearningProgramme.ApprenticeshipStandard))
+                .Setup(x => x.IsApprenticeship(ProgTypes.ApprenticeshipStandard))
                 .Returns(true);
 
             var sut = new LearnStartDate_12Rule(handler.Object, service.Object, rule07.Object);

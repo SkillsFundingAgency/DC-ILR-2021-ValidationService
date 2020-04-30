@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ProgTypeConditionMet(int? progType)
         {
-            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+            return progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public bool LearnActEndDateNotKnown(DateTime? actEndDate)

@@ -21,7 +21,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
             delivery.OutcomeNullable == OutcomeConstants.Achieved;
 
         public bool IsExcluded(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
+            delivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard
             && delivery.FundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool IsNotValid(ILearningDelivery delivery) =>

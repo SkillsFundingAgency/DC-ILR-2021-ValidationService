@@ -33,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                     {
                         LearnStartDate = new DateTime(2015, 7, 31),
                         AimType = AimTypes.ProgrammeAim,
-                        ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
+                        ProgTypeNullable = ProgTypes.Traineeship,
                         OutcomeNullable = OutcomeConstants.Achieved
                     }
                 }
@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                     {
                         LearnStartDate = new DateTime(2015, 8, 1),
                         AimType = AimTypes.AimNotPartOfAProgramme,
-                        ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
+                        ProgTypeNullable = ProgTypes.Traineeship,
                         OutcomeNullable = OutcomeConstants.Achieved
                     }
                 }
@@ -79,7 +79,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                     {
                         LearnStartDate = new DateTime(2015, 8, 1),
                         AimType = AimTypes.ProgrammeAim,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         OutcomeNullable = OutcomeConstants.Achieved
                     }
                 }
@@ -102,7 +102,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                     {
                         LearnStartDate = new DateTime(2015, 8, 1),
                         AimType = AimTypes.ProgrammeAim,
-                        ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
+                        ProgTypeNullable = ProgTypes.Traineeship,
                         OutcomeNullable = OutcomeConstants.PartialAchievement
                     }
                 }
@@ -153,7 +153,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                         LearnStartDate = new DateTime(2015, 8, 1),
                         LearnActEndDateNullable = null,
                         AimType = AimTypes.ProgrammeAim,
-                        ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
+                        ProgTypeNullable = ProgTypes.Traineeship,
                         OutcomeNullable = OutcomeConstants.Achieved
                     }
                 }
@@ -216,7 +216,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                         LearnStartDate = new DateTime(2015, 8, 1),
                         LearnActEndDateNullable = new DateTime(2017, 7, 31),
                         AimType = AimTypes.ProgrammeAim,
-                        ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
+                        ProgTypeNullable = ProgTypes.Traineeship,
                         OutcomeNullable = OutcomeConstants.Achieved
                     },
                     new TestLearningDelivery
@@ -224,7 +224,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                         LearnStartDate = new DateTime(2014, 1, 1),
                         LearnActEndDateNullable = new DateTime(2017, 7, 31),
                         AimType = AimTypes.ProgrammeAim,
-                        ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
+                        ProgTypeNullable = ProgTypes.Traineeship,
                         OutcomeNullable = OutcomeConstants.Achieved
                     },
                     new TestLearningDelivery
@@ -232,7 +232,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
                         LearnStartDate = new DateTime(2015, 8, 1),
                         LearnActEndDateNullable = new DateTime(2017, 7, 31),
                         AimType = AimTypes.AimNotPartOfAProgramme,
-                        ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
+                        ProgTypeNullable = ProgTypes.Traineeship,
                         OutcomeNullable = OutcomeConstants.Achieved
                     }
                 }

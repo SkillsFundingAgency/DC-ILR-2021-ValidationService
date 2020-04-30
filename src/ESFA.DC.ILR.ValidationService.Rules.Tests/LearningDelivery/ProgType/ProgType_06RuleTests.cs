@@ -84,7 +84,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
                 .Returns(fundModel);
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
-                .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
+                .Returns(ProgTypes.ApprenticeshipStandard);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -117,9 +117,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         [InlineData(FundModels.NotFundedByESFA, 26)]
         [InlineData(FundModels.OtherAdult, 27)]
         [InlineData(FundModels.ApprenticeshipsFrom1May2017, 28)]
-        [InlineData(FundModels.NotFundedByESFA, TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(FundModels.OtherAdult, TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(FundModels.ApprenticeshipsFrom1May2017, TypeOfLearningProgramme.ApprenticeshipStandard)]
+        [InlineData(FundModels.NotFundedByESFA, ProgTypes.ApprenticeshipStandard)]
+        [InlineData(FundModels.OtherAdult, ProgTypes.ApprenticeshipStandard)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, ProgTypes.ApprenticeshipStandard)]
         [InlineData(FundModels.EuropeanSocialFund, null)]
         [InlineData(FundModels.CommunityLearning, null)]
         [InlineData(FundModels.Age16To19ExcludingApprenticeships, null)]

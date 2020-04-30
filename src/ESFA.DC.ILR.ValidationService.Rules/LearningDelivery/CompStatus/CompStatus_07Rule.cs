@@ -64,7 +64,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
         public bool ProgTypeConditionMet(int? progType)
         {
             return progType.HasValue
-                    && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+                    && progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public bool LearnActEndDateConditionMet(DateTime? learnActEndDate)

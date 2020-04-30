@@ -17,7 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool IsTraineeship(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
+            delivery.ProgTypeNullable == ProgTypes.Traineeship;
 
         public bool IsWorkExperience(ILearningDelivery delivery)
         {

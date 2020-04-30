@@ -27,7 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery()
                     {
-                        ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                        ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                         AimType = AimTypes.ProgrammeAim,
                         CompStatus = CompletionState.HasCompleted,
                     }
@@ -49,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery()
                     {
-                        ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                        ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                         AimType = AimTypes.ProgrammeAim,
                         CompStatus = CompletionState.HasCompleted,
                         AppFinRecords = new List<IAppFinRecord>()
@@ -129,14 +129,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var learningDelivery = new TestLearningDelivery()
             {
                 FundModel = FundModels.NotFundedByESFA,
-                ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard
+                ProgTypeNullable = ProgTypes.ApprenticeshipStandard
             };
 
             NewRule().IsNonFundedApprenticeshipStandard(learningDelivery).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(0, TypeOfLearningProgramme.ApprenticeshipStandard)]
+        [InlineData(0, ProgTypes.ApprenticeshipStandard)]
         [InlineData(FundModels.NotFundedByESFA, 0)]
         [InlineData(0, 0)]
         [InlineData(FundModels.NotFundedByESFA, null)]
@@ -156,7 +156,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var learningDelivery = new TestLearningDelivery()
             {
-                ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                 AimType = AimTypes.ProgrammeAim,
                 CompStatus = CompletionState.HasCompleted
             };
@@ -167,8 +167,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Theory]
         [InlineData(0, AimTypes.ProgrammeAim, CompletionState.HasCompleted)]
         [InlineData(null, AimTypes.ProgrammeAim, CompletionState.HasCompleted)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, 0, CompletionState.HasCompleted)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, AimTypes.ProgrammeAim, 0)]
+        [InlineData(ProgTypes.ApprenticeshipStandard, 0, CompletionState.HasCompleted)]
+        [InlineData(ProgTypes.ApprenticeshipStandard, AimTypes.ProgrammeAim, 0)]
         public void IsCompletedApprenticeshipStandardAim_False(int? progType, int aimType, int compStatus)
         {
             var learningDelivery = new TestLearningDelivery()

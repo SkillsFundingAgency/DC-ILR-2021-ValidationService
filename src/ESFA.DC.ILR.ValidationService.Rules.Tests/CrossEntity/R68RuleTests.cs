@@ -34,7 +34,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimSeqNumber = 1,
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -46,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimSeqNumber = 2,
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -75,7 +75,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimSeqNumber = 1,
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -105,7 +105,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimSeqNumber = 1,
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -118,7 +118,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimSeqNumber = 2,
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 2,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -130,7 +130,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimSeqNumber = 3,
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         FworkCodeNullable = 2,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -142,7 +142,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimSeqNumber = 4,
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         FworkCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -155,7 +155,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                         AimSeqNumber = 5,
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         FworkCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -183,7 +183,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -195,7 +195,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 2,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -222,7 +222,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -233,7 +233,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -260,7 +260,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         FworkCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -271,7 +271,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         FworkCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -298,7 +298,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         FworkCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -309,7 +309,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -336,7 +336,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 1,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -347,7 +347,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         StdCodeNullable = 2,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -409,12 +409,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship)]
+        [InlineData(ProgTypes.IntermediateLevelApprenticeship)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel6)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus)]
         public void IsApprenticeshipProgrammeAim_True(int progType)
         {
             var learningDelivery = new TestLearningDelivery()
@@ -434,7 +434,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             {
                 AimType = AimTypes.AimNotPartOfAProgramme,
                 FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship
+                ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship
             };
 
             NewRule().IsApprenticeshipProgrammeAim(learningDelivery).Should().BeFalse();
@@ -447,7 +447,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             {
                 AimType = AimTypes.ProgrammeAim,
                 FundModel = FundModels.AdultSkills,
-                ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship
+                ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship
             };
 
             NewRule().IsApprenticeshipProgrammeAim(learningDelivery).Should().BeFalse();
@@ -460,7 +460,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             {
                 AimType = AimTypes.ProgrammeAim,
                 FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
+                ProgTypeNullable = ProgTypes.Traineeship,
             };
 
             NewRule().IsApprenticeshipProgrammeAim(learningDelivery).Should().BeFalse();
@@ -522,7 +522,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                        ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                         StdCodeNullable = 12,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -533,7 +533,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ProgrammeAim,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                        ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                         StdCodeNullable = 12,
                     }
                 }

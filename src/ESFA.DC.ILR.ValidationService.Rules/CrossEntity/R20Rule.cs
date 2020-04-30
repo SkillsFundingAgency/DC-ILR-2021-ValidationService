@@ -91,7 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public bool LARSConditionMet(string learnAimRef, int? progType, int? fworkCode, int? pwayCode, DateTime startDate) => _lARSDataService.FrameworkCodeExistsForFrameworkAimsAndFrameworkComponentTypes(learnAimRef, progType, fworkCode, pwayCode, _frameWorkComponentTypes, startDate);
 
         public bool ApprenticeshipStandardsConditionMet(int? progTypeNullable) => progTypeNullable.HasValue
-                && progTypeNullable != TypeOfLearningProgramme.ApprenticeshipStandard;
+                && progTypeNullable != ProgTypes.ApprenticeshipStandard;
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, DateTime learnStartDate, DateTime? learnActEndDateNullable)
         {

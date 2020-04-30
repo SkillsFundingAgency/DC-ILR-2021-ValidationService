@@ -48,14 +48,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         [InlineData(4, false)]
         [InlineData(19, false)]
         [InlineData(26, false)]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship, true)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, true)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4, true)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5, true)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel6, true)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, true)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship, true)]
-        [InlineData(TypeOfLearningProgramme.Traineeship, true)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship, true)]
+        [InlineData(ProgTypes.ApprenticeshipStandard, true)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4, true)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel5, true)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel6, true)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, true)]
+        [InlineData(ProgTypes.IntermediateLevelApprenticeship, true)]
+        [InlineData(ProgTypes.Traineeship, true)]
         public void ConditionMetWithLearningDeliveriesContainingProgTypeMeetsExpectation(int progType, bool expectation)
         {
             var sut = NewRule();
@@ -71,10 +71,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
 
         [Theory]
         [InlineData(1, 4, 19, 26)]
-        [InlineData(1, TypeOfLearningProgramme.AdvancedLevelApprenticeship, TypeOfLearningProgramme.HigherApprenticeshipLevel4, TypeOfLearningProgramme.HigherApprenticeshipLevel6)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, 4, TypeOfLearningProgramme.HigherApprenticeshipLevel4)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4, TypeOfLearningProgramme.HigherApprenticeshipLevel6, 19)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship, TypeOfLearningProgramme.AdvancedLevelApprenticeship, TypeOfLearningProgramme.HigherApprenticeshipLevel6, 26, TypeOfLearningProgramme.ApprenticeshipStandard)]
+        [InlineData(1, ProgTypes.AdvancedLevelApprenticeship, ProgTypes.HigherApprenticeshipLevel4, ProgTypes.HigherApprenticeshipLevel6)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, 4, ProgTypes.HigherApprenticeshipLevel4)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4, ProgTypes.HigherApprenticeshipLevel6, 19)]
+        [InlineData(ProgTypes.IntermediateLevelApprenticeship, ProgTypes.AdvancedLevelApprenticeship, ProgTypes.HigherApprenticeshipLevel6, 26, ProgTypes.ApprenticeshipStandard)]
         public void InvalidItemRaisesValidationMessage(params int[] progTypes)
         {
             const string LearnRefNumber = "123456789X";
@@ -130,11 +130,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship, TypeOfLearningProgramme.HigherApprenticeshipLevel4, TypeOfLearningProgramme.HigherApprenticeshipLevel6)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus, TypeOfLearningProgramme.HigherApprenticeshipLevel4)]
-        [InlineData(TypeOfLearningProgramme.IntermediateLevelApprenticeship, TypeOfLearningProgramme.AdvancedLevelApprenticeship, TypeOfLearningProgramme.HigherApprenticeshipLevel6, TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4, TypeOfLearningProgramme.HigherApprenticeshipLevel6)]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship, TypeOfLearningProgramme.IntermediateLevelApprenticeship)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship, ProgTypes.HigherApprenticeshipLevel4, ProgTypes.HigherApprenticeshipLevel6)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, ProgTypes.HigherApprenticeshipLevel4)]
+        [InlineData(ProgTypes.IntermediateLevelApprenticeship, ProgTypes.AdvancedLevelApprenticeship, ProgTypes.HigherApprenticeshipLevel6, ProgTypes.ApprenticeshipStandard)]
+        [InlineData(ProgTypes.HigherApprenticeshipLevel4, ProgTypes.HigherApprenticeshipLevel6)]
+        [InlineData(ProgTypes.AdvancedLevelApprenticeship, ProgTypes.IntermediateLevelApprenticeship)]
         public void ValidItemDoesNotRaiseAValidationMessage(params int[] progTypes)
         {
             const string LearnRefNumber = "123456789X";

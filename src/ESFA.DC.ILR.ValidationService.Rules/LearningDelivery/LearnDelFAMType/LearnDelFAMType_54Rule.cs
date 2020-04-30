@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                         LearningDeliveryFAMCodeConstants.ACT_ContractESFA);
         }
 
-        public bool ProgTypeConditionMet(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        public bool ProgTypeConditionMet(int? progType) => progType == ProgTypes.ApprenticeshipStandard;
 
         public bool FundModelConditionMet(int fundModel) => fundModel == _fundModel;
 

@@ -40,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     LearnAimRef = "101",
                     AimType = AimTypes.ComponentAimInAProgramme,
                     FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                    ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                    ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                     FworkCodeNullable = 1,
                     PwayCodeNullable = 2,
                     StdCodeNullable = 3
@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             NewRule().AimTypeConditionMet(
                 aimType: AimTypes.AimNotPartOfAProgramme,
                 fundModel: FundModels.ApprenticeshipsFrom1May2017,
-                progTypeNullable: TypeOfLearningProgramme.ApprenticeshipStandard,
+                progTypeNullable: ProgTypes.ApprenticeshipStandard,
                 fworkCodeNullable: 1,
                 pwayCodeNullable: 2,
                 stdCodeNullable: 3,
@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     LearnAimRef = "101",
                     AimType = AimTypes.ComponentAimInAProgramme,
                     FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                    ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                    ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                     FworkCodeNullable = 1,
                     PwayCodeNullable = 2,
                     StdCodeNullable = 3
@@ -77,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             NewRule().AimTypeConditionMet(
                 aimType: AimTypes.ComponentAimInAProgramme,
                 fundModel: FundModels.ApprenticeshipsFrom1May2017,
-                progTypeNullable: TypeOfLearningProgramme.ApprenticeshipStandard,
+                progTypeNullable: ProgTypes.ApprenticeshipStandard,
                 fworkCodeNullable: 1,
                 pwayCodeNullable: 2,
                 stdCodeNullable: 3,
@@ -94,7 +94,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     LearnAimRef = "101",
                     AimType = AimTypes.ProgrammeAim,
                     FundModel = FundModels.NotFundedByESFA,
-                    ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                    ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                     FworkCodeNullable = 2,
                     PwayCodeNullable = 3,
                     StdCodeNullable = 5
@@ -104,7 +104,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             NewRule().AimTypeConditionMet(
                 aimType: AimTypes.ComponentAimInAProgramme,
                 fundModel: FundModels.ApprenticeshipsFrom1May2017,
-                progTypeNullable: TypeOfLearningProgramme.ApprenticeshipStandard,
+                progTypeNullable: ProgTypes.ApprenticeshipStandard,
                 fworkCodeNullable: 4,
                 pwayCodeNullable: 5,
                 stdCodeNullable: 6,
@@ -117,7 +117,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             NewRule().AimTypeConditionMet(
                 aimType: AimTypes.ComponentAimInAProgramme,
                 fundModel: FundModels.ApprenticeshipsFrom1May2017,
-                progTypeNullable: TypeOfLearningProgramme.ApprenticeshipStandard,
+                progTypeNullable: ProgTypes.ApprenticeshipStandard,
                 fworkCodeNullable: 4,
                 pwayCodeNullable: 5,
                 stdCodeNullable: 6,
@@ -134,7 +134,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     LearnAimRef = "101",
                     AimType = AimTypes.ComponentAimInAProgramme,
                     FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                    ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                    ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                     FworkCodeNullable = 1,
                     PwayCodeNullable = 2,
                     StdCodeNullable = 3
@@ -144,7 +144,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             NewRule().ConditionMet(
                 aimType: AimTypes.AimNotPartOfAProgramme,
                 fundModel: FundModels.ApprenticeshipsFrom1May2017,
-                progTypeNullable: TypeOfLearningProgramme.ApprenticeshipStandard,
+                progTypeNullable: ProgTypes.ApprenticeshipStandard,
                 fworkCodeNullable: 1,
                 pwayCodeNullable: 2,
                 stdCodeNullable: 3,
@@ -161,7 +161,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     LearnAimRef = "101",
                     AimType = AimTypes.ProgrammeAim,
                     FundModel = FundModels.NotFundedByESFA,
-                    ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                    ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                     FworkCodeNullable = 2,
                     PwayCodeNullable = 3,
                     StdCodeNullable = 5
@@ -171,7 +171,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             NewRule().AimTypeConditionMet(
                 aimType: AimTypes.ComponentAimInAProgramme,
                 fundModel: FundModels.ApprenticeshipsFrom1May2017,
-                progTypeNullable: TypeOfLearningProgramme.ApprenticeshipStandard,
+                progTypeNullable: ProgTypes.ApprenticeshipStandard,
                 fworkCodeNullable: 4,
                 pwayCodeNullable: 5,
                 stdCodeNullable: 6,
@@ -188,7 +188,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     LearnAimRef = "101",
                     AimType = AimTypes.ProgrammeAim,
                     FundModel = FundModels.NotFundedByESFA,
-                    ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                    ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                     FworkCodeNullable = 2,
                     PwayCodeNullable = 3,
                     StdCodeNullable = 5
@@ -204,7 +204,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ComponentAimInAProgramme,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                        ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                         FworkCodeNullable = 2,
                         PwayCodeNullable = 3,
                         StdCodeNullable = 5
@@ -229,7 +229,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     LearnAimRef = "101",
                     AimType = AimTypes.ProgrammeAim,
                     FundModel = FundModels.NotFundedByESFA,
-                    ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                    ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                     FworkCodeNullable = 2,
                     PwayCodeNullable = 3,
                     StdCodeNullable = 5
@@ -245,7 +245,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimType = AimTypes.ComponentAimInAProgramme,
                         FundModel = FundModels.NotFundedByESFA,
-                        ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                        ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                         FworkCodeNullable = 2,
                         PwayCodeNullable = 3,
                         StdCodeNullable = 5
@@ -267,7 +267,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.ComponentAimInAProgramme)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.NotFundedByESFA)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.ProgType, TypeOfLearningProgramme.AdvancedLevelApprenticeship)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.ProgType, ProgTypes.AdvancedLevelApprenticeship)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FworkCode, 1)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.PwayCode, 2)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.StdCode, 3)).Verifiable();
@@ -275,7 +275,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(
                 aimType: AimTypes.ComponentAimInAProgramme,
                 fundModel: FundModels.NotFundedByESFA,
-                progTypeNullable: TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                progTypeNullable: ProgTypes.AdvancedLevelApprenticeship,
                 fworkCodeNullable: 1,
                 pwayCodeNullable: 2,
                 stdCodeNullable: 3);

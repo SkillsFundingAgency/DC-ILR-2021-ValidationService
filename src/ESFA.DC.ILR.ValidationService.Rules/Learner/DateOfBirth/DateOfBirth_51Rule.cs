@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         {
             return !Excluded(learningDelivery.LearningDeliveryFAMs)
                    && learningDelivery.LearnStartDate > _julyThirtyFirst2016
-                   && (learningDelivery.ProgTypeNullable.HasValue && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship)
+                   && (learningDelivery.ProgTypeNullable.HasValue && learningDelivery.ProgTypeNullable == ProgTypes.Traineeship)
                    && learningDelivery.AimType == AimTypes.ProgrammeAim
                    && _dateTimeQueryService.YearsBetween(dateOfBirth, learningDelivery.LearnStartDate) >= 25;
         }

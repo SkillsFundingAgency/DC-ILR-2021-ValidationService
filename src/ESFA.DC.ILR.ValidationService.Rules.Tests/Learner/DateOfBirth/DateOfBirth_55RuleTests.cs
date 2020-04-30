@@ -27,7 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void ConditionMet_True()
         {
             var fundModel = FundModels.AdultSkills;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var learnStartDate = new DateTime(2017, 09, 01);
             var dateOfBirth = new DateTime(1992, 09, 01);
             var learnAimRef = "123456789";
@@ -73,7 +73,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void ConditionMet_False_Excluded(bool dd07MockResult, bool ldFamTypeMockResult, bool ldFamTypeAndCodesMockResult, bool larsDataServiceMockResult)
         {
             var fundModel = FundModels.AdultSkills;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var learnStartDate = new DateTime(2017, 09, 01);
             var dateOfBirth = new DateTime(1992, 09, 01);
             var learnAimRef = "123456789";
@@ -114,7 +114,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void ConditionMet_False_FundModel()
         {
             var fundModel = 0;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var learnStartDate = new DateTime(2017, 09, 01);
             var dateOfBirth = new DateTime(1992, 09, 01);
             var learnAimRef = "123456789";
@@ -155,7 +155,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void ConditionMet_False_LearnStartDateLessThanFirstAugust2017()
         {
             var fundModel = FundModels.AdultSkills;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var learnStartDate = new DateTime(2016, 09, 01);
             var dateOfBirth = new DateTime(1992, 09, 01);
             var learnAimRef = "123456789";
@@ -196,7 +196,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void ConditionMet_False_YearsBetweenDoBAndLearnStartDateLessThan24()
         {
             var fundModel = FundModels.AdultSkills;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var learnStartDate = new DateTime(2017, 09, 01);
             var dateOfBirth = new DateTime(1994, 09, 01);
             var learnAimRef = "123456789";
@@ -237,7 +237,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void ConditionMet_False_LARSNVQConditionFalse()
         {
             var fundModel = FundModels.AdultSkills;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var learnStartDate = new DateTime(2017, 09, 01);
             var dateOfBirth = new DateTime(1992, 09, 01);
             var learnAimRef = "123456789";
@@ -278,7 +278,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void ValidateError()
         {
             var fundModel = FundModels.AdultSkills;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var learnStartDate = new DateTime(2017, 09, 01);
             var dateOfBirth = new DateTime(1992, 09, 01);
             var learnAimRef = "123456789";
@@ -340,7 +340,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         public void ValidateNoError()
         {
             var fundModel = FundModels.AdultSkills;
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var learnStartDate = new DateTime(2017, 09, 01);
             var dateOfBirth = new DateTime(1992, 09, 01);
             var learnAimRef = "123456789";

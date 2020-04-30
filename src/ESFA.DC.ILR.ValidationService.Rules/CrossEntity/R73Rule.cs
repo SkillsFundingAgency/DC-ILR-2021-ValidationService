@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             theDelivery.AimType == AimTypes.ProgrammeAim;
 
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
-            theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            theDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
 
         public bool HasStandardCode(ILearningDelivery theDelivery) =>
             theDelivery.StdCodeNullable.HasValue;
@@ -124,7 +124,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         {
             BuildErrorMessageParameter(PropertyNameConstants.LearnRefNumber, learnRefNumber),
             BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.ProgrammeAim),
-            BuildErrorMessageParameter(PropertyNameConstants.ProgType, TypeOfLearningProgramme.ApprenticeshipStandard),
+            BuildErrorMessageParameter(PropertyNameConstants.ProgType, ProgTypes.ApprenticeshipStandard),
             BuildErrorMessageParameter(PropertyNameConstants.StdCode, stdCode),
         };
     }

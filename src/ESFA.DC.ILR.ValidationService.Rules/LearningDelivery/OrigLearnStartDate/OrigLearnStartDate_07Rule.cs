@@ -58,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
         public bool FundModelConditionMet(int fundModel, int? progType)
         {
             return fundModel == FundModels.OtherAdult
-                || (fundModel == FundModels.ApprenticeshipsFrom1May2017 && progType.HasValue && progType == TypeOfLearningProgramme.ApprenticeshipStandard);
+                || (fundModel == FundModels.ApprenticeshipsFrom1May2017 && progType.HasValue && progType == ProgTypes.ApprenticeshipStandard);
         }
 
         public bool LARSConditionMet(DateTime origLearnStartDate, string learnAimRef)

@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
             && !HasQualifyingEmployment(thisEmployment);
 
         public bool IsExcluded(ILearningDelivery thisDelivery) =>
-            thisDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
+            thisDelivery.ProgTypeNullable == ProgTypes.Traineeship;
 
         public bool HasQualifyingFunding(ILearningDelivery thisDelivery) =>
             _fundModels.Contains(thisDelivery.FundModel);

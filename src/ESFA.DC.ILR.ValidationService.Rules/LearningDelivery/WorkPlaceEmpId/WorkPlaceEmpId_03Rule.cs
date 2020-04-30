@@ -30,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceEmpId
         public TimeSpan SixtyDays => new TimeSpan(60, 0, 0, 0);
 
         public bool IsQualifyingProgramme(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
+            delivery.ProgTypeNullable == ProgTypes.Traineeship;
 
         public bool IsInsideTheRegistrationPeriod(ILearningDeliveryWorkPlacement placement) =>
             (_fileDataService.FilePreparationDate() - placement.WorkPlaceStartDate) <= SixtyDays;

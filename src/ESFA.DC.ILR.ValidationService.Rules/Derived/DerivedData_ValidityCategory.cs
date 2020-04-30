@@ -111,7 +111,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         {
             return !HasAdvancedLearnerLoansFAMType(learningDelivery.LearningDeliveryFAMs)
                 && (learningDelivery.FundModel == FundModels.NotFundedByESFA || learningDelivery.FundModel == FundModels.OtherAdult)
-                || (learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017 && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard);
+                || (learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017 && learningDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard);
         }
 
         public bool OlassAdultMatch(ILearningDelivery learningDelivery)
@@ -130,7 +130,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         public bool ApprenticeshipsMatch(ILearningDelivery learningDelivery)
         {
             return (learningDelivery.FundModel == FundModels.AdultSkills || learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017)
-                && learningDelivery.ProgTypeNullable != TypeOfLearningProgramme.ApprenticeshipStandard
+                && learningDelivery.ProgTypeNullable != ProgTypes.ApprenticeshipStandard
                 && learningDelivery.LearnStartDate >= _firstAugust2011
                 && learningDelivery.AimType == AimTypes.ComponentAimInAProgramme
                 && HasDD07(learningDelivery.ProgTypeNullable);
