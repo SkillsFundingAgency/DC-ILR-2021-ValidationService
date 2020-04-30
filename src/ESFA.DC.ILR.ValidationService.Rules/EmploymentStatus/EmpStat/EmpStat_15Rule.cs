@@ -36,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             _derivedData07.IsApprenticeship(delivery.ProgTypeNullable);
 
         public bool InAProgramme(ILearningDelivery delivery) =>
-            delivery.AimType == TypeOfAim.ProgrammeAim;
+            delivery.AimType == AimTypes.ProgrammeAim;
 
         public bool IsQualifyingAim(ILearningDelivery delivery) =>
             delivery.LearnStartDate > LastInviableDate;

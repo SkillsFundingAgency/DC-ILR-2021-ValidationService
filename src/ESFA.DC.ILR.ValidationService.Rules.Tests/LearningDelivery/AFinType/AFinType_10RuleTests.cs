@@ -55,10 +55,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         }
 
         [Theory]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, false)]
-        [InlineData(TypeOfAim.CoreAim16To19ExcludingApprenticeships, false)]
-        [InlineData(TypeOfAim.ProgrammeAim, true)]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, false)]
+        [InlineData(AimTypes.AimNotPartOfAProgramme, false)]
+        [InlineData(AimTypes.CoreAim16To19ExcludingApprenticeships, false)]
+        [InlineData(AimTypes.ProgrammeAim, true)]
+        [InlineData(AimTypes.ComponentAimInAProgramme, false)]
         [InlineData(2, false)]
         public void IsInAProgrammeMeetsExpectation(int candidate, bool expectation)
         {
@@ -160,7 +160,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
                 .Returns(FundModels.ApprenticeshipsFrom1May2017);
@@ -225,7 +225,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfLearningProgramme.ApprenticeshipStandard);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
                 .Returns(FundModels.ApprenticeshipsFrom1May2017);

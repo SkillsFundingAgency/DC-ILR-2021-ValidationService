@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             }
 
             var learningDeliveriesProgrammingAimType = objectToValidate.LearningDeliveries
-                .Where(p => p.AimType == TypeOfAim.ProgrammeAim).ToList();
+                .Where(p => p.AimType == AimTypes.ProgrammeAim).ToList();
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
@@ -80,7 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             int? stdCodeNullable,
             IEnumerable<ILearningDelivery> learningDeliveriesProgrammingAimType)
         {
-            return aimType == TypeOfAim.ComponentAimInAProgramme
+            return aimType == AimTypes.ComponentAimInAProgramme
                 && (learningDeliveriesProgrammingAimType == null
                     || !learningDeliveriesProgrammingAimType.Any(
                         p => p.FundModel == fundModel

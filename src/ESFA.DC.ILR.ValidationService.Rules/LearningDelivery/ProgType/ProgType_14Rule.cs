@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
             return thisDelivery != null
-                ? !thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.IndustryPlacement)
+                ? !thisDelivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.IndustryPlacement)
                 : true;
         }
 

@@ -92,7 +92,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ProgrammeAim;
+            return aimType == AimTypes.ProgrammeAim;
         }
 
         public bool LearnActEndDateConditionMet(DateTime learnStartDate, DateTime? learnActEndDate)

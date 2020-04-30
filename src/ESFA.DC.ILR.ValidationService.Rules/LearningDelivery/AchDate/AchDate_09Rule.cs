@@ -10,7 +10,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
     public class AchDate_09Rule : AbstractRule, IRule<ILearner>
     {
         private readonly DateTime _learnStartDate = new DateTime(2015, 7, 31);
-        private readonly int _aimType = TypeOfAim.ProgrammeAim;
+        private readonly int _aimType = AimTypes.ProgrammeAim;
         private readonly int _progTypeTraineeship = TypeOfLearningProgramme.Traineeship;
         private readonly int _progTypeApprenticeship = TypeOfLearningProgramme.ApprenticeshipStandard;
         private readonly int _fundModelOtherAdult = FundModels.OtherAdult;

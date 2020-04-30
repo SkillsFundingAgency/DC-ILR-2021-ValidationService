@@ -37,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
             !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(thisDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)
             && thisDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
-            && thisDelivery.AimType == TypeOfAim.ProgrammeAim
+            && thisDelivery.AimType == AimTypes.ProgrammeAim
             && thisDelivery.StdCodeNullable.HasValue
             && !HasQualifyingStart(thisDelivery, GetStandardPeriodsOfValidityFor(thisDelivery));
 

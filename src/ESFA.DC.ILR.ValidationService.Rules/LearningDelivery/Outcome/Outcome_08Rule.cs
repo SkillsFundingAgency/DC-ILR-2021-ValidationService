@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
                     continue;
                 }
 
-                if (learningDelivery.AimType != TypeOfAim.ProgrammeAim ||
+                if (learningDelivery.AimType != AimTypes.ProgrammeAim ||
                     ((learningDelivery.ProgTypeNullable ?? -1) != TypeOfLearningProgramme.Traineeship) ||
                     (learningDelivery.OutcomeNullable ?? -1) != OutcomeConstants.Achieved)
                 {

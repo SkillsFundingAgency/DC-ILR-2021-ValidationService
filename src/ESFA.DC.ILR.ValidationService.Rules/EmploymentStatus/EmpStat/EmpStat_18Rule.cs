@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             thisDelivery != null
             && _dateTimeQueryService.IsDateBetween(thisDelivery.LearnStartDate, DateTime.MinValue, OldCodeMonitoringThresholdDate)
             && thisDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
-            && thisDelivery.AimType == TypeOfAim.ProgrammeAim;
+            && thisDelivery.AimType == AimTypes.ProgrammeAim;
 
         public bool HasQualifyingEmploymentStatus(ILearnerEmploymentStatus thisEmployment) =>
             thisEmployment != null

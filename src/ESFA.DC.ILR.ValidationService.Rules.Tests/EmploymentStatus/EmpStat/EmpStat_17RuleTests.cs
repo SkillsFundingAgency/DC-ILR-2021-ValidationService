@@ -72,10 +72,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         }
 
         [Theory]
-        [InlineData(TypeOfAim.ProgrammeAim, true)]
-        [InlineData(TypeOfAim.AimNotPartOfAProgramme, false)]
-        [InlineData(TypeOfAim.ComponentAimInAProgramme, false)]
-        [InlineData(TypeOfAim.CoreAim16To19ExcludingApprenticeships, false)]
+        [InlineData(AimTypes.ProgrammeAim, true)]
+        [InlineData(AimTypes.AimNotPartOfAProgramme, false)]
+        [InlineData(AimTypes.ComponentAimInAProgramme, false)]
+        [InlineData(AimTypes.CoreAim16To19ExcludingApprenticeships, false)]
         public void IsInAProgrammeMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -165,7 +165,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(DateTime.Today);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(TypeOfLearningProgramme.Traineeship);
@@ -233,7 +233,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(DateTime.Today);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(TypeOfLearningProgramme.Traineeship);

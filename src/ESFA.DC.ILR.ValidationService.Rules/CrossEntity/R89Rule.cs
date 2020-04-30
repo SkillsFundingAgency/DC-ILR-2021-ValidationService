@@ -27,7 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             }
 
             var latestMainAim = objectToValidate.LearningDeliveries.Where(ld =>
-                ld.AimType == TypeOfAim.ProgrammeAim)
+                ld.AimType == AimTypes.ProgrammeAim)
                 .OrderByDescending(x => x.LearnStartDate)
                 .FirstOrDefault();
 
@@ -45,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ConditionMet(ILearningDelivery mainAim, IReadOnlyCollection<ILearningDelivery> componentAims)
         {
-            return componentAims.Any(x => x.AimType == TypeOfAim.ComponentAimInAProgramme &&
+            return componentAims.Any(x => x.AimType == AimTypes.ComponentAimInAProgramme &&
                                           x.ProgTypeNullable == mainAim.ProgTypeNullable &&
                                           x.FworkCodeNullable == mainAim.FworkCodeNullable &&
                                           x.PwayCodeNullable == mainAim.PwayCodeNullable &&

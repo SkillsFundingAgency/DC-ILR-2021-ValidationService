@@ -30,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learningDelivery = new TestLearningDelivery
             {
                 ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 LearnStartDate = learnStartDate
             };
 
@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learningDelivery = new TestLearningDelivery
             {
                 ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 LearnStartDate = learnStartDate
             };
 
@@ -82,7 +82,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learningDelivery = new TestLearningDelivery
             {
                 ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 LearnStartDate = learnStartDate
             };
 
@@ -108,7 +108,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learningDelivery = new TestLearningDelivery
             {
                 ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 LearnStartDate = learnStartDate
             };
 
@@ -134,7 +134,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learningDelivery = new TestLearningDelivery
             {
                 ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                AimType = TypeOfAim.AimNotPartOfAProgramme,
+                AimType = AimTypes.AimNotPartOfAProgramme,
                 LearnStartDate = learnStartDate
             };
 
@@ -160,7 +160,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learningDelivery = new TestLearningDelivery
             {
                 ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 LearnStartDate = learnStartDate
             };
 
@@ -191,7 +191,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     new TestLearningDelivery()
                     {
                         ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnStartDate = learnStartDate
                     }
                 }
@@ -225,7 +225,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     new TestLearningDelivery()
                     {
                         ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnStartDate = learnStartDate
                     }
                 }

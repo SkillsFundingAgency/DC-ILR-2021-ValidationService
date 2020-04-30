@@ -24,13 +24,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Fact]
         public void ComponentAimTypeConditionMet_False()
         {
-            NewRule().ComponentAimTypeConditionMet(TypeOfAim.AimNotPartOfAProgramme).Should().BeFalse();
+            NewRule().ComponentAimTypeConditionMet(AimTypes.AimNotPartOfAProgramme).Should().BeFalse();
         }
 
         [Fact]
         public void ComponentAimTypeConditionMet_True()
         {
-            NewRule().ComponentAimTypeConditionMet(TypeOfAim.ComponentAimInAProgramme).Should().BeTrue();
+            NewRule().ComponentAimTypeConditionMet(AimTypes.ComponentAimInAProgramme).Should().BeTrue();
         }
 
         [Fact]
@@ -174,7 +174,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        AimType = TypeOfAim.AimNotPartOfAProgramme,
+                        AimType = AimTypes.AimNotPartOfAProgramme,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 01),
                         LearnActEndDateNullable = new DateTime(2017, 02, 28),
@@ -184,7 +184,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 24),
                         LearnActEndDateNullable = new DateTime(2017, 03, 01),
@@ -194,7 +194,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        AimType = TypeOfAim.AimNotPartOfAProgramme,
+                        AimType = AimTypes.AimNotPartOfAProgramme,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 25),
                         LearnActEndDateNullable = new DateTime(2017, 10, 25),
@@ -204,7 +204,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 26),
                         LearnActEndDateNullable = new DateTime(2017, 11, 25),
@@ -241,7 +241,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
                         LearnStartDate = new DateTime(2015, 07, 02),
                         LearnActEndDateNullable = null
@@ -269,13 +269,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.ComponentAimInAProgramme)).Verifiable();
+            validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.ComponentAimInAProgramme)).Verifiable();
             validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, "02/07/2018")).Verifiable();
             validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, "25/10/2018")).Verifiable();
 
             NewRule(validationErrorHandler: validationErrorHandlerMock.Object)
                 .BuildErrorMessageParameters(
-                TypeOfAim.ComponentAimInAProgramme,
+                AimTypes.ComponentAimInAProgramme,
                 new DateTime(2018, 07, 02),
                 new DateTime(2018, 10, 25));
 

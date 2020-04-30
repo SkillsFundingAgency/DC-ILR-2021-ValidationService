@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool IsCompletedQualifyingAim(ILearningDelivery delivery) =>
-            delivery.LearnAimRef == TypeOfAim.References.ESFLearnerStartandAssessment
+            delivery.LearnAimRef == AimTypes.References.ESFLearnerStartandAssessment
             && delivery.CompStatus == CompletionState.HasCompleted;
 
         public bool HasMatchingContractReference(ILearningDelivery source, ILearningDelivery candidate) =>

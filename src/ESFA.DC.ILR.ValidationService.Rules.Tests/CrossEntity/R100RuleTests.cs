@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         CompStatus = CompletionState.HasCompleted,
                     }
                 }
@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         CompStatus = CompletionState.HasCompleted,
                         AppFinRecords = new List<IAppFinRecord>()
                         {
@@ -157,7 +157,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var learningDelivery = new TestLearningDelivery()
             {
                 ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
-                AimType = TypeOfAim.ProgrammeAim,
+                AimType = AimTypes.ProgrammeAim,
                 CompStatus = CompletionState.HasCompleted
             };
 
@@ -165,10 +165,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         }
 
         [Theory]
-        [InlineData(0, TypeOfAim.ProgrammeAim, CompletionState.HasCompleted)]
-        [InlineData(null, TypeOfAim.ProgrammeAim, CompletionState.HasCompleted)]
+        [InlineData(0, AimTypes.ProgrammeAim, CompletionState.HasCompleted)]
+        [InlineData(null, AimTypes.ProgrammeAim, CompletionState.HasCompleted)]
         [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, 0, CompletionState.HasCompleted)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, TypeOfAim.ProgrammeAim, 0)]
+        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard, AimTypes.ProgrammeAim, 0)]
         public void IsCompletedApprenticeshipStandardAim_False(int? progType, int aimType, int compStatus)
         {
             var learningDelivery = new TestLearningDelivery()

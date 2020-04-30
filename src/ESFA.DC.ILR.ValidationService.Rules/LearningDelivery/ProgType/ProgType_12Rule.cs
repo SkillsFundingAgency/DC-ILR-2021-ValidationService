@@ -126,7 +126,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ComponentAimInAProgramme;
+            return aimType == AimTypes.ComponentAimInAProgramme;
         }
 
         public bool ProgTypeConditionMet(int? progType)

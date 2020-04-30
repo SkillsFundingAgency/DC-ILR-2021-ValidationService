@@ -63,7 +63,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             _fcsData.GetEligibilityRuleSectorSubjectAreaLevelsFor(thisDelivery.ConRefNumber).ToReadOnlyCollection();
 
         public bool IsExcluded(ILearningDelivery thisDelivery) =>
-            thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment);
+            thisDelivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.ESFLearnerStartandAssessment);
 
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
             !IsExcluded(thisDelivery)

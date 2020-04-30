@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool ConditionMet(ILearningDelivery learningDelivery, DateTime firstAugustForAcademicYearOfLearnersSixteenthBirthDate)
         {
             return (learningDelivery.ProgTypeNullable.HasValue && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship)
-                   && learningDelivery.AimType == TypeOfAim.ProgrammeAim
+                   && learningDelivery.AimType == AimTypes.ProgrammeAim
                    && learningDelivery.LearnStartDate > _julyThirtyFirst2016
                    && learningDelivery.LearnStartDate < firstAugustForAcademicYearOfLearnersSixteenthBirthDate;
         }

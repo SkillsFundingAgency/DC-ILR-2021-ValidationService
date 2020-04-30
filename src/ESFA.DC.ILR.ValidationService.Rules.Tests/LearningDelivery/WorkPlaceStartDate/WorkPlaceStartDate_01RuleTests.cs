@@ -60,14 +60,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.IndustryPlacement, true)]
-        [InlineData(TypeOfAim.References.SupportedInternship16To19, true)]
-        [InlineData(TypeOfAim.References.WorkExperience, true)]
-        [InlineData(TypeOfAim.References.WorkPlacement0To49Hours, true)]
-        [InlineData(TypeOfAim.References.WorkPlacement100To199Hours, true)]
-        [InlineData(TypeOfAim.References.WorkPlacement200To499Hours, true)]
-        [InlineData(TypeOfAim.References.WorkPlacement500PlusHours, true)]
-        [InlineData(TypeOfAim.References.WorkPlacement50To99Hours, true)]
+        [InlineData(AimTypes.References.IndustryPlacement, true)]
+        [InlineData(AimTypes.References.SupportedInternship16To19, true)]
+        [InlineData(AimTypes.References.WorkExperience, true)]
+        [InlineData(AimTypes.References.WorkPlacement0To49Hours, true)]
+        [InlineData(AimTypes.References.WorkPlacement100To199Hours, true)]
+        [InlineData(AimTypes.References.WorkPlacement200To499Hours, true)]
+        [InlineData(AimTypes.References.WorkPlacement500PlusHours, true)]
+        [InlineData(AimTypes.References.WorkPlacement50To99Hours, true)]
         [InlineData("asdflkasroas i", false)]
         [InlineData("w;oraeijwq rf;oiew ", false)]
         [InlineData(null, false)]
@@ -133,14 +133,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.IndustryPlacement, "2014-08-01")]
-        [InlineData(TypeOfAim.References.SupportedInternship16To19, "2015-01-14")]
-        [InlineData(TypeOfAim.References.WorkExperience, "2014-08-26")]
-        [InlineData(TypeOfAim.References.WorkPlacement0To49Hours, "2016-02-09")]
-        [InlineData(TypeOfAim.References.WorkPlacement100To199Hours, "2015-05-18")]
-        [InlineData(TypeOfAim.References.WorkPlacement200To499Hours, "2014-12-28")]
-        [InlineData(TypeOfAim.References.WorkPlacement500PlusHours, "2017-11-07")]
-        [InlineData(TypeOfAim.References.WorkPlacement50To99Hours, "2016-04-04")]
+        [InlineData(AimTypes.References.IndustryPlacement, "2014-08-01")]
+        [InlineData(AimTypes.References.SupportedInternship16To19, "2015-01-14")]
+        [InlineData(AimTypes.References.WorkExperience, "2014-08-26")]
+        [InlineData(AimTypes.References.WorkPlacement0To49Hours, "2016-02-09")]
+        [InlineData(AimTypes.References.WorkPlacement100To199Hours, "2015-05-18")]
+        [InlineData(AimTypes.References.WorkPlacement200To499Hours, "2014-12-28")]
+        [InlineData(AimTypes.References.WorkPlacement500PlusHours, "2017-11-07")]
+        [InlineData(AimTypes.References.WorkPlacement50To99Hours, "2016-04-04")]
         public void InvalidItemRaisesValidationMessage(string aimReference, string startDate)
         {
             const string LearnRefNumber = "123456789X";
@@ -184,14 +184,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.IndustryPlacement, "2014-08-01")]
-        [InlineData(TypeOfAim.References.SupportedInternship16To19, "2015-01-14")]
-        [InlineData(TypeOfAim.References.WorkExperience, "2014-08-26")]
-        [InlineData(TypeOfAim.References.WorkPlacement0To49Hours, "2016-02-09")]
-        [InlineData(TypeOfAim.References.WorkPlacement100To199Hours, "2015-05-18")]
-        [InlineData(TypeOfAim.References.WorkPlacement200To499Hours, "2014-12-28")]
-        [InlineData(TypeOfAim.References.WorkPlacement500PlusHours, "2017-11-07")]
-        [InlineData(TypeOfAim.References.WorkPlacement50To99Hours, "2016-04-04")]
+        [InlineData(AimTypes.References.IndustryPlacement, "2014-08-01")]
+        [InlineData(AimTypes.References.SupportedInternship16To19, "2015-01-14")]
+        [InlineData(AimTypes.References.WorkExperience, "2014-08-26")]
+        [InlineData(AimTypes.References.WorkPlacement0To49Hours, "2016-02-09")]
+        [InlineData(AimTypes.References.WorkPlacement100To199Hours, "2015-05-18")]
+        [InlineData(AimTypes.References.WorkPlacement200To499Hours, "2014-12-28")]
+        [InlineData(AimTypes.References.WorkPlacement500PlusHours, "2017-11-07")]
+        [InlineData(AimTypes.References.WorkPlacement50To99Hours, "2016-04-04")]
         public void ValidItemDoesNotRaiseAValidationMessage(string aimReference, string startDate)
         {
             const string LearnRefNumber = "123456789X";

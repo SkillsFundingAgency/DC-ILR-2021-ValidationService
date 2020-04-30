@@ -30,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
             delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            delivery.AimType == TypeOfAim.ProgrammeAim;
+            delivery.AimType == AimTypes.ProgrammeAim;
 
         public void Validate(ILearner objectToValidate)
         {

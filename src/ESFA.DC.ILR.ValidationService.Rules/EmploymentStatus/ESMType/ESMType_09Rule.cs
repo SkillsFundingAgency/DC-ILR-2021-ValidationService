@@ -41,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public bool IsACandidate(ILearningDelivery delivery) =>
             _dd07.IsApprenticeship(delivery.ProgTypeNullable)
-                && delivery.AimType == TypeOfAim.ProgrammeAim
+                && delivery.AimType == AimTypes.ProgrammeAim
                 && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue);
 
         public bool IsQualifyingEmployment(ILearnerEmploymentStatus employmentStatus) =>

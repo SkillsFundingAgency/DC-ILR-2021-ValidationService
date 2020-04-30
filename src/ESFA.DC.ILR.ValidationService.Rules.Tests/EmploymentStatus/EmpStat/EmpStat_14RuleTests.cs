@@ -47,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                     .Returns(contractCandidates.ElementAt(i));
                 mockDelivery
                     .SetupGet(x => x.LearnAimRef)
-                    .Returns(TypeOfAim.References.ESFLearnerStartandAssessment);
+                    .Returns(AimTypes.References.ESFLearnerStartandAssessment);
                 mockDelivery
                     .SetupGet(x => x.CompStatus)
                     .Returns(CompletionState.HasCompleted);
@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockItem = new Mock<ILearningDelivery>();
             mockItem
                 .SetupGet(x => x.LearnAimRef)
-                .Returns(TypeOfAim.References.ESFLearnerStartandAssessment);
+                .Returns(AimTypes.References.ESFLearnerStartandAssessment);
             mockItem
                 .SetupGet(x => x.CompStatus)
                 .Returns(CompletionState.HasCompleted);
@@ -313,7 +313,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             var mockItem = new Mock<ILearningDelivery>(MockBehavior.Strict);
             mockItem
                 .SetupGet(x => x.LearnAimRef)
-                .Returns(TypeOfAim.References.ESFLearnerStartandAssessment);
+                .Returns(AimTypes.References.ESFLearnerStartandAssessment);
             mockItem
                 .SetupGet(x => x.CompStatus)
                 .Returns(CompletionState.HasCompleted);

@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
             var learnRefNumber = objectToValidate.LearnRefNumber;
 
             objectToValidate.LearningDeliveries
-                .NullSafeWhere(x => x.ProgTypeNullable == TypeOfLearningProgramme.Traineeship && x.AimType == TypeOfAim.ProgrammeAim)
+                .NullSafeWhere(x => x.ProgTypeNullable == TypeOfLearningProgramme.Traineeship && x.AimType == AimTypes.ProgrammeAim)
                 .ForEach(x =>
                 {
                     var failedValidation = !ConditionMet(x);

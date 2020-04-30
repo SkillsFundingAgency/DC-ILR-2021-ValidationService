@@ -34,7 +34,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             && _dateTimeQueryService.IsDateBetween(thisDelivery.LearnStartDate, allocation.StartDate.Value, DateTime.MaxValue);
 
         public bool HasQualifyingAim(ILearningDelivery thisDelivery) =>
-            thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment);
+            thisDelivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.ESFLearnerStartandAssessment);
 
         public bool HasQualifyingModel(ILearningDelivery thisDelivery) =>
             thisDelivery.FundModel == FundModels.EuropeanSocialFund;

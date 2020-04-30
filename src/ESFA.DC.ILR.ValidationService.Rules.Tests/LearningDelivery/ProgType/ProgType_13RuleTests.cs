@@ -87,7 +87,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
                 .Returns(TypeOfLearningProgramme.Traineeship);
             mockDelivery
                 .SetupGet(y => y.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
 
             var deliveries = new List<ILearningDelivery>
             {
@@ -145,7 +145,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
                 .Returns(TypeOfLearningProgramme.Traineeship);
             mockDelivery
                 .SetupGet(y => y.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
 
             var deliveries = new List<ILearningDelivery>
             {

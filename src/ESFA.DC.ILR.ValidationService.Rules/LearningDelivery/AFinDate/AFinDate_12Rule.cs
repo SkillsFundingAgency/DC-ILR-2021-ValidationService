@@ -11,7 +11,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
 {
     public class AFinDate_12Rule : AbstractRule, IRule<ILearner>
     {
-        private const int _aimType = TypeOfAim.ProgrammeAim;
+        private const int _aimType = AimTypes.ProgrammeAim;
         private const int _numberOfYears = 2;
 
         private readonly IDerivedData_07Rule _dd07;

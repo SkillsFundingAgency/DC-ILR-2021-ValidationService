@@ -58,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public virtual bool IsCompletedApprenticeshipStandardAim(ILearningDelivery learningDelivery)
         {
             return learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
-                   && learningDelivery.AimType == TypeOfAim.ProgrammeAim
+                   && learningDelivery.AimType == AimTypes.ProgrammeAim
                    && learningDelivery.CompStatus == CompletionState.HasCompleted;
         }
 

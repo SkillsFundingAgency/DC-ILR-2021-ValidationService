@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         public bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ComponentAimInAProgramme;
+            return aimType == AimTypes.ComponentAimInAProgramme;
         }
 
         public bool StandardCodeExists(int? stdCode)

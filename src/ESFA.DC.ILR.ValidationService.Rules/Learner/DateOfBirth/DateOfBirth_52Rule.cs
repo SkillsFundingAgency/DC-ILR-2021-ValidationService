@@ -59,7 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                    && fundModel == FundModels.ApprenticeshipsFrom1May2017
                    && learnStartDate >= _mayFirst2017
                    && _dd07.IsApprenticeship(progType)
-                   && aimType == TypeOfAim.ProgrammeAim
+                   && aimType == AimTypes.ProgrammeAim
                    && _dateTimeQueryService.WholeDaysBetween(learnStartDate, learnPlanEndDate) < 365;
         }
 

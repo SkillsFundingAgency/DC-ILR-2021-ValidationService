@@ -16,7 +16,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         private const int MinimumContractMonths = 12;
 
         private const int ProgrammeType = TypeOfLearningProgramme.ApprenticeshipStandard;
-        private const int AimType = TypeOfAim.ProgrammeAim;
+        private const int AimType = AimTypes.ProgrammeAim;
 
         private readonly DateTime _ruleEndDate = new DateTime(2016, 7, 31);
 
@@ -97,7 +97,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public virtual bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ProgrammeAim;
+            return aimType == AimTypes.ProgrammeAim;
         }
 
         public virtual bool ProgTypeConditionMet(int? progType)

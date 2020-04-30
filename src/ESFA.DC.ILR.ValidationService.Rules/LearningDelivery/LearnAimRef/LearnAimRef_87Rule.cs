@@ -14,9 +14,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public const string Name = RuleNameConstants.LearnAimRef_87;
         private readonly HashSet<string> DisqualifyingAims = new HashSet<string>
         {
-            TypeOfAim.Branches.VocationalStudiesNotLeadingToARecognisedQualification,
-            TypeOfAim.Branches.NonExternallyCertificatedFEOtherProvision,
-            TypeOfAim.Branches.UnitsOfApprovedNQFProvision
+            AimTypes.Branches.VocationalStudiesNotLeadingToARecognisedQualification,
+            AimTypes.Branches.NonExternallyCertificatedFEOtherProvision,
+            AimTypes.Branches.UnitsOfApprovedNQFProvision
         };
 
         private readonly IValidationErrorHandler _messageHandler;

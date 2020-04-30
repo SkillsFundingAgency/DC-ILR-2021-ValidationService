@@ -34,7 +34,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             return null;
         }
 
-        private bool ProgAimCondition(int aimType) => aimType == TypeOfAim.ProgrammeAim;
+        private bool ProgAimCondition(int aimType) => aimType == AimTypes.ProgrammeAim;
 
         private bool ProgTypeCondition(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
 

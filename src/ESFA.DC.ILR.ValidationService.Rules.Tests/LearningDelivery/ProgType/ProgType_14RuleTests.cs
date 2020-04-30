@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.IndustryPlacement, false)]
+        [InlineData(AimTypes.References.IndustryPlacement, false)]
         [InlineData("asdflkasroas i", true)]
         [InlineData("w;oraeijwq rf;oiew ", true)]
         [InlineData(null, true)]
@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.IndustryPlacement, TypeOfLearningProgramme.Traineeship)]
+        [InlineData(AimTypes.References.IndustryPlacement, TypeOfLearningProgramme.Traineeship)]
         public void InvalidItemRaisesValidationMessage(string aimReference, int typeOfProgramme)
         {
             const string LearnRefNumber = "123456789X";

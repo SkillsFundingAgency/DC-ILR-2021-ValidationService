@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 1,
                         FundModel = FundModels.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = new DateTime(2018, 10, 10),
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
@@ -78,7 +78,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 2,
                         FundModel = 35,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
                         PwayCodeNullable = 3,
@@ -106,7 +106,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 1,
                         FundModel = FundModels.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = null,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
@@ -117,7 +117,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 2,
                         FundModel = FundModels.NotFundedByESFA,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
                         PwayCodeNullable = 3,
@@ -145,7 +145,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 1,
                         FundModel = FundModels.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = null,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
@@ -156,7 +156,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 2,
                         FundModel = FundModels.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = null,
                         ProgTypeNullable = 23,
                         FworkCodeNullable = 24,
@@ -167,7 +167,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 3,
                         FundModel = 35,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
                         PwayCodeNullable = 3,
@@ -177,7 +177,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 4,
                         FundModel = FundModels.NotFundedByESFA,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = 1,
                         FworkCodeNullable = 2,
                         PwayCodeNullable = 3,
@@ -217,7 +217,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 1,
                         FundModel = FundModels.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = null,
                         ProgTypeNullable = progType,
                         FworkCodeNullable = frameworkCode,
@@ -228,7 +228,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 2,
                         FundModel = fundModel,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = progType,
                         FworkCodeNullable = frameworkCode,
                         PwayCodeNullable = pathwayCode,
@@ -238,7 +238,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 3,
                         FundModel = fundModel,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         ProgTypeNullable = progType,
                         FworkCodeNullable = frameworkCode,
                         PwayCodeNullable = pathwayCode,
@@ -278,7 +278,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 1,
                         FundModel = FundModels.NotFundedByESFA,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnActEndDateNullable = null,
                         ProgTypeNullable = progType,
                         FworkCodeNullable = frameworkCode,
@@ -289,7 +289,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 2,
                         FundModel = fundModel,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
+                        AimType = AimTypes.ComponentAimInAProgramme,
                         ProgTypeNullable = progType.HasValue ? progType + 1 : 1,
                         FworkCodeNullable = frameworkCode.HasValue ? frameworkCode + 1 : 2,
                         PwayCodeNullable = pathwayCode.HasValue ? pathwayCode + 1 : 3,
@@ -299,7 +299,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     {
                         AimSeqNumber = 3,
                         FundModel = fundModel,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        AimType = AimTypes.ProgrammeAim,
                         ProgTypeNullable = progType,
                         FworkCodeNullable = frameworkCode,
                         PwayCodeNullable = pathwayCode,
@@ -320,7 +320,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.ComponentAimInAProgramme)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.ComponentAimInAProgramme)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.ApprenticeshipsFrom1May2017)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.ProgType, TypeOfLearningProgramme.AdvancedLevelApprenticeship)).Verifiable();
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FworkCode, 2)).Verifiable();
@@ -331,7 +331,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var learningDelivery = new TestLearningDelivery()
             {
                 LearnAimRef = "101",
-                AimType = TypeOfAim.ComponentAimInAProgramme,
+                AimType = AimTypes.ComponentAimInAProgramme,
                 ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                 FworkCodeNullable = 2,
                 PwayCodeNullable = 3,

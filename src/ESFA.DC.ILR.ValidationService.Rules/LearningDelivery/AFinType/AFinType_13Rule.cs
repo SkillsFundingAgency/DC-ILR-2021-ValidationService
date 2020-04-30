@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
             delivery.FundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            delivery.AimType == TypeOfAim.ProgrammeAim;
+            delivery.AimType == AimTypes.ProgrammeAim;
 
         public void Validate(ILearner objectToValidate)
         {

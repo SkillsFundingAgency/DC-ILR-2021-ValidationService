@@ -66,7 +66,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool FundModelFilter(int fundModel) => fundModel == FundModels.AdultSkills || fundModel == FundModels.ApprenticeshipsFrom1May2017;
 
-        public bool AimTypeFilter(int aimType) => aimType == TypeOfAim.ComponentAimInAProgramme;
+        public bool AimTypeFilter(int aimType) => aimType == AimTypes.ComponentAimInAProgramme;
 
         public bool CompStatusFilter(int compStatus) => compStatus == CompletionState.HasCompleted;
 

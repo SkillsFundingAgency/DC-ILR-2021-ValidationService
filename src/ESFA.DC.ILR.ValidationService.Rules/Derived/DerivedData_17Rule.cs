@@ -53,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             theDelivery.StdCodeNullable == stdCode;
 
         public bool IsProgrameAim(ILearningDelivery theDelivery) =>
-            theDelivery.AimType == TypeOfAim.ProgrammeAim;
+            theDelivery.AimType == AimTypes.ProgrammeAim;
 
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
             theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;

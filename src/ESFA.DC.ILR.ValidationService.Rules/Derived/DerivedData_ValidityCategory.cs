@@ -132,7 +132,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             return (learningDelivery.FundModel == FundModels.AdultSkills || learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017)
                 && learningDelivery.ProgTypeNullable != TypeOfLearningProgramme.ApprenticeshipStandard
                 && learningDelivery.LearnStartDate >= _firstAugust2011
-                && learningDelivery.AimType == TypeOfAim.ComponentAimInAProgramme
+                && learningDelivery.AimType == AimTypes.ComponentAimInAProgramme
                 && HasDD07(learningDelivery.ProgTypeNullable);
         }
 

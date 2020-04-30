@@ -12,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         IDerivedData_04Rule
     {
         public DateTime? GetEarliesStartDateFor(ILearningDelivery thisDelivery, IReadOnlyCollection<ILearningDelivery> usingSources) =>
-            GetEarliesStartDateFor(TypeOfAim.ProgrammeAim, thisDelivery.ProgTypeNullable, thisDelivery.FworkCodeNullable, thisDelivery.PwayCodeNullable, usingSources);
+            GetEarliesStartDateFor(AimTypes.ProgrammeAim, thisDelivery.ProgTypeNullable, thisDelivery.FworkCodeNullable, thisDelivery.PwayCodeNullable, usingSources);
 
         public DateTime? GetEarliesStartDateFor(long aimType, long? progType, long? fworkCode, long? pwayCode, IEnumerable<ILearningDelivery> usingSources) =>
             usingSources

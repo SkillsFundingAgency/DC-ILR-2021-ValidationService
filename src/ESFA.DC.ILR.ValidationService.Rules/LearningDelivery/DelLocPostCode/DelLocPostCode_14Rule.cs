@@ -80,7 +80,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
             fundModel == FundModel;
 
         public bool ConditionMetLearnAimRef(string learnAimRef) =>
-            !learnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment);
+            !learnAimRef.CaseInsensitiveEquals(AimTypes.References.ESFLearnerStartandAssessment);
 
         public bool ConditionMetTemporaryPostcode(string postcode) =>
             !postcode.CaseInsensitiveEquals(ValidationConstants.TemporaryPostCode);

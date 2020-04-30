@@ -50,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
            theDelivery.FundModel == FundModels.OtherAdult;
 
         public bool IsProgrammeAim(ILearningDelivery theDelivery) =>
-            theDelivery.AimType == TypeOfAim.ProgrammeAim;
+            theDelivery.AimType == AimTypes.ProgrammeAim;
 
         public bool IsStandardApprenticeship(ILearningDelivery theDelivery) =>
             theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
@@ -121,7 +121,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor(string learnRefNumber, int stdCode) => new[]
         {
             BuildErrorMessageParameter(PropertyNameConstants.LearnRefNumber, learnRefNumber),
-            BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.ProgrammeAim),
+            BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.ProgrammeAim),
             BuildErrorMessageParameter(PropertyNameConstants.ProgType, TypeOfLearningProgramme.ApprenticeshipStandard),
             BuildErrorMessageParameter(PropertyNameConstants.StdCode, stdCode),
         };

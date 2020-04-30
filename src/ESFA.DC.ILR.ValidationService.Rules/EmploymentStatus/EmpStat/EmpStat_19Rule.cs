@@ -49,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public bool IsRestrictionMatch(ILearningDelivery delivery) =>
             delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship
-            && delivery.AimType == TypeOfAim.ProgrammeAim
+            && delivery.AimType == AimTypes.ProgrammeAim
             && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, NewCodeMonitoringThresholdDate, DateTime.MaxValue);
 
         public void Validate(ILearner objectToValidate)

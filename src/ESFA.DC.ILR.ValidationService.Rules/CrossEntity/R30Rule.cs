@@ -27,9 +27,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var group in groups)
             {
-                if (group.Any(d => d.AimType == TypeOfAim.ComponentAimInAProgramme) && group.All(d => d.AimType != TypeOfAim.ProgrammeAim))
+                if (group.Any(d => d.AimType == AimTypes.ComponentAimInAProgramme) && group.All(d => d.AimType != AimTypes.ProgrammeAim))
                 {
-                    var aimSequenceNumber = group.First(x => x.AimType == TypeOfAim.ComponentAimInAProgramme).AimSeqNumber;
+                    var aimSequenceNumber = group.First(x => x.AimType == AimTypes.ComponentAimInAProgramme).AimSeqNumber;
                     HandleValidationError(
                         objectToValidate.LearnRefNumber,
                         aimSequenceNumber,

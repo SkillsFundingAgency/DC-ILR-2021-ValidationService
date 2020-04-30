@@ -25,7 +25,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public string RuleName => Name;
 
         public bool IsWorkExperience(ILearningDelivery delivery) =>
-            delivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.WorkExperience);
+            delivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.WorkExperience);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             delivery.FundModel == FundModels.AdultSkills
@@ -33,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 delivery.LearningDeliveryFAMs,
                 LearningDeliveryFAMTypeConstants.LDM,
                 LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)
-            && delivery.AimType != TypeOfAim.ProgrammeAim
+            && delivery.AimType != AimTypes.ProgrammeAim
             && IsWorkExperience(delivery);
 
         public void Validate(ILearner objectToValidate)

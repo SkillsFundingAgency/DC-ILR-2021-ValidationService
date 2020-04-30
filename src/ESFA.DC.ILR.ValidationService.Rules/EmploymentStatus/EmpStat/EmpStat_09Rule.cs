@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            delivery.AimType == TypeOfAim.ProgrammeAim;
+            delivery.AimType == AimTypes.ProgrammeAim;
 
         public bool HasAViableStart(ILearningDelivery delivery) =>
             delivery.LearnStartDate > LastInviableDate;

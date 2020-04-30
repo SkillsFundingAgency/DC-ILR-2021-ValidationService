@@ -27,7 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
             delivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship;
 
         public bool IsInAProgramme(ILearningDelivery delivery) =>
-            delivery.AimType == TypeOfAim.ProgrammeAim;
+            delivery.AimType == AimTypes.ProgrammeAim;
 
         public bool IsViable(ILearningDelivery delivery) =>
             TypeOfLearningProgramme.IsViableApprenticeship(delivery.LearnStartDate);

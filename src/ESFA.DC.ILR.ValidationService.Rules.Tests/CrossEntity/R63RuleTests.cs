@@ -32,13 +32,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Fact]
         public void AimTypeConditionMet_False()
         {
-            NewRule().AimTypeConditionMet(TypeOfAim.ComponentAimInAProgramme).Should().BeFalse();
+            NewRule().AimTypeConditionMet(AimTypes.ComponentAimInAProgramme).Should().BeFalse();
         }
 
         [Fact]
         public void AimTypeConditionMet_True()
         {
-            NewRule().AimTypeConditionMet(TypeOfAim.CoreAim16To19ExcludingApprenticeships).Should().BeTrue();
+            NewRule().AimTypeConditionMet(AimTypes.CoreAim16To19ExcludingApprenticeships).Should().BeTrue();
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         FundModel = FundModels.Age16To19ExcludingApprenticeships,
-                        AimType = TypeOfAim.AimNotPartOfAProgramme
+                        AimType = AimTypes.AimNotPartOfAProgramme
                     }
                 }
             };
@@ -72,7 +72,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         FundModel = FundModels.Age16To19ExcludingApprenticeships,
-                        AimType = TypeOfAim.CoreAim16To19ExcludingApprenticeships
+                        AimType = AimTypes.CoreAim16To19ExcludingApprenticeships
                     }
                 }
             };
@@ -93,12 +93,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         FundModel = FundModels.CommunityLearning,
-                        AimType = TypeOfAim.CoreAim16To19ExcludingApprenticeships
+                        AimType = AimTypes.CoreAim16To19ExcludingApprenticeships
                     },
                     new TestLearningDelivery()
                     {
                         FundModel = FundModels.EuropeanSocialFund,
-                        AimType = TypeOfAim.AimNotPartOfAProgramme
+                        AimType = AimTypes.AimNotPartOfAProgramme
                     }
                 }
             };
@@ -126,9 +126,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
             validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.Age16To19ExcludingApprenticeships)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.CoreAim16To19ExcludingApprenticeships)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.CoreAim16To19ExcludingApprenticeships)).Verifiable();
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(FundModels.Age16To19ExcludingApprenticeships, TypeOfAim.CoreAim16To19ExcludingApprenticeships);
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(FundModels.Age16To19ExcludingApprenticeships, AimTypes.CoreAim16To19ExcludingApprenticeships);
             validationErrorHandlerMock.Verify();
         }
 

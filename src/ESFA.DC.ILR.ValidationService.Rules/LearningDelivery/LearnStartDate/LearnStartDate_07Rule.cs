@@ -81,7 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             && _fwkCommonComponents.Contains(larsDelivery.FrameworkCommonComponent.Value);
 
         public bool IsComponentAim(ILearningDelivery theDelivery) =>
-            theDelivery.AimType == TypeOfAim.ComponentAimInAProgramme;
+            theDelivery.AimType == AimTypes.ComponentAimInAProgramme;
 
         public bool IsApprenticeship(ILearningDelivery theDelivery) =>
             _dd07.IsApprenticeship(theDelivery.ProgTypeNullable);
