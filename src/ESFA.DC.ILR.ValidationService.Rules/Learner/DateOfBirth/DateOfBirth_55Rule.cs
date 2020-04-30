@@ -21,11 +21,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         private readonly string[] _learnAimRefTypes =
         {
-            TypeOfLARSLearnAimRef.GCEALevel,
-            TypeOfLARSLearnAimRef.GCEA2Level,
-            TypeOfLARSLearnAimRef.GCEAppliedALevel,
-            TypeOfLARSLearnAimRef.GCEAppliedALevelDoubleAward,
-            TypeOfLARSLearnAimRef.GCEALevelWithGCEAdvancedSubsidiary
+            LARSLearnAimRefTypes.GCEALevel,
+            LARSLearnAimRefTypes.GCEA2Level,
+            LARSLearnAimRefTypes.GCEAppliedALevel,
+            LARSLearnAimRefTypes.GCEAppliedALevelDoubleAward,
+            LARSLearnAimRefTypes.GCEALevelWithGCEAdvancedSubsidiary
         };
 
         private readonly string[] _notionalNvqLevels =

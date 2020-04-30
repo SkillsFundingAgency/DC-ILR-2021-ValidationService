@@ -20,17 +20,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OutGrade
 
         private readonly string[] _learnAinRefTypes =
         {
-            TypeOfLARSLearnAimRef.GCEASLevel,
-            TypeOfLARSLearnAimRef.GCEALevel,
-            TypeOfLARSLearnAimRef.GCSE,
-            TypeOfLARSLearnAimRef.GCEA2Level,
-            TypeOfLARSLearnAimRef.GSCEVocational,
-            TypeOfLARSLearnAimRef.GCEAppliedALevel,
-            TypeOfLARSLearnAimRef.GCEAppliedASLevelDoubleAward,
-            TypeOfLARSLearnAimRef.GCEAppliedA2,
-            TypeOfLARSLearnAimRef.GCEAppliedA2DoubleAward,
-            TypeOfLARSLearnAimRef.GCEALevelWithGCEAdvancedSubsidiary,
-            TypeOfLARSLearnAimRef.ShortCourseGCSE
+            LARSLearnAimRefTypes.GCEASLevel,
+            LARSLearnAimRefTypes.GCEALevel,
+            LARSLearnAimRefTypes.GCSE,
+            LARSLearnAimRefTypes.GCEA2Level,
+            LARSLearnAimRefTypes.GSCEVocational,
+            LARSLearnAimRefTypes.GCEAppliedALevel,
+            LARSLearnAimRefTypes.GCEAppliedASLevelDoubleAward,
+            LARSLearnAimRefTypes.GCEAppliedA2,
+            LARSLearnAimRefTypes.GCEAppliedA2DoubleAward,
+            LARSLearnAimRefTypes.GCEALevelWithGCEAdvancedSubsidiary,
+            LARSLearnAimRefTypes.ShortCourseGCSE
         };
 
         public OutGrade_07Rule(
