@@ -9,7 +9,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
     public class R91Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _fundModel = TypeOfFunding.EuropeanSocialFund;
+        private readonly int _fundModel = FundModels.EuropeanSocialFund;
         private readonly string _learnAimReference = TypeOfAim.References.ESFLearnerStartandAssessment;
         private readonly int _completionState = CompletionState.HasCompleted;
 

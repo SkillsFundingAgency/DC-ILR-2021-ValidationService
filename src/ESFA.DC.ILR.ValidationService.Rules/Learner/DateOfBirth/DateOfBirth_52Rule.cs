@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool ConditionMet(int fundModel, int? progType, int aimType, DateTime learnStartDate, DateTime learnPlanEndDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
             return !Excluded(progType, learningDeliveryFams)
-                   && fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+                   && fundModel == FundModels.ApprenticeshipsFrom1May2017
                    && learnStartDate >= _mayFirst2017
                    && _dd07.IsApprenticeship(progType)
                    && aimType == TypeOfAim.ProgrammeAim

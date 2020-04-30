@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             HasMatchingBenefitsIndicator(GetEligibilityRuleFor(thisDelivery), derivedRuleAction());
 
         public bool IsNotValid(ILearningDelivery thisDelivery, Func<bool> derivedRuleAction) =>
-            thisDelivery.FundModel == TypeOfFunding.EuropeanSocialFund
+            thisDelivery.FundModel == FundModels.EuropeanSocialFund
                 && !HasMatchingBenefitsIndicator(thisDelivery, derivedRuleAction);
 
         public void Validate(ILearner thisLearner)

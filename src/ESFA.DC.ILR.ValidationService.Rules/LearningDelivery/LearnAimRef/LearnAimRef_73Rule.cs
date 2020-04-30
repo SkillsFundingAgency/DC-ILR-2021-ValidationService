@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.EuropeanSocialFund;
+            return fundModel == FundModels.EuropeanSocialFund;
         }
 
         public void Validate(ILearner thisLearner)

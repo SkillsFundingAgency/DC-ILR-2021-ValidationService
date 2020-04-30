@@ -42,14 +42,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, false)]
-        [InlineData(TypeOfFunding.CommunityLearning, false)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, false)]
-        [InlineData(TypeOfFunding.AdultSkills, false)]
-        [InlineData(TypeOfFunding.Other16To19, false)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, true)]
-        [InlineData(TypeOfFunding.OtherAdult, true)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, true)]
+        [InlineData(FundModels.EuropeanSocialFund, false)]
+        [InlineData(FundModels.CommunityLearning, false)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, false)]
+        [InlineData(FundModels.AdultSkills, false)]
+        [InlineData(FundModels.Other16To19, false)]
+        [InlineData(FundModels.NotFundedByESFA, true)]
+        [InlineData(FundModels.OtherAdult, true)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, true)]
         public void ConditionMetWithLearningDeliveriesContainingFundModelsMeetsExpectation(int fundModel, bool expectation)
         {
             var sut = NewRule();
@@ -64,11 +64,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.EuropeanSocialFund)]
-        [InlineData(TypeOfFunding.CommunityLearning)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships)]
-        [InlineData(TypeOfFunding.AdultSkills)]
-        [InlineData(TypeOfFunding.Other16To19)]
+        [InlineData(FundModels.EuropeanSocialFund)]
+        [InlineData(FundModels.CommunityLearning)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships)]
+        [InlineData(FundModels.AdultSkills)]
+        [InlineData(FundModels.Other16To19)]
         public void InvalidItemRaisesValidationMessage(int fundModel)
         {
             const string LearnRefNumber = "123456789X";
@@ -114,17 +114,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.NotFundedByESFA, 26)]
-        [InlineData(TypeOfFunding.OtherAdult, 27)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, 28)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(TypeOfFunding.OtherAdult, TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, null)]
-        [InlineData(TypeOfFunding.CommunityLearning, null)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, null)]
-        [InlineData(TypeOfFunding.AdultSkills, null)]
-        [InlineData(TypeOfFunding.Other16To19, null)]
+        [InlineData(FundModels.NotFundedByESFA, 26)]
+        [InlineData(FundModels.OtherAdult, 27)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, 28)]
+        [InlineData(FundModels.NotFundedByESFA, TypeOfLearningProgramme.ApprenticeshipStandard)]
+        [InlineData(FundModels.OtherAdult, TypeOfLearningProgramme.ApprenticeshipStandard)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, TypeOfLearningProgramme.ApprenticeshipStandard)]
+        [InlineData(FundModels.EuropeanSocialFund, null)]
+        [InlineData(FundModels.CommunityLearning, null)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, null)]
+        [InlineData(FundModels.AdultSkills, null)]
+        [InlineData(FundModels.Other16To19, null)]
         public void ValidItemDoesNotRaiseAValidationMessage(int fundModel, int? programmeType)
         {
             const string LearnRefNumber = "123456789X";

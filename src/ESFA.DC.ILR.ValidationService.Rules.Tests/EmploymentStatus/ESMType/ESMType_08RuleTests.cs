@@ -68,13 +68,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, false)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, true)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, false)]
-        [InlineData(TypeOfFunding.CommunityLearning, false)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, false)]
-        [InlineData(TypeOfFunding.Other16To19, true)]
-        [InlineData(TypeOfFunding.OtherAdult, false)]
+        [InlineData(FundModels.AdultSkills, false)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, true)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, false)]
+        [InlineData(FundModels.CommunityLearning, false)]
+        [InlineData(FundModels.EuropeanSocialFund, false)]
+        [InlineData(FundModels.Other16To19, true)]
+        [InlineData(FundModels.OtherAdult, false)]
         public void IsExcludedMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();

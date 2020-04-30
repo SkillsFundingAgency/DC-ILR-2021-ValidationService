@@ -31,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
         }
 
         public bool Excluded(int? ProgType, int? FundModel) =>
-            ProgType == TypeOfLearningProgramme.ApprenticeshipStandard && FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            ProgType == TypeOfLearningProgramme.ApprenticeshipStandard && FundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int compStatus, int? outcome)
         {

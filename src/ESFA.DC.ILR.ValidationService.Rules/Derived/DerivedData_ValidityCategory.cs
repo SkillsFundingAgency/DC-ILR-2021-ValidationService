@@ -88,48 +88,48 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool CommunityLearningMatch(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == TypeOfFunding.CommunityLearning;
+            return learningDelivery.FundModel == FundModels.CommunityLearning;
         }
 
         public bool ESFMatch(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == TypeOfFunding.EuropeanSocialFund;
+            return learningDelivery.FundModel == FundModels.EuropeanSocialFund;
         }
 
         public bool EFA16To19Match(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == TypeOfFunding.Age16To19ExcludingApprenticeships || learningDelivery.FundModel == TypeOfFunding.Other16To19;
+            return learningDelivery.FundModel == FundModels.Age16To19ExcludingApprenticeships || learningDelivery.FundModel == FundModels.Other16To19;
         }
 
         public bool AdvancedLearnerLoanMatch(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == TypeOfFunding.NotFundedByESFA
+            return learningDelivery.FundModel == FundModels.NotFundedByESFA
                 && HasAdvancedLearnerLoansFAMType(learningDelivery.LearningDeliveryFAMs);
         }
 
         public bool AnyMatch(ILearningDelivery learningDelivery)
         {
             return !HasAdvancedLearnerLoansFAMType(learningDelivery.LearningDeliveryFAMs)
-                && (learningDelivery.FundModel == TypeOfFunding.NotFundedByESFA || learningDelivery.FundModel == TypeOfFunding.OtherAdult)
-                || (learningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017 && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard);
+                && (learningDelivery.FundModel == FundModels.NotFundedByESFA || learningDelivery.FundModel == FundModels.OtherAdult)
+                || (learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017 && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard);
         }
 
         public bool OlassAdultMatch(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == TypeOfFunding.AdultSkills
+            return learningDelivery.FundModel == FundModels.AdultSkills
                 && HasOlassFAMTypeAndCode(learningDelivery.LearningDeliveryFAMs);
         }
 
         public bool AdultSkillsMatch(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == TypeOfFunding.AdultSkills
+            return learningDelivery.FundModel == FundModels.AdultSkills
                 && !HasOlassFAMTypeAndCode(learningDelivery.LearningDeliveryFAMs)
                 && !HasDD07(learningDelivery.ProgTypeNullable);
         }
 
         public bool ApprenticeshipsMatch(ILearningDelivery learningDelivery)
         {
-            return (learningDelivery.FundModel == TypeOfFunding.AdultSkills || learningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017)
+            return (learningDelivery.FundModel == FundModels.AdultSkills || learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017)
                 && learningDelivery.ProgTypeNullable != TypeOfLearningProgramme.ApprenticeshipStandard
                 && learningDelivery.LearnStartDate >= _firstAugust2011
                 && learningDelivery.AimType == TypeOfAim.ComponentAimInAProgramme
@@ -138,7 +138,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool UnemployedMatch(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            return learningDelivery.FundModel == TypeOfFunding.AdultSkills
+            return learningDelivery.FundModel == FundModels.AdultSkills
                 && learningDelivery.LearnStartDate < _firstAugust2016
                 && HasDD11(learningDelivery, learnerEmploymentStatuses)
                 && !HasDD07(learningDelivery.ProgTypeNullable)

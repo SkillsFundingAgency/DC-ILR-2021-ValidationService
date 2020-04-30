@@ -41,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             && IsLearningSupportFunding(theDelivery);
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            theDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool IsComponentAim(ILearningDelivery theDelivery) =>
             theDelivery.AimType == TypeOfAim.ComponentAimInAProgramme;

@@ -35,13 +35,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         [Fact]
         public void FundModelConditionMet_False()
         {
-            NewRule().FundModelConditionMet(TypeOfFunding.CommunityLearning).Should().BeFalse();
+            NewRule().FundModelConditionMet(FundModels.CommunityLearning).Should().BeFalse();
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships)]
-        [InlineData(TypeOfFunding.AdultSkills)]
-        [InlineData(TypeOfFunding.NotFundedByESFA)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships)]
+        [InlineData(FundModels.AdultSkills)]
+        [InlineData(FundModels.NotFundedByESFA)]
         public void FundModelConditionMet_True(int fundModel)
         {
             NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
@@ -175,9 +175,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.CommunityLearning, "", TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, "50023111", TypeOfLearningProgramme.Traineeship)]
-        [InlineData(TypeOfFunding.CommunityLearning, "50023408", TypeOfLearningProgramme.Traineeship)]
+        [InlineData(FundModels.CommunityLearning, "", TypeOfLearningProgramme.ApprenticeshipStandard)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, "50023111", TypeOfLearningProgramme.Traineeship)]
+        [InlineData(FundModels.CommunityLearning, "50023408", TypeOfLearningProgramme.Traineeship)]
         public void ConditionMet_False(int fundModel, string learnAimRef, int? progType)
         {
             var testLearningDeliveryHeEntity = new TestLearningDeliveryHE()
@@ -210,9 +210,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, "50023408", TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData(TypeOfFunding.AdultSkills, "50023408", TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, "50023408", TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, "50023408", TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
+        [InlineData(FundModels.AdultSkills, "50023408", TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
+        [InlineData(FundModels.NotFundedByESFA, "50023408", TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
         public void ConditionMet_True(int fundModel, string learnAimRef, int? progType)
         {
             var testLearningDeliveryFAMs = new TestLearningDeliveryFAM[]
@@ -257,7 +257,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.AdultSkills,
+                        FundModel = FundModels.AdultSkills,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                         LearnAimRef = "50023408",
                         LearningDeliveryFAMs = testLearningDeliveryFAMs
@@ -315,7 +315,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.CommunityLearning,
+                        FundModel = FundModels.CommunityLearning,
                         ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
                         LearnAimRef = "50023408",
                         LearningDeliveryFAMs = testLearningDeliveryFAMs,
@@ -379,9 +379,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, TypeOfFunding.NotFundedByESFA)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.NotFundedByESFA)).Verifiable();
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(TypeOfFunding.NotFundedByESFA);
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(FundModels.NotFundedByESFA);
 
             validationErrorHandlerMock.Verify();
         }

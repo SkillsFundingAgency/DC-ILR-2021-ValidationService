@@ -62,7 +62,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.NotFundedByESFA;
+            return fundModel == FundModels.NotFundedByESFA;
         }
 
         public bool LARSConditionMet(DateTime origLearnStartDate, string learnAimRef)

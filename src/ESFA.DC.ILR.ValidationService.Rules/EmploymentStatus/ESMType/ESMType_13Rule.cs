@@ -49,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
             HasDisqualifyingLOUIndicator(GetEligibilityRuleFor(thisDelivery), derivedRuleAction());
 
         public bool IsNotValid(ILearningDelivery thisDelivery, Func<int?> derivedRuleAction) =>
-            thisDelivery.FundModel == TypeOfFunding.EuropeanSocialFund
+            thisDelivery.FundModel == FundModels.EuropeanSocialFund
                 && HasDisqualifyingLOUIndicator(thisDelivery, derivedRuleAction);
 
         public void Validate(ILearner thisLearner)

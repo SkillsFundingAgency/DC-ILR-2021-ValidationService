@@ -11,7 +11,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_44Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { TypeOfFunding.AdultSkills, TypeOfFunding.EuropeanSocialFund, TypeOfFunding.OtherAdult };
+        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { FundModels.AdultSkills, FundModels.EuropeanSocialFund, FundModels.OtherAdult };
         private readonly IEnumerable<int> _aimTypes = new HashSet<int>() { 3, 5 };
         private readonly DateTime _firstAugust2015 = new DateTime(2015, 08, 01);
 

@@ -17,7 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.LLDDHealthProb
         private const int MaxRuleAge = 25;
         private readonly int applicableLLDDCode = LLDDHealthProblemConstants.LearningDifficulty;
 
-        private readonly int[] _applicableFundModels = { TypeOfFunding.NotFundedByESFA, TypeOfFunding.CommunityLearning };
+        private readonly int[] _applicableFundModels = { FundModels.NotFundedByESFA, FundModels.CommunityLearning };
 
         private readonly IDerivedData_06Rule _derivedData06;
         private readonly IDateTimeQueryService _dateTimeQueryService;
@@ -59,7 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.LLDDHealthProb
             }
 
             if (!learner.LearningDeliveries.Any(ld =>
-                    ld.FundModel == TypeOfFunding.NotFundedByESFA &&
+                    ld.FundModel == FundModels.NotFundedByESFA &&
                     (ld.LearningDeliveryFAMs
                         ?.Any(ldf => !ldf.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.SOF) ||
                                     !ldf.LearnDelFAMCode.CaseInsensitiveEquals(LearningDeliveryFAMCodeConstants.SOF_LA)) ?? false)))

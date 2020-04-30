@@ -151,7 +151,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearningDeliveryFAMs = learningDeliveryFAMs
                     }
                 }

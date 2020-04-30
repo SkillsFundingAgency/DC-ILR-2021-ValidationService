@@ -20,8 +20,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFamQueryService;
         private readonly IEnumerable<int> _fundModels = new HashSet<int>
         {
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.ApprenticeshipsFrom1May2017
+            FundModels.AdultSkills,
+            FundModels.ApprenticeshipsFrom1May2017
         };
 
         private readonly HashSet<int?> _componentTypes = new HashSet<int?> { 1, 2, 3 };

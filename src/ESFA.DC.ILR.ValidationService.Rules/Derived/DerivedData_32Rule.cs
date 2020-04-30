@@ -16,7 +16,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool AimTypeConditionMet(int aimType) => aimType == TypeOfAim.ProgrammeAim;
 
-        public bool FundModelConditionMet(int fundModel) => fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+        public bool FundModelConditionMet(int fundModel) => fundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool LearnActEndDateConditionMet(DateTime? learnActEndDate) => !learnActEndDate.HasValue;
     }

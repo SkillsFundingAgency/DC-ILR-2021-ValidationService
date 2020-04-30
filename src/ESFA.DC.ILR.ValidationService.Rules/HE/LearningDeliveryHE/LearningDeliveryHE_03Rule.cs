@@ -16,9 +16,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.LearningDeliveryHE
     {
         private readonly int[] _fundModels =
             {
-                TypeOfFunding.Age16To19ExcludingApprenticeships,
-                TypeOfFunding.AdultSkills,
-                TypeOfFunding.NotFundedByESFA
+                FundModels.Age16To19ExcludingApprenticeships,
+                FundModels.AdultSkills,
+                FundModels.NotFundedByESFA
             };
 
         private readonly string[] _notionalNVQLevels =

@@ -53,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                         otherwise set to N
              */
 
-            return delivery.FundModel == TypeOfFunding.AdultSkills
+            return delivery.FundModel == FundModels.AdultSkills
                 && InReceiptOfBenefits(employments, delivery.LearnStartDate);
         }
     }

@@ -59,7 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.OtherAdult;
+            theDelivery.FundModel == FundModels.OtherAdult;
 
         public int GetTotalTNPPriceFor(IReadOnlyCollection<ILearningDelivery> theDeliveries) =>
             _appFinRecordData.GetTotalTNPPriceForLatestAppFinRecordsForLearning(theDeliveries);

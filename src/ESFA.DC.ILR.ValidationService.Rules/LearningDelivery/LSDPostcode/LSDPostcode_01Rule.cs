@@ -12,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 {
     public class LSDPostcode_01Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly HashSet<int> _fundModels = new HashSet<int>() { TypeOfFunding.CommunityLearning, TypeOfFunding.AdultSkills };
+        private readonly HashSet<int> _fundModels = new HashSet<int>() { FundModels.CommunityLearning, FundModels.AdultSkills };
         private readonly DateTime _firstAugust2019 = new DateTime(2019, 08, 01);
 
         private readonly IPostcodesDataService _postcodesDataService;

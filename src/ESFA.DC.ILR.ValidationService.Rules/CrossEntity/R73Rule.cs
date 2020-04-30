@@ -45,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 && HasStandardCode(theDelivery);
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.OtherAdult;
+            theDelivery.FundModel == FundModels.OtherAdult;
 
         public bool IsProgrammeAim(ILearningDelivery theDelivery) =>
             theDelivery.AimType == TypeOfAim.ProgrammeAim;

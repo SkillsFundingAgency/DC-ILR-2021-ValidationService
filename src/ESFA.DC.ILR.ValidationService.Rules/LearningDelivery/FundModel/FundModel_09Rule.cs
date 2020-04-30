@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
 
         public virtual bool FundModelConditionMet(int fundModel)
         {
-            return fundModel != TypeOfFunding.OtherAdult;
+            return fundModel != FundModels.OtherAdult;
         }
 
         public virtual bool ProgTypeConditionMet(int? progType)
@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
 
         public virtual bool ApprenticeshipConditionMet(int fundModel, int? progType)
         {
-            return !(fundModel == TypeOfFunding.NotFundedByESFA && _dd07.IsApprenticeship(progType));
+            return !(fundModel == FundModels.NotFundedByESFA && _dd07.IsApprenticeship(progType));
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel)

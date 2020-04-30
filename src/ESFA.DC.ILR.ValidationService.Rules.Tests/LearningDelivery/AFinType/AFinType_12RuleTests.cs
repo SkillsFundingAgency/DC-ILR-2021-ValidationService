@@ -83,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfAim.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
 
             var mockFinRec = new Mock<IAppFinRecord>();
             mockFinRec
@@ -121,7 +121,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfAim.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
 
             var mockFinRec = new Mock<IAppFinRecord>();
             var records = new List<IAppFinRecord>();
@@ -170,7 +170,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfAim.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
 
             var mockFinRec = new Mock<IAppFinRecord>();
             mockFinRec

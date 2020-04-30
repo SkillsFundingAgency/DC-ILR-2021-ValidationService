@@ -74,7 +74,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public bool IsApprenticeshipProgrammeAim(ILearningDelivery learningDelivery)
         {
             return learningDelivery.AimType == TypeOfAim.ProgrammeAim
-                   && learningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+                   && learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017
                    && _apprenticeshipProgTypes.Contains(learningDelivery.ProgTypeNullable);
         }
 

@@ -35,8 +35,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             delivery.LearnStartDate > LastInviableDate;
 
         public bool HasQualifyingFunding(ILearningDelivery delivery) =>
-           delivery.FundModel == TypeOfFunding.Age16To19ExcludingApprenticeships
-           || delivery.FundModel == TypeOfFunding.Other16To19;
+           delivery.FundModel == FundModels.Age16To19ExcludingApprenticeships
+           || delivery.FundModel == FundModels.Other16To19;
 
         public bool HasAQualifyingEmploymentStatus(ILearningDelivery delivery, IReadOnlyCollection<ILearnerEmploymentStatus> usingEmployments) =>
             usingEmployments

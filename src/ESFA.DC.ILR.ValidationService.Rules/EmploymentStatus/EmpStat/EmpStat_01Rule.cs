@@ -15,9 +15,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
     {
         public HashSet<int> _fundModels = new HashSet<int>
         {
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.OtherAdult,
-            TypeOfFunding.NotFundedByESFA
+            FundModels.AdultSkills,
+            FundModels.OtherAdult,
+            FundModels.NotFundedByESFA
         };
 
         private readonly IDerivedData_07Rule _derivedData07;
@@ -58,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             CheckDeliveryFAMs(delivery, IsComunityLearningFund);
 
         public bool IsNotFundedByESFA(ILearningDelivery delivery) =>
-            delivery.FundModel == TypeOfFunding.NotFundedByESFA;
+            delivery.FundModel == FundModels.NotFundedByESFA;
 
         public bool IsNotQualifiedFunding(ILearningDelivery delivery) =>
             IsNotFundedByESFA(delivery) && IsComunityLearningFund(delivery);

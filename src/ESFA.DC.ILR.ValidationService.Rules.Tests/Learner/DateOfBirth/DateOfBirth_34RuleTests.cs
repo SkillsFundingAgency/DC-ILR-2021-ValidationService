@@ -46,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships
                     }
                 }
             };
@@ -82,7 +82,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships
                     }
                 }
             };
@@ -118,7 +118,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.AdultSkills
+                        FundModel = FundModels.AdultSkills
                     }
                 }
             };
@@ -158,7 +158,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships
                     }
                 }
             };
@@ -200,7 +200,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships
                     }
                 }
             };
@@ -236,7 +236,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships
                     }
                 }
             };

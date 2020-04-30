@@ -17,12 +17,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
         public const int RuleLeniencyPeriod = 60;
         private readonly HashSet<int> _fundModels = new HashSet<int>
         {
-            TypeOfFunding.Age16To19ExcludingApprenticeships,
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.ApprenticeshipsFrom1May2017,
-            TypeOfFunding.EuropeanSocialFund,
-            TypeOfFunding.OtherAdult,
-            TypeOfFunding.Other16To19
+            FundModels.Age16To19ExcludingApprenticeships,
+            FundModels.AdultSkills,
+            FundModels.ApprenticeshipsFrom1May2017,
+            FundModels.EuropeanSocialFund,
+            FundModels.OtherAdult,
+            FundModels.Other16To19
         };
 
         private readonly IDateTimeQueryService _dateTimeQuery;
@@ -94,7 +94,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
             _fundModels.Contains(theDelivery.FundModel);
 
         public bool IsNotFundedByESFA(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.NotFundedByESFA;
+            theDelivery.FundModel == FundModels.NotFundedByESFA;
 
         public bool HasAdvancedLearnerLoan(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(

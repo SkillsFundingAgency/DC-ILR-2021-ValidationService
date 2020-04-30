@@ -169,13 +169,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
         }
 
         [Theory]
-        [InlineData(25, TypeOfFunding.Age16To19ExcludingApprenticeships)]
-        [InlineData(35, TypeOfFunding.AdultSkills)]
-        [InlineData(36, TypeOfFunding.ApprenticeshipsFrom1May2017)]
-        [InlineData(70, TypeOfFunding.EuropeanSocialFund)]
-        [InlineData(81, TypeOfFunding.OtherAdult)]
-        [InlineData(82, TypeOfFunding.Other16To19)]
-        [InlineData(99, TypeOfFunding.NotFundedByESFA)]
+        [InlineData(25, FundModels.Age16To19ExcludingApprenticeships)]
+        [InlineData(35, FundModels.AdultSkills)]
+        [InlineData(36, FundModels.ApprenticeshipsFrom1May2017)]
+        [InlineData(70, FundModels.EuropeanSocialFund)]
+        [InlineData(81, FundModels.OtherAdult)]
+        [InlineData(82, FundModels.Other16To19)]
+        [InlineData(99, FundModels.NotFundedByESFA)]
         public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
         {
             Assert.Equal(expectation, candidate);

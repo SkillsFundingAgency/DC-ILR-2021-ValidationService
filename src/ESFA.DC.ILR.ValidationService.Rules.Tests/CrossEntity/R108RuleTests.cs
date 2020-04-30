@@ -53,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [InlineData(25)]
         [InlineData(35)]
         [InlineData(70)]
-        [InlineData(TypeOfFunding.OtherAdult)]
+        [InlineData(FundModels.OtherAdult)]
         public void FundModelConditionMet_True(int fundModel)
         {
             IReadOnlyCollection<ILearningDelivery> learningDeliveries = new List<ILearningDelivery>()

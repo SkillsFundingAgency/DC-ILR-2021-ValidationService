@@ -52,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
         public bool ExceptionConditionMet(int fundModel, int? progType)
         {
             return (!progType.HasValue || progType != TypeOfLearningProgramme.ApprenticeshipStandard)
-                && fundModel != TypeOfFunding.ApprenticeshipsFrom1May2017;
+                && fundModel != FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? outcome, int compStatus)

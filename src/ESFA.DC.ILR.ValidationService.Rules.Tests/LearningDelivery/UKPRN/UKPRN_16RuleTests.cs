@@ -41,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = "ConRef1",
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }
@@ -76,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = "ConRef1",
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }
@@ -222,7 +222,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = "ConRef1",
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }

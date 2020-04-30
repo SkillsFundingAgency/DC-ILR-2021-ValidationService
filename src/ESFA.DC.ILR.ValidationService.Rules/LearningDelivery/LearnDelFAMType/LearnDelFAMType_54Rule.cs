@@ -9,7 +9,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_54Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+        private readonly int _fundModel = FundModels.ApprenticeshipsFrom1May2017;
 
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 

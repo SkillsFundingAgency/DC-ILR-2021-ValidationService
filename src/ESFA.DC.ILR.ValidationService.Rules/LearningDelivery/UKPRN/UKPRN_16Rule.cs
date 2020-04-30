@@ -12,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
     public class UKPRN_16Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _learnDelFundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+        private readonly int _learnDelFundModel = FundModels.ApprenticeshipsFrom1May2017;
         private readonly HashSet<string> _fundingStreamPeriodCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             FundingStreamPeriodCodeConstants.C1618_NLAP2018,

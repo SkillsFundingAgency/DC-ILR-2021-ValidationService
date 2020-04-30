@@ -75,7 +75,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ULN
                 LearningDeliveryFAMCodeConstants.LDM_OLASS);
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.NotFundedByESFA;
+            theDelivery.FundModel == FundModels.NotFundedByESFA;
 
         public bool HasQualifyingMonitor(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(

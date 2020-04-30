@@ -14,9 +14,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         public const string Name = RuleNameConstants.ProgType_06;
         private readonly HashSet<int> _fundingTypes = new HashSet<int>
         {
-            TypeOfFunding.ApprenticeshipsFrom1May2017,
-            TypeOfFunding.OtherAdult,
-            TypeOfFunding.NotFundedByESFA
+            FundModels.ApprenticeshipsFrom1May2017,
+            FundModels.OtherAdult,
+            FundModels.NotFundedByESFA
         };
 
         private readonly IValidationErrorHandler _messageHandler;

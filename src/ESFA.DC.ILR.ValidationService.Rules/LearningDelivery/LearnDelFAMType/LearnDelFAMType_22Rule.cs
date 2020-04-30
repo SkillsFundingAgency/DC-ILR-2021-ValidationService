@@ -13,8 +13,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public HashSet<int> _fundModels = new HashSet<int>
         {
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.OtherAdult
+            FundModels.AdultSkills,
+            FundModels.OtherAdult
         };
 
         private readonly IValidationErrorHandler _messageHandler;

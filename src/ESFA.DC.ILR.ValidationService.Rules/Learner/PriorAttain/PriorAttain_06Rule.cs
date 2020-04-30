@@ -75,7 +75,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.EuropeanSocialFund;
+            return fundModel == FundModels.EuropeanSocialFund;
         }
 
         public bool PriorAttainConditionMet(int? priorAttain, string conRefNumber)

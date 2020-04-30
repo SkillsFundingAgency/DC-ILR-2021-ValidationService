@@ -13,11 +13,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     {
         private readonly HashSet<int> _fundModels = new HashSet<int>
         {
-            TypeOfFunding.CommunityLearning,
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.ApprenticeshipsFrom1May2017,
-            TypeOfFunding.EuropeanSocialFund,
-            TypeOfFunding.OtherAdult
+            FundModels.CommunityLearning,
+            FundModels.AdultSkills,
+            FundModels.ApprenticeshipsFrom1May2017,
+            FundModels.EuropeanSocialFund,
+            FundModels.OtherAdult
         };
 
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;

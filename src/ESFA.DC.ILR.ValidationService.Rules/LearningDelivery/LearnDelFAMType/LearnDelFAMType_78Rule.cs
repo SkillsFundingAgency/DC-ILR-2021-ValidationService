@@ -10,7 +10,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_78Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int[] _fundingModels = { TypeOfFunding.AdultSkills, TypeOfFunding.CommunityLearning };
+        private readonly int[] _fundingModels = { FundModels.AdultSkills, FundModels.CommunityLearning };
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public LearnDelFAMType_78Rule(

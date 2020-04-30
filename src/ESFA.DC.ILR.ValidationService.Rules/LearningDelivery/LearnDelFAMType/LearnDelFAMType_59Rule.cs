@@ -104,7 +104,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.AdultSkills;
+            return fundModel == FundModels.AdultSkills;
         }
 
         public bool AgeConditionMet(DateTime learnStartDate, DateTime? dateOfBirth)

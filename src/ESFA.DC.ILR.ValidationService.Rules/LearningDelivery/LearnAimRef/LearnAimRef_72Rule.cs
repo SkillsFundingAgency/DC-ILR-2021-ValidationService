@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
             !IsExcluded(thisDelivery)
-                && thisDelivery.FundModel == TypeOfFunding.EuropeanSocialFund
+                && thisDelivery.FundModel == FundModels.EuropeanSocialFund
                 && HasDisqualifyingSubjectSector(GetLARSLearningDeliveryFor(thisDelivery), GetSubjectAreaLevelsFor(thisDelivery));
 
         public void Validate(ILearner thisLearner)

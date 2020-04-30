@@ -74,14 +74,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, true)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, true)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, true)]
-        [InlineData(TypeOfFunding.CommunityLearning, true)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, true)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, false)]
-        [InlineData(TypeOfFunding.Other16To19, true)]
-        [InlineData(TypeOfFunding.OtherAdult, true)]
+        [InlineData(FundModels.AdultSkills, true)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, true)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, true)]
+        [InlineData(FundModels.CommunityLearning, true)]
+        [InlineData(FundModels.EuropeanSocialFund, true)]
+        [InlineData(FundModels.NotFundedByESFA, false)]
+        [InlineData(FundModels.Other16To19, true)]
+        [InlineData(FundModels.OtherAdult, true)]
         public void IsFundedMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -163,7 +163,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfAim.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
                 .Returns(records);
@@ -228,7 +228,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfAim.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
                 .Returns(records);

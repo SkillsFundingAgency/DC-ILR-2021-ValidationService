@@ -27,7 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateOfBirth = new DateTime(1995, 08, 01);
             var learnStartDate = new DateTime(2015, 08, 01);
             var learnPlanEndDate = new DateTime(2016, 01, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -52,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateOfBirth = new DateTime(1995, 08, 01);
             var learnStartDate = new DateTime(2015, 08, 01);
             var learnPlanEndDate = new DateTime(2016, 01, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -79,7 +79,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateOfBirth = new DateTime(1995, 08, 01);
             var learnStartDate = DateTime.Parse(learnStartDateInput);
             var learnPlanEndDate = new DateTime(2016, 01, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -131,7 +131,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateOfBirth = new DateTime(1995, 08, 01);
             var learnStartDate = new DateTime(2015, 08, 01);
             var learnPlanEndDate = new DateTime(2016, 01, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var aimType = TypeOfAim.ProgrammeAim;
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
@@ -155,7 +155,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateOfBirth = new DateTime(1995, 08, 01);
             var learnStartDate = new DateTime(2015, 08, 01);
             var learnPlanEndDate = new DateTime(2016, 01, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var aimType = 0;
 
@@ -180,7 +180,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateOfBirth = new DateTime(1997, 08, 01);
             var learnStartDate = new DateTime(2015, 08, 01);
             var learnPlanEndDate = new DateTime(2016, 01, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -205,7 +205,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateOfBirth = new DateTime(1995, 08, 01);
             var learnStartDate = new DateTime(2015, 08, 01);
             var learnPlanEndDate = new DateTime(2016, 09, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -230,7 +230,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateOfBirth = new DateTime(1995, 08, 01);
             var learnStartDate = new DateTime(2015, 08, 01);
             var learnPlanEndDate = new DateTime(2016, 09, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -255,7 +255,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var dateOfBirth = new DateTime(1995, 08, 01);
             var learnStartDate = new DateTime(2015, 08, 01);
             var learnPlanEndDate = new DateTime(2016, 09, 01);
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -290,7 +290,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     {
                         LearnStartDate = learnStartDate,
                         LearnPlanEndDate = learnPlanEndDate,
-                        FundModel = TypeOfFunding.AdultSkills,
+                        FundModel = FundModels.AdultSkills,
                         ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
                         AimType = TypeOfAim.ProgrammeAim
                     }
@@ -328,7 +328,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     {
                         LearnStartDate = learnStartDate,
                         LearnPlanEndDate = learnPlanEndDate,
-                        FundModel = TypeOfFunding.AdultSkills,
+                        FundModel = FundModels.AdultSkills,
                         ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
                         AimType = TypeOfAim.ProgrammeAim
                     }

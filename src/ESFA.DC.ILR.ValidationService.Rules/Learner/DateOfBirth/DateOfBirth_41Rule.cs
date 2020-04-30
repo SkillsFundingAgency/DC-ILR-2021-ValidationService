@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.OtherAdult;
+            return fundModel == FundModels.OtherAdult;
         }
 
         public bool DD07ConditionMet(int? progType)

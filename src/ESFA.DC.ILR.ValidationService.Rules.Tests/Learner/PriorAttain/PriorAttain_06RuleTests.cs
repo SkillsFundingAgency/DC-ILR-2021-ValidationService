@@ -118,7 +118,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PriorAttain
         [Fact]
         public void ConditionMet_False()
         {
-            int fundModel = TypeOfFunding.EuropeanSocialFund;
+            int fundModel = FundModels.EuropeanSocialFund;
             int priorAttain = 2;
             string conRefNumber = "ZESF00098";
             var fcsDataServiceMock = new Mock<IFCSDataService>();
@@ -138,7 +138,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PriorAttain
         [Fact]
         public void ConditionMet_True()
         {
-            int fundModel = TypeOfFunding.EuropeanSocialFund;
+            int fundModel = FundModels.EuropeanSocialFund;
             int priorAttain = 9;
             string conRefNumber = "ZESF00098";
             var fcsDataServiceMock = new Mock<IFCSDataService>();
@@ -166,7 +166,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PriorAttain
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         ConRefNumber = conRefNumber
                     }
                 }
@@ -201,7 +201,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PriorAttain
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
+                        FundModel = FundModels.EuropeanSocialFund,
                         ConRefNumber = conRefNumber
                     }
                 }

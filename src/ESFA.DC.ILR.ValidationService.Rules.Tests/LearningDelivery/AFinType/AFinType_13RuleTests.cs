@@ -96,7 +96,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfAim.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -155,7 +155,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfAim.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
 
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
@@ -301,7 +301,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(TypeOfAim.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
             mockDelivery
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(DateTime.Parse(learnDate));

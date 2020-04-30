@@ -30,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
                 if (learningDelivery.LearningDeliveryFAMs == null ||
-                    learningDelivery.FundModel != TypeOfFunding.NotFundedByESFA)
+                    learningDelivery.FundModel != FundModels.NotFundedByESFA)
                 {
                     continue;
                 }

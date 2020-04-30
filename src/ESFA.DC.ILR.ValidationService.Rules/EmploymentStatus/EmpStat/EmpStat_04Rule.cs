@@ -11,7 +11,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 {
     public class EmpStat_04Rule : AbstractRule, IRule<ILearner>
     {
-        private const int FundModel = TypeOfFunding.EuropeanSocialFund;
+        private const int FundModel = FundModels.EuropeanSocialFund;
 
         private readonly IDerivedData_22Rule _derivedData22;
 

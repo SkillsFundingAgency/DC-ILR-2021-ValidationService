@@ -22,8 +22,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         private readonly int[] _fundModels =
          {
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.OtherAdult
+            FundModels.AdultSkills,
+            FundModels.OtherAdult
         };
 
         private readonly IDateTimeQueryService _dateTimeQueryService;

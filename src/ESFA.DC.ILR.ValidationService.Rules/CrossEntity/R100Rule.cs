@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public virtual bool IsNonFundedApprenticeshipStandard(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == TypeOfFunding.NotFundedByESFA
+            return learningDelivery.FundModel == FundModels.NotFundedByESFA
                    && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
         }
 

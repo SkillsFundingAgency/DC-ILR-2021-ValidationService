@@ -172,7 +172,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.ULN
         }
 
         [Theory]
-        [InlineData(99, TypeOfFunding.NotFundedByESFA)]
+        [InlineData(99, FundModels.NotFundedByESFA)]
         public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
         {
             Assert.Equal(expectation, candidate);

@@ -138,7 +138,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.NotFundedByESFA,
+                        FundModel = FundModels.NotFundedByESFA,
                         LearnStartDate = new DateTime(2017, 01, 01),
                         LearningDeliveryFAMs = new List<ILearningDeliveryFAM>()
                         {
@@ -156,7 +156,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                     },
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.AdultSkills,
+                        FundModel = FundModels.AdultSkills,
                         LearnStartDate = new DateTime(2018, 01, 01),
                         LearningDeliveryFAMs = new List<ILearningDeliveryFAM>()
                         {
@@ -198,7 +198,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.NotFundedByESFA,
+                        FundModel = FundModels.NotFundedByESFA,
                         LearnStartDate = new DateTime(2018, 07, 01),
                         LearningDeliveryFAMs = new List<ILearningDeliveryFAM>()
                         {
@@ -216,7 +216,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                     },
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.AdultSkills,
+                        FundModel = FundModels.AdultSkills,
                         LearnStartDate = new DateTime(2018, 01, 01),
                         LearningDeliveryFAMs = new List<ILearningDeliveryFAM>()
                         {

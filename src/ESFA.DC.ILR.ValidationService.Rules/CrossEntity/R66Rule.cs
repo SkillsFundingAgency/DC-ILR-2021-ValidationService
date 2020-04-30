@@ -9,7 +9,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
     public class R66Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _funModel = TypeOfFunding.NotFundedByESFA;
+        private readonly int _funModel = FundModels.NotFundedByESFA;
 
         public R66Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.R66)

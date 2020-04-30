@@ -13,8 +13,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
         private readonly int _aimType = TypeOfAim.ProgrammeAim;
         private readonly int _progTypeTraineeship = TypeOfLearningProgramme.Traineeship;
         private readonly int _progTypeApprenticeship = TypeOfLearningProgramme.ApprenticeshipStandard;
-        private readonly int _fundModelOtherAdult = TypeOfFunding.OtherAdult;
-        private readonly int _fundModelApprencticeMay2017 = TypeOfFunding.ApprenticeshipsFrom1May2017;
+        private readonly int _fundModelOtherAdult = FundModels.OtherAdult;
+        private readonly int _fundModelApprencticeMay2017 = FundModels.ApprenticeshipsFrom1May2017;
 
         public AchDate_09Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.AchDate_09)

@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.OtherAdult;
+            return fundModel == FundModels.OtherAdult;
         }
 
         public bool ProgTypeConditionMet(int? progType)

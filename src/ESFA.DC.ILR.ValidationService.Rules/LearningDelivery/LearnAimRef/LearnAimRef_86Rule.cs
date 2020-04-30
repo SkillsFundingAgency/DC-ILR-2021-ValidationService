@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             delivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.WorkExperience);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
-            delivery.FundModel == TypeOfFunding.AdultSkills
+            delivery.FundModel == FundModels.AdultSkills
             && !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
                 delivery.LearningDeliveryFAMs,
                 LearningDeliveryFAMTypeConstants.LDM,

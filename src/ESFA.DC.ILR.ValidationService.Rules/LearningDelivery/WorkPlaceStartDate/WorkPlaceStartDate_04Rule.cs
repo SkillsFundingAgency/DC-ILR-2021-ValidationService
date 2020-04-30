@@ -35,7 +35,7 @@
 
         public bool ConditionMet(string learnAimRef, int fundModel)
         {
-            return learnAimRef.CaseInsensitiveEquals(TypeOfAim.References.IndustryPlacement) && fundModel != TypeOfFunding.Age16To19ExcludingApprenticeships;
+            return learnAimRef.CaseInsensitiveEquals(TypeOfAim.References.IndustryPlacement) && fundModel != FundModels.Age16To19ExcludingApprenticeships;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel)

@@ -18,7 +18,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 {
     public class UKPRN_06RuleTests : AbstractRuleTests<UKPRN_06Rule>
     {
-        private readonly int _fundModel = TypeOfFunding.AdultSkills;
+        private readonly int _fundModel = FundModels.AdultSkills;
         private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
             FundingStreamPeriodCodeConstants.AEBC_19TRN1920,

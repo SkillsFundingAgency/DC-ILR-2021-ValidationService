@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 && BasicSkillsConditionMet(learningDelivery.LearnAimRef, learningDelivery.LearnStartDate);
         }
 
-        public bool FundModelConditionMet(int fundModel) => fundModel == TypeOfFunding.AdultSkills;
+        public bool FundModelConditionMet(int fundModel) => fundModel == FundModels.AdultSkills;
 
         public bool BasicSkillsConditionMet(string learnAimRef, DateTime learnStartDate) => _larsDataService.BasicSkillsMatchForLearnAimRefAndStartDate(_englishOrMathsBasicSkillsTypes, learnAimRef, learnStartDate);
     }

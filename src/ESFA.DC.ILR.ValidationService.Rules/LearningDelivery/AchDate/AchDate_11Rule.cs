@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AchDate
         private readonly IAcademicYearDataService _academicYearDataService;
         private readonly HashSet<long> _fundModels = new HashSet<long>
         {
-            TypeOfFunding.ApprenticeshipsFrom1May2017
+            FundModels.ApprenticeshipsFrom1May2017
         };
 
         public AchDate_11Rule(IAcademicYearDataService academicYearDataService, IValidationErrorHandler validationErrorHandler)

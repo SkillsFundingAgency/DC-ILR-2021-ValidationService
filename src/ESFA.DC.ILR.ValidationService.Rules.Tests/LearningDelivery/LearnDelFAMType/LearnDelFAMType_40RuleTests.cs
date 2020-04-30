@@ -21,9 +21,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.NotFundedByESFA, true)]
-        [InlineData(TypeOfFunding.CommunityLearning, false)]
-        [InlineData(TypeOfFunding.AdultSkills, false)]
+        [InlineData(FundModels.NotFundedByESFA, true)]
+        [InlineData(FundModels.CommunityLearning, false)]
+        [InlineData(FundModels.AdultSkills, false)]
         public void FundModelConditionMetMeetsExpectation(int fundModel, bool expectation)
         {
             NewRule().FundModelConditionMet(fundModel).Should().Be(expectation);
@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void ConditionMet_True()
         {
-            var fundModel = TypeOfFunding.NotFundedByESFA;
+            var fundModel = FundModels.NotFundedByESFA;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ADL;
 
@@ -69,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void ConditionMet_False_InvalidFundModel()
         {
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ADL;
 
@@ -82,7 +82,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void ConditionMet_False_InvalidLearnDelFamType()
         {
-            var fundModel = TypeOfFunding.NotFundedByESFA;
+            var fundModel = FundModels.NotFundedByESFA;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ALB;
 
@@ -95,7 +95,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void ConditionMet_False_DD07RuleReturnsFalse()
         {
-            var fundModel = TypeOfFunding.NotFundedByESFA;
+            var fundModel = FundModels.NotFundedByESFA;
             var progType = TypeOfLearningProgramme.Traineeship;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ADL;
 
@@ -108,7 +108,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void Validate_Error()
         {
-            var fundModel = TypeOfFunding.NotFundedByESFA;
+            var fundModel = FundModels.NotFundedByESFA;
             var progType = TypeOfLearningProgramme.ApprenticeshipStandard;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ADL;
 
@@ -143,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void Validate_NoError()
         {
-            var fundModel = TypeOfFunding.AdultSkills;
+            var fundModel = FundModels.AdultSkills;
             var progType = TypeOfLearningProgramme.Traineeship;
             var learnDelFamType = LearningDeliveryFAMTypeConstants.ALB;
 
@@ -180,10 +180,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.FundModel, TypeOfFunding.NotFundedByESFA)).Verifiable();
+            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.NotFundedByESFA)).Verifiable();
             validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.ADL)).Verifiable();
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(TypeOfFunding.NotFundedByESFA, LearningDeliveryFAMTypeConstants.ADL);
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(FundModels.NotFundedByESFA, LearningDeliveryFAMTypeConstants.ADL);
 
             validationErrorHandlerMock.Verify();
         }

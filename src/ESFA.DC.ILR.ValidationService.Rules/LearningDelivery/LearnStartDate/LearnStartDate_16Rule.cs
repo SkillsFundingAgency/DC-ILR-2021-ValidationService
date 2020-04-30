@@ -37,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment);
 
         public bool HasQualifyingModel(ILearningDelivery thisDelivery) =>
-            thisDelivery.FundModel == TypeOfFunding.EuropeanSocialFund;
+            thisDelivery.FundModel == FundModels.EuropeanSocialFund;
 
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
             HasQualifyingModel(thisDelivery)

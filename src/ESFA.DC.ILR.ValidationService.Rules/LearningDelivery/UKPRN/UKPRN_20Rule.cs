@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
     public class UKPRN_20Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _learnDelFundModel = TypeOfFunding.EuropeanSocialFund;
+        private readonly int _learnDelFundModel = FundModels.EuropeanSocialFund;
         private readonly string _fundingStreamPeriodCode = FundingStreamPeriodCodeConstants.ESF1420;
 
         private readonly IFileDataService _fileDataService;

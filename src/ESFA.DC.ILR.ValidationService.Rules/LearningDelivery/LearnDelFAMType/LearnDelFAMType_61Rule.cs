@@ -100,7 +100,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             candidate.LearningDeliveries.NullSafeAny(matchCondition);
 
         public bool IsAdultFunding(ILearningDelivery delivery) =>
-            delivery.FundModel == TypeOfFunding.AdultSkills;
+            delivery.FundModel == FundModels.AdultSkills;
 
         public bool IsViableStart(ILearningDelivery delivery) =>
             delivery.LearnStartDate > LastInviableDate;

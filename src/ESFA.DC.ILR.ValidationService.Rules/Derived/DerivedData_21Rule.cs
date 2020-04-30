@@ -71,7 +71,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
             var employment = _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(forThisCandidate.LearnerEmploymentStatuses, thisDelivery.LearnStartDate);
 
-            return thisDelivery.FundModel == TypeOfFunding.AdultSkills
+            return thisDelivery.FundModel == FundModels.AdultSkills
                 && employment != null
                 && IsNotEmployed(employment)
                 && (InReceiptOfBenefits(employment)

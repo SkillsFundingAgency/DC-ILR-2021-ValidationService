@@ -122,11 +122,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(10, TypeOfFunding.CommunityLearning)]
-        [InlineData(35, TypeOfFunding.AdultSkills)]
-        [InlineData(36, TypeOfFunding.ApprenticeshipsFrom1May2017)]
-        [InlineData(70, TypeOfFunding.EuropeanSocialFund)]
-        [InlineData(81, TypeOfFunding.OtherAdult)]
+        [InlineData(10, FundModels.CommunityLearning)]
+        [InlineData(35, FundModels.AdultSkills)]
+        [InlineData(36, FundModels.ApprenticeshipsFrom1May2017)]
+        [InlineData(70, FundModels.EuropeanSocialFund)]
+        [InlineData(81, FundModels.OtherAdult)]
         public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
         {
             Assert.Equal(expectation, candidate);

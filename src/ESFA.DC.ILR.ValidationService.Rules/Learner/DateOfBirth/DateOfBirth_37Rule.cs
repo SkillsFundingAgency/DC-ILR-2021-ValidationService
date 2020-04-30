@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             return !Excluded(learningDeliveryFams)
                    && learnStartDate < _firstAugust2016
                    && learnStartDate >= _firstAugust2014
-                   && (fundModel == TypeOfFunding.AdultSkills || fundModel == TypeOfFunding.OtherAdult)
+                   && (fundModel == FundModels.AdultSkills || fundModel == FundModels.OtherAdult)
                    && (progType.HasValue && progType.Value == TypeOfLearningProgramme.ApprenticeshipStandard)
                    && aimType == TypeOfAim.ProgrammeAim
                    && _dateTimeQueryService.YearsBetween(dateOfBirth, learnStartDate) >= 19

@@ -80,14 +80,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, true)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, false)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, false)]
-        [InlineData(TypeOfFunding.CommunityLearning, false)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, false)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, false)]
-        [InlineData(TypeOfFunding.Other16To19, false)]
-        [InlineData(TypeOfFunding.OtherAdult, true)]
+        [InlineData(FundModels.AdultSkills, true)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, false)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, false)]
+        [InlineData(FundModels.CommunityLearning, false)]
+        [InlineData(FundModels.EuropeanSocialFund, false)]
+        [InlineData(FundModels.NotFundedByESFA, false)]
+        [InlineData(FundModels.Other16To19, false)]
+        [InlineData(FundModels.OtherAdult, true)]
         public void IsQualifyingFundModelMeetsExpectation(int candidate, bool expectation)
         {
             var sut = NewRule();
@@ -102,12 +102,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017)]
-        [InlineData(TypeOfFunding.CommunityLearning)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund)]
-        [InlineData(TypeOfFunding.NotFundedByESFA)]
-        [InlineData(TypeOfFunding.Other16To19)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017)]
+        [InlineData(FundModels.CommunityLearning)]
+        [InlineData(FundModels.EuropeanSocialFund)]
+        [InlineData(FundModels.NotFundedByESFA)]
+        [InlineData(FundModels.Other16To19)]
         public void InvalidItemRaisesValidationMessage(int candidate)
         {
             const string LearnRefNumber = "123456789X";
@@ -165,8 +165,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills)]
-        [InlineData(TypeOfFunding.OtherAdult)]
+        [InlineData(FundModels.AdultSkills)]
+        [InlineData(FundModels.OtherAdult)]
         public void ValidItemDoesNotRaiseValidationMessage(int candidate)
         {
             const string LearnRefNumber = "123456789X";

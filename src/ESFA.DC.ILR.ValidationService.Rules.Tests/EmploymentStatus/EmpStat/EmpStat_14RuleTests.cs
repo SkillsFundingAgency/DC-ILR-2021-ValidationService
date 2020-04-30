@@ -53,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                     .Returns(CompletionState.HasCompleted);
                 mockDelivery
                     .SetupGet(x => x.FundModel)
-                    .Returns(TypeOfFunding.EuropeanSocialFund);
+                    .Returns(FundModels.EuropeanSocialFund);
                 deliveries.Add(mockDelivery.Object);
             }
 
@@ -66,7 +66,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(CompletionState.HasCompleted);
             mockItem
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.EuropeanSocialFund);
+                .Returns(FundModels.EuropeanSocialFund);
             mockItem
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(testDate);
@@ -319,7 +319,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
                 .Returns(CompletionState.HasCompleted);
             mockItem
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.EuropeanSocialFund);
+                .Returns(FundModels.EuropeanSocialFund);
             mockItem
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(startDate);

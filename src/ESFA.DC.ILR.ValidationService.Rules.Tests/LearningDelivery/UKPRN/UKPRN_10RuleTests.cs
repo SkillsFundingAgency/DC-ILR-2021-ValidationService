@@ -106,7 +106,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Theory]
-        [InlineData(36, TypeOfFunding.ApprenticeshipsFrom1May2017)]
+        [InlineData(36, FundModels.ApprenticeshipsFrom1May2017)]
         public void TypeOfFundingMeetsExpectation(int expectation, int candidate)
         {
             Assert.Equal(expectation, candidate);

@@ -30,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo
         }
 
         public bool HasQualifyingFunding(ILearningDelivery theDelivery) =>
-            theDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            theDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool IsNotValid(ILearningDelivery theDelivery, ILearningDeliveryFAM theMonitor) =>
             IsQualifyingMonitor(theMonitor)

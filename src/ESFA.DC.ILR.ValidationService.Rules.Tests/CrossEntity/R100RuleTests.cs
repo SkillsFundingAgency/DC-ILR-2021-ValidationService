@@ -128,7 +128,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var learningDelivery = new TestLearningDelivery()
             {
-                FundModel = TypeOfFunding.NotFundedByESFA,
+                FundModel = FundModels.NotFundedByESFA,
                 ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard
             };
 
@@ -137,9 +137,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
         [Theory]
         [InlineData(0, TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, 0)]
+        [InlineData(FundModels.NotFundedByESFA, 0)]
         [InlineData(0, 0)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, null)]
+        [InlineData(FundModels.NotFundedByESFA, null)]
         public void IsNonFundedApprenticeshipStandard_False(int fundModel, int? progType)
         {
             var learningDelivery = new TestLearningDelivery()

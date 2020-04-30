@@ -41,12 +41,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 HandleValidationError(
                             learnRefNumber: objectToValidate.LearnRefNumber,
                             errorMessageParameters: BuildErrorMessageParameters(
-                                TypeOfFunding.Age16To19ExcludingApprenticeships,
+                                FundModels.Age16To19ExcludingApprenticeships,
                                 TypeOfAim.CoreAim16To19ExcludingApprenticeships));
             }
         }
 
-        public bool FundModelConditionMet(int fundModel) => fundModel == TypeOfFunding.Age16To19ExcludingApprenticeships;
+        public bool FundModelConditionMet(int fundModel) => fundModel == FundModels.Age16To19ExcludingApprenticeships;
 
         public bool AimTypeConditionMet(int aimType) => aimType == TypeOfAim.CoreAim16To19ExcludingApprenticeships;
 

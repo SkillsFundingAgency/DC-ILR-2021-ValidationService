@@ -20,9 +20,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017)]
-        [InlineData(TypeOfFunding.OtherAdult)]
+        [InlineData(FundModels.AdultSkills)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017)]
+        [InlineData(FundModels.OtherAdult)]
         public void FundModelConditionMet_False(int fundModel)
         {
             NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
@@ -31,7 +31,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [Fact]
         public void FundModelConditionMet_True()
         {
-            NewRule().FundModelConditionMet(TypeOfFunding.Other16To19).Should().BeTrue();
+            NewRule().FundModelConditionMet(FundModels.Other16To19).Should().BeTrue();
         }
 
         [Fact]
@@ -91,10 +91,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, false, true)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, true, false)]
-        [InlineData(TypeOfFunding.OtherAdult, false, false)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, false, false)]
+        [InlineData(FundModels.AdultSkills, false, true)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, true, false)]
+        [InlineData(FundModels.OtherAdult, false, false)]
+        [InlineData(FundModels.NotFundedByESFA, false, false)]
         public void ConditionMet_False(int fundModel, bool dd07Result, bool famsResult)
         {
             var testLearningDeliveryFAMs = new TestLearningDeliveryFAM[]
@@ -115,9 +115,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, true, true)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, true, true)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, false, true)]
+        [InlineData(FundModels.AdultSkills, true, true)]
+        [InlineData(FundModels.NotFundedByESFA, true, true)]
+        [InlineData(FundModels.NotFundedByESFA, false, true)]
         public void ConditionMet_True(int fundModel, bool dd07Result, bool famsResult)
         {
             var testLearningDeliveryFAMs = new TestLearningDeliveryFAM[]
@@ -154,7 +154,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.NotFundedByESFA,
+                        FundModel = FundModels.NotFundedByESFA,
                         ProgTypeNullable = null,
                         LearningDeliveryFAMs = testLearningDeliveryFAMs
                     }
@@ -190,7 +190,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
                         LearningDeliveryFAMs = testLearningDeliveryFAMs
                     }
@@ -210,9 +210,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017)]
-        [InlineData(TypeOfFunding.AdultSkills)]
-        [InlineData(TypeOfFunding.OtherAdult)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017)]
+        [InlineData(FundModels.AdultSkills)]
+        [InlineData(FundModels.OtherAdult)]
         public void BuildErrorMessageParameters(int fundModel)
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();

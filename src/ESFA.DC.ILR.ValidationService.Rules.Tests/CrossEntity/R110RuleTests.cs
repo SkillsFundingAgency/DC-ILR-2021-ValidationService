@@ -54,7 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearningDeliveryFAMs = learningDeliveryFams
                     }
                 }
@@ -98,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearningDeliveryFAMs = learningDeliveryFams
                     }
                 }
@@ -119,7 +119,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var learningDelivery = new TestLearningDelivery()
             {
-                FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017
+                FundModel = FundModels.ApprenticeshipsFrom1May2017
             };
 
             NewRule().IsApprenticeshipProgramme(learningDelivery).Should().BeTrue();
@@ -130,7 +130,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var learningDelivery = new TestLearningDelivery()
             {
-                FundModel = TypeOfFunding.AdultSkills
+                FundModel = FundModels.AdultSkills
             };
 
             NewRule().IsApprenticeshipProgramme(learningDelivery).Should().BeFalse();

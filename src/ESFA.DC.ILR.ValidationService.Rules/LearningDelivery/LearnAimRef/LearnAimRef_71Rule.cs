@@ -12,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
     public class LearnAimRef_71Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _fundModel = TypeOfFunding.EuropeanSocialFund;
+        private readonly int _fundModel = FundModels.EuropeanSocialFund;
 
         private readonly IFCSDataService _fCSDataService;
         private readonly ILARSDataService _lARSDataService;

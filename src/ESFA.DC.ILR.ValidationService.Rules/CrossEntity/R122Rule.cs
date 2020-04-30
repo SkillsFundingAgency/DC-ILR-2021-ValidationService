@@ -49,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             && AchievementDateConditionMet(theDelivery.AchDateNullable)
             && FAMDateConditionMet(theDelivery.LearningDeliveryFAMs, theDelivery.LearnActEndDateNullable);
 
-        public bool FundModelConditionMet(int fundModel) => fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+        public bool FundModelConditionMet(int fundModel) => fundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool ProgTypeConditionMet(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
 

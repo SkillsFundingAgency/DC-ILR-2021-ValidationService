@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 {
     public class DelLocPostCode_15Rule : AbstractRule, IRule<ILearner>
     {
-        private const int FundModel = TypeOfFunding.EuropeanSocialFund;
+        private const int FundModel = FundModels.EuropeanSocialFund;
 
         private readonly IFCSDataService _fcsDataService;
         private readonly IPostcodesDataService _postcodeService;

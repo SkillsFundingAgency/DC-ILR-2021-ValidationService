@@ -64,7 +64,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool Exclusion(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
 
-        public bool FundModelFilter(int fundModel) => fundModel == TypeOfFunding.AdultSkills || fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+        public bool FundModelFilter(int fundModel) => fundModel == FundModels.AdultSkills || fundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool AimTypeFilter(int aimType) => aimType == TypeOfAim.ComponentAimInAProgramme;
 

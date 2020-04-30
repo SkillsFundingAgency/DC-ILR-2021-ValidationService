@@ -46,11 +46,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships)]
-        [InlineData(TypeOfFunding.Other16To19)]
-        [InlineData(TypeOfFunding.CommunityLearning)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund)]
-        [InlineData(TypeOfFunding.NotFundedByESFA)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships)]
+        [InlineData(FundModels.Other16To19)]
+        [InlineData(FundModels.CommunityLearning)]
+        [InlineData(FundModels.EuropeanSocialFund)]
+        [InlineData(FundModels.NotFundedByESFA)]
         public void ValidationPassesIrrelevantFamType(int fundModel)
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
@@ -106,11 +106,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships)]
-        [InlineData(TypeOfFunding.Other16To19)]
-        [InlineData(TypeOfFunding.CommunityLearning)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund)]
-        [InlineData(TypeOfFunding.NotFundedByESFA)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships)]
+        [InlineData(FundModels.Other16To19)]
+        [InlineData(FundModels.CommunityLearning)]
+        [InlineData(FundModels.EuropeanSocialFund)]
+        [InlineData(FundModels.NotFundedByESFA)]
         public void ValidationFails(int fundModel)
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();

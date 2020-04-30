@@ -66,7 +66,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            return fundModel == FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? learnActEndDateNullable, string learnDelFAMType, DateTime? learnDelFAMDateTo)

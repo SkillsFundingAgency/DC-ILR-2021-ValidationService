@@ -22,7 +22,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
 
         public bool IsExcluded(ILearningDelivery delivery) =>
             delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
-            && delivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            && delivery.FundModel == FundModels.ApprenticeshipsFrom1May2017;
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             !IsExcluded(delivery)

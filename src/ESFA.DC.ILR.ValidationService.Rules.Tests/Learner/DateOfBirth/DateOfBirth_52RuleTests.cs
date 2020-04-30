@@ -27,7 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 12, 02);
             var learnPlanEndDate = new DateTime(2018, 08, 01);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
             var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
             var aimType = TypeOfAim.ProgrammeAim;
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
@@ -106,7 +106,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2016, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
             var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -132,7 +132,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
             var progType = 0;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -158,7 +158,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2017, 08, 01);
             var learnPlanEndDate = new DateTime(2018, 01, 01);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
             var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
             var aimType = 0;
 
@@ -184,7 +184,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2018, 08, 01);
             var learnPlanEndDate = new DateTime(2019, 08, 02);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
             var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -212,7 +212,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         {
             var learnStartDate = new DateTime(2018, 08, 01);
             var learnPlanEndDate = new DateTime(2019, 08, 12);
-            var fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+            var fundModel = FundModels.ApprenticeshipsFrom1May2017;
             var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
             var aimType = TypeOfAim.ProgrammeAim;
 
@@ -250,7 +250,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     {
                         LearnStartDate = learnStartDate,
                         LearnPlanEndDate = learnPlanEndDate,
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         ProgTypeNullable = progType,
                         AimType = TypeOfAim.ProgrammeAim
                     }
@@ -289,7 +289,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     {
                         LearnStartDate = learnStartDate,
                         LearnPlanEndDate = learnPlanEndDate,
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         ProgTypeNullable = progType,
                         AimType = TypeOfAim.ProgrammeAim
                     }
