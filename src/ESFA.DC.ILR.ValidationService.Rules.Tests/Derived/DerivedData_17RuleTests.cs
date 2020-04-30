@@ -44,12 +44,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                .SetupGet(x => x.AimType)
                .Returns(aimType);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            var result = NewRule(commonOps: commonOps.Object).IsProgrameAim(delivery.Object);
+            var result = NewRule().IsProgrameAim(delivery.Object);
 
             Assert.Equal(expectation, result);
-            commonOps.VerifyAll();
         }
 
         [Theory]
@@ -62,30 +59,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                .SetupGet(x => x.ProgTypeNullable)
                .Returns(progType);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            var result = NewRule(commonOps: commonOps.Object).IsStandardApprenticeship(delivery.Object);
+            var result = NewRule().IsStandardApprenticeship(delivery.Object);
 
             Assert.Equal(expectation, result);
-            commonOps.VerifyAll();
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        [InlineData(81, true)]
+        [InlineData(25, false)]
+        public void HasQualifyingFundingMeetsExpectation(int fundModel, bool expectation)
         {
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(fundModel);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 81))
-                .Returns(expectation);
-
-            var result = NewRule(commonOps: commonOps.Object).HasQualifyingModel(delivery.Object);
+            var result = NewRule().HasQualifyingModel(delivery.Object);
 
             Assert.Equal(expectation, result);
-            commonOps.VerifyAll();
         }
 
         [Fact]
@@ -201,10 +192,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         public DerivedData_17Rule NewRule(
             IDateTimeQueryService dateTimeQueryService = null,
             ILARSDataService larsDataService = null,
-            IProvideRuleCommonOperations commonOps = null,
             ILearningDeliveryAppFinRecordQueryService appFinRecordQueryService = null)
         {
-            return new DerivedData_17Rule(dateTimeQueryService, larsDataService, commonOps, appFinRecordQueryService);
+            return new DerivedData_17Rule(dateTimeQueryService, larsDataService, appFinRecordQueryService);
         }
     }
 }

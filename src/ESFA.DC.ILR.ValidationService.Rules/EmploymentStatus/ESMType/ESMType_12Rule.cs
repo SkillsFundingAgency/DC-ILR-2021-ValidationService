@@ -13,16 +13,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public const string MessagePropertyName = "ESMType";
         public const string Name = RuleNameConstants.ESMType_12;
         private readonly IValidationErrorHandler _messageHandler;
-        private readonly IProvideRuleCommonOperations _check;
         private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public ESMType_12Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations check,
             IDateTimeQueryService dateTimeQueryService)
         {
             _messageHandler = validationErrorHandler;
-            _check = check;
             _dateTimeQueryService = dateTimeQueryService;
         }
 

@@ -7,30 +7,22 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
-    public class LearnAimRef_72Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnAimRef_72Rule : AbstractRule, IRule<ILearner>
     {
         private readonly IFCSDataService _fcsData;
-
         private readonly ILARSDataService _larsData;
-
-        private readonly IProvideRuleCommonOperations _check;
 
         public LearnAimRef_72Rule(
             IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOperations,
             IFCSDataService fcsDataService,
             ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.LearnAimRef_72)
         {
             _fcsData = fcsDataService;
             _larsData = larsDataService;
-            _check = commonOperations;
         }
 
         public bool HasDisqualifyingSubjectSector(ILARSLearningDelivery larsDelivery, IReadOnlyCollection<IEsfEligibilityRuleSectorSubjectAreaLevel> subjectAreaLevels) =>
@@ -75,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool IsNotValid(ILearningDelivery thisDelivery) =>
             !IsExcluded(thisDelivery)
-                && _check.HasQualifyingFunding(thisDelivery, TypeOfFunding.EuropeanSocialFund)
+                && thisDelivery.FundModel == TypeOfFunding.EuropeanSocialFund
                 && HasDisqualifyingSubjectSector(GetLARSLearningDeliveryFor(thisDelivery), GetSubjectAreaLevelsFor(thisDelivery));
 
         public void Validate(ILearner thisLearner)

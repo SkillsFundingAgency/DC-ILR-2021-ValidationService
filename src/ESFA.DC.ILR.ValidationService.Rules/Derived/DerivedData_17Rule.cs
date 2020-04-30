@@ -10,23 +10,19 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
-    public class DerivedData_17Rule :
-        IDerivedData_17Rule
+    public class DerivedData_17Rule : IDerivedData_17Rule
     {
         private readonly IDateTimeQueryService _dateTimeQueryService;
         private readonly ILARSDataService _larsData;
-        private readonly IProvideRuleCommonOperations _check;
         private readonly ILearningDeliveryAppFinRecordQueryService _appFinRecordData;
 
         public DerivedData_17Rule(
             IDateTimeQueryService dateTimeQueryService,
             ILARSDataService larsDataService,
-            IProvideRuleCommonOperations commonOps,
             ILearningDeliveryAppFinRecordQueryService appFinRecordQueryService)
         {
             _dateTimeQueryService = dateTimeQueryService;
             _larsData = larsDataService;
-            _check = commonOps;
             _appFinRecordData = appFinRecordQueryService;
         }
 
@@ -63,7 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             theDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(theDelivery, TypeOfFunding.OtherAdult);
+            theDelivery.FundModel == TypeOfFunding.OtherAdult;
 
         public int GetTotalTNPPriceFor(IReadOnlyCollection<ILearningDelivery> theDeliveries) =>
             _appFinRecordData.GetTotalTNPPriceForLatestAppFinRecordsForLearning(theDeliveries);

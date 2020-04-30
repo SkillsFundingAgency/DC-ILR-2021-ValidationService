@@ -1,26 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
 {
-    public class Outcome_04Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class Outcome_04Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _common;
-
-        public Outcome_04Rule(
-            IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOps)
+        public Outcome_04Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.Outcome_04)
         {
-            _common = commonOps;
         }
 
         public bool HasAchievementDate(ILearningDelivery delivery) =>
@@ -31,7 +22,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
 
         public bool IsExcluded(ILearningDelivery delivery) =>
             delivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
-            && _common.HasQualifyingFunding(delivery, TypeOfFunding.ApprenticeshipsFrom1May2017);
+            && delivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             !IsExcluded(delivery)

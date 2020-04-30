@@ -5,22 +5,14 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo
 {
-    public class LearnDelFAMDateTo_05Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnDelFAMDateTo_05Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _check;
-
-        public LearnDelFAMDateTo_05Rule(
-            IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOps)
+        public LearnDelFAMDateTo_05Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMDateTo_05)
         {
-            _check = commonOps;
         }
 
         public void Validate(ILearner theLearner)
@@ -38,9 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo
         }
 
         public bool HasQualifyingFunding(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(
-                theDelivery,
-                TypeOfFunding.ApprenticeshipsFrom1May2017);
+            theDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
 
         public bool IsNotValid(ILearningDelivery theDelivery, ILearningDeliveryFAM theMonitor) =>
             IsQualifyingMonitor(theMonitor)

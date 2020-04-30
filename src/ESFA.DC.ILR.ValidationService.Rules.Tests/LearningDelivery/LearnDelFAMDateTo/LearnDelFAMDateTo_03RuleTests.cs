@@ -3,7 +3,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -27,19 +26,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void HasQualifyingFundingMeetsExpectation(bool expectation)
+        [InlineData(35, true)]
+        [InlineData(36, true)]
+        [InlineData(81, true)]
+        [InlineData(99, true)]
+        [InlineData(25, false)]
+        public void HasQualifyingFundingMeetsExpectation(int fundModel, bool expectation)
         {
             // arrange
             var delivery = new Mock<ILearningDelivery>();
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 36, 81, 99))
-                .Returns(expectation);
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(fundModel);
 
-            var sut = new LearnDelFAMDateTo_03Rule(handler.Object, commonOps.Object);
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            var sut = new LearnDelFAMDateTo_03Rule(handler.Object);
 
             // act
             var result = sut.HasQualifyingFunding(delivery.Object);
@@ -47,7 +49,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             // assert
             Assert.Equal(expectation, result);
             handler.VerifyAll();
-            commonOps.VerifyAll();
         }
 
         [Theory]
@@ -179,19 +180,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.BuildErrorMessageParameter("LearnDelFAMDateTo", AbstractRule.AsRequiredCultureDate(testDate.AddDays(dateOffset))))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 36, 81, 99))
-                .Returns(true);
-
-            var sut = new LearnDelFAMDateTo_03Rule(handler.Object, commonOps.Object);
+            var sut = new LearnDelFAMDateTo_03Rule(handler.Object);
 
             // act
             sut.Validate(learner.Object);
 
             // assert
             handler.VerifyAll();
-            commonOps.VerifyAll();
         }
 
         [Theory]
@@ -250,27 +245,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 35, 36, 81, 99))
-                .Returns(true);
 
-            var sut = new LearnDelFAMDateTo_03Rule(handler.Object, commonOps.Object);
+            var sut = new LearnDelFAMDateTo_03Rule(handler.Object);
 
             // act
             sut.Validate(learner.Object);
 
             // assert
             handler.VerifyAll();
-            commonOps.VerifyAll();
         }
 
         public LearnDelFAMDateTo_03Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            return new LearnDelFAMDateTo_03Rule(handler.Object, commonOps.Object);
+            return new LearnDelFAMDateTo_03Rule(handler.Object);
         }
     }
 }

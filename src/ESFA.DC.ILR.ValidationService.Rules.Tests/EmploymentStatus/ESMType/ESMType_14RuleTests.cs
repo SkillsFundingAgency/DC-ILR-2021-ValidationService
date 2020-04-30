@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
 using Xunit;
 
@@ -42,9 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Setup(x => x.GetEligibilityRuleFor(candidate))
                 .Returns(new Mock<IEsfEligibilityRule>().Object);
 
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            var sut = new ESMType_14Rule(handler.Object, ddRule26.Object, fcsData.Object, common.Object);
+            var sut = new ESMType_14Rule(handler.Object, ddRule26.Object, fcsData.Object);
 
             var result = sut.GetEligibilityRuleFor(mockItem.Object);
 
@@ -54,7 +50,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             handler.VerifyAll();
             ddRule26.VerifyAll();
             fcsData.VerifyAll();
-            common.VerifyAll();
         }
 
         [Theory]
@@ -79,9 +74,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(expectation);
 
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            var sut = new ESMType_14Rule(handler.Object, ddRule26.Object, fcsData.Object, common.Object);
+            var sut = new ESMType_14Rule(handler.Object, ddRule26.Object, fcsData.Object);
 
             var result = sut.GetDerivedRuleBenefitsIndicatorFor(mockLearner.Object, mockItem.Object);
 
@@ -90,7 +84,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             handler.VerifyAll();
             ddRule26.VerifyAll();
             fcsData.VerifyAll();
-            common.VerifyAll();
         }
 
         [Theory]
@@ -137,6 +130,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             mockDelivery
                 .SetupGet(y => y.ConRefNumber)
                 .Returns(contractRef);
+            mockDelivery
+                .SetupGet(y => y.FundModel)
+                .Returns(70);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -171,19 +167,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Setup(x => x.GetEligibilityRuleFor(contractRef))
                 .Returns(mockItem.Object);
 
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            common
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 70))
-                .Returns(true);
-
-            var sut = new ESMType_14Rule(handler.Object, ddRule26.Object, fcsData.Object, common.Object);
+            var sut = new ESMType_14Rule(handler.Object, ddRule26.Object, fcsData.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             ddRule26.VerifyAll();
             fcsData.VerifyAll();
-            common.VerifyAll();
         }
 
         [Theory]
@@ -198,6 +188,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             mockDelivery
                 .SetupGet(y => y.ConRefNumber)
                 .Returns(contractRef);
+            mockDelivery
+                .SetupGet(y => y.FundModel)
+                .Returns(70);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -227,19 +220,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Setup(x => x.GetEligibilityRuleFor(contractRef))
                 .Returns(mockItem.Object);
 
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            common
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, 70))
-                .Returns(true);
-
-            var sut = new ESMType_14Rule(handler.Object, ddRule26.Object, fcsData.Object, common.Object);
+            var sut = new ESMType_14Rule(handler.Object, ddRule26.Object, fcsData.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
             ddRule26.VerifyAll();
             fcsData.VerifyAll();
-            common.VerifyAll();
         }
 
         public ESMType_14Rule NewRule()
@@ -247,9 +234,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var ddRule26 = new Mock<IDerivedData_26Rule>(MockBehavior.Strict);
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
-            var common = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
 
-            return new ESMType_14Rule(handler.Object, ddRule26.Object, fcsData.Object, common.Object);
+            return new ESMType_14Rule(handler.Object, ddRule26.Object, fcsData.Object);
         }
     }
 }

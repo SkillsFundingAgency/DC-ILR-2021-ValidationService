@@ -5,22 +5,22 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo
 {
-    public class LearnDelFAMDateTo_03Rule :
-        AbstractRule,
-        IRule<ILearner>
+    public class LearnDelFAMDateTo_03Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IProvideRuleCommonOperations _check;
+        private readonly HashSet<int> _fundModels = new HashSet<int>
+        {
+            TypeOfFunding.AdultSkills,
+            TypeOfFunding.ApprenticeshipsFrom1May2017,
+            TypeOfFunding.OtherAdult,
+            TypeOfFunding.NotFundedByESFA
+        };
 
-        public LearnDelFAMDateTo_03Rule(
-            IValidationErrorHandler validationErrorHandler,
-            IProvideRuleCommonOperations commonOps)
+        public LearnDelFAMDateTo_03Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMDateTo_03)
         {
-           _check = commonOps;
         }
 
         public void Validate(ILearner theLearner)
@@ -38,12 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMDateTo
         }
 
         public bool HasQualifyingFunding(ILearningDelivery theDelivery) =>
-            _check.HasQualifyingFunding(
-                theDelivery,
-                TypeOfFunding.AdultSkills,
-                TypeOfFunding.ApprenticeshipsFrom1May2017,
-                TypeOfFunding.OtherAdult,
-                TypeOfFunding.NotFundedByESFA);
+            _fundModels.Contains(theDelivery.FundModel);
 
         public bool IsNotValid(ILearningDelivery theDelivery, ILearningDeliveryFAM theMonitor) =>
             IsQualifyingMonitor(theMonitor)
