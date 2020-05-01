@@ -1262,17 +1262,17 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
         }
 
         [Theory]
-        [InlineData(LARSValidities.Apprenticeships)]
-        [InlineData(LARSValidities.AdultSkills)]
-        [InlineData(LARSValidities.Unemployed)]
-        [InlineData(LARSValidities.OLASSAdult)]
-        [InlineData(LARSValidities.Any)]
-        [InlineData(LARSValidities.CommunityLearning)]
-        [InlineData(LARSValidities.EFAConFundEnglish)]
-        [InlineData(LARSValidities.AdvancedLearnerLoan)]
-        [InlineData(LARSValidities.EFA16To19)]
-        [InlineData(LARSValidities.EFAConFundMaths)]
-        [InlineData(LARSValidities.EuropeanSocialFund)]
+        [InlineData(LARSConstants.Validities.Apprenticeships)]
+        [InlineData(LARSConstants.Validities.AdultSkills)]
+        [InlineData(LARSConstants.Validities.Unemployed)]
+        [InlineData(LARSConstants.Validities.OLASSAdult)]
+        [InlineData(LARSConstants.Validities.Any)]
+        [InlineData(LARSConstants.Validities.CommunityLearning)]
+        [InlineData(LARSConstants.Validities.EFAConFundEnglish)]
+        [InlineData(LARSConstants.Validities.AdvancedLearnerLoan)]
+        [InlineData(LARSConstants.Validities.EFA16To19)]
+        [InlineData(LARSConstants.Validities.EFAConFundMaths)]
+        [InlineData(LARSConstants.Validities.EuropeanSocialFund)]
         public void OrigLearnStartDateBetweenStartAndEndDateForValidityCategory_True(string larsValidityType)
         {
             var learnAimRef = "123456789";
@@ -1330,14 +1330,14 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                             new LARSValidity()
                             {
                                 LearnAimRef = learnAimRef,
-                                ValidityCategory = LARSValidities.Apprenticeships,
+                                ValidityCategory = LARSConstants.Validities.Apprenticeships,
                                 StartDate = new DateTime(2017, 10, 01),
                                 EndDate = new DateTime(2018, 10, 01)
                             },
                             new LARSValidity()
                             {
                                 LearnAimRef = learnAimRef,
-                                ValidityCategory = LARSValidities.EFA16To19,
+                                ValidityCategory = LARSConstants.Validities.EFA16To19,
                                 StartDate = new DateTime(2016, 10, 01)
                             },
                             new LARSValidity()
@@ -1351,8 +1351,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 
             var categorryTypesToCheck = new List<string>()
             {
-                LARSValidities.Apprenticeships,
-                LARSValidities.OLASSAdult,
+                LARSConstants.Validities.Apprenticeships,
+                LARSConstants.Validities.OLASSAdult,
                 "XYZ"
             };
 
@@ -1401,8 +1401,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 
             var categorryTypesToCheck = new List<string>()
             {
-                LARSValidities.Apprenticeships,
-                LARSValidities.OLASSAdult,
+               LARSConstants.Validities.Apprenticeships,
+               LARSConstants.Validities.OLASSAdult,
             };
 
             NewService(externalDataCacheMock.Object)
@@ -1429,14 +1429,14 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
                             new LARSValidity()
                             {
                                 LearnAimRef = learnAimRef,
-                                ValidityCategory = LARSValidities.Apprenticeships,
+                                ValidityCategory = LARSConstants.Validities.Apprenticeships,
                                 StartDate = new DateTime(2017, 10, 01),
                                 EndDate = new DateTime(2018, 10, 01)
                             },
                             new LARSValidity()
                             {
                                 LearnAimRef = learnAimRef,
-                                ValidityCategory = LARSValidities.Any,
+                                ValidityCategory = LARSConstants.Validities.Any,
                                 StartDate = new DateTime(2016, 10, 01)
                             },
                             new LARSValidity()
@@ -1449,7 +1449,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
             externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
 
             NewService(externalDataCacheMock.Object)
-                .OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.Any)
+                .OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSConstants.Validities.Any)
                 .Should()
                 .BeTrue();
         }
@@ -1492,7 +1492,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
             externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
 
             NewService(externalDataCacheMock.Object)
-                .OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.Apprenticeships)
+                .OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSConstants.Validities.Apprenticeships)
                 .Should()
                 .BeFalse();
         }
@@ -1509,7 +1509,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
             externalDataCacheMock.SetupGet(c => c.LearningDeliveries).Returns(learningDeliveriesDictionary);
 
             NewService(externalDataCacheMock.Object)
-                .OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.Apprenticeships)
+                .OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSConstants.Validities.Apprenticeships)
                 .Should()
                 .BeFalse();
         }

@@ -55,7 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         }
 
         public bool IsQualifyingNotionalNVQ(ILARSLearningDelivery delivery) =>
-            delivery?.NotionalNVQLevelv2 == LARSNotionalNVQLevelV2.Level3;
+            delivery?.NotionalNVQLevelv2 == LARSConstants.NotionalNVQLevelV2Strings.Level3;
 
         public bool HasQualifyingNotionalNVQ(ILearningDelivery delivery)
         {
@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         }
 
         public bool IsQualifyingCategory(ILARSLearningCategory category) =>
-            category.CategoryRef == LARSCategories.OnlyForLegalEntitlementAtLevel3;
+            category.CategoryRef == LARSConstants.Categories.OnlyForLegalEntitlementAtLevel3;
 
         public bool HasQualifyingCategory(ILearningDelivery delivery)
         {

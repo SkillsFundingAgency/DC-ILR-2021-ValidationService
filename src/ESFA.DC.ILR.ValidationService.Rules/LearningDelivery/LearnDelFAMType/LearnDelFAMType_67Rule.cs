@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             theValue.BasicSkillsType.HasValue;
 
         public bool IsEnglishOrMathBasicSkill(ILARSAnnualValue theValue) =>
-            LARSBasicSkills.AsEnglishAndMathsBasicSkills.Contains(theValue.BasicSkillsType.Value);
+            LARSConstants.BasicSkills.EnglishAndMathsList.Contains(theValue.BasicSkillsType.Value);
 
         public bool IsValueCurrent(ILearningDelivery theDelivery, ILARSAnnualValue theValue) =>
            _larsData.IsCurrentAndNotWithdrawn(theValue, theDelivery.LearnStartDate);
@@ -68,7 +68,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             theLarsAim != null && IsBritishSignLanguage(theLarsAim);
 
         public bool IsBritishSignLanguage(ILARSLearningDelivery theDelivery) =>
-            theDelivery.FrameworkCommonComponent == LARSCommonComponents.BritishSignLanguage;
+            theDelivery.FrameworkCommonComponent == LARSConstants.CommonComponents.BritishSignLanguage;
 
         public bool IsLearningSupportFunding(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LSF);

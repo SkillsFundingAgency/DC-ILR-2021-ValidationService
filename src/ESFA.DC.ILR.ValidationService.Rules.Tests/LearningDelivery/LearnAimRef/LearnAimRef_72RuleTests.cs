@@ -151,21 +151,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(null, TypeOfNotionalNVQLevelV2.OutOfScope)]
-        [InlineData("A", TypeOfNotionalNVQLevelV2.OutOfScope)]
-        [InlineData("E", TypeOfNotionalNVQLevelV2.EntryLevel)]
-        [InlineData("1", TypeOfNotionalNVQLevelV2.Level1)]
-        [InlineData("2", TypeOfNotionalNVQLevelV2.Level2)]
-        [InlineData("3", TypeOfNotionalNVQLevelV2.Level3)]
-        [InlineData("H", TypeOfNotionalNVQLevelV2.HigherLevel)]
-        [InlineData("1.5", TypeOfNotionalNVQLevelV2.Level1_2)]
-        [InlineData("4", TypeOfNotionalNVQLevelV2.Level4)]
-        [InlineData("5", TypeOfNotionalNVQLevelV2.Level5)]
-        [InlineData("6", TypeOfNotionalNVQLevelV2.Level6)]
-        [InlineData("7", TypeOfNotionalNVQLevelV2.Level7)]
-        [InlineData("8", TypeOfNotionalNVQLevelV2.Level8)]
-        [InlineData("M", TypeOfNotionalNVQLevelV2.MixedLevel)]
-        [InlineData("X", TypeOfNotionalNVQLevelV2.NotKnown)]
+        [InlineData(null, LARSConstants.NotionalNVQLevelV2Doubles.OutOfScope)]
+        [InlineData("A", LARSConstants.NotionalNVQLevelV2Doubles.OutOfScope)]
+        [InlineData("E", LARSConstants.NotionalNVQLevelV2Doubles.EntryLevel)]
+        [InlineData("1", LARSConstants.NotionalNVQLevelV2Doubles.Level1)]
+        [InlineData("2", LARSConstants.NotionalNVQLevelV2Doubles.Level2)]
+        [InlineData("3", LARSConstants.NotionalNVQLevelV2Doubles.Level3)]
+        [InlineData("H", LARSConstants.NotionalNVQLevelV2Doubles.HigherLevel)]
+        [InlineData("1.5", LARSConstants.NotionalNVQLevelV2Doubles.Level1_2)]
+        [InlineData("4", LARSConstants.NotionalNVQLevelV2Doubles.Level4)]
+        [InlineData("5", LARSConstants.NotionalNVQLevelV2Doubles.Level5)]
+        [InlineData("6", LARSConstants.NotionalNVQLevelV2Doubles.Level6)]
+        [InlineData("7", LARSConstants.NotionalNVQLevelV2Doubles.Level7)]
+        [InlineData("8", LARSConstants.NotionalNVQLevelV2Doubles.Level8)]
+        [InlineData("M", LARSConstants.NotionalNVQLevelV2Doubles.MixedLevel)]
+        [InlineData("X", LARSConstants.NotionalNVQLevelV2Doubles.NotKnown)]
         public void GetNotionalNVQLevelV2MeetsExpectation(string candidate, double expectation)
         {
             // arrange
@@ -183,13 +183,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData("E", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData("A", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
-        [InlineData("1", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
-        [InlineData("2", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
-        [InlineData("1", TypeOfNotionalNVQLevelV2.Level2, false)]
-        [InlineData("2", TypeOfNotionalNVQLevelV2.Level2, false)]
-        [InlineData("1234568", TypeOfNotionalNVQLevelV2.EntryLevel, true)]
+        [InlineData("E", LARSConstants.NotionalNVQLevelV2Doubles.EntryLevel, false)]
+        [InlineData("A", LARSConstants.NotionalNVQLevelV2Doubles.EntryLevel, true)]
+        [InlineData("1", LARSConstants.NotionalNVQLevelV2Doubles.EntryLevel, true)]
+        [InlineData("2", LARSConstants.NotionalNVQLevelV2Doubles.EntryLevel, true)]
+        [InlineData("1", LARSConstants.NotionalNVQLevelV2Doubles.Level2, false)]
+        [InlineData("2", LARSConstants.NotionalNVQLevelV2Doubles.Level2, false)]
+        [InlineData("1234568", LARSConstants.NotionalNVQLevelV2Doubles.EntryLevel, true)]
         public void HasDisqualifyingMinimumLevelMeetsExpectation(string candidate, double notionalLevel, bool expectation)
         {
             // arrange
@@ -207,13 +207,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData("E", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData("A", TypeOfNotionalNVQLevelV2.Level3, false)]
-        [InlineData("1", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData("2", TypeOfNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData("1", TypeOfNotionalNVQLevelV2.Level2, true)]
-        [InlineData("2", TypeOfNotionalNVQLevelV2.Level2, false)]
-        [InlineData("1234568", TypeOfNotionalNVQLevelV2.OutOfScope, false)]
+        [InlineData("E", LARSConstants.NotionalNVQLevelV2Doubles.EntryLevel, false)]
+        [InlineData("A", LARSConstants.NotionalNVQLevelV2Doubles.Level3, false)]
+        [InlineData("1", LARSConstants.NotionalNVQLevelV2Doubles.EntryLevel, false)]
+        [InlineData("2", LARSConstants.NotionalNVQLevelV2Doubles.EntryLevel, false)]
+        [InlineData("1", LARSConstants.NotionalNVQLevelV2Doubles.Level2, true)]
+        [InlineData("2", LARSConstants.NotionalNVQLevelV2Doubles.Level2, false)]
+        [InlineData("1234568", LARSConstants.NotionalNVQLevelV2Doubles.OutOfScope, false)]
         public void HasDisqualifyingMaximumLevelMeetsExpectation(string candidate, double notionalLevel, bool expectation)
         {
             // arrange

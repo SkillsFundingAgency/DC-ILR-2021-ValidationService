@@ -83,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
 
         public bool LARSConditionMet(DateTime origLearnStartDate, string learnAimRef)
         {
-            return !_larsDataService.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSValidities.Apprenticeships);
+            return !_larsDataService.OrigLearnStartDateBetweenStartAndEndDateForValidityCategory(origLearnStartDate, learnAimRef, LARSConstants.Validities.Apprenticeships);
         }
 
         public bool Excluded(int? progType)

@@ -52,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool IsDisqualifyingNotionalNVQ(ILARSLearningDelivery delivery) =>
             delivery != null
-            && delivery.NotionalNVQLevelv2.CaseInsensitiveEquals(LARSNotionalNVQLevelV2.Level3);
+            && delivery.NotionalNVQLevelv2.CaseInsensitiveEquals(LARSConstants.NotionalNVQLevelV2Strings.Level3);
 
         public bool HasDisqualifyingNotionalNVQ(ILearningDelivery delivery)
         {

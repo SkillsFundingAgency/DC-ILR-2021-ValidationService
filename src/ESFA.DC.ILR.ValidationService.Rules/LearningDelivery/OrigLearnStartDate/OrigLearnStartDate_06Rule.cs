@@ -13,9 +13,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
     {
         private readonly HashSet<string> larsValidityCategories = new HashSet<string>()
         {
-            LARSValidities.AdultSkills,
-            LARSValidities.Unemployed,
-            LARSValidities.OLASSAdult
+            LARSConstants.Validities.AdultSkills,
+            LARSConstants.Validities.Unemployed,
+            LARSConstants.Validities.OLASSAdult
         };
 
         private readonly IDerivedData_07Rule _dd07;

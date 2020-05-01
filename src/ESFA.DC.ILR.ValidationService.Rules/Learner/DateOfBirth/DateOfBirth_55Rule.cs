@@ -21,22 +21,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         private readonly string[] _learnAimRefTypes =
         {
-            LARSLearnAimRefTypes.GCEALevel,
-            LARSLearnAimRefTypes.GCEA2Level,
-            LARSLearnAimRefTypes.GCEAppliedALevel,
-            LARSLearnAimRefTypes.GCEAppliedALevelDoubleAward,
-            LARSLearnAimRefTypes.GCEALevelWithGCEAdvancedSubsidiary
+            LARSConstants.LearnAimRefTypes.GCEALevel,
+            LARSConstants.LearnAimRefTypes.GCEA2Level,
+            LARSConstants.LearnAimRefTypes.GCEAppliedALevel,
+            LARSConstants.LearnAimRefTypes.GCEAppliedALevelDoubleAward,
+            LARSConstants.LearnAimRefTypes.GCEALevelWithGCEAdvancedSubsidiary
         };
 
         private readonly string[] _notionalNvqLevels =
         {
-            LARSNotionalNVQLevelV2.Level3,
-            LARSNotionalNVQLevelV2.Level4,
-            LARSNotionalNVQLevelV2.Level5,
-            LARSNotionalNVQLevelV2.Level6,
-            LARSNotionalNVQLevelV2.Level7,
-            LARSNotionalNVQLevelV2.Level8,
-            LARSNotionalNVQLevelV2.HigherLevel
+            LARSConstants.NotionalNVQLevelV2Strings.Level3,
+            LARSConstants.NotionalNVQLevelV2Strings.Level4,
+            LARSConstants.NotionalNVQLevelV2Strings.Level5,
+            LARSConstants.NotionalNVQLevelV2Strings.Level6,
+            LARSConstants.NotionalNVQLevelV2Strings.Level7,
+            LARSConstants.NotionalNVQLevelV2Strings.Level8,
+            LARSConstants.NotionalNVQLevelV2Strings.HigherLevel
         };
 
         private readonly string[] _learningDeliveryFamCodes =

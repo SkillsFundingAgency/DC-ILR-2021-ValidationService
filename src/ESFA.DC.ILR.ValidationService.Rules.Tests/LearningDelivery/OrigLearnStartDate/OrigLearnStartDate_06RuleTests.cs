@@ -77,9 +77,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.OrigLearnSt
 
             var larsValidityCategories = new HashSet<string>()
             {
-                LARSValidities.AdultSkills,
-                LARSValidities.Unemployed,
-                LARSValidities.OLASSAdult
+                LARSConstants.Validities.AdultSkills,
+                LARSConstants.Validities.Unemployed,
+                LARSConstants.Validities.OLASSAdult
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();

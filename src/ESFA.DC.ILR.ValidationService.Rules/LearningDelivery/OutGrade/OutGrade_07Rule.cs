@@ -20,17 +20,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OutGrade
 
         private readonly string[] _learnAinRefTypes =
         {
-            LARSLearnAimRefTypes.GCEASLevel,
-            LARSLearnAimRefTypes.GCEALevel,
-            LARSLearnAimRefTypes.GCSE,
-            LARSLearnAimRefTypes.GCEA2Level,
-            LARSLearnAimRefTypes.GSCEVocational,
-            LARSLearnAimRefTypes.GCEAppliedALevel,
-            LARSLearnAimRefTypes.GCEAppliedASLevelDoubleAward,
-            LARSLearnAimRefTypes.GCEAppliedA2,
-            LARSLearnAimRefTypes.GCEAppliedA2DoubleAward,
-            LARSLearnAimRefTypes.GCEALevelWithGCEAdvancedSubsidiary,
-            LARSLearnAimRefTypes.ShortCourseGCSE
+            LARSConstants.LearnAimRefTypes.GCEASLevel,
+            LARSConstants.LearnAimRefTypes.GCEALevel,
+            LARSConstants.LearnAimRefTypes.GCSE,
+            LARSConstants.LearnAimRefTypes.GCEA2Level,
+            LARSConstants.LearnAimRefTypes.GSCEVocational,
+            LARSConstants.LearnAimRefTypes.GCEAppliedALevel,
+            LARSConstants.LearnAimRefTypes.GCEAppliedASLevelDoubleAward,
+            LARSConstants.LearnAimRefTypes.GCEAppliedA2,
+            LARSConstants.LearnAimRefTypes.GCEAppliedA2DoubleAward,
+            LARSConstants.LearnAimRefTypes.GCEALevelWithGCEAdvancedSubsidiary,
+            LARSConstants.LearnAimRefTypes.ShortCourseGCSE
         };
 
         public OutGrade_07Rule(

@@ -40,47 +40,47 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         {
             if (CommunityLearningMatch(learningDelivery))
             {
-                return LARSValidities.CommunityLearning;
+                return LARSConstants.Validities.CommunityLearning;
             }
 
             if (ESFMatch(learningDelivery))
             {
-                return LARSValidities.EuropeanSocialFund;
+                return LARSConstants.Validities.EuropeanSocialFund;
             }
 
             if (EFA16To19Match(learningDelivery))
             {
-                return LARSValidities.EFA16To19;
+                return LARSConstants.Validities.EFA16To19;
             }
 
             if (AdvancedLearnerLoanMatch(learningDelivery))
             {
-                return LARSValidities.AdvancedLearnerLoan;
+                return LARSConstants.Validities.AdvancedLearnerLoan;
             }
 
             if (AnyMatch(learningDelivery))
             {
-                return LARSValidities.Any;
+                return LARSConstants.Validities.Any;
             }
 
             if (OlassAdultMatch(learningDelivery))
             {
-                return LARSValidities.OLASSAdult;
+                return LARSConstants.Validities.OLASSAdult;
             }
 
             if (ApprenticeshipsMatch(learningDelivery))
             {
-                return LARSValidities.Apprenticeships;
+                return LARSConstants.Validities.Apprenticeships;
             }
 
             if (UnemployedMatch(learningDelivery, learnerEmploymentStatuses))
             {
-                return LARSValidities.Unemployed;
+                return LARSConstants.Validities.Unemployed;
             }
 
             if (AdultSkillsMatch(learningDelivery))
             {
-                return LARSValidities.AdultSkills;
+                return LARSConstants.Validities.AdultSkills;
             }
 
             return null;
