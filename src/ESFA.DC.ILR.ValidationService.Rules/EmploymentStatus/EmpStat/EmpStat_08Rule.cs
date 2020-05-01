@@ -23,14 +23,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         private readonly IDerivedData_07Rule _dd07;
         private readonly IDateTimeQueryService _dateTimeQueryService;
-        private readonly IAcademicYearDataService _academicYearDataService;
+        private readonly IAcademicYearQueryService _academicYearQueryService;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;
 
         public EmpStat_08Rule(
             IDerivedData_07Rule dd07,
             IDateTimeQueryService dateTimeQueryService,
-            IAcademicYearDataService academicYearDataService,
+            IAcademicYearQueryService academicYearQueryService,
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             ILearnerEmploymentStatusQueryService learnerEmploymentStatusQueryService,
             IValidationErrorHandler validationErrorHandler)
@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         {
             _dd07 = dd07;
             _dateTimeQueryService = dateTimeQueryService;
-            _academicYearDataService = academicYearDataService;
+            _academicYearQueryService = academicYearQueryService;
             _learnerEmploymentStatusQueryService = learnerEmploymentStatusQueryService;
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
@@ -92,7 +92,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
                 && learnStartDate >= _augustFirst2014
                 && _dateTimeQueryService.YearsBetween(
                     dateOfBirth.Value,
-                    _academicYearDataService.GetAcademicYearOfLearningDate(
+                    _academicYearQueryService.GetAcademicYearOfLearningDate(
                         learnStartDate,
                         AcademicYearDates.August31)) >= 19;
 

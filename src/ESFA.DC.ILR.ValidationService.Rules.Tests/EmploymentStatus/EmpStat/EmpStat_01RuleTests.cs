@@ -132,7 +132,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             mockDDRule07
                 .Setup(x => x.IsApprenticeship(null))
                 .Returns(expectation);
-            var yeardata = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            var yeardata = new Mock<IAcademicYearQueryService>(MockBehavior.Strict);
 
             var sut = NewRule(handler.Object, mockDDRule07.Object, yeardata.Object);
 
@@ -222,7 +222,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            var yearData = new Mock<IAcademicYearQueryService>(MockBehavior.Strict);
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Today);
@@ -341,7 +341,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             mockDDRule07
                 .Setup(x => x.IsApprenticeship(Moq.It.IsAny<int>()))
                 .Returns(false);
-            var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            var yearData = new Mock<IAcademicYearQueryService>(MockBehavior.Strict);
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(previousYearEndDate);
@@ -412,7 +412,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
             mockDDRule07
                 .Setup(x => x.IsApprenticeship(Moq.It.IsAny<int>()))
                 .Returns(false);
-            var yearData = new Mock<IAcademicYearDataService>(MockBehavior.Strict);
+            var yearData = new Mock<IAcademicYearQueryService>(MockBehavior.Strict);
             yearData
                 .Setup(x => x.GetAcademicYearOfLearningDate(testDate, AcademicYearDates.PreviousYearEnd))
                 .Returns(DateTime.Parse(previousYearEnd));
@@ -432,13 +432,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.EmpStat
         public EmpStat_01Rule NewRule(
             IValidationErrorHandler handler = null,
             IDerivedData_07Rule dd07 = null,
-            IAcademicYearDataService academicYearDataService = null,
+            IAcademicYearQueryService academicYearQueryService = null,
             IDateTimeQueryService dateTimeQueryService = null)
         {
             return new EmpStat_01Rule(
                 handler,
                 dd07,
-                academicYearDataService,
+                academicYearQueryService,
                 dateTimeQueryService);
         }
     }

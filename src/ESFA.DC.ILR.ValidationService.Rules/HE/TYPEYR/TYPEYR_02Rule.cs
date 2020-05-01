@@ -5,20 +5,21 @@ using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.HE.TYPEYR
 {
     public class TYPEYR_02Rule : AbstractRule, IRule<ILearner>
     {
         private readonly DateTime _dateCondition = new DateTime(2009, 08, 01);
-        private readonly IAcademicYearDataService _academicYearDataService;
+        private readonly IAcademicYearQueryService _academicYearQueryService;
 
         public TYPEYR_02Rule(
             IValidationErrorHandler validationErrorHandler,
-            IAcademicYearDataService academicYearDataService)
+            IAcademicYearQueryService academicYearQueryService)
             : base(validationErrorHandler, RuleNameConstants.TYPEYR_02)
         {
-            _academicYearDataService = academicYearDataService;
+            _academicYearQueryService = academicYearQueryService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -60,8 +61,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.TYPEYR
             var result = false;
             if (learnActDateNullable.HasValue)
             {
-                var learnStartDateAcademicYear = _academicYearDataService.GetAcademicYearOfLearningDate(learnStartDate, AcademicYearDates.Commencement);
-                var learnEndDateAcademicYear = _academicYearDataService.GetAcademicYearOfLearningDate(learnActDateNullable.Value, AcademicYearDates.Commencement);
+                var learnStartDateAcademicYear = _academicYearQueryService.GetAcademicYearOfLearningDate(learnStartDate, AcademicYearDates.Commencement);
+                var learnEndDateAcademicYear = _academicYearQueryService.GetAcademicYearOfLearningDate(learnActDateNullable.Value, AcademicYearDates.Commencement);
 
                 if (learnStartDate >= _dateCondition && learnStartDateAcademicYear.Year == learnEndDateAcademicYear.Year)
                 {

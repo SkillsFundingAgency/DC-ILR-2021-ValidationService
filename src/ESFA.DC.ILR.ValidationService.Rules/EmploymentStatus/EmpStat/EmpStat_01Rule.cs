@@ -21,13 +21,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
         };
 
         private readonly IDerivedData_07Rule _derivedData07;
-        private readonly IAcademicYearDataService _yearData;
+        private readonly IAcademicYearQueryService _yearData;
         private readonly IDateTimeQueryService _dateTimeQueryService;
 
         public EmpStat_01Rule(
             IValidationErrorHandler validationErrorHandler,
             IDerivedData_07Rule derivedData07,
-            IAcademicYearDataService yearData,
+            IAcademicYearQueryService yearData,
             IDateTimeQueryService dateTimeQueryService)
             : base(validationErrorHandler, RuleNameConstants.EmpStat_01)
         {
