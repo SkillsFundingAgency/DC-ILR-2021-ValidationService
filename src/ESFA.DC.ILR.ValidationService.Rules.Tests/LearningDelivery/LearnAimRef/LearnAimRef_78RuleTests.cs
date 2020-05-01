@@ -80,19 +80,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(LARSNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData(LARSNotionalNVQLevelV2.HigherLevel, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level1, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level1_2, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level2, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level3, true)]
-        [InlineData(LARSNotionalNVQLevelV2.Level4, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level5, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level6, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level7, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level8, false)]
-        [InlineData(LARSNotionalNVQLevelV2.MixedLevel, false)]
-        [InlineData(LARSNotionalNVQLevelV2.NotKnown, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.EntryLevel, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.HigherLevel, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level1, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level1_2, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level2, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level3, true)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level4, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level5, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level6, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level7, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level8, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.MixedLevel, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.NotKnown, false)]
         public void IsQualifyingNotionalNVQMeetsExpectation(string candidate, bool expectation)
         {
             var sut = NewRule();
@@ -144,10 +144,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Theory]
-        [InlineData(LARSCategories.LegalEntitlementLevel2, false)]
-        [InlineData(LARSCategories.OnlyForLegalEntitlementAtLevel3, true)]
-        [InlineData(LARSCategories.WorkPlacementSFAFunded, false)]
-        [InlineData(LARSCategories.WorkPreparationSFATraineeships, false)]
+        [InlineData(LARSConstants.Categories.LegalEntitlementLevel2, false)]
+        [InlineData(LARSConstants.Categories.OnlyForLegalEntitlementAtLevel3, true)]
+        [InlineData(LARSConstants.Categories.WorkPlacementSFAFunded, false)]
+        [InlineData(LARSConstants.Categories.WorkPreparationSFATraineeships, false)]
         [InlineData(36, false)]
         [InlineData(39, false)]
         public void IsQualifyingCategoryMeetsExpectation(int category, bool expectation)
@@ -247,7 +247,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var mockCategory = new Mock<ILARSLearningCategory>();
             mockCategory
                 .SetupGet(x => x.CategoryRef)
-                .Returns(LARSCategories.LegalEntitlementLevel2);
+                .Returns(LARSConstants.Categories.LegalEntitlementLevel2);
 
             var larsCategories = new List<ILARSLearningCategory>();
             larsCategories.Add(mockCategory.Object);
@@ -255,7 +255,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var mockLars = new Mock<ILARSLearningDelivery>();
             mockLars
                 .SetupGet(x => x.NotionalNVQLevelv2)
-                .Returns(LARSNotionalNVQLevelV2.Level3);
+                .Returns(LARSConstants.NotionalNVQLevelV2Strings.Level3);
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
@@ -350,7 +350,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var mockCategory = new Mock<ILARSLearningCategory>();
             mockCategory
                 .SetupGet(x => x.CategoryRef)
-                .Returns(LARSCategories.OnlyForLegalEntitlementAtLevel3);
+                .Returns(LARSConstants.Categories.OnlyForLegalEntitlementAtLevel3);
 
             var larsCategories = new List<ILARSLearningCategory>();
             larsCategories.Add(mockCategory.Object);
@@ -358,7 +358,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var mockLars = new Mock<ILARSLearningDelivery>();
             mockLars
                 .SetupGet(x => x.NotionalNVQLevelv2)
-                .Returns(LARSNotionalNVQLevelV2.Level3);
+                .Returns(LARSConstants.NotionalNVQLevelV2Strings.Level3);
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service

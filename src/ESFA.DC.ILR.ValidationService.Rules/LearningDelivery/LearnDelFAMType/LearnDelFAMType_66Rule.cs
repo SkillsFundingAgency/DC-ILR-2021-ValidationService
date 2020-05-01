@@ -18,9 +18,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     {
         private readonly HashSet<string> _nvqLevels = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-             LARSNotionalNVQLevelV2.EntryLevel,
-             LARSNotionalNVQLevelV2.Level1,
-             LARSNotionalNVQLevelV2.Level2
+             LARSConstants.NotionalNVQLevelV2Strings.EntryLevel,
+             LARSConstants.NotionalNVQLevelV2Strings.Level1,
+             LARSConstants.NotionalNVQLevelV2Strings.Level2
         };
 
         private readonly ILARSDataService _larsData;
@@ -87,7 +87,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool IsBasicSkillsLearner(ILARSAnnualValue monitor) =>
            monitor.BasicSkillsType.HasValue
-           && LARSBasicSkills.AsEnglishAndMathsBasicSkills.Contains(monitor.BasicSkillsType.Value);
+           && LARSConstants.BasicSkills.EnglishAndMathsList.Contains(monitor.BasicSkillsType.Value);
 
         public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearningDelivery thisDelivery, ILearner forCandidate) =>
             _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, forCandidate);

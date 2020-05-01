@@ -29,32 +29,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         private readonly HashSet<string> n = new HashSet<string>(new List<string>()
         {
-            LARSNotionalNVQLevelV2.EntryLevel,
-            LARSNotionalNVQLevelV2.Level1,
-            LARSNotionalNVQLevelV2.Level2
+            LARSConstants.NotionalNVQLevelV2Strings.EntryLevel,
+            LARSConstants.NotionalNVQLevelV2Strings.Level1,
+            LARSConstants.NotionalNVQLevelV2Strings.Level2
         }).ToCaseInsensitiveHashSet();
 
         private readonly HashSet<int> basicSkillTypes = new HashSet<int>()
         {
-            LARSBasicSkills.Certificate_AdultLiteracy,
-            LARSBasicSkills.Certificate_AdultNumeracy,
-            LARSBasicSkills.GCSE_EnglishLanguage,
-            LARSBasicSkills.GCSE_Mathematics,
-            LARSBasicSkills.KeySkill_Communication,
-            LARSBasicSkills.KeySkill_ApplicationOfNumbers,
-            LARSBasicSkills.FunctionalSkillsMathematics,
-            LARSBasicSkills.FunctionalSkillsEnglish,
-            LARSBasicSkills.UnitsOfTheCertificate_AdultNumeracy,
-            LARSBasicSkills.UnitsOfTheCertificate_AdultLiteracy,
-            LARSBasicSkills.NonNQF_QCFS4LLiteracy,
-            LARSBasicSkills.NonNQF_QCFS4LNumeracy,
-            LARSBasicSkills.QCFBasicSkillsEnglishLanguage,
-            LARSBasicSkills.QCFBasicSkillsMathematics,
-            LARSBasicSkills.UnitQCFBasicSkillsEnglishLanguage,
-            LARSBasicSkills.UnitQCFBasicSkillsMathematics,
-            LARSBasicSkills.InternationalGCSEEnglishLanguage,
-            LARSBasicSkills.InternationalGCSEMathematics,
-            LARSBasicSkills.FreeStandingMathematicsQualification,
+            LARSConstants.BasicSkills.Certificate_AdultLiteracy,
+            LARSConstants.BasicSkills.Certificate_AdultNumeracy,
+            LARSConstants.BasicSkills.GCSE_EnglishLanguage,
+            LARSConstants.BasicSkills.GCSE_Mathematics,
+            LARSConstants.BasicSkills.KeySkill_Communication,
+            LARSConstants.BasicSkills.KeySkill_ApplicationOfNumbers,
+            LARSConstants.BasicSkills.FunctionalSkillsMathematics,
+            LARSConstants.BasicSkills.FunctionalSkillsEnglish,
+            LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultNumeracy,
+            LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultLiteracy,
+            LARSConstants.BasicSkills.NonNQF_QCFS4LLiteracy,
+            LARSConstants.BasicSkills.NonNQF_QCFS4LNumeracy,
+            LARSConstants.BasicSkills.QCFBasicSkillsEnglishLanguage,
+            LARSConstants.BasicSkills.QCFBasicSkillsMathematics,
+            LARSConstants.BasicSkills.UnitQCFBasicSkillsEnglishLanguage,
+            LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics,
+            LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage,
+            LARSConstants.BasicSkills.InternationalGCSEMathematics,
+            LARSConstants.BasicSkills.FreeStandingMathematicsQualification,
         };
 
         private readonly ILARSDataService _larsDataService;

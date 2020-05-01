@@ -186,7 +186,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             }
 
             if (_larsDataService.BasicSkillsMatchForLearnAimRefAndStartDate(
-                LARSBasicSkills.AsEnglishAndMathsBasicSkills,
+                LARSConstants.BasicSkills.EnglishAndMathsList,
                 learningDelivery.LearnAimRef,
                 learningDelivery.LearnStartDate))
             {

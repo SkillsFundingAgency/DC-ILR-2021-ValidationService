@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_63Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly HashSet<int> _basicSkillsList = new HashSet<int>(LARSBasicSkills.AsEnglishAndMathsBasicSkills);
+        private readonly HashSet<int> _basicSkillsList = new HashSet<int>(LARSConstants.BasicSkills.EnglishAndMathsList);
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly ILARSDataService _larsData;
 
@@ -77,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         }
 
         public bool IsBritishSignLanguage(ILARSLearningDelivery theDelivery) =>
-            theDelivery.FrameworkCommonComponent == LARSCommonComponents.BritishSignLanguage;
+            theDelivery.FrameworkCommonComponent == LARSConstants.CommonComponents.BritishSignLanguage;
 
         public bool IsApprenticeshipContract(ILearningDelivery theDelivery) =>
            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT);

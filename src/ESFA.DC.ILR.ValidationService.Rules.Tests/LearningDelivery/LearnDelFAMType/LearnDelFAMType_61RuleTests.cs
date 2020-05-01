@@ -415,10 +415,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(LARSNotionalNVQLevelV2.Level2, true)]
-        [InlineData(LARSNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData(LARSNotionalNVQLevelV2.HigherLevel, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level1, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level2, true)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.EntryLevel, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.HigherLevel, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level1, false)]
         public void IsV2NotionalLevel2MeetsExpectation(string candidate, bool expectation)
         {
             // arrange
@@ -436,9 +436,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(LARSCategories.LegalEntitlementLevel2, false)]
-        [InlineData(LARSCategories.WorkPlacementSFAFunded, true)]
-        [InlineData(LARSCategories.WorkPreparationSFATraineeships, true)]
+        [InlineData(LARSConstants.Categories.LegalEntitlementLevel2, false)]
+        [InlineData(LARSConstants.Categories.WorkPlacementSFAFunded, true)]
+        [InlineData(LARSConstants.Categories.WorkPreparationSFATraineeships, true)]
         [InlineData(39, true)]
         [InlineData(23, true)]
         public void IsNotEntitledMeetsExpectation(int candidate, bool expectation)
@@ -458,7 +458,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mock = new Mock<ILARSLearningDelivery>();
             mock
                 .SetupGet(x => x.NotionalNVQLevelv2)
-                .Returns(LARSNotionalNVQLevelV2.Level2);
+                .Returns(LARSConstants.NotionalNVQLevelV2Strings.Level2);
             mock
                 .SetupGet(x => x.Categories)
                 .Returns(larsCats);
@@ -492,39 +492,39 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(LARSBasicSkills.CertificateESOLS4L, false)]
-        [InlineData(LARSBasicSkills.CertificateESOLS4LSpeakListen, false)]
-        [InlineData(LARSBasicSkills.Certificate_AdultLiteracy, true)]
-        [InlineData(LARSBasicSkills.Certificate_AdultNumeracy, true)]
-        [InlineData(LARSBasicSkills.FreeStandingMathematicsQualification, true)]
-        [InlineData(LARSBasicSkills.FunctionalSkillsEnglish, true)]
-        [InlineData(LARSBasicSkills.FunctionalSkillsMathematics, true)]
-        [InlineData(LARSBasicSkills.GCSE_EnglishLanguage, true)]
-        [InlineData(LARSBasicSkills.GCSE_Mathematics, true)]
-        [InlineData(LARSBasicSkills.InternationalGCSEEnglishLanguage, true)]
-        [InlineData(LARSBasicSkills.InternationalGCSEMathematics, true)]
-        [InlineData(LARSBasicSkills.KeySkill_ApplicationOfNumbers, true)]
-        [InlineData(LARSBasicSkills.KeySkill_Communication, true)]
-        [InlineData(LARSBasicSkills.NonNQF_QCFS4LESOL, false)]
-        [InlineData(LARSBasicSkills.NonNQF_QCFS4LLiteracy, true)]
-        [InlineData(LARSBasicSkills.NonNQF_QCFS4LNumeracy, true)]
-        [InlineData(LARSBasicSkills.NotApplicable, false)]
-        [InlineData(LARSBasicSkills.OtherS4LNotLiteracyNumeracyOrESOL, false)]
-        [InlineData(LARSBasicSkills.QCFBasicSkillsEnglishLanguage, true)]
-        [InlineData(LARSBasicSkills.QCFBasicSkillsMathematics, true)]
-        [InlineData(LARSBasicSkills.QCFCertificateESOL, false)]
-        [InlineData(LARSBasicSkills.QCFESOLReading, false)]
-        [InlineData(LARSBasicSkills.QCFESOLSpeakListen, false)]
-        [InlineData(LARSBasicSkills.QCFESOLWriting, false)]
-        [InlineData(LARSBasicSkills.UnitESOLReading, false)]
-        [InlineData(LARSBasicSkills.UnitESOLSpeakListen, false)]
-        [InlineData(LARSBasicSkills.UnitESOLWriting, false)]
-        [InlineData(LARSBasicSkills.UnitQCFBasicSkillsEnglishLanguage, true)]
-        [InlineData(LARSBasicSkills.UnitQCFBasicSkillsMathematics, true)]
-        [InlineData(LARSBasicSkills.UnitsOfTheCertificate_AdultLiteracy, true)]
-        [InlineData(LARSBasicSkills.UnitsOfTheCertificate_AdultNumeracy, true)]
-        [InlineData(LARSBasicSkills.UnitsOfTheCertificate_ESOLS4L, false)]
-        [InlineData(LARSBasicSkills.Unknown, false)]
+        [InlineData(LARSConstants.BasicSkills.CertificateESOLS4L, false)]
+        [InlineData(LARSConstants.BasicSkills.CertificateESOLS4LSpeakListen, false)]
+        [InlineData(LARSConstants.BasicSkills.Certificate_AdultLiteracy, true)]
+        [InlineData(LARSConstants.BasicSkills.Certificate_AdultNumeracy, true)]
+        [InlineData(LARSConstants.BasicSkills.FreeStandingMathematicsQualification, true)]
+        [InlineData(LARSConstants.BasicSkills.FunctionalSkillsEnglish, true)]
+        [InlineData(LARSConstants.BasicSkills.FunctionalSkillsMathematics, true)]
+        [InlineData(LARSConstants.BasicSkills.GCSE_EnglishLanguage, true)]
+        [InlineData(LARSConstants.BasicSkills.GCSE_Mathematics, true)]
+        [InlineData(LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage, true)]
+        [InlineData(LARSConstants.BasicSkills.InternationalGCSEMathematics, true)]
+        [InlineData(LARSConstants.BasicSkills.KeySkill_ApplicationOfNumbers, true)]
+        [InlineData(LARSConstants.BasicSkills.KeySkill_Communication, true)]
+        [InlineData(LARSConstants.BasicSkills.NonNQF_QCFS4LESOL, false)]
+        [InlineData(LARSConstants.BasicSkills.NonNQF_QCFS4LLiteracy, true)]
+        [InlineData(LARSConstants.BasicSkills.NonNQF_QCFS4LNumeracy, true)]
+        [InlineData(LARSConstants.BasicSkills.NotApplicable, false)]
+        [InlineData(LARSConstants.BasicSkills.OtherS4LNotLiteracyNumeracyOrESOL, false)]
+        [InlineData(LARSConstants.BasicSkills.QCFBasicSkillsEnglishLanguage, true)]
+        [InlineData(LARSConstants.BasicSkills.QCFBasicSkillsMathematics, true)]
+        [InlineData(LARSConstants.BasicSkills.QCFCertificateESOL, false)]
+        [InlineData(LARSConstants.BasicSkills.QCFESOLReading, false)]
+        [InlineData(LARSConstants.BasicSkills.QCFESOLSpeakListen, false)]
+        [InlineData(LARSConstants.BasicSkills.QCFESOLWriting, false)]
+        [InlineData(LARSConstants.BasicSkills.UnitESOLReading, false)]
+        [InlineData(LARSConstants.BasicSkills.UnitESOLSpeakListen, false)]
+        [InlineData(LARSConstants.BasicSkills.UnitESOLWriting, false)]
+        [InlineData(LARSConstants.BasicSkills.UnitQCFBasicSkillsEnglishLanguage, true)]
+        [InlineData(LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics, true)]
+        [InlineData(LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultLiteracy, true)]
+        [InlineData(LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultNumeracy, true)]
+        [InlineData(LARSConstants.BasicSkills.UnitsOfTheCertificate_ESOLS4L, false)]
+        [InlineData(LARSConstants.BasicSkills.Unknown, false)]
         [InlineData(null, false)]
         public void IsBasicSkillsLearnerMeetsExpectation(int? candidate, bool expectation)
         {
@@ -753,7 +753,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                .Returns(learnAimRef);
             mockCat
                 .SetupGet(x => x.CategoryRef)
-                .Returns(LARSCategories.LicenseToPractice);
+                .Returns(LARSConstants.Categories.LicenseToPractice);
 
             var larsCats = new List<ILARSLearningCategory>
             {
@@ -766,7 +766,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockLARSDel
                 .SetupGet(x => x.NotionalNVQLevelv2)
-                .Returns(LARSNotionalNVQLevelV2.Level2);
+                .Returns(LARSConstants.NotionalNVQLevelV2Strings.Level2);
             mockLARSDel
                 .SetupGet(x => x.Categories)
                 .Returns(larsCats);
@@ -777,7 +777,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockLARSValidity
                 .SetupGet(x => x.ValidityCategory)
-                .Returns(LARSValidities.CommunityLearning);
+                .Returns(LARSConstants.Validities.CommunityLearning);
             mockLARSValidity
                 .SetupGet(x => x.LastNewStartDate)
                 .Returns(new DateTime(2018, 08, 01));
@@ -926,7 +926,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockCat = new Mock<ILARSLearningCategory>();
             mockCat
                 .SetupGet(x => x.CategoryRef)
-                .Returns(LARSCategories.LegalEntitlementLevel2);
+                .Returns(LARSConstants.Categories.LegalEntitlementLevel2);
 
             var larsCats = new List<ILARSLearningCategory>
             {
@@ -939,7 +939,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockLARSDel
                 .SetupGet(x => x.NotionalNVQLevelv2)
-                .Returns(LARSNotionalNVQLevelV2.Level3);
+                .Returns(LARSConstants.NotionalNVQLevelV2Strings.Level3);
             mockLARSDel
                 .SetupGet(x => x.Categories)
                 .Returns(larsCats);
@@ -950,7 +950,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockLARSValidity
                 .SetupGet(x => x.ValidityCategory)
-                .Returns(LARSValidities.CommunityLearning);
+                .Returns(LARSConstants.Validities.CommunityLearning);
             mockLARSValidity
                 .SetupGet(x => x.LastNewStartDate)
                 .Returns(new DateTime(2018, 08, 01));

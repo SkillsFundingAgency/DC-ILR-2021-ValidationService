@@ -143,25 +143,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(1, LARSBasicSkills.Certificate_AdultLiteracy)]
-        [InlineData(2, LARSBasicSkills.Certificate_AdultNumeracy)]
-        [InlineData(11, LARSBasicSkills.GCSE_EnglishLanguage)]
-        [InlineData(12, LARSBasicSkills.GCSE_Mathematics)]
-        [InlineData(13, LARSBasicSkills.KeySkill_Communication)]
-        [InlineData(14, LARSBasicSkills.KeySkill_ApplicationOfNumbers)]
-        [InlineData(19, LARSBasicSkills.FunctionalSkillsMathematics)]
-        [InlineData(20, LARSBasicSkills.FunctionalSkillsEnglish)]
-        [InlineData(21, LARSBasicSkills.UnitsOfTheCertificate_AdultNumeracy)]
-        [InlineData(23, LARSBasicSkills.UnitsOfTheCertificate_AdultLiteracy)]
-        [InlineData(24, LARSBasicSkills.NonNQF_QCFS4LLiteracy)]
-        [InlineData(25, LARSBasicSkills.NonNQF_QCFS4LNumeracy)]
-        [InlineData(29, LARSBasicSkills.QCFBasicSkillsEnglishLanguage)]
-        [InlineData(30, LARSBasicSkills.QCFBasicSkillsMathematics)]
-        [InlineData(31, LARSBasicSkills.UnitQCFBasicSkillsEnglishLanguage)]
-        [InlineData(32, LARSBasicSkills.UnitQCFBasicSkillsMathematics)]
-        [InlineData(33, LARSBasicSkills.InternationalGCSEEnglishLanguage)]
-        [InlineData(34, LARSBasicSkills.InternationalGCSEMathematics)]
-        [InlineData(35, LARSBasicSkills.FreeStandingMathematicsQualification)]
+        [InlineData(1, LARSConstants.BasicSkills.Certificate_AdultLiteracy)]
+        [InlineData(2, LARSConstants.BasicSkills.Certificate_AdultNumeracy)]
+        [InlineData(11, LARSConstants.BasicSkills.GCSE_EnglishLanguage)]
+        [InlineData(12, LARSConstants.BasicSkills.GCSE_Mathematics)]
+        [InlineData(13, LARSConstants.BasicSkills.KeySkill_Communication)]
+        [InlineData(14, LARSConstants.BasicSkills.KeySkill_ApplicationOfNumbers)]
+        [InlineData(19, LARSConstants.BasicSkills.FunctionalSkillsMathematics)]
+        [InlineData(20, LARSConstants.BasicSkills.FunctionalSkillsEnglish)]
+        [InlineData(21, LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultNumeracy)]
+        [InlineData(23, LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultLiteracy)]
+        [InlineData(24, LARSConstants.BasicSkills.NonNQF_QCFS4LLiteracy)]
+        [InlineData(25, LARSConstants.BasicSkills.NonNQF_QCFS4LNumeracy)]
+        [InlineData(29, LARSConstants.BasicSkills.QCFBasicSkillsEnglishLanguage)]
+        [InlineData(30, LARSConstants.BasicSkills.QCFBasicSkillsMathematics)]
+        [InlineData(31, LARSConstants.BasicSkills.UnitQCFBasicSkillsEnglishLanguage)]
+        [InlineData(32, LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics)]
+        [InlineData(33, LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage)]
+        [InlineData(34, LARSConstants.BasicSkills.InternationalGCSEMathematics)]
+        [InlineData(35, LARSConstants.BasicSkills.FreeStandingMathematicsQualification)]
         public void TypeOfLARSBasicSkillMeetsExpectation(int candidate, int expectation)
         {
             Assert.Equal(expectation, candidate);
@@ -189,7 +189,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData(35)]
         public void AsEnglishAndMathsBasicSkillsMeetsExpectation(int basicSkill)
         {
-            Assert.Contains(basicSkill, LARSBasicSkills.AsEnglishAndMathsBasicSkills);
+            Assert.Contains(basicSkill, LARSConstants.BasicSkills.EnglishAndMathsList);
         }
 
         [Theory]
@@ -319,7 +319,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(20, LARSCommonComponents.BritishSignLanguage)]
+        [InlineData(20, LARSConstants.CommonComponents.BritishSignLanguage)]
         public void TypeOfLARSCommonComponentMeetsExpectation(int candidate, int expectation)
         {
             Assert.Equal(expectation, candidate);

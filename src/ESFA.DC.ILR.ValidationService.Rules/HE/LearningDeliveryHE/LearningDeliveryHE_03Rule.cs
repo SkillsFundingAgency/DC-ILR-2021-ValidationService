@@ -23,12 +23,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.LearningDeliveryHE
 
         private readonly string[] _notionalNVQLevels =
             {
-                LARSNotionalNVQLevelV2.Level4,
-                LARSNotionalNVQLevelV2.Level5,
-                LARSNotionalNVQLevelV2.Level6,
-                LARSNotionalNVQLevelV2.Level7,
-                LARSNotionalNVQLevelV2.Level8,
-                LARSNotionalNVQLevelV2.HigherLevel
+                LARSConstants.NotionalNVQLevelV2Strings.Level4,
+                LARSConstants.NotionalNVQLevelV2Strings.Level5,
+                LARSConstants.NotionalNVQLevelV2Strings.Level6,
+                LARSConstants.NotionalNVQLevelV2Strings.Level7,
+                LARSConstants.NotionalNVQLevelV2Strings.Level8,
+                LARSConstants.NotionalNVQLevelV2Strings.HigherLevel
             };
 
         private readonly IDerivedData_07Rule _dd07;

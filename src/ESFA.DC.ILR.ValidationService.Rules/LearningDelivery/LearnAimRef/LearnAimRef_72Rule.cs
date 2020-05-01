@@ -48,7 +48,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 || HasDisqualifyingMaximumLevel(subjectAreaLevel, notionalNVQLevel2));
 
         public bool IsOutOfScope(double notionalNVQLevel2) =>
-            notionalNVQLevel2 == TypeOfNotionalNVQLevelV2.OutOfScope;
+            notionalNVQLevel2 == LARSConstants.NotionalNVQLevelV2Doubles.OutOfScope;
 
         public bool HasDisqualifyingMinimumLevel(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, double notionalNVQLevel2) =>
             notionalNVQLevel2 < subjectAreaLevel.MinLevelCode.AsNotionalNVQLevelV2();

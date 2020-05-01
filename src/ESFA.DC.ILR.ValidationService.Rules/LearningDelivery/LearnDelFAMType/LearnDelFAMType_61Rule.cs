@@ -79,7 +79,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool IsBasicSkillsLearner(ILARSAnnualValue monitor) =>
             monitor.BasicSkillsType.HasValue
-            && LARSBasicSkills.AsEnglishAndMathsBasicSkills.Contains(monitor.BasicSkillsType.Value);
+            && LARSConstants.BasicSkills.EnglishAndMathsList.Contains(monitor.BasicSkillsType.Value);
 
         public bool IsAdultFundedUnemployedWithOtherStateBenefits(ILearningDelivery thisDelivery, ILearner forCandidate) =>
             _derivedData21.IsAdultFundedUnemployedWithOtherStateBenefits(thisDelivery, forCandidate);
@@ -123,11 +123,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             var larsDelivery = _larsData.GetDeliveryFor(delivery.LearnAimRef);
 
-            return !larsDelivery.Categories.NullSafeAny(category => category.CategoryRef == LARSCategories.LegalEntitlementLevel2);
+            return !larsDelivery.Categories.NullSafeAny(category => category.CategoryRef == LARSConstants.Categories.LegalEntitlementLevel2);
         }
 
         public bool IsV2NotionalLevel2(ILARSLearningDelivery delivery) =>
-            delivery?.NotionalNVQLevelv2 == LARSNotionalNVQLevelV2.Level2;
+            delivery?.NotionalNVQLevelv2 == LARSConstants.NotionalNVQLevelV2Strings.Level2;
 
         public void RunChecksFor(ILearningDelivery thisDelivery, ILearner learner, Action<ILearningDeliveryFAM> doAction)
         {

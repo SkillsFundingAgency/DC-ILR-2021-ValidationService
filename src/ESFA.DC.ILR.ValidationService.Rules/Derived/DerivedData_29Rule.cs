@@ -27,8 +27,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         }
 
         public bool IsWorkExperience(ILARSLearningCategory category) =>
-            category.CategoryRef == LARSCategories.WorkPlacementSFAFunded
-            || category.CategoryRef == LARSCategories.WorkPreparationSFATraineeships;
+            category.CategoryRef == LARSConstants.Categories.WorkPlacementSFAFunded
+            || category.CategoryRef == LARSConstants.Categories.WorkPreparationSFATraineeships;
 
         public bool IsInflexibleElementOfTrainingAimLearningDelivery(ILearningDelivery candidate)
         {
