@@ -111,13 +111,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsFullyFundedLearningAim(ILearningDeliveryFAM monitor) =>
             Monitoring.Delivery.FullyFundedLearningAim.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
-        //public bool IsLevel2Nvq(ILearningDelivery delivery)
-        //{
-        //    var larsDelivery = _larsData.GetDeliveryFor(delivery.LearnAimRef);
-
-        //    return IsV2NotionalLevel2(larsDelivery);
-        //}
-
         public bool IsNotEntitled(ILARSLearningDelivery larsLearningDelivery)
         {
             return !larsLearningDelivery.Categories.NullSafeAny(category => category.CategoryRef == LARSConstants.Categories.LegalEntitlementLevel2);
