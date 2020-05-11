@@ -6,17 +6,22 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
 {
     public class AFinDate_07Rule : AbstractRule, IRule<ILearner>
     {
-        private const string _TNP1 = ApprenticeshipFinancialRecord.TotalTrainingPrice;
-        private const string _TNP3 = ApprenticeshipFinancialRecord.ResidualTrainingPrice;
+        private const string _tnpType = ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice;
+        private const int _tnp1 = ApprenticeshipFinancialRecord.TotalNegotiatedPriceCodes.TotalTrainingPrice;
+        private const int _tnp3 = ApprenticeshipFinancialRecord.TotalNegotiatedPriceCodes.ResidualTrainingPrice;
 
-        public AFinDate_07Rule(IValidationErrorHandler validationErrorHandler)
+        private readonly ILearningDeliveryAppFinRecordQueryService _learningDeliveryAppFinRecordQueryService;
+
+        public AFinDate_07Rule(IValidationErrorHandler validationErrorHandler, ILearningDeliveryAppFinRecordQueryService learningDeliveryAppFinRecordQueryService)
             : base(validationErrorHandler, RuleNameConstants.AFinDate_07)
         {
+            _learningDeliveryAppFinRecordQueryService = learningDeliveryAppFinRecordQueryService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -50,22 +55,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
         {
             var tnp3Records =
                 appFinRecords?
-                .Where(af => $"{af.AFinType}{af.AFinCode}".CaseInsensitiveEquals(_TNP3))
+                .Where(af => $"{af.AFinType}{af.AFinCode}".CaseInsensitiveEquals(_tnpType))
                 .Select(af => af.AFinDate);
 
             var tnp1Records = appFinRecords?
-               .Where(af => $"{af.AFinType}{af.AFinCode}".CaseInsensitiveEquals(_TNP1));
+               .Where(af => $"{af.AFinType}{af.AFinCode}".CaseInsensitiveEquals(_tnpType));
 
             return tnp1Records?.Where(af => tnp3Records.Contains(af.AFinDate)).FirstOrDefault();
         }
 
         public bool TNP1And3Exists(IEnumerable<IAppFinRecord> appFinRecords)
         {
-            return
-                appFinRecords == null
-                ? false
-                : appFinRecords.Any(af => $"{af.AFinType}{af.AFinCode}".CaseInsensitiveEquals(_TNP1))
-                && appFinRecords.Any(af => $"{af.AFinType}{af.AFinCode}".CaseInsensitiveEquals(_TNP3));
+            return _learningDeliveryAppFinRecordQueryService.HasAnyLearningDeliveryAFinCodeForType(appFinRecords, _tnpType, _tnp1)
+                && _learningDeliveryAppFinRecordQueryService.HasAnyLearningDeliveryAFinCodeForType(appFinRecords, _tnpType, _tnp3);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string aFinType, int aFinCode, DateTime aFinDate)

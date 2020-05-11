@@ -331,6 +331,56 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             NewService().GetAppFinRecordsForType(appFinRecords, "TNP").Should().HaveCount(2);
         }
 
+        [Fact]
+        public void GetAppFinRecordsForTypeAndCode_NullRecords()
+        {
+            NewService().GetAppFinRecordsForTypeAndCode(null, "TNP", 1).Should().BeNullOrEmpty();
+        }
+
+        [Theory]
+        [InlineData("TNP", 2)]
+        [InlineData("xxx", 1)]
+        [InlineData("xxx", 2)]
+        public void GetAppFinRecordsForTypeAndCode_AFinType_MisMatch(string type, int code)
+        {
+            var appFinRecords = new List<IAppFinRecord>()
+            {
+                new TestAppFinRecord
+                {
+                    AFinCode = 2,
+                    AFinType = "TNP",
+                    AFinAmount = 1,
+                    AFinDate = new DateTime(2017, 10, 10)
+                }
+            };
+
+            NewService().GetAppFinRecordsForTypeAndCode(appFinRecords, type, code).Should().BeNullOrEmpty();
+        }
+
+        [Fact]
+        public void GetAppFinRecordsForTypeAndCode()
+        {
+            var appFinRecords = new List<IAppFinRecord>()
+            {
+                new TestAppFinRecord
+                {
+                    AFinCode = 2,
+                    AFinType = "TNP",
+                    AFinAmount = 5,
+                    AFinDate = new DateTime(2017, 10, 10)
+                },
+                new TestAppFinRecord
+                {
+                    AFinCode = 2,
+                    AFinType = "tnp",
+                    AFinAmount = 10,
+                    AFinDate = new DateTime(2017, 10, 12)
+                },
+            };
+
+            NewService().GetAppFinRecordsForTypeAndCode(appFinRecords, "TNP", 2).Should().HaveCount(2);
+        }
+
         private LearningDeliveryAppFinRecordQueryService NewService()
         {
             return new LearningDeliveryAppFinRecordQueryService();

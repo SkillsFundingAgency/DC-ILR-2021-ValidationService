@@ -55,6 +55,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             return appFinRecords?.Where(afr => afr.AFinType.CaseInsensitiveEquals(aFinType)) ?? Enumerable.Empty<IAppFinRecord>();
         }
 
+        public IEnumerable<IAppFinRecord> GetAppFinRecordsForTypeAndCode(IEnumerable<IAppFinRecord> appFinRecords, string aFinType, int aFinCode)
+        {
+            return appFinRecords?.Where(afr => afr.AFinType.CaseInsensitiveEquals(aFinType) && afr.AFinCode == aFinCode) ?? Enumerable.Empty<IAppFinRecord>();
+        }
+
         public int GetTotalTNPPriceForLatestAppFinRecordsForLearning(IEnumerable<ILearningDelivery> learningDeliveries)
         {
             var total = 0;
