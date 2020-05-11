@@ -36,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                    && appFinRecords.Any(afr => aFinCodes.Contains(afr.AFinCode));
         }
 
-        public IAppFinRecord GetLatestAppFinRecord(IReadOnlyCollection<IAppFinRecord> appFinRecords, string appFinType, int appFinCode)
+        public IAppFinRecord GetLatestAppFinRecord(IEnumerable<IAppFinRecord> appFinRecords, string appFinType, int appFinCode)
         {
             if (string.IsNullOrEmpty(appFinType) || appFinCode == 0)
             {
