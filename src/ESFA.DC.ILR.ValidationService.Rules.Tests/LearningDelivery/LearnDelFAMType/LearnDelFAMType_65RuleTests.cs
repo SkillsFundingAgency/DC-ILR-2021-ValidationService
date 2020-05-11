@@ -315,6 +315,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
 
+            var learningDelivery = new TestLearningDelivery
+            {
+                FundModel = 35,
+                LearnAimRef = "00103212",
+                LearnStartDate = new DateTime(2018, 8, 1),
+                LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMType = LearningDeliveryFAMTypeConstants.FFI,
+                        LearnDelFAMCode = "1"
+                    }
+                }
+            };
+
             var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
             mockLARSLearningDelivery
                 .SetupGet(x => x.LearnAimRef)
@@ -358,6 +373,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             dateTimeServiceMock
                 .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
+            dateTimeServiceMock.Setup(x => x.IsDateBetween(learningDelivery.LearnStartDate, mockLARSLearningDelivery.Object.EffectiveFrom, mockLARSLearningDelivery.Object.EffectiveTo ?? DateTime.MaxValue, true))
+                .Returns(true);
 
             var testLearner = new TestLearner
             {
@@ -365,20 +382,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 PriorAttainNullable = 2,
                 LearningDeliveries = new List<TestLearningDelivery>
                 {
-                    new TestLearningDelivery
-                    {
-                        FundModel = 35,
-                        LearnAimRef = "00103212",
-                        LearnStartDate = new DateTime(2018, 8, 1),
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.FFI,
-                                LearnDelFAMCode = "1"
-                            }
-                        }
-                    }
+                    learningDelivery
                 }
             };
 

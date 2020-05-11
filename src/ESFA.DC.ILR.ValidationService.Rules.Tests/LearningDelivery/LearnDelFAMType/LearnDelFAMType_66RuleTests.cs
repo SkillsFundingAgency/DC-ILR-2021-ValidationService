@@ -629,6 +629,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
             mockDateTimeQueryService.Setup(x => x.YearsBetween(birthDate, testDate)).Returns(24);
+            mockDateTimeQueryService.Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, mockLARSDel.Object.EffectiveFrom, mockLARSDel.Object.EffectiveTo ?? DateTime.MaxValue, true))
+                .Returns(false);
 
             var sut = new LearnDelFAMType_66Rule(
                 handler.Object,
@@ -770,6 +772,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var mockDateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
             mockDateTimeQueryService.Setup(x => x.YearsBetween(dateOfBirth, learnStartDate)).Returns(24);
+            mockDateTimeQueryService.Setup(x => x.IsDateBetween(learnStartDate, mockLARSDel.Object.EffectiveFrom, mockLARSDel.Object.EffectiveTo ?? DateTime.MaxValue, true))
+                .Returns(false);
 
             var sut = new LearnDelFAMType_66Rule(
                 handler.Object,
