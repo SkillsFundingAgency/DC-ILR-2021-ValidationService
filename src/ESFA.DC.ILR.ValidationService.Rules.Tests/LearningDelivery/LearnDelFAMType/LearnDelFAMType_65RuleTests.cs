@@ -27,6 +27,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ValidationPasses()
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+
+            var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
+            mockLARSLearningDelivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns("00103212");
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveFrom)
+                .Returns(new DateTime(2018, 08, 01));
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveTo)
+                .Returns(new DateTime(2022, 08, 01));
+
             var larsService = new Mock<ILARSDataService>();
             larsService
                 .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(
@@ -37,6 +49,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             larsService
                 .Setup(m => m.GetNotionalNVQLevelv2ForLearnAimRef(It.IsAny<string>()))
                 .Returns("1");
+            larsService
+                .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
+                .Returns(mockLARSLearningDelivery.Object);
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock
@@ -147,16 +162,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ValidationPasses_DerivedDataExceptions(bool dd07, bool dd28, bool dd29)
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+
+            var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
+            mockLARSLearningDelivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns("00103212");
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveFrom)
+                .Returns(new DateTime(2018, 08, 01));
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveTo)
+                .Returns(new DateTime(2022, 08, 01));
+
             var larsService = new Mock<ILARSDataService>();
             larsService
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(
+                .Setup(m => m.BasicSkillsTypeMatchForLearnAimRef(
                         It.IsAny<IEnumerable<int>>(),
-                        It.IsAny<string>(),
-                        It.IsAny<DateTime>()))
+                        It.IsAny<string>()))
                 .Returns(false);
             larsService
                 .Setup(m => m.GetNotionalNVQLevelv2ForLearnAimRef(It.IsAny<string>()))
                 .Returns("1");
+            larsService
+               .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
+               .Returns(mockLARSLearningDelivery.Object);
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock
@@ -209,16 +238,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ValidationPasses_NVQException()
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+
+            var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
+            mockLARSLearningDelivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns("00103212");
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveFrom)
+                .Returns(new DateTime(2018, 08, 01));
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveTo)
+                .Returns(new DateTime(2022, 08, 01));
+
             var larsService = new Mock<ILARSDataService>();
             larsService
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(
+                .Setup(m => m.BasicSkillsTypeMatchForLearnAimRef(
                         It.IsAny<IEnumerable<int>>(),
-                        It.IsAny<string>(),
-                        It.IsAny<DateTime>()))
+                        It.IsAny<string>()))
                 .Returns(false);
             larsService
                 .Setup(m => m.GetNotionalNVQLevelv2ForLearnAimRef(It.IsAny<string>()))
                 .Returns("3");
+            larsService
+               .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
+               .Returns(mockLARSLearningDelivery.Object);
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock
@@ -271,16 +314,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ValidationPasses_BasicSkillException()
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+
+            var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
+            mockLARSLearningDelivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns("00103212");
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveFrom)
+                .Returns(new DateTime(2018, 08, 01));
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveTo)
+                .Returns(new DateTime(2022, 08, 01));
+
             var larsService = new Mock<ILARSDataService>();
             larsService
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(
+                .Setup(m => m.BasicSkillsTypeMatchForLearnAimRef(
                         It.IsAny<IEnumerable<int>>(),
-                        It.IsAny<string>(),
-                        It.IsAny<DateTime>()))
+                        It.IsAny<string>()))
                 .Returns(true);
             larsService
                 .Setup(m => m.GetNotionalNVQLevelv2ForLearnAimRef(It.IsAny<string>()))
                 .Returns("1");
+            larsService
+               .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
+               .Returns(mockLARSLearningDelivery.Object);
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock
@@ -312,7 +369,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                     {
                         FundModel = 35,
                         LearnAimRef = "00103212",
-                        LearnStartDate = new DateTime(2017, 8, 1),
+                        LearnStartDate = new DateTime(2018, 8, 1),
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
                         {
                             new TestLearningDeliveryFAM
@@ -333,16 +390,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ValidationPasses_StartDate()
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+
+            var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
+            mockLARSLearningDelivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns("00103212");
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveFrom)
+                .Returns(new DateTime(2018, 08, 01));
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveTo)
+                .Returns(new DateTime(2022, 08, 01));
             var larsService = new Mock<ILARSDataService>();
             larsService
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(
+                .Setup(m => m.BasicSkillsTypeMatchForLearnAimRef(
                         It.IsAny<IEnumerable<int>>(),
-                        It.IsAny<string>(),
-                        It.IsAny<DateTime>()))
+                        It.IsAny<string>()))
                 .Returns(false);
             larsService
                 .Setup(m => m.GetNotionalNVQLevelv2ForLearnAimRef(It.IsAny<string>()))
                 .Returns("1");
+            larsService
+               .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
+               .Returns(mockLARSLearningDelivery.Object);
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock
@@ -395,16 +465,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ValidationPasses_AgeException()
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+
+            var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
+            mockLARSLearningDelivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns("00103212");
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveFrom)
+                .Returns(new DateTime(2018, 08, 01));
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveTo)
+                .Returns(new DateTime(2022, 08, 01));
             var larsService = new Mock<ILARSDataService>();
             larsService
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(
+                .Setup(m => m.BasicSkillsTypeMatchForLearnAimRef(
                         It.IsAny<IEnumerable<int>>(),
-                        It.IsAny<string>(),
-                        It.IsAny<DateTime>()))
+                        It.IsAny<string>()))
                 .Returns(false);
             larsService
                 .Setup(m => m.GetNotionalNVQLevelv2ForLearnAimRef(It.IsAny<string>()))
                 .Returns("1");
+            larsService
+               .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
+               .Returns(mockLARSLearningDelivery.Object);
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock
@@ -457,16 +540,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ValidationPasses_PriorAttainments()
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+
+            var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
+            mockLARSLearningDelivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns("00103212");
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveFrom)
+                .Returns(new DateTime(2018, 08, 01));
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveTo)
+                .Returns(new DateTime(2022, 08, 01));
             var larsService = new Mock<ILARSDataService>();
             larsService
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(
+                .Setup(m => m.BasicSkillsTypeMatchForLearnAimRef(
                         It.IsAny<IEnumerable<int>>(),
-                        It.IsAny<string>(),
-                        It.IsAny<DateTime>()))
+                        It.IsAny<string>()))
                 .Returns(false);
             larsService
                 .Setup(m => m.GetNotionalNVQLevelv2ForLearnAimRef(It.IsAny<string>()))
                 .Returns("1");
+            larsService
+               .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
+               .Returns(mockLARSLearningDelivery.Object);
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock
@@ -521,16 +617,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ValidationPasses_IrrelevantFam(string famType, string famCode)
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
+
+            var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
+            mockLARSLearningDelivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns("00103212");
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveFrom)
+                .Returns(new DateTime(2018, 08, 01));
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveTo)
+                .Returns(new DateTime(2022, 08, 01));
             var larsService = new Mock<ILARSDataService>();
             larsService
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(
+                .Setup(m => m.BasicSkillsTypeMatchForLearnAimRef(
                         It.IsAny<IEnumerable<int>>(),
-                        It.IsAny<string>(),
-                        It.IsAny<DateTime>()))
+                        It.IsAny<string>()))
                 .Returns(false);
             larsService
                 .Setup(m => m.GetNotionalNVQLevelv2ForLearnAimRef(It.IsAny<string>()))
                 .Returns("1");
+            larsService
+               .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
+               .Returns(mockLARSLearningDelivery.Object);
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock
@@ -583,16 +692,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void ValidationFails()
         {
             var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError();
+
+            var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
+            mockLARSLearningDelivery
+                .SetupGet(x => x.LearnAimRef)
+                .Returns("00103212");
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveFrom)
+                .Returns(new DateTime(2018, 08, 01));
+            mockLARSLearningDelivery
+                .SetupGet(x => x.EffectiveTo)
+                .Returns(new DateTime(2022, 08, 01));
             var larsService = new Mock<ILARSDataService>();
             larsService
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(
+                .Setup(m => m.BasicSkillsTypeMatchForLearnAimRef(
                         It.IsAny<IEnumerable<int>>(),
-                        It.IsAny<string>(),
-                        It.IsAny<DateTime>()))
+                        It.IsAny<string>()))
                 .Returns(false);
             larsService
                 .Setup(m => m.GetNotionalNVQLevelv2ForLearnAimRef(It.IsAny<string>()))
                 .Returns("1");
+            larsService
+               .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
+               .Returns(mockLARSLearningDelivery.Object);
 
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             dd07Mock

@@ -1,6 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
+using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
@@ -324,6 +325,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 .Setup(qs => qs.HasAnyLearningDeliveryFAMCodesForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, It.IsAny<string[]>()))
                 .Returns(false);
 
+            var fileDataServiceMock = new Mock<IFileDataService>();
+            fileDataServiceMock.Setup(x => x.UKPRN()).Returns(99999999);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
                 NewRule(
@@ -331,6 +335,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     larsDataServiceMock.Object,
                     learningDeliveryFamQueryServiceMock.Object,
                     dd07Mock.Object,
+                    fileDataServiceMock.Object,
                     validationErrorHandlerMock.Object)
                 .Validate(learner);
             }
@@ -386,6 +391,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 .Setup(qs => qs.HasAnyLearningDeliveryFAMCodesForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, It.IsAny<string[]>()))
                 .Returns(false);
 
+            var fileDataServiceMock = new Mock<IFileDataService>();
+            fileDataServiceMock.Setup(x => x.UKPRN()).Returns(99999999);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
                 NewRule(
@@ -393,23 +401,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                     larsDataServiceMock.Object,
                     learningDeliveryFamQueryServiceMock.Object,
                     dd07Mock.Object,
+                    fileDataServiceMock.Object,
                     validationErrorHandlerMock.Object)
                 .Validate(learner);
             }
         }
 
         private DateOfBirth_55Rule NewRule(
-            IDateTimeQueryService dateTimeQueryService = null,
-            ILARSDataService larsDataService = null,
-            ILearningDeliveryFAMQueryService learningDeliveryFamQueryService = null,
-            IDerivedData_07Rule derivedData07 = null,
-            IValidationErrorHandler validationErrorHandler = null)
+           IDateTimeQueryService dateTimeQueryService = null,
+           ILARSDataService larsDataService = null,
+           ILearningDeliveryFAMQueryService learningDeliveryFamQueryService = null,
+           IDerivedData_07Rule derivedData07 = null,
+           IFileDataService fileDataService = null,
+           IValidationErrorHandler validationErrorHandler = null)
         {
             return new DateOfBirth_55Rule(
                 dateTimeQueryService,
                 larsDataService,
                 learningDeliveryFamQueryService,
                 derivedData07,
+                fileDataService,
                 validationErrorHandler);
         }
     }

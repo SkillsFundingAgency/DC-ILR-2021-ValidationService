@@ -51,10 +51,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _dateTimeQueryService = dateTimeQueryService;
         }
 
-        /// <summary>
-        /// Validates the specified object.
-        /// </summary>
-        /// <param name="learner">The object to validate.</param>
         public void Validate(ILearner learner)
         {
             if (learner?.LearningDeliveries == null)
@@ -104,6 +100,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             }
         }
 
+        public bool IsBasicSkillsLearner(ILearningDelivery delivery)
+        {
+            var larsLearningDelivery = _larsDataService.GetDeliveryFor(delivery.LearnAimRef);
+
+            return _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, larsLearningDelivery.EffectiveFrom, larsLearningDelivery.EffectiveTo ?? DateTime.MaxValue)
+                && _larsDataService.BasicSkillsTypeMatchForLearnAimRef(_basicSkillTypes, delivery.LearnAimRef);
+        }
+
         private bool ExclusionsApply(ILearner learner, ILearningDelivery learningDelivery)
         {
             if (_dd07.IsApprenticeship(learningDelivery.ProgTypeNullable))
@@ -132,10 +136,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 return true;
             }
 
-            return _larsDataService.BasicSkillsMatchForLearnAimRefAndStartDate(
-                   _basicSkillTypes,
-                   learningDelivery.LearnAimRef,
-                   learningDelivery.LearnStartDate);
+            return IsBasicSkillsLearner(learningDelivery);
         }
 
         private void RaiseValidationMessage(ILearner learner, ILearningDelivery learningDelivery, ILearningDeliveryFAM learningDeliveryFam)
