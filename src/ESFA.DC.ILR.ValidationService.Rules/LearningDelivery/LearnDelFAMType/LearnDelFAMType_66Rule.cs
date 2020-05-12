@@ -76,12 +76,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool InReceiptOfLowWages(ILearningDeliveryFAM monitor) =>
             Monitoring.Delivery.InReceiptOfLowWages.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
-        public bool IsBasicSkillsLearner(ILearningDelivery delivery)
+        public bool IsBasicSkillsLearner(ILearningDelivery delivery, ILARSLearningDelivery larsLearningDelivery)
         {
-            var validities = _larsData.GetValiditiesFor(delivery.LearnAimRef);
             var annualValues = _larsData.GetAnnualValuesFor(delivery.LearnAimRef);
 
-            return validities.Any(x => _larsData.IsCurrentAndNotWithdrawn(x, delivery.LearnStartDate))
+            return _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, larsLearningDelivery.EffectiveFrom, larsLearningDelivery.EffectiveTo ?? DateTime.MaxValue)
                 && annualValues.Any(IsBasicSkillsLearner);
         }
 
@@ -120,18 +119,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsFullyFunded(ILearningDeliveryFAM monitor) =>
             Monitoring.Delivery.FullyFundedLearningAim.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
-        public bool IsEarlyStageNVQ(ILearningDelivery delivery)
+        public bool IsEarlyStageNVQ(ILearningDelivery delivery, ILARSLearningDelivery larsLearningDelivery)
         {
-            var larsDelivery = _larsData.GetDeliveryFor(delivery.LearnAimRef);
-
-            return _nvqLevels.Contains(larsDelivery.NotionalNVQLevelv2);
+            return _nvqLevels.Contains(larsLearningDelivery.NotionalNVQLevelv2);
         }
 
-        public bool IsExcluded(ILearningDelivery candidate)
+        public bool IsExcluded(ILearningDelivery candidate, ILARSLearningDelivery larsLearningDelivery)
         {
             return IsInflexibleElementOfTrainingAim(candidate)
                 || IsApprenticeship(candidate)
-                || IsBasicSkillsLearner(candidate)
+                || IsBasicSkillsLearner(candidate, larsLearningDelivery)
                 || CheckDeliveryFAMs(candidate, IsLearnerInCustody)
                 || CheckDeliveryFAMs(candidate, IsReleasedOnTemporaryLicence)
                 || CheckDeliveryFAMs(candidate, IsRestart)
@@ -144,15 +141,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             ValidateDeliveries(objectToValidate);
         }
 
-        public bool IsNotValid(ILearningDelivery delivery, ILearner learner) =>
-            !IsExcluded(delivery)
-            && !IsAdultFundedUnemployedWithBenefits(delivery, learner)
-            && !IsAdultFundedUnemployedWithOtherStateBenefits(delivery, learner)
-            && IsAdultFunding(delivery)
-            && IsViableStart(delivery)
-            && IsTargetAgeGroup(learner, delivery)
-            && CheckDeliveryFAMs(delivery, IsFullyFunded)
-            && IsEarlyStageNVQ(delivery);
+        public bool IsNotValid(ILearningDelivery delivery, ILearner learner)
+        {
+            var larsLearningDelivery = _larsData.GetDeliveryFor(delivery.LearnAimRef);
+
+            return !IsExcluded(delivery, larsLearningDelivery)
+                && !IsAdultFundedUnemployedWithBenefits(delivery, learner)
+                && !IsAdultFundedUnemployedWithOtherStateBenefits(delivery, learner)
+                && IsAdultFunding(delivery)
+                && IsViableStart(delivery)
+                && IsTargetAgeGroup(learner, delivery)
+                && CheckDeliveryFAMs(delivery, IsFullyFunded)
+                && IsEarlyStageNVQ(delivery, larsLearningDelivery);
+        }
 
         public void ValidateDeliveries(ILearner candidate)
         {

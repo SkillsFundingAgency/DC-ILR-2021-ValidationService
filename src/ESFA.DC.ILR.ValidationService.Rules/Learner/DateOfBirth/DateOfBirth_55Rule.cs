@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
+using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -16,6 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         private readonly ILARSDataService _larsDataService;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFamQueryService;
         private readonly IDerivedData_07Rule _derivedData07;
+        private readonly IFileDataService _fileDataService;
 
         private readonly DateTime _firstAugust2017 = new DateTime(2017, 08, 01);
 
@@ -51,6 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             ILARSDataService larsDataService,
             ILearningDeliveryFAMQueryService learningDeliveryFamQueryService,
             IDerivedData_07Rule derivedData07,
+            IFileDataService fileDataService,
             IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.DateOfBirth_55)
         {
@@ -58,6 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             _larsDataService = larsDataService;
             _learningDeliveryFamQueryService = learningDeliveryFamQueryService;
             _derivedData07 = derivedData07;
+            _fileDataService = fileDataService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -66,6 +70,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             {
                 return;
             }
+
+            var ukprn = _fileDataService.UKPRN();
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
@@ -77,7 +83,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                     learningDelivery.LearnAimRef,
                     learningDelivery.LearningDeliveryFAMs))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber);
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(
+                            ukprn,
+                            objectToValidate.DateOfBirthNullable,
+                            learningDelivery.LearnStartDate,
+                            learningDelivery.FundModel));
                 }
             }
         }
@@ -97,6 +110,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                 || _learningDeliveryFamQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.RES)
                 || _learningDeliveryFamQueryService.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.LDM, _learningDeliveryFamCodes)
                 || _larsDataService.HasAnyLearningDeliveryForLearnAimRefAndTypes(learnAimRef, _learnAimRefTypes);
+        }
+
+        private IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int ukprn, DateTime? dateOfBirth, DateTime learnStartDate, int fundModel)
+        {
+            return new[]
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.UKPRN, ukprn),
+                BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, dateOfBirth),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learnStartDate),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel)
+            };
         }
     }
 }
