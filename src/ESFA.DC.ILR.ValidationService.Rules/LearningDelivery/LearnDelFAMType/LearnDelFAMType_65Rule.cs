@@ -104,11 +104,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             var larsLearningDelivery = _larsDataService.GetDeliveryFor(delivery.LearnAimRef);
 
+            if (larsLearningDelivery == null)
+            {
+                return true;
+            }
+
             return _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, larsLearningDelivery.EffectiveFrom, larsLearningDelivery.EffectiveTo ?? DateTime.MaxValue)
                 && _larsDataService.BasicSkillsTypeMatchForLearnAimRef(_basicSkillTypes, delivery.LearnAimRef);
         }
 
-        private bool ExclusionsApply(ILearner learner, ILearningDelivery learningDelivery)
+        public bool ExclusionsApply(ILearner learner, ILearningDelivery learningDelivery)
         {
             if (_dd07.IsApprenticeship(learningDelivery.ProgTypeNullable))
             {
