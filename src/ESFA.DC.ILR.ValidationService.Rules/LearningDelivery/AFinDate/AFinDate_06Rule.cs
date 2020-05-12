@@ -32,12 +32,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
                     _appFinRecordQueryService?.GetLatestAppFinRecord(
                         learningDelivery.AppFinRecords,
                         ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice,
-                        ApprenticeshipFinancialRecord.TotalNegotiatedPriceCodes.ResidualAssessmentPrice)
-                        .AFinDate;
+                        ApprenticeshipFinancialRecord.TotalNegotiatedPriceCodes.ResidualAssessmentPrice);
 
-                if (latestTnp4Date.HasValue)
+                if (latestTnp4Date != null)
                 {
-                    var tnp2RecordLaterThanTnp4 = TNP2RecordLaterThanTNP4Record(learningDelivery.AppFinRecords, latestTnp4Date);
+                    var tnp2RecordLaterThanTnp4 = TNP2RecordLaterThanTNP4Record(learningDelivery.AppFinRecords, latestTnp4Date.AFinDate);
 
                     if (tnp2RecordLaterThanTnp4 != null)
                     {

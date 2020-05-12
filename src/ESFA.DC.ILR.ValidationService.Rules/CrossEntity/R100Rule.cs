@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public virtual bool HasAssessmentPrice(ILearningDelivery learningDelivery)
         {
             return _appFinRecordQueryService.HasAnyLearningDeliveryAFinCodesForType(
-                learningDelivery.AppFinRecords,
+                learningDelivery?.AppFinRecords,
                 ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice,
                 _tnpCodes);
         }

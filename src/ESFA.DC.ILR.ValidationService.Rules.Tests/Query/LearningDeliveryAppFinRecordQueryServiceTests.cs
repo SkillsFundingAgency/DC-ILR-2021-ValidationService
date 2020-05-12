@@ -338,9 +338,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         }
 
         [Theory]
-        [InlineData("TNP", 2)]
+        [InlineData("TNP", 1)]
         [InlineData("xxx", 1)]
-        [InlineData("xxx", 2)]
+        [InlineData("XXX", 2)]
         public void GetAppFinRecordsForTypeAndCode_AFinType_MisMatch(string type, int code)
         {
             var appFinRecords = new List<IAppFinRecord>()

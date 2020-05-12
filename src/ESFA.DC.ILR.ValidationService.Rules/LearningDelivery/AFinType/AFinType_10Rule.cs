@@ -43,6 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
         public bool ConditionMet(ILearningDelivery learningDelivery)
         {
             return !Exclusion(learningDelivery.FundModel, learningDelivery.ProgTypeNullable)
+                && learningDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard
                 && AppFinRecordConditionMet(learningDelivery);
         }
 
