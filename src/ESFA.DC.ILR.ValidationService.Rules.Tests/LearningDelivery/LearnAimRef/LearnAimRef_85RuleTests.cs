@@ -166,6 +166,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                     mockDelivery.Object.LearningDeliveryFAMs,
                     "RES"))
                 .Returns(false);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "DAM",
+                    "023"))
+                .Returns(false);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             dd07
@@ -245,6 +251,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.HasLearningDeliveryFAMType(
                     mockDelivery.Object.LearningDeliveryFAMs,
                     "RES"))
+                .Returns(false);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "DAM",
+                    "023"))
                 .Returns(false);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);

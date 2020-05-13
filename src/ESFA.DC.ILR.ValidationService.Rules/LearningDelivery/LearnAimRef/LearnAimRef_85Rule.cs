@@ -67,7 +67,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool IsExcluded(ILearningDelivery delivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(delivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)
-            || _dd07.IsApprenticeship(delivery.ProgTypeNullable);
+            || _dd07.IsApprenticeship(delivery.ProgTypeNullable)
+            || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                delivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.DAM,
+                LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             !IsExcluded(delivery)
