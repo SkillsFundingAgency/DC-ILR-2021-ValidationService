@@ -33,6 +33,7 @@
         public const string ADL_Code = "1";
 
         public const string DAM_Code_001 = "001";
+        public const string DAM_DevolvedLevelTwoOrThreeExclusion = "023";
 
         public const string ALB_Rate_1 = "1";
         public const string ALB_Rate_2 = "2";
