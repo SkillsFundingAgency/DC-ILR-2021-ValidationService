@@ -144,6 +144,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsNotValid(ILearningDelivery delivery, ILearner learner)
         {
             var larsLearningDelivery = _larsData.GetDeliveryFor(delivery.LearnAimRef);
+            if (larsLearningDelivery == null)
+            {
+                return false;
+            }
 
             return !IsExcluded(delivery, larsLearningDelivery)
                 && !IsAdultFundedUnemployedWithBenefits(delivery, learner)

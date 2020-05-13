@@ -36,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                    && appFinRecords.Any(afr => aFinCodes.Contains(afr.AFinCode));
         }
 
-        public IAppFinRecord GetLatestAppFinRecord(IReadOnlyCollection<IAppFinRecord> appFinRecords, string appFinType, int appFinCode)
+        public IAppFinRecord GetLatestAppFinRecord(IEnumerable<IAppFinRecord> appFinRecords, string appFinType, int appFinCode)
         {
             if (string.IsNullOrEmpty(appFinType) || appFinCode == 0)
             {
@@ -53,6 +53,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         public IEnumerable<IAppFinRecord> GetAppFinRecordsForType(IEnumerable<IAppFinRecord> appFinRecords, string aFinType)
         {
             return appFinRecords?.Where(afr => afr.AFinType.CaseInsensitiveEquals(aFinType)) ?? Enumerable.Empty<IAppFinRecord>();
+        }
+
+        public IEnumerable<IAppFinRecord> GetAppFinRecordsForTypeAndCode(IEnumerable<IAppFinRecord> appFinRecords, string aFinType, int aFinCode)
+        {
+            return appFinRecords?.Where(afr => afr.AFinType.CaseInsensitiveEquals(aFinType) && afr.AFinCode == aFinCode) ?? Enumerable.Empty<IAppFinRecord>();
         }
 
         public int GetTotalTNPPriceForLatestAppFinRecordsForLearning(IEnumerable<ILearningDelivery> learningDeliveries)

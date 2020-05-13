@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
 {
     public class AFinDate_05Rule : AbstractRule, IRule<ILearner>
     {
-        private const string _TNP1 = ApprenticeshipFinancialRecord.TotalTrainingPrice;
-        private const string _TNP3 = ApprenticeshipFinancialRecord.ResidualTrainingPrice;
+        private readonly ILearningDeliveryAppFinRecordQueryService _appFinRecordQueryService;
 
-        public AFinDate_05Rule(IValidationErrorHandler validationErrorHandler)
+        public AFinDate_05Rule(IValidationErrorHandler validationErrorHandler, ILearningDeliveryAppFinRecordQueryService appFinRecordQueryService)
             : base(validationErrorHandler, RuleNameConstants.AFinDate_05)
         {
+            _appFinRecordQueryService = appFinRecordQueryService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -28,9 +28,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (TNP3Exists(learningDelivery.AppFinRecords))
+                var latestTnp3Date =
+               _appFinRecordQueryService?.GetLatestAppFinRecord(
+                   learningDelivery.AppFinRecords,
+                   ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice,
+                   ApprenticeshipFinancialRecord.TotalNegotiatedPriceCodes.ResidualTrainingPrice);
+
+                if (latestTnp3Date != null)
                 {
-                    var tnp1RecordLaterThanTnp3 = TNP1RecordLaterThanTNP3Record(learningDelivery.AppFinRecords);
+                    var tnp1RecordLaterThanTnp3 = TNP1RecordLaterThanTNP3Record(learningDelivery.AppFinRecords, latestTnp3Date.AFinDate);
 
                     if (tnp1RecordLaterThanTnp3 != null)
                     {
@@ -46,25 +52,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate
             }
         }
 
-        public IAppFinRecord TNP1RecordLaterThanTNP3Record(IEnumerable<IAppFinRecord> appFinRecords)
+        public IAppFinRecord TNP1RecordLaterThanTNP3Record(IEnumerable<IAppFinRecord> appFinRecords, DateTime? latestTnp3Date)
         {
-            var tnp3Records =
-                appFinRecords?
-                .Where(af => $"{af.AFinType}{af.AFinCode}".CaseInsensitiveEquals(_TNP3))
-                .Select(af => af.AFinDate);
+            var tnp1Records =
+                _appFinRecordQueryService?.GetAppFinRecordsForTypeAndCode(
+                    appFinRecords,
+                    ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice,
+                    ApprenticeshipFinancialRecord.TotalNegotiatedPriceCodes.TotalTrainingPrice);
 
-            var tnp1Records = appFinRecords?
-               .Where(af => $"{af.AFinType}{af.AFinCode}".CaseInsensitiveEquals(_TNP1));
-
-            return tnp1Records?.Where(af => af.AFinDate > tnp3Records?.Max()).FirstOrDefault();
-        }
-
-        public bool TNP3Exists(IEnumerable<IAppFinRecord> appFinRecords)
-        {
-            return
-                appFinRecords == null
-                ? false
-                : appFinRecords.Any(af => $"{af.AFinType}{af.AFinCode}".CaseInsensitiveEquals(_TNP3));
+            return tnp1Records?.Where(af => af.AFinDate > latestTnp3Date).FirstOrDefault();
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string aFinType, int aFinCode, DateTime aFinDate)

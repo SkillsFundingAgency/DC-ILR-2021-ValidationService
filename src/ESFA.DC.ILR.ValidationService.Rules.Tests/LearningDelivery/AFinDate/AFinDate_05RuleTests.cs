@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinDate;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
@@ -17,62 +21,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
             NewRule().RuleName.Should().Be("AFinDate_05");
         }
 
-        [Theory]
-        [InlineData(3, 1)]
-        [InlineData(3, 3)]
-        [InlineData(1, 3)]
-        public void TNP3Exists_True(int aFinCode1, int aFinCode2)
-        {
-            var appFinRecords = new List<TestAppFinRecord>
-            {
-                new TestAppFinRecord
-                {
-                    AFinType = "TNP",
-                    AFinCode = aFinCode1,
-                    AFinDate = new DateTime(2018, 9, 1)
-                },
-                new TestAppFinRecord
-                {
-                    AFinType = "TNP",
-                    AFinCode = aFinCode2,
-                    AFinDate = new DateTime(2018, 9, 1)
-                }
-            };
-
-            NewRule().TNP3Exists(appFinRecords).Should().BeTrue();
-        }
-
-        [Theory]
-        [InlineData("TNP", "PMR", 3)]
-        [InlineData("PMR", "PMR", 3)]
-        [InlineData("TNP", "TNP", 1)]
-        public void TNP3Exists_False(string aFinType1, string aFinType2, int aFinCode)
-        {
-            var appFinRecords = new List<TestAppFinRecord>
-            {
-                new TestAppFinRecord
-                {
-                    AFinType = aFinType1,
-                    AFinCode = 1,
-                    AFinDate = new DateTime(2018, 9, 1)
-                },
-                new TestAppFinRecord
-                {
-                    AFinType = aFinType2,
-                    AFinCode = aFinCode,
-                    AFinDate = new DateTime(2018, 9, 1)
-                }
-            };
-
-            NewRule().TNP3Exists(appFinRecords).Should().BeFalse();
-        }
-
-        [Fact]
-        public void TNP3Exists_False_Null()
-        {
-            NewRule().TNP3Exists(null).Should().BeFalse();
-        }
-
         [Fact]
         public void TNP1RecordLaterThanTNP3Record_ReturnsEntity()
         {
@@ -83,88 +31,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                 AFinDate = new DateTime(2018, 10, 1)
             };
 
-            var tnp3Entity = new TestAppFinRecord
-            {
-                AFinType = "TNP",
-                AFinCode = 3,
-                AFinDate = new DateTime(2018, 9, 1)
-            };
+            var tnp3Date = new DateTime(2018, 9, 1);
 
             var appFinRecords = new List<TestAppFinRecord>
             {
-                tnp1Entity,
-                tnp3Entity
+                tnp1Entity
             };
 
-            NewRule().TNP1RecordLaterThanTNP3Record(appFinRecords).Should().Be(tnp1Entity);
-        }
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(appFinRecords, "TNP", 1)).Returns(appFinRecords);
 
-        [Fact]
-        public void TNP1RecordLaterThanTNP3Record_MultipleTNP3ReturnsNull()
-        {
-            var tnp1Entity = new TestAppFinRecord
-            {
-                AFinType = "TNP",
-                AFinCode = 1,
-                AFinDate = new DateTime(2018, 10, 1)
-            };
-
-            var tnp3EntityOne = new TestAppFinRecord
-            {
-                AFinType = "TNP",
-                AFinCode = 3,
-                AFinDate = new DateTime(2018, 9, 1)
-            };
-
-            var tnp3EntityTwo = new TestAppFinRecord
-            {
-                AFinType = "TNP",
-                AFinCode = 3,
-                AFinDate = new DateTime(2018, 10, 1)
-            };
-
-            var appFinRecords = new List<TestAppFinRecord>
-            {
-                tnp1Entity,
-                tnp3EntityOne,
-                tnp3EntityTwo
-            };
-
-            NewRule().TNP1RecordLaterThanTNP3Record(appFinRecords).Should().BeNull();
-        }
-
-        [Fact]
-        public void TNP1RecordLaterThanTNP3Record_MultipleTNP3ReturnsEntity()
-        {
-            var tnp1Entity = new TestAppFinRecord
-            {
-                AFinType = "TNP",
-                AFinCode = 1,
-                AFinDate = new DateTime(2018, 11, 1)
-            };
-
-            var tnp3EntityOne = new TestAppFinRecord
-            {
-                AFinType = "TNP",
-                AFinCode = 3,
-                AFinDate = new DateTime(2018, 9, 1)
-            };
-
-            var tnp3EntityTwo = new TestAppFinRecord
-            {
-                AFinType = "TNP",
-                AFinCode = 3,
-                AFinDate = new DateTime(2018, 10, 1)
-            };
-
-            var appFinRecords = new List<TestAppFinRecord>
-            {
-                tnp1Entity,
-                tnp3EntityOne,
-                tnp3EntityTwo
-            };
-
-            NewRule().TNP1RecordLaterThanTNP3Record(appFinRecords).Should().Be(tnp1Entity);
+            NewRule(appFinRecordQueryServiceMock.Object).TNP1RecordLaterThanTNP3Record(appFinRecords, tnp3Date).Should().Be(tnp1Entity);
         }
 
         [Fact]
@@ -177,16 +54,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                     AFinType = "PMR",
                     AFinCode = 1,
                     AFinDate = new DateTime(2018, 9, 1)
-                },
-                new TestAppFinRecord
-                {
-                    AFinType = "TNP",
-                    AFinCode = 3,
-                    AFinDate = new DateTime(2018, 9, 1)
                 }
             };
 
-            NewRule().TNP1RecordLaterThanTNP3Record(appFinRecords).Should().BeNull();
+            var tnp3Date = new DateTime(2018, 9, 1);
+
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(appFinRecords, "TNP", 1)).Returns(Enumerable.Empty<IAppFinRecord>());
+
+            NewRule(appFinRecordQueryServiceMock.Object).TNP1RecordLaterThanTNP3Record(appFinRecords, tnp3Date).Should().BeNull();
         }
 
         [Fact]
@@ -199,149 +75,198 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
                     AFinType = "TNP",
                     AFinCode = 1,
                     AFinDate = new DateTime(2018, 9, 1)
-                },
-                new TestAppFinRecord
-                {
-                    AFinType = "TNP",
-                    AFinCode = 3,
-                    AFinDate = new DateTime(2018, 9, 1)
                 }
             };
 
-            NewRule().TNP1RecordLaterThanTNP3Record(appFinRecords).Should().BeNull();
+            var tnp3Date = new DateTime(2018, 9, 1);
+
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(appFinRecords, "TNP", 1)).Returns(appFinRecords);
+
+            NewRule(appFinRecordQueryServiceMock.Object).TNP1RecordLaterThanTNP3Record(appFinRecords, tnp3Date).Should().BeNull();
         }
 
         [Fact]
         public void TNP1RecordLaterThanTNP3Record_NoEntitiesReturnsNull()
         {
-            NewRule().TNP1RecordLaterThanTNP3Record(null).Should().BeNull();
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(null, "TNP", 1)).Returns(Enumerable.Empty<IAppFinRecord>());
+
+            NewRule(appFinRecordQueryServiceMock.Object).TNP1RecordLaterThanTNP3Record(null, new DateTime(2018, 9, 1)).Should().BeNull();
+        }
+
+        [Fact]
+        public void TNP1RecordLaterThanTNP3Record_NullEntityAndDateReturnsNull()
+        {
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(null, "TNP", 1)).Returns(Enumerable.Empty<IAppFinRecord>());
+
+            NewRule(appFinRecordQueryServiceMock.Object).TNP1RecordLaterThanTNP3Record(null, null).Should().BeNull();
+        }
+
+        [Fact]
+        public void TNP1RecordLaterThanTNP3Record_NullDate()
+        {
+            var tnp1Entity = new TestAppFinRecord
+            {
+                AFinType = "TNP",
+                AFinCode = 1,
+                AFinDate = new DateTime(2018, 10, 1)
+            };
+
+            var appFinRecords = new List<TestAppFinRecord>
+            {
+                tnp1Entity
+            };
+
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(appFinRecords, "TNP", 1)).Returns(appFinRecords);
+
+            NewRule(appFinRecordQueryServiceMock.Object).TNP1RecordLaterThanTNP3Record(appFinRecords, null).Should().BeNull();
         }
 
         [Fact]
         public void Validate_Error()
         {
+            var tnp1ListOne = new List<TestAppFinRecord>
+            {
+                new TestAppFinRecord
+                {
+                    AFinType = "TNP",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 9, 1)
+                },
+                new TestAppFinRecord
+                {
+                    AFinType = "TNP",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 10, 1)
+                },
+            };
+
+            var appFinListOne = new List<TestAppFinRecord>();
+
+            appFinListOne.Union(tnp1ListOne);
+            appFinListOne.Add(
+                new TestAppFinRecord
+                {
+                    AFinType = "PMR",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 9, 1)
+                });
+
+            var tnp1ListTwo = new List<TestAppFinRecord>
+            {
+                new TestAppFinRecord
+                {
+                    AFinType = "TNP",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 11, 1)
+                }
+            };
+
+            var tnp3Two = new TestAppFinRecord
+            {
+                AFinType = "TNP",
+                AFinCode = 3,
+                AFinDate = new DateTime(2018, 10, 1)
+            };
+
+            var appFinListTwo = new List<TestAppFinRecord>
+            {
+                new TestAppFinRecord
+                {
+                    AFinType = "PMR",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 9, 1)
+                }
+            };
+
+            appFinListTwo.Union(tnp1ListTwo);
+            appFinListTwo.Add(tnp3Two);
+
             var learner = new TestLearner()
             {
                 LearningDeliveries = new List<TestLearningDelivery>()
                 {
                     new TestLearningDelivery()
                     {
-                        AppFinRecords = new List<TestAppFinRecord>
-                        {
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 10, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "PMR",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            }
-                        }
+                        AppFinRecords = appFinListOne
                     },
                     new TestLearningDelivery()
                     {
-                        AppFinRecords = new List<TestAppFinRecord>
-                        {
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 11, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 3,
-                                AFinDate = new DateTime(2018, 10, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "PMR",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            }
-                        }
+                        AppFinRecords = appFinListTwo
                     }
                 }
             };
 
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetLatestAppFinRecord(appFinListOne, "TNP", 3)).Returns((IAppFinRecord)null);
+            appFinRecordQueryServiceMock.Setup(x => x.GetLatestAppFinRecord(appFinListTwo, "TNP", 3)).Returns(tnp3Two);
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(appFinListOne, "TNP", 1)).Returns(tnp1ListOne);
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(appFinListTwo, "TNP", 1)).Returns(tnp1ListTwo);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(appFinRecordQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
         [Fact]
         public void Validate_Error_MultipleDeliveriesTrigger()
         {
+            var tnp1List = new List<TestAppFinRecord>
+            {
+                new TestAppFinRecord
+                {
+                    AFinType = "TNP",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 11, 1)
+                }
+            };
+
+            var tnp3 = new TestAppFinRecord
+            {
+                AFinType = "TNP",
+                AFinCode = 3,
+                AFinDate = new DateTime(2018, 10, 1)
+            };
+
+            var appFinList = new List<TestAppFinRecord>
+            {
+                new TestAppFinRecord
+                {
+                    AFinType = "PMR",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 9, 1)
+                }
+            };
+
+            appFinList.Union(tnp1List);
+            appFinList.Add(tnp3);
+
             var learner = new TestLearner()
             {
                 LearningDeliveries = new List<TestLearningDelivery>()
                 {
                     new TestLearningDelivery()
                     {
-                        AppFinRecords = new List<TestAppFinRecord>
-                        {
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 3,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 10, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "PMR",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            }
-                        }
+                        AppFinRecords = appFinList
                     },
                     new TestLearningDelivery()
                     {
-                        AppFinRecords = new List<TestAppFinRecord>
-                        {
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 11, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 3,
-                                AFinDate = new DateTime(2018, 10, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "PMR",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            }
-                        }
+                        AppFinRecords = appFinList
                     }
                 }
             };
 
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetLatestAppFinRecord(appFinList, "TNP", 3)).Returns(tnp3);
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(appFinList, "TNP", 1)).Returns(tnp1List);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(appFinRecordQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -354,163 +279,174 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinDate
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
         [Fact]
         public void Validate_NoError_NullAppFinRecords()
         {
+            var learningDeliveryOne = new TestLearningDelivery();
+            var learningDeliveryTwo = new TestLearningDelivery();
+
             var learner = new TestLearner()
             {
                 LearningDeliveries = new List<TestLearningDelivery>
                 {
-                    new TestLearningDelivery
-                    {
-                    },
-                    new TestLearningDelivery
-                    {
-                    }
+                    learningDeliveryOne,
+                    learningDeliveryTwo
                 }
             };
 
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetLatestAppFinRecord(learningDeliveryOne.AppFinRecords, "TNP", 3)).Returns((IAppFinRecord)null);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(appFinRecordQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
         [Fact]
         public void Validate_NoError_AppFinRecordsNoTNP3()
         {
+            var appFinRecords = new List<TestAppFinRecord>
+            {
+                new TestAppFinRecord
+                {
+                    AFinType = "TNP",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 9, 1)
+                },
+                new TestAppFinRecord
+                {
+                    AFinType = "TNP",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 10, 1)
+                },
+                new TestAppFinRecord
+                {
+                    AFinType = "PMR",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 9, 1)
+                }
+            };
+
             var learner = new TestLearner()
             {
                 LearningDeliveries = new List<TestLearningDelivery>()
                 {
                     new TestLearningDelivery()
                     {
-                        AppFinRecords = new List<TestAppFinRecord>
-                        {
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 10, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "PMR",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            }
-                        }
+                        AppFinRecords = appFinRecords
                     },
                     new TestLearningDelivery()
                     {
-                        AppFinRecords = new List<TestAppFinRecord>
-                        {
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 11, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "PMR",
-                                AFinCode = 3,
-                                AFinDate = new DateTime(2018, 10, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "PMR",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            }
-                        }
+                        AppFinRecords = appFinRecords
                     }
                 }
             };
 
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetLatestAppFinRecord(appFinRecords, "TNP", 3)).Returns((IAppFinRecord)null);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(appFinRecordQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
         [Fact]
         public void Validate_NoError_AppFinRecordsDateMisMatch()
         {
+            var tnp1ListOne = new List<TestAppFinRecord>
+            {
+                new TestAppFinRecord
+                {
+                    AFinType = "TNP",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 9, 1)
+                },
+                new TestAppFinRecord
+                {
+                    AFinType = "TNP",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 10, 1)
+                }
+            };
+
+            var appFinRecordsOne = new List<TestAppFinRecord>
+            {
+                new TestAppFinRecord
+                {
+                    AFinType = "PMR",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 9, 1)
+                }
+            };
+
+            appFinRecordsOne.AddRange(tnp1ListOne);
+
+            var tnp3 = new TestAppFinRecord
+            {
+                AFinType = "TNP",
+                AFinCode = 3,
+                AFinDate = new DateTime(2018, 10, 1)
+            };
+
+            var tnp1ListTwo = new List<TestAppFinRecord>
+            {
+                new TestAppFinRecord
+                {
+                    AFinType = "TNP",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 10, 1)
+                }
+            };
+
+            var appFinRecordsTwo = new List<TestAppFinRecord>
+            {
+                new TestAppFinRecord
+                {
+                    AFinType = "PMR",
+                    AFinCode = 1,
+                    AFinDate = new DateTime(2018, 9, 1)
+                }
+            };
+
+            appFinRecordsTwo.AddRange(tnp1ListTwo);
+            appFinRecordsTwo.Add(tnp3);
+
             var learner = new TestLearner()
             {
                 LearningDeliveries = new List<TestLearningDelivery>()
                 {
                     new TestLearningDelivery()
                     {
-                        AppFinRecords = new List<TestAppFinRecord>
-                        {
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 10, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "PMR",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            }
-                        }
+                        AppFinRecords = appFinRecordsOne
                     },
                     new TestLearningDelivery()
                     {
-                        AppFinRecords = new List<TestAppFinRecord>
-                        {
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 10, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "TNP",
-                                AFinCode = 3,
-                                AFinDate = new DateTime(2018, 10, 1)
-                            },
-                            new TestAppFinRecord
-                            {
-                                AFinType = "PMR",
-                                AFinCode = 1,
-                                AFinDate = new DateTime(2018, 9, 1)
-                            }
-                        }
+                        AppFinRecords = appFinRecordsTwo
                     }
                 }
             };
 
+            var appFinRecordQueryServiceMock = new Mock<ILearningDeliveryAppFinRecordQueryService>();
+            appFinRecordQueryServiceMock.Setup(x => x.GetLatestAppFinRecord(appFinRecordsOne, "TNP", 3)).Returns((IAppFinRecord)null);
+            appFinRecordQueryServiceMock.Setup(x => x.GetLatestAppFinRecord(appFinRecordsTwo, "TNP", 3)).Returns(tnp3);
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(appFinRecordsOne, "TNP", 1)).Returns(tnp1ListOne);
+            appFinRecordQueryServiceMock.Setup(x => x.GetAppFinRecordsForTypeAndCode(appFinRecordsTwo, "TNP", 1)).Returns(tnp1ListTwo);
+
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(appFinRecordQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
-        private AFinDate_05Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
+        private AFinDate_05Rule NewRule(ILearningDeliveryAppFinRecordQueryService appFinRecordQueryService = null, IValidationErrorHandler validationErrorHandler = null)
         {
-            return new AFinDate_05Rule(validationErrorHandler);
+            return new AFinDate_05Rule(validationErrorHandler, appFinRecordQueryService ?? Mock.Of<ILearningDeliveryAppFinRecordQueryService>());
         }
     }
 }

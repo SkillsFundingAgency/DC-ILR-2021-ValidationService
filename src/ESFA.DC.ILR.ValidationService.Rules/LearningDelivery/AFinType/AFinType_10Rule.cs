@@ -1,66 +1,73 @@
-﻿using System;
-using System.Linq;
+﻿using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
 {
-    public class AFinType_10Rule :
-        IRule<ILearner>
+    public class AFinType_10Rule : AbstractRule, IRule<ILearner>
     {
-        public const string MessagePropertyName = RuleNameConstants.AFinType_10;
+        private readonly HashSet<int> _tnpCodes = new HashSet<int> { 2, 4 };
+        private readonly ILearningDeliveryAppFinRecordQueryService _appFinRecordQueryService;
 
-        public const string Name = "AFinType_10";
-
-        private readonly IValidationErrorHandler _messageHandler;
-
-        public AFinType_10Rule(IValidationErrorHandler validationErrorHandler)
+        public AFinType_10Rule(IValidationErrorHandler validationErrorHandler, ILearningDeliveryAppFinRecordQueryService appFinRecordQueryService)
+              : base(validationErrorHandler, RuleNameConstants.AFinType_10)
         {
-            _messageHandler = validationErrorHandler;
+            _appFinRecordQueryService = appFinRecordQueryService;
         }
-
-        public string RuleName => Name;
-
-        public bool IsFunded(ILearningDelivery delivery) =>
-            FundModels.TypeOfFundingCollection.Contains(delivery.FundModel);
-
-        public bool IsTargetApprenticeship(ILearningDelivery delivery) =>
-            delivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
-
-        public bool IsInAProgramme(ILearningDelivery delivery) =>
-            delivery.AimType == AimTypes.ProgrammeAim;
 
         public void Validate(ILearner objectToValidate)
         {
-            var learnRefNumber = objectToValidate.LearnRefNumber;
+            if (objectToValidate.LearningDeliveries == null)
+            {
+                return;
+            }
 
-            objectToValidate.LearningDeliveries
-                .NullSafeWhere(x => IsFunded(x) && IsTargetApprenticeship(x) && IsInAProgramme(x))
-                .ForEach(x =>
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
+            {
+                if (ConditionMet(learningDelivery))
                 {
-                    var failedValidation = !x.AppFinRecords.NullSafeAny(y => ConditionMet(y));
-
-                    if (failedValidation)
-                    {
-                        RaiseValidationMessage(learnRefNumber, x);
-                    }
-                });
+                    HandleValidationError(
+                             objectToValidate.LearnRefNumber,
+                             learningDelivery.AimSeqNumber,
+                             BuildErrorMessageParameters(
+                                 learningDelivery.AimType,
+                                 learningDelivery.FundModel,
+                                 learningDelivery.ProgTypeNullable));
+                }
+            }
         }
 
-        public bool ConditionMet(IAppFinRecord financialRecord)
+        public bool ConditionMet(ILearningDelivery learningDelivery)
         {
-            return financialRecord == null
-                   || $"{financialRecord.AFinType}{financialRecord.AFinCode}".CaseInsensitiveEquals(ApprenticeshipFinancialRecord.TotalAssessmentPrice)
-                   || $"{financialRecord.AFinType}{financialRecord.AFinCode}".CaseInsensitiveEquals(ApprenticeshipFinancialRecord.ResidualAssessmentPrice);
+            return !Exclusion(learningDelivery.FundModel, learningDelivery.ProgTypeNullable)
+                && learningDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard
+                && AppFinRecordConditionMet(learningDelivery);
         }
 
-        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)
+        public bool AppFinRecordConditionMet(ILearningDelivery learningDelivery)
         {
-            var parameters = Array.Empty<IErrorMessageParameter>();
+            return !_appFinRecordQueryService.HasAnyLearningDeliveryAFinCodesForType(
+                learningDelivery.AppFinRecords,
+                ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice,
+                _tnpCodes);
+        }
 
-            _messageHandler.Handle(RuleName, learnRefNumber, thisDelivery.AimSeqNumber, parameters);
+        public bool Exclusion(int fundModel, int? progTypeNullable)
+        {
+            return fundModel == FundModels.NotFundedByESFA && progTypeNullable == ProgTypes.ApprenticeshipStandard;
+        }
+
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, int fundModel, int? progType)
+        {
+            return new[]
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.AimType, aimType),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
+                BuildErrorMessageParameter(PropertyNameConstants.ProgType, progType)
+            };
         }
     }
 }

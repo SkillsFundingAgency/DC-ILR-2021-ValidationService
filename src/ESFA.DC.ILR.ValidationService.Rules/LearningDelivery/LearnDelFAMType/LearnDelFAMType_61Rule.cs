@@ -122,6 +122,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public void RunChecksFor(ILearningDelivery thisDelivery, ILearner learner, Action<ILearningDeliveryFAM> doAction)
         {
             var larsLearningDelivery = _larsData.GetDeliveryFor(thisDelivery.LearnAimRef);
+            if (larsLearningDelivery == null)
+            {
+                return;
+            }
 
             if (!IsExcluded(thisDelivery, larsLearningDelivery)
                 && !IsAdultFundedUnemployedWithBenefits(thisDelivery, learner)

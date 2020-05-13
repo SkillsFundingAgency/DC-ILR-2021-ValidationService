@@ -767,6 +767,36 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Validate(testLearner);
         }
 
+        [Fact]
+        public void ExclusionsApply_NullLARSLearningDelivery()
+        {
+            var dd07Mock = new Mock<IDerivedData_07Rule>();
+            dd07Mock
+                .Setup(m => m.IsApprenticeship(It.IsAny<int?>()))
+                .Returns(false);
+            var dd28Mock = new Mock<IDerivedData_28Rule>();
+            dd28Mock
+                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
+                .Returns(false);
+            var dd29Mock = new Mock<IDerivedData_29Rule>();
+            dd29Mock
+                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
+                .Returns(false);
+            var learningDeliveryFAM = new Mock<ILearningDeliveryFAM>();
+            var learningDelivery = new Mock<ILearningDelivery>();
+            learningDelivery
+                .Setup(x => x.LearningDeliveryFAMs).Returns(new List<ILearningDeliveryFAM> { learningDeliveryFAM.Object });
+            var learner = new Mock<ILearner>();
+            learner
+                .Setup(x => x.LearningDeliveries).Returns(new List<ILearningDelivery> { learningDelivery.Object });
+            var larsService = new Mock<ILARSDataService>();
+            larsService
+               .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
+               .Returns((ILARSLearningDelivery)null);
+            NewRule(larsDataService: larsService.Object, dd07: dd07Mock.Object, derivedData28Rule: dd28Mock.Object, derivedData29Rule: dd29Mock.Object)
+                .ExclusionsApply(learner.Object, learningDelivery.Object).Should().BeTrue();
+        }
+
         private LearnDelFAMType_65Rule NewRule(
             IValidationErrorHandler validationErrorHandler = null,
             ILARSDataService larsDataService = null,
