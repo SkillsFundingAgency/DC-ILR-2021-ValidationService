@@ -109,7 +109,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             return _derivedData07.IsApprenticeship(progType)
                 || _learningDeliveryFamQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.RES)
                 || _learningDeliveryFamQueryService.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.LDM, _learningDeliveryFamCodes)
-                || _larsDataService.HasAnyLearningDeliveryForLearnAimRefAndTypes(learnAimRef, _learnAimRefTypes);
+                || _larsDataService.HasAnyLearningDeliveryForLearnAimRefAndTypes(learnAimRef, _learnAimRefTypes)
+                || _learningDeliveryFamQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion);
         }
 
         private IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int ukprn, DateTime? dateOfBirth, DateTime learnStartDate, int fundModel)

@@ -59,6 +59,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 .Setup(qs => qs.HasAnyLearningDeliveryFAMCodesForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, It.IsAny<string[]>()))
                 .Returns(false);
 
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion))
+                .Returns(false);
+
             NewRule(dateTimeQueryServiceMock.Object, larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object, dd07Mock.Object)
                 .ConditionMet(fundModel, progType, learnStartDate, dateOfBirth, learnAimRef, It.IsAny<IEnumerable<ILearningDeliveryFAM>>())
                 .Should()
@@ -66,12 +70,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         }
 
         [Theory]
-        [InlineData(true, false, false, false)]
-        [InlineData(false, true, false, false)]
-        [InlineData(false, false, true, false)]
-        [InlineData(false, false, false, true)]
-        [InlineData(true, true, true, true)]
-        public void ConditionMet_False_Excluded(bool dd07MockResult, bool ldFamTypeMockResult, bool ldFamTypeAndCodesMockResult, bool larsDataServiceMockResult)
+        [InlineData(true, false, false, false, false)]
+        [InlineData(false, true, false, false, false)]
+        [InlineData(false, false, true, false, false)]
+        [InlineData(false, false, false, true, false)]
+        [InlineData(false, false, false, false, true)]
+        [InlineData(true, true, true, true, true)]
+        public void ConditionMet_False_Excluded(bool dd07MockResult, bool ldFamTypeMockResult, bool ldFamTypeAndCodesMockResult, bool larsDataServiceMockResult, bool devolvedLevelTwoOrThreeExclusion)
         {
             var fundModel = FundModels.AdultSkills;
             var progType = ProgTypes.AdvancedLevelApprenticeship;
@@ -104,6 +109,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             learningDeliveryFamQueryServiceMock
                 .Setup(qs => qs.HasAnyLearningDeliveryFAMCodesForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.LDM, It.IsAny<string[]>()))
                 .Returns(ldFamTypeAndCodesMockResult);
+
+            learningDeliveryFamQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion))
+                .Returns(devolvedLevelTwoOrThreeExclusion);
 
             NewRule(dateTimeQueryServiceMock.Object, larsDataServiceMock.Object, learningDeliveryFamQueryServiceMock.Object, dd07Mock.Object)
                 .ConditionMet(fundModel, progType, learnStartDate, dateOfBirth, learnAimRef, It.IsAny<IEnumerable<ILearningDeliveryFAM>>())
