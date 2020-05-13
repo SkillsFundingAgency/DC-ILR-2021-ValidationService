@@ -84,6 +84,8 @@
 
             public const string PostcodeValidationExclusion = "DAM001";
 
+            public const string DevolvedLevelTwoOrThree = "DAM023";
+
             public static class Types
             {
                 public const string SourceOfFunding = "SOF";

@@ -552,6 +552,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
+        [InlineData(Monitoring.Delivery.OLASSOffendersInCustody, false)]
+        [InlineData(Monitoring.Delivery.DevolvedLevelTwoOrThree, true)]
+        [InlineData(Monitoring.Delivery.InReceiptOfLowWages, false)]
+        [InlineData(Monitoring.Delivery.MandationToSkillsTraining, false)]
+        public void IsDevolvedLevel2or3ExcludedLearningMeetsExpectation(string candidate, bool expectation)
+        {
+            // arrange
+            var sut = NewRule();
+            var mockItem = new Mock<ILearningDeliveryFAM>();
+            mockItem
+                .SetupGet(y => y.LearnDelFAMType)
+                .Returns(candidate.Substring(0, 3));
+            mockItem
+                .SetupGet(y => y.LearnDelFAMCode)
+                .Returns(candidate.Substring(3));
+
+            // act
+            var result = sut.IsDevolvedLevel2or3ExcludedLearning(mockItem.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
+        [Theory]
         [InlineData(LARSConstants.BasicSkills.CertificateESOLS4L, false)]
         [InlineData(LARSConstants.BasicSkills.CertificateESOLS4LSpeakListen, false)]
         [InlineData(LARSConstants.BasicSkills.Certificate_AdultLiteracy, true)]

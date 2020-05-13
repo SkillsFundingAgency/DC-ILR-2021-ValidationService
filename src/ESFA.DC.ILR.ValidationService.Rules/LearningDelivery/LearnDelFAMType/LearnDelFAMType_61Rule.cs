@@ -68,6 +68,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsSteelWorkerRedundancyTrainingOrIsInReceiptOfLowWages(ILearningDeliveryFAM monitor) =>
             _ldmLookups.Contains($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
+        public bool IsDevolvedLevel2or3ExcludedLearning(ILearningDeliveryFAM monitor) =>
+            Monitoring.Delivery.DevolvedLevelTwoOrThree.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
+
         public bool IsBasicSkillsLearner(ILearningDelivery delivery, ILARSLearningDelivery larsLearningDelivery)
         {
             var annualValues = _larsData.GetAnnualValuesFor(delivery.LearnAimRef);
@@ -148,7 +151,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 || CheckDeliveryFAMs(candidate, IsLearnerInCustody)
                 || CheckDeliveryFAMs(candidate, IsReleasedOnTemporaryLicence)
                 || CheckDeliveryFAMs(candidate, IsRestart)
-                || CheckDeliveryFAMs(candidate, IsSteelWorkerRedundancyTrainingOrIsInReceiptOfLowWages);
+                || CheckDeliveryFAMs(candidate, IsSteelWorkerRedundancyTrainingOrIsInReceiptOfLowWages)
+                || CheckDeliveryFAMs(candidate, IsDevolvedLevel2or3ExcludedLearning);
         }
 
         public void Validate(ILearner objectToValidate)
