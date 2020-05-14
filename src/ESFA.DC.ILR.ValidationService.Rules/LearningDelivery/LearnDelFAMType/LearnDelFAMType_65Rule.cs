@@ -92,7 +92,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 foreach (var deliveryFam in learningDelivery.LearningDeliveryFAMs)
                 {
                     if (deliveryFam.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.FFI)
-                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(InvalidFamCode))
+                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(InvalidFamCode)
+                        && !IsDevolvedLevel2or3ExcludedLearning(deliveryFam))
                     {
                         RaiseValidationMessage(learner, learningDelivery, deliveryFam);
                     }
@@ -112,6 +113,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             return _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, larsLearningDelivery.EffectiveFrom, larsLearningDelivery.EffectiveTo ?? DateTime.MaxValue)
                 && _larsDataService.BasicSkillsTypeMatchForLearnAimRef(_basicSkillTypes, delivery.LearnAimRef);
         }
+
+        public bool IsDevolvedLevel2or3ExcludedLearning(ILearningDeliveryFAM monitor) =>
+            Monitoring.Delivery.DevolvedLevelTwoOrThree.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool ExclusionsApply(ILearner learner, ILearningDelivery learningDelivery)
         {
