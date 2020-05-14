@@ -76,6 +76,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool InReceiptOfLowWages(ILearningDeliveryFAM monitor) =>
             Monitoring.Delivery.InReceiptOfLowWages.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
+        public bool IsDevolvedLevel2or3ExcludedLearning(ILearningDeliveryFAM monitor) =>
+            Monitoring.Delivery.DevolvedLevelTwoOrThree.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
+
         public bool IsBasicSkillsLearner(ILearningDelivery delivery, ILARSLearningDelivery larsLearningDelivery)
         {
             var annualValues = _larsData.GetAnnualValuesFor(delivery.LearnAimRef);
@@ -133,7 +136,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 || CheckDeliveryFAMs(candidate, IsReleasedOnTemporaryLicence)
                 || CheckDeliveryFAMs(candidate, IsRestart)
                 || CheckDeliveryFAMs(candidate, IsSteelWorkerRedundancyTraining)
-                || CheckDeliveryFAMs(candidate, InReceiptOfLowWages);
+                || CheckDeliveryFAMs(candidate, InReceiptOfLowWages)
+                || CheckDeliveryFAMs(candidate, IsDevolvedLevel2or3ExcludedLearning);
         }
 
         public void Validate(ILearner objectToValidate)
