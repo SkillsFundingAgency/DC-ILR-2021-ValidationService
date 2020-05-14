@@ -19,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
         {
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (ConditionMet(objectToValidate.PlanLearnHoursNullable, learningDelivery.FundModel))
+                if (ConditionMet(objectToValidate.PlanLearnHoursNullable, learningDelivery.FundModel, learningDelivery.ProgTypeNullable))
                 {
                     HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, errorMessageParameters: BuildErrorMessageParameters(objectToValidate.PMUKPRNNullable, learningDelivery.FundModel));
                     return;
@@ -27,9 +27,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
             }
         }
 
-        public bool ConditionMet(int? planLearnHours, int fundModel)
+        public bool ConditionMet(int? planLearnHours, int fundModel, int? progType)
         {
-            return PlanLearnHoursConditionMet(planLearnHours)
+            return !Excluded(fundModel, progType)
+                   && PlanLearnHoursConditionMet(planLearnHours)
                    && FundModelConditionMet(fundModel);
         }
 
@@ -42,6 +43,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
         public bool FundModelConditionMet(int fundModel)
         {
             return _fundModels.Contains(fundModel);
+        }
+
+        public bool Excluded(int fundModel, int? progType)
+        {
+            return progType.HasValue
+                   && fundModel == FundModels.Age16To19ExcludingApprenticeships
+                   && (progType == ProgTypes.TLevel || progType == ProgTypes.TLevelTransition);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? planLearnHours, int fundModel)
