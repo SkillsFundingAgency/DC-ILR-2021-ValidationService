@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <Compile Remove="CrossEntity\R97Rule.cs" />
-    <Compile Remove="EmploymentStatus\AgreeId\AgreeId_02Rule.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,10 +28,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Data\ESFA.DC.ILR.ValidationService.Data.csproj" />
     <ProjectReference Include="..\ESFA.DC.ILR.ValidationService.Interface\ESFA.DC.ILR.ValidationService.Interface.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="EmploymentStatus\AgreeId\" />
   </ItemGroup>
 
 </Project>
