@@ -490,6 +490,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             mockDateTimeQueryService.VerifyAll();
         }
 
+        [Theory]
+        [InlineData(Monitoring.Delivery.OLASSOffendersInCustody, false)]
+        [InlineData(Monitoring.Delivery.FullyFundedLearningAim, false)]
+        [InlineData(Monitoring.Delivery.DevolvedLevelTwoOrThree, true)]
+        [InlineData(Monitoring.Delivery.MandationToSkillsTraining, false)]
+        [InlineData(Monitoring.Delivery.ReleasedOnTemporaryLicence, false)]
+        [InlineData(Monitoring.Delivery.SteelIndustriesRedundancyTraining, false)]
+        public void IsDevolvedLevel2or3MeetsExpectation(string candidate, bool expectation)
+        {
+            // arrange
+            var sut = NewRule();
+            var mockItem = new Mock<ILearningDeliveryFAM>();
+            mockItem
+                .SetupGet(y => y.LearnDelFAMType)
+                .Returns(candidate.Substring(0, 3));
+            mockItem
+                .SetupGet(y => y.LearnDelFAMCode)
+                .Returns(candidate.Substring(3));
+
+            // act
+            var result = sut.IsDevolvedLevel2or3ExcludedLearning(mockItem.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
         [Fact]
         public void InvalidItemRaisesValidationMessage()
         {
