@@ -198,6 +198,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
             NewRule(dd07Mock.Object).LearningDeliveryConditionMet(fundModel, progType).Should().BeFalse();
         }
 
+        [Theory]
+        [InlineData(25, 30)]
+        [InlineData(25, 31)]
+        public void LearningDeliveryConditionMet_False_Excluded(int fundModel, int? progType)
+        {
+            var dd07Mock = new Mock<IDerivedData_07Rule>();
+
+            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
+
+            NewRule(dd07Mock.Object).LearningDeliveryConditionMet(fundModel, progType).Should().BeFalse();
+        }
+
         [Fact]
         public void Validate_Error()
         {
