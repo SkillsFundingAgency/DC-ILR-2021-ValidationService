@@ -1,4 +1,5 @@
-﻿using ESFA.DC.ILR.Tests.Model;
+﻿using System.Collections.Generic;
+using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours;
@@ -31,13 +32,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
             NewRule().ConditionMet(planLearnHours, planEEPHours).Should().Be(expectation);
         }
 
+        [Theory]
+        [InlineData(25, 31)]
+        [InlineData(25, 30)]
+        public void ConditionMet_False_Excluded(int fundModel, int? progType)
+        {
+            NewRule().Excluded(fundModel, progType).Should().BeTrue();
+        }
+
         [Fact]
         public void Validate_Error()
         {
             var learner = new TestLearner()
             {
                 PlanLearnHoursNullable = 2000,
-                PlanEEPHoursNullable = 3000
+                PlanEEPHoursNullable = 3000,
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        ProgTypeNullable = 1,
+                        FundModel = 25
+                    }
+                }
             };
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
@@ -53,6 +70,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
             {
                 PlanLearnHoursNullable = 500,
                 PlanEEPHoursNullable = 500,
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        ProgTypeNullable = 1,
+                        FundModel = 25
+                    }
+                }
             };
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
