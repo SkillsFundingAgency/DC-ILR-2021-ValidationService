@@ -1,60 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 {
-    public class ProgType_14Rule :
-        IRule<ILearner>
+    public class ProgType_14Rule : AbstractRule, IRule<ILearner>
     {
-        public const string MessagePropertyName = "ProgType";
-
-        public const string Name = RuleNameConstants.ProgType_14;
-
-        private readonly IValidationErrorHandler _messageHandler;
-
         public ProgType_14Rule(IValidationErrorHandler validationErrorHandler)
+             : base(validationErrorHandler, RuleNameConstants.ProgType_14)
         {
-            _messageHandler = validationErrorHandler;
         }
-
-        public string RuleName => Name;
 
         public void Validate(ILearner objectToValidate)
         {
-            var learnRefNumber = objectToValidate.LearnRefNumber;
-
-            objectToValidate.LearningDeliveries
-                .NullSafeWhere(x => x.ProgTypeNullable == ProgTypes.Traineeship)
-                .ForEach(x =>
-                {
-                    var failedValidation = !ConditionMet(x);
-
-                    if (failedValidation)
-                    {
-                        RaiseValidationMessage(learnRefNumber, x);
-                    }
-                });
-        }
-
-        public bool ConditionMet(ILearningDelivery thisDelivery)
-        {
-            return thisDelivery != null
-                ? !thisDelivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.IndustryPlacement)
-                : true;
-        }
-
-        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)
-        {
-            var parameters = new List<IErrorMessageParameter>
+            if (objectToValidate?.LearningDeliveries == null)
             {
-                _messageHandler.BuildErrorMessageParameter(MessagePropertyName, thisDelivery)
-            };
+                return;
+            }
 
-            _messageHandler.Handle(RuleName, learnRefNumber, thisDelivery.AimSeqNumber, parameters);
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
+            {
+                if (ConditionMet(learningDelivery.LearnAimRef, learningDelivery.ProgTypeNullable))
+                {
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(learningDelivery.LearnAimRef, learningDelivery.ProgTypeNullable));
+                }
+            }
+        }
+
+        public bool ConditionMet(string learnAimRef, int? progType)
+        {
+            return progType == ProgTypes.Traineeship
+                && (learnAimRef.CaseInsensitiveEquals(AimTypes.References.IndustryPlacement)
+                || learnAimRef.CaseInsensitiveEquals(AimTypes.References.TLevelWorkExperience));
+        }
+
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string learnAimRef, int? progType)
+        {
+            return new[]
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, learnAimRef),
+                BuildErrorMessageParameter(PropertyNameConstants.ProgType, progType)
+            };
         }
     }
 }

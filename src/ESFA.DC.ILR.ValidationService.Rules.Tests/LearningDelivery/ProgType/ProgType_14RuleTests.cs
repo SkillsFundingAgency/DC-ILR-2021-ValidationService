@@ -1,154 +1,184 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType;
+using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
+using FluentAssertions;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
 {
-    public class ProgType_14RuleTests
+    public class ProgType_14RuleTests : AbstractRuleTests<ProgType_14Rule>
     {
         [Fact]
         public void RuleName()
         {
-            var sut = NewRule();
+            NewRule().RuleName.Should().Be("ProgType_14");
+        }
 
-            var result = sut.RuleName;
+        [Theory]
+        [InlineData("ZWRKX002", 24)]
+        [InlineData("ZWRKX003", 24)]
+        public void ConditionMet_True(string learnAimRef, int? progType)
+        {
+            NewRule().ConditionMet(learnAimRef, progType).Should().BeTrue();
+        }
 
-            Assert.Equal("ProgType_14", result);
+        [Theory]
+        [InlineData("ZWRKX002", 35)]
+        [InlineData("ZWRKX003", 35)]
+        [InlineData("ZWRKX003", null)]
+        [InlineData("ZWRKX002", null)]
+        [InlineData("ZWRKX123", 24)]
+        public void ConditionMet_False(string learnAimRef, int? progType)
+        {
+            NewRule().ConditionMet(learnAimRef, progType).Should().BeFalse();
         }
 
         [Fact]
-        public void ConditionMetWithNullLearningDeliveryReturnsTrue()
+        public void Validate_Null_LearningDelivery_NoError()
         {
-            var sut = NewRule();
-
-            var result = sut.ConditionMet(null);
-
-            Assert.True(result);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(new TestLearner());
+            }
         }
 
         [Theory]
-        [InlineData(AimTypes.References.IndustryPlacement, false)]
-        [InlineData("asdflkasroas i", true)]
-        [InlineData("w;oraeijwq rf;oiew ", true)]
-        [InlineData(null, true)]
-        public void ConditionMetForLearningDeliveriesWithTrainingNotInWorkPlacementMeetsExpectation(string aimReference, bool expectation)
+        [InlineData("ZWRKX002")]
+        [InlineData("ZWRKX003")]
+        public void Validate_Error(string learnAimRef)
         {
-            var sut = NewRule();
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(aimReference);
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = learnAimRef,
+                        ProgTypeNullable = 24
+                    }
+                }
+            };
 
-            var result = sut.ConditionMet(mockDelivery.Object);
-
-            Assert.Equal(expectation, result);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
         }
 
         [Theory]
-        [InlineData(AimTypes.References.IndustryPlacement, ProgTypes.Traineeship)]
-        public void InvalidItemRaisesValidationMessage(string aimReference, int typeOfProgramme)
+        [InlineData("ZWRKX002", 35)]
+        [InlineData("ZWRKX003", 35)]
+        [InlineData("ZWRKX003", null)]
+        [InlineData("ZWRKX002", null)]
+        [InlineData("ZWRKX123", 24)]
+        public void Validate_NoError(string learnAimRef, int? progType)
         {
-            const string LearnRefNumber = "123456789X";
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = learnAimRef,
+                        ProgTypeNullable = progType
+                    }
+                }
+            };
 
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.ProgTypeNullable)
-                .Returns(typeOfProgramme);
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(aimReference);
-
-            var deliveries = new List<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
-
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries);
-
-            var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            mockHandler.Setup(x => x.Handle(
-                Moq.It.Is<string>(y => y == ProgType_14Rule.Name),
-                Moq.It.Is<string>(y => y == LearnRefNumber),
-                0,
-                Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
-            mockHandler
-                .Setup(x => x.BuildErrorMessageParameter(
-                    Moq.It.Is<string>(y => y == ProgType_14Rule.MessagePropertyName),
-                    Moq.It.IsAny<ILearningDelivery>()))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-
-            var sut = new ProgType_14Rule(mockHandler.Object);
-
-            sut.Validate(mockLearner.Object);
-
-            mockHandler.VerifyAll();
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
         }
 
-        [Theory]
-        [InlineData("SSER SUR I", ProgTypes.AdvancedLevelApprenticeship)]
-        [InlineData("VCMWAPOASFM", ProgTypes.ApprenticeshipStandard)]
-        [InlineData("CMASLFDASEJEF", ProgTypes.HigherApprenticeshipLevel4)]
-        [InlineData("CASLFAIWEJ", ProgTypes.HigherApprenticeshipLevel5)]
-        [InlineData("2AAWSFPOASERGK", ProgTypes.HigherApprenticeshipLevel6)]
-        [InlineData("SMAFAIJ", ProgTypes.HigherApprenticeshipLevel7Plus)]
-        [InlineData("sdfaseira", ProgTypes.IntermediateLevelApprenticeship)]
-        [InlineData("cansefaEEfasoeif", ProgTypes.Traineeship)]
-        [InlineData(null, ProgTypes.AdvancedLevelApprenticeship)]
-        [InlineData(null, ProgTypes.ApprenticeshipStandard)]
-        [InlineData(null, ProgTypes.HigherApprenticeshipLevel4)]
-        [InlineData(null, ProgTypes.HigherApprenticeshipLevel5)]
-        [InlineData(null, ProgTypes.HigherApprenticeshipLevel6)]
-        [InlineData(null, ProgTypes.HigherApprenticeshipLevel7Plus)]
-        [InlineData(null, ProgTypes.IntermediateLevelApprenticeship)]
-        [InlineData(null, ProgTypes.Traineeship)]
-        public void ValidItemDoesNotRaiseAValidationMessage(string aimReference, int typeOfProgramme)
+        [Fact]
+        public void Validate_Error_InMultipleDeliveries()
         {
-            const string LearnRefNumber = "123456789X";
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX002",
+                        ProgTypeNullable = 24
+                    },
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX002",
+                        ProgTypeNullable = 35
+                    },
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX003",
+                        ProgTypeNullable = 24
+                    },
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX001",
+                        ProgTypeNullable = 24
+                    },
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX001",
+                        ProgTypeNullable = 35
+                    }
+                }
+            };
 
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.ProgTypeNullable)
-                .Returns(typeOfProgramme);
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(aimReference);
-
-            var deliveries = new List<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
-
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries);
-
-            var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            var sut = new ProgType_14Rule(mockHandler.Object);
-
-            sut.Validate(mockLearner.Object);
-
-            mockHandler.VerifyAll();
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
         }
 
-        public ProgType_14Rule NewRule()
+        [Fact]
+        public void Validate_NoError_InMultipleDeliveries()
         {
-            var mock = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX001",
+                        ProgTypeNullable = 24
+                    },
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX001",
+                        ProgTypeNullable = 35
+                    }
+                }
+            };
 
-            return new ProgType_14Rule(mock.Object);
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void BuildErrorMessageParameters()
+        {
+            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
+
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, "LearnAimRef")).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.ProgType, 24)).Verifiable();
+
+            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters("LearnAimRef", 24);
+
+            validationErrorHandlerMock.Verify();
+        }
+
+        public ProgType_14Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
+        {
+            return new ProgType_14Rule(validationErrorHandler);
         }
     }
 }
