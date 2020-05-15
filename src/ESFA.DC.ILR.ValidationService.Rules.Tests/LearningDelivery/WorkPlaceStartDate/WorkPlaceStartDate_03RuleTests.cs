@@ -26,6 +26,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         [InlineData(AimTypes.References.WorkPlacement500PlusHours)]
         [InlineData(AimTypes.References.SupportedInternship16To19)]
         [InlineData(AimTypes.References.WorkExperience)]
+        [InlineData(AimTypes.References.IndustryPlacement)]
+        [InlineData(AimTypes.References.IndustryPlacement)]
+        [InlineData(AimTypes.References.TLevelWorkExperience)]
         [InlineData("zwrkx002")]
         public void LearnAimRefConditionMet_False(string learnAimRef)
         {
