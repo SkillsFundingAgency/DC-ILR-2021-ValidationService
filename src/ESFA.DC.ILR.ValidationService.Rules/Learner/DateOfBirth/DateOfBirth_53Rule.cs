@@ -98,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool LearnActEndDateConditionMet(DateTime learnStartDate, DateTime? learnActEndDate)
         {
             return learnActEndDate.HasValue
-                && _dateTimeQueryService.WholeDaysBetween(learnStartDate, learnActEndDate.Value) < 365;
+                && _dateTimeQueryService.WholeDaysBetween(learnStartDate, learnActEndDate.Value) < 372;
         }
 
         public bool CompStatusConditionMet(int compStatus)
