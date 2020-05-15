@@ -20,6 +20,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDat
             AimTypes.References.SupportedInternship16To19,
             AimTypes.References.WorkExperience,
             AimTypes.References.IndustryPlacement,
+            AimTypes.References.TLevelWorkExperience,
         }.ToCaseInsensitiveHashSet();
 
         public WorkPlaceStartDate_03Rule(IValidationErrorHandler validationErrorHandler)
