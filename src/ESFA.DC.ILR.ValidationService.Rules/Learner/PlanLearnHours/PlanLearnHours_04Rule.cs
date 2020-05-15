@@ -15,16 +15,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 
         public void Validate(ILearner objectToValidate)
         {
-            if (ConditionMet(objectToValidate.PlanLearnHoursNullable, objectToValidate.PlanEEPHoursNullable))
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(objectToValidate.PMUKPRNNullable, objectToValidate.PlanEEPHoursNullable));
-                return;
+                if (!Excluded(learningDelivery.FundModel, learningDelivery.ProgTypeNullable) && ConditionMet(objectToValidate.PlanLearnHoursNullable, objectToValidate.PlanEEPHoursNullable))
+                {
+                    HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(objectToValidate.PMUKPRNNullable, objectToValidate.PlanEEPHoursNullable));
+                }
             }
         }
 
         public bool ConditionMet(int? planLearnHours, int? planEEPHours)
         {
             return (PlanLearnHoursValue(planLearnHours) + PlanEEPHoursValue(planEEPHours)) > 1000;
+        }
+
+        public bool Excluded(int fundModel, int? progType)
+        {
+            return progType.HasValue
+                   && fundModel == FundModels.Age16To19ExcludingApprenticeships
+                   && (progType == ProgTypes.TLevel || progType == ProgTypes.TLevelTransition);
         }
 
         public int PlanLearnHoursValue(int? planLearnHours)
