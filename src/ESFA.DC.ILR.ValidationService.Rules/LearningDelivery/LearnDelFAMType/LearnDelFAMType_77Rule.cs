@@ -9,7 +9,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_77Rule : AbstractRule, IRule<ILearner>
     {
-        private const int MaxOccurences = 4;
+        private const int MaxOccurences = 6;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public LearnDelFAMType_77Rule(
@@ -19,10 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
-        /// <summary>
-        /// Validates the specified object.
-        /// </summary>
-        /// <param name="learner">The object to validate.</param>
         public void Validate(ILearner learner)
         {
             if (learner?.LearningDeliveries == null)
