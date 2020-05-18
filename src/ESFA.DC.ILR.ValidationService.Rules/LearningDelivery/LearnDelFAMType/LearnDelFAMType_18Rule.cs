@@ -21,9 +21,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 LearningDeliveryFAMTypeConstants.ADL,
                 LearningDeliveryFAMTypeConstants.ASL,
                 LearningDeliveryFAMTypeConstants.SPP,
-                LearningDeliveryFAMTypeConstants.NSA,
-                LearningDeliveryFAMTypeConstants.WPP,
-                LearningDeliveryFAMTypeConstants.POD,
                 LearningDeliveryFAMTypeConstants.FLN
             };
 
