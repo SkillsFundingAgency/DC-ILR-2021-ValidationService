@@ -110,19 +110,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             }
         }
 
-        [Fact]
-        public void BuildErrorMessageParameters()
-        {
-            var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
-
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.UKPRN, (long)546)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.ULN, (long)123467)).Verifiable();
-
-            NewRule(validationErrorHandlerMock.Object).BuildErrorMessageParameters(546, 123467);
-
-            validationErrorHandlerMock.Verify();
-        }
-
         private R59Rule NewRule(IValidationErrorHandler validationErrorHandler = null)
         {
             return new R59Rule(validationErrorHandler);
