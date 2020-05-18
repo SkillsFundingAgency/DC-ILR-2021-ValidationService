@@ -55,9 +55,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData(LearningDeliveryFAMTypeConstants.ADL)]
         [InlineData(LearningDeliveryFAMTypeConstants.ASL)]
         [InlineData(LearningDeliveryFAMTypeConstants.SPP)]
-        [InlineData(LearningDeliveryFAMTypeConstants.NSA)]
-        [InlineData(LearningDeliveryFAMTypeConstants.WPP)]
-        [InlineData(LearningDeliveryFAMTypeConstants.POD)]
         [InlineData(LearningDeliveryFAMTypeConstants.FLN)]
         public void ConditionMet_True(string learDelFamType)
         {
