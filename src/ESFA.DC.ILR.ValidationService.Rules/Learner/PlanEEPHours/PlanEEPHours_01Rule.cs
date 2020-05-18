@@ -60,7 +60,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanEEPHours
         public bool Excluded(int? progType, int fundModel)
         {
             return DD07ExcludeConditionMet(progType)
-                   || FundModelExcludeConditionMet(fundModel);
+                   || FundModelExcludeConditionMet(fundModel)
+                   || TLevelExcludeConditionMet(fundModel, progType);
         }
 
         public bool DD07ExcludeConditionMet(int? progType)
@@ -71,6 +72,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanEEPHours
         public bool FundModelExcludeConditionMet(int fundModel)
         {
             return fundModel == 70;
+        }
+
+        public bool TLevelExcludeConditionMet(int fundModel, int? progType)
+        {
+            return progType.HasValue
+                   && fundModel == FundModels.Age16To19ExcludingApprenticeships
+                   && (progType == ProgTypes.TLevel || progType == ProgTypes.TLevelTransition);
         }
 
         public bool AllLearningAimsClosedExcludeConditionMet(IEnumerable<ILearningDelivery> learningDeliveries)
