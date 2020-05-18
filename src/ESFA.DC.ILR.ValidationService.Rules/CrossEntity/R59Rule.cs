@@ -8,18 +8,12 @@ using ESFA.DC.ILR.ValidationService.Rules.Constants;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
-    public class R59Rule : IRule<IMessage>
+    public class R59Rule : AbstractRule, IRule<IMessage>
     {
-        public const string Name = RuleNameConstants.R59;
-
-        private readonly IValidationErrorHandler _messageHandler;
-
         public R59Rule(IValidationErrorHandler validationErrorHandler)
+            : base(validationErrorHandler, RuleNameConstants.R59)
         {
-            _messageHandler = validationErrorHandler;
         }
-
-        public string RuleName => Name;
 
         public void Validate(IMessage objectToValidate)
         {
@@ -38,21 +32,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             {
                 objectToValidate.Learners.Where(x => x.ULN == uln)
                     .ForEach(learner =>
-                        RaiseValidationMessage(
-                            objectToValidate.LearningProviderEntity?.UKPRN,
-                            learner));
+                        HandleValidationError(
+                            learner.LearnRefNumber,
+                            null,
+                            BuildErrorMessageParameters(objectToValidate.LearningProviderEntity?.UKPRN, uln)));
             }
         }
 
-        public void RaiseValidationMessage(int? ukprn, ILearner thisLearner)
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(long? ukprn, long uln)
         {
-            var parameters = new List<IErrorMessageParameter>
+            return new[]
             {
-                _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.UKPRN, ukprn),
-                _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.ULN, thisLearner.ULN)
+                BuildErrorMessageParameter(PropertyNameConstants.UKPRN, ukprn),
+                BuildErrorMessageParameter(PropertyNameConstants.ULN, uln)
             };
-
-            _messageHandler.Handle(RuleName, thisLearner.LearnRefNumber, null, parameters);
         }
     }
 }
