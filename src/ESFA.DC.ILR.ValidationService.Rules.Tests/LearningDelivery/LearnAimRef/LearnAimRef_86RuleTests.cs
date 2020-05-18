@@ -23,9 +23,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
         [Theory]
         [InlineData(AimTypes.References.ESFLearnerStartandAssessment, false)]
-        [InlineData(AimTypes.References.IndustryPlacement, false)]
         [InlineData(AimTypes.References.SupportedInternship16To19, false)]
         [InlineData(AimTypes.References.WorkExperience, true)]
+        [InlineData(AimTypes.References.IndustryPlacement, true)]
+        [InlineData(AimTypes.References.TLevelWorkExperience, true)]
         [InlineData(AimTypes.References.WorkPlacement0To49Hours, false)]
         [InlineData(AimTypes.References.WorkPlacement100To199Hours, false)]
         [InlineData(AimTypes.References.WorkPlacement200To499Hours, false)]
