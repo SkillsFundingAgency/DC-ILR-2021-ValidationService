@@ -301,6 +301,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(EmpId_02Rule),
                 typeof(EmpId_10Rule),
                 typeof(EmpId_13Rule),
+                typeof(EmpId_14Rule),
                 typeof(EmpOutcome_01Rule),
                 typeof(EmpOutcome_02Rule),
                 typeof(EmpOutcome_03Rule),
