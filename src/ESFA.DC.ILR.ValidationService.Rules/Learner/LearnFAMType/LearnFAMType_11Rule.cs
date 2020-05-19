@@ -15,8 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.LearnFAMType
         private readonly HashSet<string> _learnFamTypes = new HashSet<string>()
         {
             LearnerFAMTypeConstants.NLM,
-            LearnerFAMTypeConstants.EDF,
-            LearnerFAMTypeConstants.PPE
+            LearnerFAMTypeConstants.EDF
         };
 
         public LearnFAMType_11Rule(ILearnerFAMQueryService learnerFamQueryService, IValidationErrorHandler validationErrorHandler)

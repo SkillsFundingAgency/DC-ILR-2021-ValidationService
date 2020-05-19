@@ -20,6 +20,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 
         public const int ApprenticeshipStandard = 25;
 
+        public const int TLevel = 31;
+
+        public const int TLevelTransition = 30;
+
         public static int MaximumTrainingDuration => -6;
 
         public static int MaximumOpenTrainingDuration => -8;

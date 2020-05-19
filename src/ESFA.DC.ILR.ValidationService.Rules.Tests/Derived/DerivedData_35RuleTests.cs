@@ -20,7 +20,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             LearningDeliveryFAMCodeConstants.SOF_MCAGLA_WECA,
             LearningDeliveryFAMCodeConstants.SOF_MCAGLA_TVCA,
             LearningDeliveryFAMCodeConstants.SOF_MCAGLA_CPCA,
-            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_London
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_London,
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_NTCA
         };
 
         [Fact]

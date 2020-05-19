@@ -437,9 +437,6 @@
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_40RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_46RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_50RuleTests.cs" />
-    <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_30RuleTests.cs" />
-    <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_24RuleTests.cs" />
-    <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_20RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_16RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_15RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_56RuleTests.cs" />
@@ -490,7 +487,6 @@
     <Compile Include="LearningDelivery\OutGrade\OutGrade_06RuleTests.cs" />
     <Compile Include="LearningDelivery\OutGrade\OutGrade_07RuleTests.cs" />
     <Compile Include="LearningDelivery\PHours\PHours_01RuleTests.cs" />
-    <Compile Include="LearningDelivery\PHours\PHours_02RuleTests.cs" />
     <Compile Include="LearningDelivery\ProgType\ProgType_12RuleTests.cs" />
     <Compile Include="LearningDelivery\ProvSpecDelMonOccur\ProvSpecDelMonOccur_01RuleTests.cs" />
     <Compile Include="LearningDelivery\UKPRN\UKPRN_05RuleTests.cs" />
@@ -605,7 +601,6 @@
     <Compile Include="LearningDelivery\OrigLearnStartDate\OrigLearnStartDate_03RuleTests.cs" />
     <Compile Include="LearningDelivery\OrigLearnStartDate\OrigLearnStartDate_02RuleTests.cs" />
     <Compile Include="LearningDelivery\OtherFundAdj\OtherFundAdj_01RuleTests.cs" />
-    <Compile Include="LearningDelivery\OutGrade\OutGrade_03RuleTests.cs" />
     <Compile Include="LearningDelivery\PartnerUKPRN\PartnerUKPRN_03RuleTests.cs" />
     <Compile Include="LearningDelivery\PartnerUKPRN\PartnerUKPRN_02RuleTests.cs" />
     <Compile Include="LearningDelivery\PartnerUKPRN\PartnerUKPRN_01RuleTests.cs" />
@@ -696,9 +691,7 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
     <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="EmploymentStatus\AgreeId\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -44,8 +44,6 @@
         public const string AFinType_13 = "AFinType_13";
         public const string AFinType_14 = "AFinType_14";
 
-        public const string AgreeId_02 = "AgreeId_02";
-
         public const string AimSeqNumber_02 = "AimSeqNumber_02";
         public const string ALSCost_02 = "ALSCost_02";
 
@@ -268,11 +266,8 @@
         public const string LearnDelFAMType_15 = "LearnDelFAMType_15";
         public const string LearnDelFAMType_16 = "LearnDelFAMType_16";
         public const string LearnDelFAMType_18 = "LearnDelFAMType_18";
-        public const string LearnDelFAMType_20 = "LearnDelFAMType_20";
         public const string LearnDelFAMType_22 = "LearnDelFAMType_22";
-        public const string LearnDelFAMType_24 = "LearnDelFAMType_24";
         public const string LearnDelFAMType_27 = "LearnDelFAMType_27";
-        public const string LearnDelFAMType_30 = "LearnDelFAMType_30";
         public const string LearnDelFAMType_31 = "LearnDelFAMType_31";
         public const string LearnDelFAMType_35 = "LearnDelFAMType_35";
         public const string LearnDelFAMType_36 = "LearnDelFAMType_36";
@@ -399,7 +394,6 @@
         public const string OutEndDate_01 = "OutEndDate_01";
 
         public const string OutGrade_01 = "OutGrade_01";
-        public const string OutGrade_03 = "OutGrade_03";
         public const string OutGrade_04 = "OutGrade_04";
         public const string OutGrade_05 = "OutGrade_05";
         public const string OutGrade_06 = "OutGrade_06";
@@ -436,7 +430,6 @@
         public const string PlanEEPHours_01 = "PlanEEPHours_01";
 
         public const string PHours_01 = "PHours_01";
-        public const string PHours_02 = "PHours_02";
 
         public const string PlanLearnHours_01 = "PlanLearnHours_01";
         public const string PlanLearnHours_02 = "PlanLearnHours_02";

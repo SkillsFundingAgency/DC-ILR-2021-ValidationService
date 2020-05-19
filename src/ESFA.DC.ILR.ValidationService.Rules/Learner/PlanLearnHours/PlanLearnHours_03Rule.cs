@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (ConditionMet(learningDelivery.FundModel))
+                if (!Excluded(learningDelivery.FundModel, learningDelivery.ProgTypeNullable) && ConditionMet(learningDelivery.FundModel))
                 {
                     HandleValidationError(
                         objectToValidate.LearnRefNumber,
@@ -51,6 +51,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
             => (planLearnHours ?? 0) + (planEEPHours ?? 0) == 0;
 
         public bool FundModelConditionMet(int fundModel) => _fundModels.Contains(fundModel);
+
+        public bool Excluded(int fundModel, int? progType)
+        {
+            return progType.HasValue
+                   && fundModel == FundModels.Age16To19ExcludingApprenticeships
+                   && (progType == ProgTypes.TLevel || progType == ProgTypes.TLevelTransition);
+        }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(
             int? planLearnHours,

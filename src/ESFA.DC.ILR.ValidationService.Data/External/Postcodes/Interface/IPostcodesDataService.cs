@@ -7,6 +7,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface
     {
         bool PostcodeExists(string postcode);
 
+        bool ONSPostcodeExists(string postcode);
+
         IReadOnlyCollection<IONSPostcode> GetONSPostcodes(string fromPostcode);
         
         IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodes(string fromPostcode);

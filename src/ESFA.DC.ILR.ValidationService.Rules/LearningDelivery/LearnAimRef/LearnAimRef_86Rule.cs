@@ -25,7 +25,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         public string RuleName => Name;
 
         public bool IsWorkExperience(ILearningDelivery delivery) =>
-            delivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.WorkExperience);
+            delivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.WorkExperience) ||
+            delivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.IndustryPlacement) ||
+            delivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.TLevelWorkExperience);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             delivery.FundModel == FundModels.AdultSkills
