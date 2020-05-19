@@ -22,14 +22,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var testLearnerEmloymentStatus = new TestLearnerEmploymentStatus()
             {
-                AgreeId = "123A01",
                 EmpIdNullable = 11768,
                 EmpStat = 10
             };
 
             var testPreviousLearnerEmloymentStatus = new TestLearnerEmploymentStatus()
             {
-                AgreeId = "123A02",
                 EmpIdNullable = 11769,
                 EmpStat = 11
             };
@@ -45,7 +43,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var testLearnerEmloymentStatus = new TestLearnerEmploymentStatus()
             {
                 DateEmpStatApp = new DateTime(2018, 07, 01),
-                AgreeId = "123A01",
                 EmpIdNullable = 11768,
                 EmpStat = 10
             };
@@ -53,7 +50,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
             var testPreviousLearnerEmloymentStatus = new TestLearnerEmploymentStatus()
             {
                 DateEmpStatApp = new DateTime(2018, 09, 01),
-                AgreeId = "123a01",
                 EmpIdNullable = 11768,
                 EmpStat = 10
             };
@@ -184,7 +180,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearnerEmploymentStatus()
                     {
-                        AgreeId = "123A01",
                         EmpIdNullable = 11768,
                         EmpStat = 10,
                         DateEmpStatApp = new DateTime(2018, 07, 01),
@@ -204,7 +199,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     },
                     new TestLearnerEmploymentStatus()
                     {
-                        AgreeId = "123a01",
                         EmpIdNullable = 11768,
                         EmpStat = 10,
                         DateEmpStatApp = new DateTime(2018, 07, 10),
@@ -241,7 +235,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearnerEmploymentStatus()
                     {
-                        AgreeId = "123A01",
                         EmpIdNullable = 11768,
                         EmpStat = 10,
                         DateEmpStatApp = new DateTime(2018, 07, 01),
@@ -263,7 +256,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     null,
                     new TestLearnerEmploymentStatus()
                     {
-                        AgreeId = "123a01",
                         EmpIdNullable = 11768,
                         EmpStat = 10,
                         DateEmpStatApp = new DateTime(2018, 10, 01),
@@ -302,7 +294,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearnerEmploymentStatus()
                     {
-                        AgreeId = "123A01",
                         EmpIdNullable = 11768,
                         EmpStat = 10,
                         EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
@@ -321,7 +312,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     },
                     new TestLearnerEmploymentStatus()
                     {
-                        AgreeId = "123A02",
                         EmpIdNullable = 11769,
                         EmpStat = 12,
                         EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
@@ -382,8 +372,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearnerEmploymentStatus()
                     {
-                        AgreeId = "123A01",
-                        EmpIdNullable = 11768,
                         EmpStat = 10,
                         EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
                         {
@@ -403,7 +391,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     null,
                     new TestLearnerEmploymentStatus()
                     {
-                        AgreeId = "123A02",
                         EmpIdNullable = 11769,
                         EmpStat = 12,
                         EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
@@ -440,7 +427,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearnerEmploymentStatus()
                     {
                         DateEmpStatApp = new DateTime(2016, 09, 13),
-                        AgreeId = "123A01",
                         EmpIdNullable = 11768,
                         EmpStat = 10,
                         EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
@@ -470,7 +456,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearnerEmploymentStatus()
                     {
                         DateEmpStatApp = new DateTime(2018, 09, 13),
-                        AgreeId = "123A01",
                         EmpIdNullable = 11768,
                         EmpStat = 10,
                         EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
@@ -516,7 +501,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearnerEmploymentStatus()
                     {
-                        AgreeId = "1",
                         EmpIdNullable = 154549452,
                         EmpStat = 1,
                         DateEmpStatApp = new DateTime(2018, 10, 12),
@@ -536,7 +520,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     },
                     new TestLearnerEmploymentStatus()
                     {
-                        AgreeId = "1",
                         EmpIdNullable = 154549452,
                         EmpStat = 1,
                         DateEmpStatApp = new DateTime(2018, 10, 12),

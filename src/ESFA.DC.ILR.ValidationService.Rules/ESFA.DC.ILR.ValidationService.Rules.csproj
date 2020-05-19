@@ -12,9 +12,6 @@
     <CodeAnalysisRuleSet>ESFA.DC.ILR.ValidationService.Rules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="CrossEntity\R97Rule.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.2" />
