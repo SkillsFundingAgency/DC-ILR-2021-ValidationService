@@ -18,6 +18,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 {
     public class LearnDelFAMType_79RuleTests : AbstractRuleTests<LearnDelFAMType_79Rule>
     {
+        private readonly HashSet<int?> _basicSkillTypes = new HashSet<int?>() { 01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35 };
+        private readonly HashSet<string> _ldmExclusions = new HashSet<string>
+        {
+            LearningDeliveryFAMCodeConstants.LDM_OLASS,
+            LearningDeliveryFAMCodeConstants.LDM_RoTL,
+            LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy,
+            LearningDeliveryFAMCodeConstants.LDM_LowWages,
+        };
+
         [Fact]
         public void RuleName()
         {
@@ -248,6 +257,432 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             dd29Mock.Setup(dd => dd.IsInflexibleElementOfTrainingAimLearningDelivery(learningDelivery)).Returns(true);
 
             NewRule(dd29: dd29Mock.Object).DD29Condition(learningDelivery).Should().BeTrue();
+        }
+
+        [Fact]
+        public void DD37Condition_True()
+        {
+            var learningDelivery = new TestLearningDelivery();
+
+            var dd37Mock = new Mock<IDerivedData_37Rule>();
+            dd37Mock.Setup(dd => dd.Derive(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>(), It.IsAny<IEnumerable<ILearningDeliveryFAM>>())).Returns(true);
+
+            NewRule(dd37: dd37Mock.Object).DD37Condition(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>(), It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeTrue();
+        }
+
+        [Fact]
+        public void DD37Condition_False()
+        {
+            var learningDelivery = new TestLearningDelivery();
+
+            var dd37Mock = new Mock<IDerivedData_37Rule>();
+            dd37Mock.Setup(dd => dd.Derive(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>(), It.IsAny<IEnumerable<ILearningDeliveryFAM>>())).Returns(false);
+
+            NewRule(dd37: dd37Mock.Object).DD37Condition(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>(), It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeFalse();
+        }
+
+        [Fact]
+        public void DD38Condition_True()
+        {
+            var learningDelivery = new TestLearningDelivery();
+
+            var dd38Mock = new Mock<IDerivedData_38Rule>();
+            dd38Mock.Setup(dd => dd.Derive(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>())).Returns(true);
+
+            NewRule(dd38: dd38Mock.Object).DD38Condition(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>()).Should().BeTrue();
+        }
+
+        [Fact]
+        public void DD38Condition_False()
+        {
+            var learningDelivery = new TestLearningDelivery();
+
+            var dd38Mock = new Mock<IDerivedData_38Rule>();
+            dd38Mock.Setup(dd => dd.Derive(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>())).Returns(false);
+
+            NewRule(dd38: dd38Mock.Object).DD38Condition(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>()).Should().BeFalse();
+        }
+
+        [Fact]
+        public void LearningDeliveryFAMExclusion_False()
+        {
+            var testLearningDeliveryFAMs = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
+
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFAMsQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMType(testLearningDeliveryFAMs, "RES")).Returns(false);
+            learningDeliveryFAMsQueryServiceMock.Setup(lds => lds.HasAnyLearningDeliveryFAMCodesForType(testLearningDeliveryFAMs, "LDM", _ldmExclusions)).Returns(false);
+            learningDeliveryFAMsQueryServiceMock.Setup(lds => lds.HasLearningDeliveryFAMCodeForType(testLearningDeliveryFAMs, "DAM", "023")).Returns(false);
+
+            NewRule(learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object).LearningDeliveryFAMExclusion(testLearningDeliveryFAMs).Should().BeFalse();
+        }
+
+        [Fact]
+        public void LearningDeliveryFAMExclusion_False_NullFams()
+        {
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFAMsQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMType(null, "RES")).Returns(false);
+            learningDeliveryFAMsQueryServiceMock.Setup(lds => lds.HasAnyLearningDeliveryFAMCodesForType(null, "LDM", _ldmExclusions)).Returns(false);
+            learningDeliveryFAMsQueryServiceMock.Setup(lds => lds.HasLearningDeliveryFAMCodeForType(null, "DAM", "023")).Returns(false);
+
+            NewRule(learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object).LearningDeliveryFAMExclusion(null).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, true)]
+        [InlineData(true, true, false)]
+        [InlineData(true, true, true)]
+        [InlineData(false, true, true)]
+        public void LearningDeliveryFAMExclusion_True(bool mockOne, bool mockTwo, bool mockThree)
+        {
+            var testLearningDeliveryFAMs = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
+
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFAMsQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMType(testLearningDeliveryFAMs, "RES")).Returns(mockOne);
+            learningDeliveryFAMsQueryServiceMock.Setup(lds => lds.HasAnyLearningDeliveryFAMCodesForType(testLearningDeliveryFAMs, "LDM", _ldmExclusions)).Returns(mockTwo);
+            learningDeliveryFAMsQueryServiceMock.Setup(lds => lds.HasLearningDeliveryFAMCodeForType(testLearningDeliveryFAMs, "DAM", "023")).Returns(mockThree);
+
+            NewRule(learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object).LearningDeliveryFAMExclusion(testLearningDeliveryFAMs).Should().BeTrue();
+        }
+
+        [Fact]
+        public void LARSExclusionCondition_True()
+        {
+            var learnStartDate = new DateTime(2020, 8, 1);
+            var larsLearningDelivery = new Data.External.LARS.Model.LearningDelivery
+            {
+                LearnAimRef = "AimRef",
+                EffectiveFrom = new DateTime(2020, 8, 1)
+            };
+
+            var annualValues = new List<ILARSAnnualValue>
+            {
+                new Data.External.LARS.Model.AnnualValue
+                {
+                    LearnAimRef = "AimRef",
+                    EffectiveFrom = new DateTime(2020, 8, 1),
+                    BasicSkillsType = 20
+                },
+                new Data.External.LARS.Model.AnnualValue
+                {
+                    LearnAimRef = "AimRef",
+                    EffectiveFrom = new DateTime(2020, 8, 1),
+                    BasicSkillsType = 105
+                }
+            };
+
+            var larsMock = new Mock<ILARSDataService>();
+            larsMock.Setup(x => x.GetAnnualValuesFor(larsLearningDelivery.LearnAimRef)).Returns(annualValues);
+
+            var dateTimeQSMock = new Mock<IDateTimeQueryService>();
+            dateTimeQSMock.Setup(x => x.IsDateBetween(learnStartDate, larsLearningDelivery.EffectiveFrom, larsLearningDelivery.EffectiveTo ?? DateTime.MaxValue, true)).Returns(true);
+
+            NewRule(larsDataService: larsMock.Object, dateTimeQueryService: dateTimeQSMock.Object).LARSExclusionCondition(larsLearningDelivery, learnStartDate).Should().BeTrue();
+        }
+
+        [Fact]
+        public void LARSExclusionCondition_False_NullAnnualValue()
+        {
+            var learnStartDate = new DateTime(2020, 8, 1);
+            var larsLearningDelivery = new Data.External.LARS.Model.LearningDelivery
+            {
+                LearnAimRef = "AimRef",
+                EffectiveFrom = new DateTime(2020, 8, 1)
+            };
+
+            var larsMock = new Mock<ILARSDataService>();
+            larsMock.Setup(x => x.GetAnnualValuesFor(larsLearningDelivery.LearnAimRef)).Returns(Array.Empty<ILARSAnnualValue>());
+
+            var dateTimeQSMock = new Mock<IDateTimeQueryService>();
+            dateTimeQSMock.Setup(x => x.IsDateBetween(learnStartDate, larsLearningDelivery.EffectiveFrom, larsLearningDelivery.EffectiveTo ?? DateTime.MaxValue, true)).Returns(true);
+
+            NewRule(larsDataService: larsMock.Object, dateTimeQueryService: dateTimeQSMock.Object).LARSExclusionCondition(larsLearningDelivery, learnStartDate).Should().BeFalse();
+        }
+
+        [Fact]
+        public void LARSExclusionCondition_False_AnnualValueMismatch()
+        {
+            var learnStartDate = new DateTime(2020, 8, 1);
+            var larsLearningDelivery = new Data.External.LARS.Model.LearningDelivery
+            {
+                LearnAimRef = "AimRef",
+                EffectiveFrom = new DateTime(2020, 8, 1)
+            };
+
+            var annualValues = new List<ILARSAnnualValue>
+            {
+                new Data.External.LARS.Model.AnnualValue
+                {
+                    LearnAimRef = "AimRef",
+                    EffectiveFrom = new DateTime(2020, 8, 1),
+                    BasicSkillsType = 105
+                }
+            };
+
+            var larsMock = new Mock<ILARSDataService>();
+            larsMock.Setup(x => x.GetAnnualValuesFor(larsLearningDelivery.LearnAimRef)).Returns(annualValues);
+
+            var dateTimeQSMock = new Mock<IDateTimeQueryService>();
+            dateTimeQSMock.Setup(x => x.IsDateBetween(learnStartDate, larsLearningDelivery.EffectiveFrom, larsLearningDelivery.EffectiveTo ?? DateTime.MaxValue, true)).Returns(true);
+
+            NewRule(larsDataService: larsMock.Object, dateTimeQueryService: dateTimeQSMock.Object).LARSExclusionCondition(larsLearningDelivery, learnStartDate).Should().BeFalse();
+        }
+
+        [Fact]
+        public void LARSExclusionCondition_False_StartDateMisMatch()
+        {
+            var learnStartDate = new DateTime(2020, 8, 1);
+            var larsLearningDelivery = new Data.External.LARS.Model.LearningDelivery
+            {
+                LearnAimRef = "AimRef",
+                EffectiveFrom = new DateTime(2020, 9, 1)
+            };
+
+            var annualValues = new List<ILARSAnnualValue>
+            {
+                new Data.External.LARS.Model.AnnualValue
+                {
+                    LearnAimRef = "AimRef",
+                    EffectiveFrom = new DateTime(2020, 8, 1),
+                    BasicSkillsType = 20
+                },
+                new Data.External.LARS.Model.AnnualValue
+                {
+                    LearnAimRef = "AimRef",
+                    EffectiveFrom = new DateTime(2020, 8, 1),
+                    BasicSkillsType = 105
+                }
+            };
+
+            var larsMock = new Mock<ILARSDataService>();
+            larsMock.Setup(x => x.GetAnnualValuesFor(larsLearningDelivery.LearnAimRef)).Returns(annualValues);
+
+            var dateTimeQSMock = new Mock<IDateTimeQueryService>();
+            dateTimeQSMock.Setup(x => x.IsDateBetween(learnStartDate, larsLearningDelivery.EffectiveFrom, larsLearningDelivery.EffectiveTo ?? DateTime.MaxValue, true)).Returns(false);
+
+            NewRule(larsDataService: larsMock.Object, dateTimeQueryService: dateTimeQSMock.Object).LARSExclusionCondition(larsLearningDelivery, learnStartDate).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(true, false, false, false, false, false)]
+        [InlineData(false, true, false, false, false, false)]
+        [InlineData(false, false, true, false, false, false)]
+        [InlineData(false, false, false, true, false, false)]
+        [InlineData(false, false, false, false, true, false)]
+        [InlineData(false, false, false, false, false, true)]
+        [InlineData(false, false, false, true, false, true)]
+        [InlineData(false, true, false, false, false, true)]
+        [InlineData(false, true, false, true, false, true)]
+        [InlineData(false, true, true, true, false, true)]
+        [InlineData(true, true, false, false, false, true)]
+        [InlineData(false, true, false, false, true, true)]
+        [InlineData(true, true, true, true, true, true)]
+        public void Excluded_True(bool dd07, bool dd29, bool dd37, bool dd38, bool deliveryFAMS, bool lars)
+        {
+            var learnStartDate = new DateTime(2020, 8, 1);
+            var fundModel = 35;
+            var learningDelivery = new TestLearningDelivery
+            {
+                ProgTypeNullable = 24,
+                FundModel = fundModel,
+                LearnStartDate = learnStartDate
+            };
+
+            var employmentStatuses = It.IsAny<IEnumerable<ILearnerEmploymentStatus>>();
+            var learningDeliveryFAMs = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
+
+            var larsDelivery = new Data.External.LARS.Model.LearningDelivery
+            {
+                LearnAimRef = "LearnAimRef",
+                NotionalNVQLevelv2 = "2",
+                EffectiveFrom = new DateTime(2020, 8, 1),
+                Categories = new List<Data.External.LARS.Model.LearningDeliveryCategory>
+                {
+                    new Data.External.LARS.Model.LearningDeliveryCategory
+                    {
+                        LearnAimRef = "LearnAimRef",
+                        CategoryRef = 35
+                    }
+                }
+            };
+
+            var annualValues = new List<ILARSAnnualValue>
+            {
+                new Data.External.LARS.Model.AnnualValue
+                {
+                    LearnAimRef = "AimRef",
+                    EffectiveFrom = new DateTime(2020, 8, 1),
+                    BasicSkillsType = 20
+                },
+                new Data.External.LARS.Model.AnnualValue
+                {
+                    LearnAimRef = "AimRef",
+                    EffectiveFrom = new DateTime(2020, 8, 1),
+                    BasicSkillsType = 105
+                }
+            };
+
+            var dd07Mock = new Mock<IDerivedData_07Rule>();
+            dd07Mock.Setup(dd => dd.IsApprenticeship(learningDelivery.ProgTypeNullable)).Returns(dd07);
+
+            var dd29Mock = new Mock<IDerivedData_29Rule>();
+            dd29Mock.Setup(dd => dd.IsInflexibleElementOfTrainingAimLearningDelivery(learningDelivery)).Returns(dd29);
+
+            var dd37Mock = new Mock<IDerivedData_37Rule>();
+            dd37Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses, learningDeliveryFAMs)).Returns(dd37);
+
+            var dd38Mock = new Mock<IDerivedData_38Rule>();
+            dd38Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses)).Returns(dd38);
+
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFAMsQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(deliveryFAMS);
+            learningDeliveryFAMsQueryServiceMock.Setup(lds => lds.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", _ldmExclusions)).Returns(deliveryFAMS);
+            learningDeliveryFAMsQueryServiceMock.Setup(lds => lds.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "DAM", "023")).Returns(deliveryFAMS);
+
+            var dateTimeQSMock = new Mock<IDateTimeQueryService>();
+            dateTimeQSMock.Setup(x => x.IsDateBetween(learnStartDate, larsDelivery.EffectiveFrom, larsDelivery.EffectiveTo ?? DateTime.MaxValue, true)).Returns(lars);
+
+            var larsMock = new Mock<ILARSDataService>();
+            larsMock.Setup(x => x.GetAnnualValuesFor(larsDelivery.LearnAimRef)).Returns(annualValues);
+
+            NewRule(
+                dd07: dd07Mock.Object,
+                dd29: dd29Mock.Object,
+                dd37: dd37Mock.Object,
+                dd38: dd38Mock.Object,
+                learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object,
+                larsDataService: larsMock.Object,
+                dateTimeQueryService: dateTimeQSMock.Object)
+                .Excluded(learningDelivery, employmentStatuses, larsDelivery).Should().BeTrue();
+        }
+
+        public void Excluded_False()
+        {
+            var learnStartDate = new DateTime(2020, 8, 1);
+            var fundModel = 35;
+            var learningDelivery = new TestLearningDelivery
+            {
+                ProgTypeNullable = 24,
+                FundModel = fundModel,
+                LearnStartDate = learnStartDate
+            };
+
+            var employmentStatuses = It.IsAny<IEnumerable<ILearnerEmploymentStatus>>();
+            var learningDeliveryFAMs = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
+
+            var larsDelivery = new Data.External.LARS.Model.LearningDelivery
+            {
+                LearnAimRef = "LearnAimRef",
+                NotionalNVQLevelv2 = "2",
+                EffectiveFrom = new DateTime(2020, 8, 1),
+                Categories = new List<Data.External.LARS.Model.LearningDeliveryCategory>
+                {
+                    new Data.External.LARS.Model.LearningDeliveryCategory
+                    {
+                        LearnAimRef = "LearnAimRef",
+                        CategoryRef = 35
+                    }
+                }
+            };
+
+            var annualValues = new List<ILARSAnnualValue>
+            {
+                new Data.External.LARS.Model.AnnualValue
+                {
+                    LearnAimRef = "AimRef",
+                    EffectiveFrom = new DateTime(2020, 8, 1),
+                    BasicSkillsType = 20
+                },
+                new Data.External.LARS.Model.AnnualValue
+                {
+                    LearnAimRef = "AimRef",
+                    EffectiveFrom = new DateTime(2020, 8, 1),
+                    BasicSkillsType = 105
+                }
+            };
+
+            var dd07Mock = new Mock<IDerivedData_07Rule>();
+            dd07Mock.Setup(dd => dd.IsApprenticeship(learningDelivery.ProgTypeNullable)).Returns(false);
+
+            var dd29Mock = new Mock<IDerivedData_29Rule>();
+            dd29Mock.Setup(dd => dd.IsInflexibleElementOfTrainingAimLearningDelivery(learningDelivery)).Returns(false);
+
+            var dd37Mock = new Mock<IDerivedData_37Rule>();
+            dd37Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses, learningDeliveryFAMs)).Returns(false);
+
+            var dd38Mock = new Mock<IDerivedData_38Rule>();
+            dd38Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses)).Returns(false);
+
+            var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFAMsQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
+            learningDeliveryFAMsQueryServiceMock.Setup(lds => lds.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", _ldmExclusions)).Returns(false);
+            learningDeliveryFAMsQueryServiceMock.Setup(lds => lds.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "DAM", "023")).Returns(false);
+
+            var dateTimeQSMock = new Mock<IDateTimeQueryService>();
+            dateTimeQSMock.Setup(x => x.IsDateBetween(learnStartDate, larsDelivery.EffectiveFrom, larsDelivery.EffectiveTo ?? DateTime.MaxValue, true)).Returns(false);
+
+            var larsMock = new Mock<ILARSDataService>();
+            larsMock.Setup(x => x.GetAnnualValuesFor(larsDelivery.LearnAimRef)).Returns(annualValues);
+
+            NewRule(
+                dd07: dd07Mock.Object,
+                dd29: dd29Mock.Object,
+                dd37: dd37Mock.Object,
+                dd38: dd38Mock.Object,
+                learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object,
+                larsDataService: larsMock.Object,
+                dateTimeQueryService: dateTimeQSMock.Object)
+                .Excluded(learningDelivery, employmentStatuses, larsDelivery).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_NullLars()
+        {
+            var learnAimRef = "LearnAimRef";
+            var dateOfBirth = new DateTime(2000, 8, 1);
+            var learnStartDate = new DateTime(2020, 8, 1);
+            var fundModel = 35;
+            var learningDelivery = new TestLearningDelivery
+            {
+                ProgTypeNullable = 24,
+                FundModel = fundModel,
+                LearnStartDate = learnStartDate
+            };
+
+            var employmentStatuses = It.IsAny<IEnumerable<ILearnerEmploymentStatus>>();
+            var learningDeliveryFAMs = It.IsAny<IEnumerable<ILearningDeliveryFAM>>();
+
+            var larsDelivery = new Data.External.LARS.Model.LearningDelivery
+            {
+                LearnAimRef = learnAimRef,
+                NotionalNVQLevelv2 = "2",
+                EffectiveFrom = new DateTime(2020, 8, 1),
+                Categories = new List<Data.External.LARS.Model.LearningDeliveryCategory>
+                {
+                    new Data.External.LARS.Model.LearningDeliveryCategory
+                    {
+                        LearnAimRef = learnAimRef,
+                        CategoryRef = 35
+                    }
+                }
+            };
+
+            var larsMock = new Mock<ILARSDataService>();
+            larsMock.Setup(x => x.GetDeliveryFor(learnAimRef)).Returns((ILARSLearningDelivery)null);
+
+            NewRule(larsDataService: larsMock.Object).ConditionMet(dateOfBirth, employmentStatuses, learningDelivery).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Validate_NoError_NoDeliveries()
+        {
+            var learner = new TestLearner();
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
         }
 
         [Fact]

@@ -161,6 +161,8 @@
     <Compile Include="CrossEntity\R07RuleTests.cs" />
     <Compile Include="CrossEntity\R91RuleTests.cs" />
     <Compile Include="CrossEntity\R96RuleTests.cs" />
+    <Compile Include="Derived\DerivedData_38RuleTests.cs" />
+    <Compile Include="Derived\DerivedData_37RuleTests.cs" />
     <Compile Include="Derived\DerivedData_36RuleTests.cs" />
     <Compile Include="Derived\DerivedData_11RuleTests.cs" />
     <Compile Include="Derived\DerivedData_19RuleTests.cs" />

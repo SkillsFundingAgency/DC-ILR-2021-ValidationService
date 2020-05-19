@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
@@ -55,37 +56,40 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool Derive(int fundModel, DateTime learnStartDate, IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            return FundModelCondition(fundModel) ? EmpStatusCondition(learnStartDate, learnerEmploymentStatuses) : false;
-        }
-
-        private bool EmpStatusCondition(DateTime learnStartDate, IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
-        {
-            var employmentStatus = _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(learnerEmploymentStatuses, learnStartDate);
-
-            if (employmentStatus != null && _empStatsLookupRange.Contains(employmentStatus.EmpStat))
+            if (FundModelCondition(fundModel) && learnerEmploymentStatuses != null)
             {
-                return EmpStatMonitoringConditionOne(employmentStatus)
-                    || EmpStatMonitoringConditionTwo(employmentStatus)
-                    || EmpStatMonitoringConditionThree(employmentStatus);
+                var employmentStatuses = _learnerEmploymentStatusQueryService.LearnerEmploymentStatusesForDate(learnerEmploymentStatuses, learnStartDate);
+
+                return employmentStatuses.Any(EmpStatusCondition);
             }
 
             return false;
         }
 
-        private bool EmpStatMonitoringConditionOne(ILearnerEmploymentStatus employmentStatus)
+        public bool EmpStatusCondition(ILearnerEmploymentStatus employmentStatus)
+        {
+            return ValidEmpstat(employmentStatus.EmpStat)
+                && (EmpStatMonitoringConditionOne(employmentStatus)
+                || EmpStatMonitoringConditionTwo(employmentStatus)
+                || EmpStatMonitoringConditionThree(employmentStatus));
+        }
+
+        public bool ValidEmpstat(int empStat) => _empStatsLookupRange.Contains(empStat);
+
+        public bool EmpStatMonitoringConditionOne(ILearnerEmploymentStatus employmentStatus)
         {
              return _learnerEmploymentStatusMonitoringQueryService
                     .HasAnyEmploymentStatusMonitoringTypeAndCodeForEmploymentStatus(employmentStatus, LearnerEmploymentStatusConstants.ESMTypes.BSI_BenefitStatusIndicator, LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfJSA);
         }
 
-        private bool EmpStatMonitoringConditionTwo(ILearnerEmploymentStatus employmentStatus)
+        public bool EmpStatMonitoringConditionTwo(ILearnerEmploymentStatus employmentStatus)
         {
             return _empStatsConditionTwo.Contains(employmentStatus.EmpStat)
                 && _learnerEmploymentStatusMonitoringQueryService
                    .HasAnyEmploymentStatusMonitoringTypeAndCodesForEmploymentStatus(employmentStatus, LearnerEmploymentStatusConstants.ESMTypes.BSI_BenefitStatusIndicator, _esmCodesConditionTwo);
         }
 
-        private bool EmpStatMonitoringConditionThree(ILearnerEmploymentStatus employmentStatus)
+        public bool EmpStatMonitoringConditionThree(ILearnerEmploymentStatus employmentStatus)
         {
             return employmentStatus.EmpStat == LearnerEmploymentStatusConstants.EmpStats.InPaidEmployment
                 && _learnerEmploymentStatusMonitoringQueryService
@@ -94,6 +98,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                    .HasAnyEmploymentStatusMonitoringTypeAndCodesForEmploymentStatus(employmentStatus, LearnerEmploymentStatusConstants.ESMTypes.EII_EmploymentIntensityIndicator, _esmEIICodesConditionThree);
         }
 
-        private bool FundModelCondition(int fundModel) => fundModel == FundModels.AdultSkills;
+        public bool FundModelCondition(int fundModel) => fundModel == FundModels.AdultSkills;
     }
 }
