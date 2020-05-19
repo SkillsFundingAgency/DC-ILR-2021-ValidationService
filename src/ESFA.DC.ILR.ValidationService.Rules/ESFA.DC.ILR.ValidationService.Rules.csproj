@@ -13,7 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="CrossEntity\R97Rule.cs" />
     <Compile Remove="EmploymentStatus\AgreeId\AgreeId_02Rule.cs" />
   </ItemGroup>
 

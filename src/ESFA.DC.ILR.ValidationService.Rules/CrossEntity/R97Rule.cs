@@ -80,7 +80,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             ILearnerEmploymentStatus previousLearnerEmploymentStatus,
             ILearnerEmploymentStatus learnerEmploymentStatus) =>
             learnerEmploymentStatus.DateEmpStatApp != previousLearnerEmploymentStatus.DateEmpStatApp
-                && learnerEmploymentStatus.AgreeId.CaseInsensitiveEquals(previousLearnerEmploymentStatus.AgreeId)
                 && learnerEmploymentStatus.EmpStat == previousLearnerEmploymentStatus.EmpStat
                 && learnerEmploymentStatus.EmpIdNullable == previousLearnerEmploymentStatus.EmpIdNullable;
 

@@ -597,6 +597,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(R91Rule),
                 typeof(R92Rule),
                 typeof(R96Rule),
+                typeof(R97Rule),
                 typeof(R99Rule),
                 typeof(R100Rule),
                 typeof(R101Rule),
