@@ -18,7 +18,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 {
     public class LearnDelFAMType_79RuleTests : AbstractRuleTests<LearnDelFAMType_79Rule>
     {
-        private readonly HashSet<int?> _basicSkillTypes = new HashSet<int?>() { 01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35 };
+        private readonly HashSet<int?> _basicSkillTypes = new HashSet<int?>()
+        {
+            LARSConstants.BasicSkills.Certificate_AdultLiteracy,
+            LARSConstants.BasicSkills.Certificate_AdultNumeracy,
+            LARSConstants.BasicSkills.GCSE_EnglishLanguage,
+            LARSConstants.BasicSkills.GCSE_Mathematics,
+            LARSConstants.BasicSkills.KeySkill_Communication,
+            LARSConstants.BasicSkills.KeySkill_ApplicationOfNumbers,
+            LARSConstants.BasicSkills.FunctionalSkillsMathematics,
+            LARSConstants.BasicSkills.FunctionalSkillsEnglish,
+            LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultNumeracy,
+            LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultLiteracy,
+            LARSConstants.BasicSkills.NonNQF_QCFS4LLiteracy,
+            LARSConstants.BasicSkills.NonNQF_QCFS4LNumeracy,
+            LARSConstants.BasicSkills.QCFBasicSkillsEnglishLanguage,
+            LARSConstants.BasicSkills.QCFBasicSkillsMathematics,
+            LARSConstants.BasicSkills.UnitQCFBasicSkillsEnglishLanguage,
+            LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics,
+            LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage,
+            LARSConstants.BasicSkills.InternationalGCSEMathematics,
+            LARSConstants.BasicSkills.FreeStandingMathematicsQualification
+        };
+
         private readonly HashSet<string> _ldmExclusions = new HashSet<string>
         {
             LearningDeliveryFAMCodeConstants.LDM_OLASS,
