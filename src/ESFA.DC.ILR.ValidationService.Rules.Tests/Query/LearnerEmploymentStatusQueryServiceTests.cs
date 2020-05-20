@@ -1,8 +1,10 @@
-﻿using ESFA.DC.ILR.Tests.Model;
+﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Rules.Query;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
@@ -79,6 +81,92 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
             };
 
             NewService().LearnerEmploymentStatusForDate(learnerEmploymentStatuses, learnStartDate).Should().Be(matchingLearnerEmploymentStatus);
+        }
+
+        [Fact]
+        public void LearnerEmploymentStatusesForDate_Single()
+        {
+            var learnStartDate = new DateTime(2018, 8, 13);
+
+            var matchingLearnerEmploymentStatus = new TestLearnerEmploymentStatus
+            {
+                DateEmpStatApp = new DateTime(2018, 8, 13)
+            };
+
+            var laterLearningEmploymentStatus = new TestLearnerEmploymentStatus
+            {
+                DateEmpStatApp = new DateTime(2018, 8, 19)
+            };
+
+            var learnerEmploymentStatuses = new List<TestLearnerEmploymentStatus>
+            {
+                matchingLearnerEmploymentStatus,
+                laterLearningEmploymentStatus
+            };
+
+            NewService().LearnerEmploymentStatusesForDate(learnerEmploymentStatuses, learnStartDate).Should().BeEquivalentTo(new List<ILearnerEmploymentStatus> { matchingLearnerEmploymentStatus });
+        }
+
+        [Fact]
+        public void LearnerEmploymentStatusesForDate_Multiple()
+        {
+            var learnStartDate = new DateTime(2018, 8, 13);
+
+            var matchingLearnerEmploymentStatusOne = new TestLearnerEmploymentStatus
+            {
+                DateEmpStatApp = new DateTime(2018, 8, 13)
+            };
+
+            var matchingLearnerEmploymentStatusTwo = new TestLearnerEmploymentStatus
+            {
+                DateEmpStatApp = new DateTime(2018, 8, 13)
+            };
+
+            var learnerEmploymentStatuses = new List<TestLearnerEmploymentStatus>
+            {
+                matchingLearnerEmploymentStatusOne,
+                matchingLearnerEmploymentStatusTwo
+            };
+
+            NewService().LearnerEmploymentStatusesForDate(learnerEmploymentStatuses, learnStartDate).Should().BeEquivalentTo(new List<ILearnerEmploymentStatus> { matchingLearnerEmploymentStatusOne, matchingLearnerEmploymentStatusTwo });
+        }
+
+        [Fact]
+        public void LearnerEmploymentStatusesForDate_NoMatch()
+        {
+            var learnStartDate = new DateTime(2018, 8, 1);
+
+            var earlyLearnerEmploymentStatus = new TestLearnerEmploymentStatus
+            {
+                DateEmpStatApp = new DateTime(2018, 8, 10)
+            };
+
+            var middleLearnerEmploymentStatus = new TestLearnerEmploymentStatus
+            {
+                DateEmpStatApp = new DateTime(2018, 8, 13)
+            };
+
+            var laterLearnerEmploymentStatus = new TestLearnerEmploymentStatus
+            {
+                DateEmpStatApp = new DateTime(2018, 8, 15)
+            };
+
+            var learnerEmploymentStatuses = new List<TestLearnerEmploymentStatus>
+            {
+                earlyLearnerEmploymentStatus,
+                middleLearnerEmploymentStatus,
+                laterLearnerEmploymentStatus
+            };
+
+            NewService().LearnerEmploymentStatusesForDate(learnerEmploymentStatuses, learnStartDate).Should().BeEquivalentTo(Enumerable.Empty<ILearnerEmploymentStatus>());
+        }
+
+        [Fact]
+        public void LearnerEmploymentStatusesForDate_NoMatch_NoStatuses()
+        {
+            var learnStartDate = new DateTime(2018, 8, 1);
+
+            NewService().LearnerEmploymentStatusesForDate(null, learnStartDate).Should().BeEquivalentTo(Enumerable.Empty<ILearnerEmploymentStatus>());
         }
 
         [Fact]

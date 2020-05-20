@@ -47,10 +47,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
 
         public bool HasAnyEmploymentStatusMonitoringTypeAndCodeForEmploymentStatus(ILearnerEmploymentStatus learnerEmploymentStatus, string esmType, int esmCode)
         {
-            return HasAnyEmploymentStatusMonitoringTypeAndCodesForEmploymentStatus(
-                learnerEmploymentStatus,
-                esmType,
-                new List<int>() { esmCode });
+            return learnerEmploymentStatus?.EmploymentStatusMonitorings != null
+                   && learnerEmploymentStatus.EmploymentStatusMonitorings
+                           .Any(esmt => esmt.ESMType.CaseInsensitiveEquals(esmType) && esmCode == esmt.ESMCode);
         }
     }
 }

@@ -9,6 +9,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query.Interface
     {
         ILearnerEmploymentStatus LearnerEmploymentStatusForDate(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime date);
 
+        IEnumerable<ILearnerEmploymentStatus> LearnerEmploymentStatusesForDate(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime date);
+
         bool EmpStatsNotExistBeforeDate(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime date);
 
         bool EmpStatsNotExistOnOrBeforeDate(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime date);
