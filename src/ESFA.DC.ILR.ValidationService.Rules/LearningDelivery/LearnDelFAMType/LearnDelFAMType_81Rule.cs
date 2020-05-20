@@ -12,10 +12,9 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
-    public class LearnDelFAMType_80Rule : AbstractRule, IRule<ILearner>
+    public class LearnDelFAMType_81Rule : AbstractRule, IRule<ILearner>
     {
-        private const int MinAge = 19;
-        private const int MaxAge = 23;
+        private const int MaxAge = 24;
         private readonly DateTime _latestStartDate = new DateTime(2020, 07, 31, 23, 59, 59);
 
         private readonly HashSet<string> _nvq2Levels = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -23,20 +22,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             LARSConstants.NotionalNVQLevelV2Strings.EntryLevel,
             LARSConstants.NotionalNVQLevelV2Strings.Level1,
             LARSConstants.NotionalNVQLevelV2Strings.Level2,
-        };
-
-        private readonly HashSet<int> _priorAttainments = new HashSet<int>()
-        {
-            PriorAttainments.FullLevel2,
-            PriorAttainments.FullLevel3,
-            PriorAttainments.Level4Expired20130731,
-            PriorAttainments.Level5AndAboveExpired20130731,
-            PriorAttainments.Level4,
-            PriorAttainments.Level5,
-            PriorAttainments.Level6,
-            PriorAttainments.Level7AndAbove,
-            PriorAttainments.OtherLevelNotKnown,
-            PriorAttainments.NotKnown
         };
 
         private readonly HashSet<int?> _basicSkillTypes = new HashSet<int?>()
@@ -77,8 +62,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly IDerivedData_07Rule _dd07;
         private readonly IDerivedData_29Rule _dd29;
         private readonly IDerivedData_37Rule _dd37;
+        private readonly IDerivedData_38Rule _dd38;
 
-        public LearnDelFAMType_80Rule(
+        public LearnDelFAMType_81Rule(
             IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
             IDateTimeQueryService dateTimeQueryService,
@@ -86,8 +72,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IDerivedData_07Rule dd07,
             IDerivedData_29Rule dd29,
-            IDerivedData_37Rule dd37)
-            : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_80)
+            IDerivedData_37Rule dd37,
+            IDerivedData_38Rule dd38)
+            : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_81)
         {
             _fileDataService = fileDataService;
             _dateTimeQueryService = dateTimeQueryService;
@@ -96,6 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _dd07 = dd07;
             _dd29 = dd29;
             _dd37 = dd37;
+            _dd38 = dd38;
         }
 
         public void Validate(ILearner learner)
@@ -109,7 +97,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if (ConditionMet(learner.DateOfBirthNullable, learner.PriorAttainNullable, learner.LearnerEmploymentStatuses, learningDelivery))
+                if (ConditionMet(learner.DateOfBirthNullable, learner.LearnerEmploymentStatuses, learningDelivery))
                 {
                     HandleValidationError(
                         learner.LearnRefNumber,
@@ -125,7 +113,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             }
         }
 
-        public bool ConditionMet(DateTime? dateOfBirth, int? priorAttain, IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, ILearningDelivery learningDelivery)
+        public bool ConditionMet(DateTime? dateOfBirth, IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, ILearningDelivery learningDelivery)
         {
             var larsLearningDelivery = _larsDataService.GetDeliveryFor(learningDelivery.LearnAimRef);
 
@@ -135,15 +123,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             }
 
             return !Excluded(learningDelivery, learnerEmploymentStatuses, larsLearningDelivery)
-                && PriorAttainCondition(priorAttain)
                 && FundModelCondition(learningDelivery.FundModel)
                 && StartDateCondition(learningDelivery.LearnStartDate)
                 && AgeConditionMet(learningDelivery.LearnStartDate, dateOfBirth)
                 && LarsCondition(larsLearningDelivery)
                 && LearningDeliveryFAMsCondition(learningDelivery.LearningDeliveryFAMs);
         }
-
-        public bool PriorAttainCondition(int? priorAttain) => priorAttain.HasValue && _priorAttainments.Contains(priorAttain.Value);
 
         public bool FundModelCondition(int fundModel) => fundModel == FundModels.AdultSkills;
 
@@ -157,7 +142,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             }
 
             var ageAtCourseStart = _dateTimeQueryService.YearsBetween(dateOfBirth.Value, learnStartDate);
-            if (ageAtCourseStart >= MinAge && ageAtCourseStart <= MaxAge)
+            if (ageAtCourseStart >= MaxAge)
             {
                 return true;
             }
@@ -178,6 +163,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             return DD07Condition(learningDelivery.ProgTypeNullable)
                 || DD29Condition(learningDelivery)
                 || DD37Condition(learningDelivery.FundModel, learningDelivery.LearnStartDate, learnerEmploymentStatuses, learningDelivery.LearningDeliveryFAMs)
+                || DD38Condition(learningDelivery.FundModel, learningDelivery.LearnStartDate, learnerEmploymentStatuses)
                 || LearningDeliveryFAMExclusion(learningDelivery.LearningDeliveryFAMs)
                 || LARSExclusionCondition(larsLearningDelivery, learningDelivery.LearnStartDate);
         }
@@ -195,6 +181,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool DD37Condition(int fundModel, DateTime learnStartDate, IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return _dd37.Derive(fundModel, learnStartDate, learnerEmploymentStatuses, learningDeliveryFAMs);
+        }
+
+        public bool DD38Condition(int fundModel, DateTime learnStartDate, IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
+        {
+            return _dd38.Derive(fundModel, learnStartDate, learnerEmploymentStatuses);
         }
 
         public bool LearningDeliveryFAMExclusion(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
