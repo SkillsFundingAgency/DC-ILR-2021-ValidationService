@@ -336,6 +336,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(ESMType_13Rule),
                 typeof(ESMType_14Rule),
                 typeof(ESMType_15Rule),
+                typeof(ESMType_16Rule),
                 typeof(EPAOrgID_03Rule),
                 typeof(FamilyName_01Rule),
                 typeof(FamilyName_02Rule),
