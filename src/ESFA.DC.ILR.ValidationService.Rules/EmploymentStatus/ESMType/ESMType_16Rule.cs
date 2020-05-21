@@ -44,7 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public bool LearningDeliveryConditionMet(IEnumerable<ILearningDelivery> learningDeliveries)
         {
-            return learningDeliveries?.Any(ld => ld.ProgTypeNullable != null && ld.ProgTypeNullable.Equals(ProgTypes.ApprenticeshipStandard)) ?? false;
+            return learningDeliveries?.Any(ld => ld.ProgTypeNullable == ProgTypes.ApprenticeshipStandard) ?? false;
         }
 
         public bool ConditionMet(ILearnerEmploymentStatus learnerEmploymentStatus)
