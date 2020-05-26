@@ -2,61 +2,74 @@
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
-    public class LearnAimRef_86Rule : IRule<ILearner>
+    public class LearnAimRef_86Rule : AbstractRule, IRule<ILearner>
     {
-        public const string Name = RuleNameConstants.LearnAimRef_86;
-
         private readonly IValidationErrorHandler _messageHandler;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         public LearnAimRef_86Rule(
             IValidationErrorHandler validationErrorHandler,
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
+            : base(validationErrorHandler, RuleNameConstants.LearnAimRef_86)
         {
             _messageHandler = validationErrorHandler;
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
-
-        public string RuleName => Name;
 
         public bool IsWorkExperience(ILearningDelivery delivery) =>
             delivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.WorkExperience) ||
             delivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.IndustryPlacement) ||
             delivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.TLevelWorkExperience);
 
-        public bool IsNotValid(ILearningDelivery delivery) =>
-            delivery.FundModel == FundModels.AdultSkills
-            && !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
-                delivery.LearningDeliveryFAMs,
+        public bool LearningDeliveryFAMExclusion(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs) =>
+             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                learningDeliveryFAMs,
                 LearningDeliveryFAMTypeConstants.LDM,
-                LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)
-            && delivery.ProgTypeNullable != ProgTypes.Traineeship
-            && IsWorkExperience(delivery);
+                LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy);
+
+        public bool ProgTypeCondition(int? progType) => progType != ProgTypes.Traineeship;
+
+        public bool FundModelCondition(int fundModel) => fundModel == FundModels.AdultSkills;
+
+        public bool ConditionMet(ILearningDelivery delivery) =>
+            FundModelCondition(delivery.FundModel)
+            && ProgTypeCondition(delivery.ProgTypeNullable)
+            && IsWorkExperience(delivery)
+            && !LearningDeliveryFAMExclusion(delivery.LearningDeliveryFAMs);
 
         public void Validate(ILearner objectToValidate)
         {
-            var learnRefNumber = objectToValidate.LearnRefNumber;
+            if (objectToValidate.LearningDeliveries == null)
+            {
+                return;
+            }
 
-            objectToValidate.LearningDeliveries
-                .NullSafeWhere(IsNotValid)
-                .ForEach(x => RaiseValidationMessage(learnRefNumber, x));
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries)
+            {
+                if (ConditionMet(learningDelivery))
+                {
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(learningDelivery.LearnAimRef, learningDelivery.FundModel, learningDelivery.ProgTypeNullable));
+                }
+            }
         }
 
-        public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string learnAimRef, int fundModel, int? progType)
         {
-            var parameters = new List<IErrorMessageParameter>
+            return new[]
             {
-                _messageHandler.BuildErrorMessageParameter(nameof(thisDelivery.LearnAimRef), thisDelivery.LearnAimRef),
-                _messageHandler.BuildErrorMessageParameter(nameof(thisDelivery.FundModel), thisDelivery.FundModel),
-                _messageHandler.BuildErrorMessageParameter(PropertyNameConstants.ProgType, thisDelivery.ProgTypeNullable)
+                BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, learnAimRef),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
+                BuildErrorMessageParameter(PropertyNameConstants.ProgType, progType)
             };
-
-            _messageHandler.Handle(RuleName, learnRefNumber, thisDelivery.AimSeqNumber, parameters);
         }
     }
 }
