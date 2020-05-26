@@ -35,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 delivery.LearningDeliveryFAMs,
                 LearningDeliveryFAMTypeConstants.LDM,
                 LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)
-            && delivery.AimType != AimTypes.ProgrammeAim
+            && delivery.ProgTypeNullable != ProgTypes.Traineeship
             && IsWorkExperience(delivery);
 
         public void Validate(ILearner objectToValidate)
