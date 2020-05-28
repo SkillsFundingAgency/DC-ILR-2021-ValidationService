@@ -8,13 +8,10 @@ using ESFA.DC.ILR.ValidationService.Data.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
 {
-    public class PostcodesDataService :
-        IPostcodesDataService
+    public class PostcodesDataService : IPostcodesDataService
     {
         private readonly IExternalDataCache _externalDataCache;
-
         private readonly IReadOnlyCollection<IONSPostcode> _onsPostcodes;
-
         private readonly IReadOnlyDictionary<string, IReadOnlyCollection<IDevolvedPostcode>> _devolvedPostcodes;
 
         public PostcodesDataService(IExternalDataCache externalDataCache)
@@ -28,6 +25,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
         {
             return !string.IsNullOrWhiteSpace(postcode)
                    && _externalDataCache.Postcodes.Contains(postcode);
+        }
+
+        public bool ONSPostcodeExists(string postcode)
+        {
+            return !string.IsNullOrWhiteSpace(postcode)
+                   && _onsPostcodes.Any(x => x.Postcode.CaseInsensitiveEquals(postcode));
         }
 
         public IReadOnlyCollection<IONSPostcode> GetONSPostcodes(string fromPostcode) =>

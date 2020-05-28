@@ -16,6 +16,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                 .FirstOrDefault();
         }
 
+        public IEnumerable<ILearnerEmploymentStatus> LearnerEmploymentStatusesForDate(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime date)
+        {
+            if (learnerEmploymentStatuses != null)
+            {
+                return learnerEmploymentStatuses?.Where(les => date >= les.DateEmpStatApp) ?? Enumerable.Empty<ILearnerEmploymentStatus>();
+            }
+
+            return Enumerable.Empty<ILearnerEmploymentStatus>();
+        }
+
         public bool EmpStatsNotExistBeforeDate(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime date)
         {
             if (learnerEmploymentStatuses == null)

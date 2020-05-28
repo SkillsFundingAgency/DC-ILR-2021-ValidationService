@@ -51,8 +51,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 
         public bool LearningDeliveryConditionMet(int fundModel, int? progType)
         {
-            return FundModelConditionMet(fundModel)
-                && DD07ConditionMet(progType);
+            return !Excluded(fundModel, progType)
+                   && FundModelConditionMet(fundModel)
+                   && DD07ConditionMet(progType);
         }
 
         public bool FundModelConditionMet(int fundModel)
@@ -63,6 +64,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
         public bool DD07ConditionMet(int? progType)
         {
             return !_dd07.IsApprenticeship(progType);
+        }
+
+        public bool Excluded(int fundModel, int? progType)
+        {
+            return progType.HasValue
+                   && fundModel == FundModels.Age16To19ExcludingApprenticeships
+                   && (progType == ProgTypes.TLevel || progType == ProgTypes.TLevelTransition);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? planLearnHours, int fundModel)

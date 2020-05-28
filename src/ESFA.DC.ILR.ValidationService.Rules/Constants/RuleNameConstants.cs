@@ -44,8 +44,6 @@
         public const string AFinType_13 = "AFinType_13";
         public const string AFinType_14 = "AFinType_14";
 
-        public const string AgreeId_02 = "AgreeId_02";
-
         public const string AimSeqNumber_02 = "AimSeqNumber_02";
         public const string ALSCost_02 = "ALSCost_02";
 
@@ -134,6 +132,7 @@
         public const string EmpId_02 = "EmpId_02";
         public const string EmpId_10 = "EmpId_10";
         public const string EmpId_13 = "EmpId_13";
+        public const string EmpId_14 = "EmpId_14";
 
         public const string EmpOutcome_01 = "EmpOutcome_01";
         public const string EmpOutcome_02 = "EmpOutcome_02";
@@ -180,6 +179,7 @@
         public const string ESMType_13 = "ESMType_13";
         public const string ESMType_14 = "ESMType_14";
         public const string ESMType_15 = "ESMType_15";
+        public const string ESMType_16 = "ESMType_16";
 
         public const string FamilyName_01 = "FamilyName_01";
         public const string FamilyName_02 = "FamilyName_02";
@@ -268,11 +268,8 @@
         public const string LearnDelFAMType_15 = "LearnDelFAMType_15";
         public const string LearnDelFAMType_16 = "LearnDelFAMType_16";
         public const string LearnDelFAMType_18 = "LearnDelFAMType_18";
-        public const string LearnDelFAMType_20 = "LearnDelFAMType_20";
         public const string LearnDelFAMType_22 = "LearnDelFAMType_22";
-        public const string LearnDelFAMType_24 = "LearnDelFAMType_24";
         public const string LearnDelFAMType_27 = "LearnDelFAMType_27";
-        public const string LearnDelFAMType_30 = "LearnDelFAMType_30";
         public const string LearnDelFAMType_31 = "LearnDelFAMType_31";
         public const string LearnDelFAMType_35 = "LearnDelFAMType_35";
         public const string LearnDelFAMType_36 = "LearnDelFAMType_36";
@@ -307,6 +304,9 @@
         public const string LearnDelFAMType_76 = "LearnDelFAMType_76";
         public const string LearnDelFAMType_77 = "LearnDelFAMType_77";
         public const string LearnDelFAMType_78 = "LearnDelFAMType_78";
+        public const string LearnDelFAMType_79 = "LearnDelFAMType_79";
+        public const string LearnDelFAMType_80 = "LearnDelFAMType_80";
+        public const string LearnDelFAMType_81 = "LearnDelFAMType_81";
 
         public const string LearningDeliveryHE_02 = "LearningDeliveryHE_02";
         public const string LearningDeliveryHE_03 = "LearningDeliveryHE_03";
@@ -399,7 +399,6 @@
         public const string OutEndDate_01 = "OutEndDate_01";
 
         public const string OutGrade_01 = "OutGrade_01";
-        public const string OutGrade_03 = "OutGrade_03";
         public const string OutGrade_04 = "OutGrade_04";
         public const string OutGrade_05 = "OutGrade_05";
         public const string OutGrade_06 = "OutGrade_06";
@@ -436,7 +435,7 @@
         public const string PlanEEPHours_01 = "PlanEEPHours_01";
 
         public const string PHours_01 = "PHours_01";
-        public const string PHours_02 = "PHours_02";
+        public const string PHours_03 = "PHours_03";
 
         public const string PlanLearnHours_01 = "PlanLearnHours_01";
         public const string PlanLearnHours_02 = "PlanLearnHours_02";

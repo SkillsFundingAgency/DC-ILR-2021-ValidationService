@@ -26,7 +26,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
         [InlineData(LearnerFAMTypeConstants.NLM, 2, false)]
         [InlineData(LearnerFAMTypeConstants.EDF, 2, false)]
         [InlineData("edF", 2, false)]
-        [InlineData(LearnerFAMTypeConstants.PPE, 2, false)]
         [InlineData(LearnerFAMTypeConstants.LSR, 4, false)]
         [InlineData(LearnerFAMTypeConstants.SEN, 1, false)]
         [InlineData(LearnerFAMTypeConstants.MCF, 1, false)]
@@ -37,7 +36,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
         [InlineData(LearnerFAMTypeConstants.NLM, 3, true)]
         [InlineData("nlm", 3, true)]
         [InlineData(LearnerFAMTypeConstants.EDF, 3, true)]
-        [InlineData(LearnerFAMTypeConstants.PPE, 3, true)]
         public void ConditionMetMeetsExpectation(string learnFamType, int count, bool expectation)
         {
             var learnerFAMQueryServiceMock = new Mock<ILearnerFAMQueryService>();
@@ -102,7 +100,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
                     new TestLearnerFAM { LearnFAMType = LearnerFAMTypeConstants.EDF },
                     new TestLearnerFAM { LearnFAMType = LearnerFAMTypeConstants.EDF },
                     new TestLearnerFAM { LearnFAMType = LearnerFAMTypeConstants.EDF },
-                    new TestLearnerFAM { LearnFAMType = LearnerFAMTypeConstants.PPE },
                     new TestLearnerFAM { LearnFAMType = LearnerFAMTypeConstants.HNS },
                 }
             };
@@ -117,7 +114,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.LearnFAMType
 
             validationErrorHandlerMock.Verify(dd => dd.BuildErrorMessageParameter(PropertyNameConstants.LearnFAMType, LearnerFAMTypeConstants.NLM), Times.Once);
             validationErrorHandlerMock.Verify(dd => dd.BuildErrorMessageParameter(PropertyNameConstants.LearnFAMType, LearnerFAMTypeConstants.EDF), Times.Once);
-            validationErrorHandlerMock.Verify(dd => dd.BuildErrorMessageParameter(PropertyNameConstants.LearnFAMType, LearnerFAMTypeConstants.PPE), Times.Once);
             validationErrorHandlerMock.Verify(dd => dd.BuildErrorMessageParameter(PropertyNameConstants.LearnFAMType, LearnerFAMTypeConstants.HNS), Times.Never);
         }
 

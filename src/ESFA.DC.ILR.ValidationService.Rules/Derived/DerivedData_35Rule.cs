@@ -18,7 +18,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             LearningDeliveryFAMCodeConstants.SOF_MCAGLA_WECA,
             LearningDeliveryFAMCodeConstants.SOF_MCAGLA_TVCA,
             LearningDeliveryFAMCodeConstants.SOF_MCAGLA_CPCA,
-            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_London
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_London,
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_NTCA
         };
 
         public DerivedData_35Rule(ILearningDeliveryFAMQueryService learnDelFAMQueryService)
