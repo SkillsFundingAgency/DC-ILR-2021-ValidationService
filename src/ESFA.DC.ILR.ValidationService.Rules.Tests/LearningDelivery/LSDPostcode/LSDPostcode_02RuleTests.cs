@@ -106,6 +106,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         [Fact]
+        public void PostcodeConditionTwo_FalseWhenEmpty()
+        {
+            var learnStartDate = new DateTime(2019, 9, 1);
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>();
+
+            NewRule().PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
+        }
+
+        [Fact]
         public void PostcodeConditionThree_False_SOF()
         {
             var learnStartDate = new DateTime(2019, 9, 1);
@@ -176,6 +186,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             };
 
             NewRule().PostcodeConditionThree(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
+        }
+
+        [Fact]
+        public void PostcodeConditionThree_FalseWhenEmpty()
+        {
+            var learnStartDate = new DateTime(2019, 12, 1);
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>();
+
+            NewRule().PostcodeConditionThree(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
         }
 
         [Fact]

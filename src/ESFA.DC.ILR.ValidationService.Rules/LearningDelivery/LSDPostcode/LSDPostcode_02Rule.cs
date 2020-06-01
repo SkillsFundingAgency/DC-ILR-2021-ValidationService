@@ -115,10 +115,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
             (devolvedPostcodes == null || !devolvedPostcodes.Any()) && dd35;
 
         public bool PostcodeConditionTwo(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
-            devolvedPostcodes.Any(dp => sofCode != dp.SourceOfFunding);
+            devolvedPostcodes != null && devolvedPostcodes.Any(dp => sofCode != dp.SourceOfFunding);
 
         public bool PostcodeConditionThree(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
-            devolvedPostcodes.Any(dp => sofCode == dp.SourceOfFunding && !(learnStartDate >= dp.EffectiveFrom && learnStartDate <= (dp.EffectiveTo ?? DateTime.MaxValue)));
+            devolvedPostcodes != null && devolvedPostcodes.Any(dp => sofCode == dp.SourceOfFunding && !(learnStartDate >= dp.EffectiveFrom && learnStartDate <= (dp.EffectiveTo ?? DateTime.MaxValue)));
 
         public bool IsExcluded(int? progType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs, bool longTermResUkprn)
         {
