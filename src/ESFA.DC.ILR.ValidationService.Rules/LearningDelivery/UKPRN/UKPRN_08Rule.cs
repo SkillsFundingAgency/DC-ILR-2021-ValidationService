@@ -47,8 +47,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             allocation.DeliveryUKPRN == providerID;
 
         public bool HasQualifyingFundingStream(IFcsContractAllocation allocation) =>
-            allocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.ALLB1920)
-            || allocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.ALLBC1920);
+            allocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.ALLB2021)
+            || allocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.ALLBC2021);
 
         public bool HasFundingRelationship(ILearningDelivery thisDelivery)
         {

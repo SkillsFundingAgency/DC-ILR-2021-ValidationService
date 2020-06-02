@@ -53,5 +53,9 @@
         public const string AEB_AS1920 = "AEB-AS1920";
 
         public const string C16_18TRN1920 = "16-18TRN1920";
+
+        public const string ALLB2021 = "ALLB2021";
+
+        public const string ALLBC2021 = "ALLBC2021";
     }
 }
