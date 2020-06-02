@@ -21,12 +21,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         private readonly int _fundModel = FundModels.AdultSkills;
         private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
-            FundingStreamPeriodCodeConstants.AEBC_19TRN1920,
-            FundingStreamPeriodCodeConstants.AEBC_ASCL1920,
-            FundingStreamPeriodCodeConstants.AEB_19TRLS1920,
-            FundingStreamPeriodCodeConstants.AEB_ASLS1920,
-            FundingStreamPeriodCodeConstants.AEB_19TRN1920,
-            FundingStreamPeriodCodeConstants.AEB_AS1920
+            FundingStreamPeriodCodeConstants.AEBC_19TRN2021,
+            FundingStreamPeriodCodeConstants.AEBC_ASCL2021,
+            FundingStreamPeriodCodeConstants.AEB_19TRLS2021,
+            FundingStreamPeriodCodeConstants.AEB_ASLS2021,
+            FundingStreamPeriodCodeConstants.AEB_19TRN2021,
+            FundingStreamPeriodCodeConstants.AEB_AS2021
         };
 
         [Fact]
@@ -176,9 +176,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [Fact]
         public void LearnActEndDateConditionMet_True()
         {
-            DateTime learnActEndDate = new DateTime(2018, 08, 01);
+            DateTime learnActEndDate = new DateTime(2020, 08, 01);
 
-            DateTime academicYear = new DateTime(2018, 8, 1);
+            DateTime academicYear = new DateTime(2020, 8, 1);
 
             var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
 
@@ -191,8 +191,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [Fact]
         public void LearnActEndDateConditionMet_False()
         {
-            DateTime learnActEndDate = new DateTime(2018, 5, 1);
-            DateTime academicYear = new DateTime(2018, 8, 1);
+            DateTime learnActEndDate = new DateTime(2021, 5, 1);
+            DateTime academicYear = new DateTime(2020, 8, 1);
 
             var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
 
@@ -207,9 +207,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         public void ConditionMet_True(int? progType)
         {
             var fundModel = _fundModel;
-            DateTime academicYear = new DateTime(2018, 8, 1);
-            DateTime startDate = new DateTime(2018, 8, 1);
-            DateTime learnActEndDate = new DateTime(2018, 8, 1);
+            DateTime academicYear = new DateTime(2020, 8, 1);
+            DateTime startDate = new DateTime(2020, 8, 1);
+            DateTime learnActEndDate = new DateTime(2020, 8, 1);
 
             var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
             {
@@ -260,9 +260,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         public void ConditionMet_False(bool condition1, bool condition2, bool condition3, bool condition4, bool condition5)
         {
             var fundModel = _fundModel;
-            DateTime academicYear = new DateTime(2018, 8, 1);
-            DateTime startDate = new DateTime(2018, 8, 1);
-            DateTime learnActEndDate = new DateTime(2018, 8, 1);
+            DateTime academicYear = new DateTime(2020, 8, 1);
+            DateTime startDate = new DateTime(2020, 8, 1);
+            DateTime learnActEndDate = new DateTime(2020, 8, 1);
             int progType = 24;
             var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
             {
@@ -353,9 +353,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         public void Validate_Error()
         {
             var fundModel = _fundModel;
-            DateTime academicYear = new DateTime(2018, 8, 1);
-            DateTime startDate = new DateTime(2018, 8, 1);
-            DateTime? learnActEndDate = new DateTime(2018, 8, 1);
+            DateTime academicYear = new DateTime(2020, 8, 1);
+            DateTime startDate = new DateTime(2020, 8, 1);
+            DateTime? learnActEndDate = new DateTime(2020, 8, 1);
             int? progType = 24;
 
             var learner = new TestLearner()
@@ -415,9 +415,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [Fact]
         public void Validate_NoError()
         {
-            DateTime academicYear = new DateTime(2018, 8, 1);
-            DateTime startDate = new DateTime(2018, 8, 1);
-            DateTime? learnActEndDate = new DateTime(2018, 8, 1);
+            DateTime academicYear = new DateTime(2020, 8, 1);
+            DateTime startDate = new DateTime(2020, 8, 1);
+            DateTime? learnActEndDate = new DateTime(2020, 8, 1);
             int? progType = 24;
 
             var learner = new TestLearner()

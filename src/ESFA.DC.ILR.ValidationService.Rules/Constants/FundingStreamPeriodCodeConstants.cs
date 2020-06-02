@@ -53,5 +53,17 @@
         public const string AEB_AS1920 = "AEB-AS1920";
 
         public const string C16_18TRN1920 = "16-18TRN1920";
+
+        public const string AEBC_19TRN2021 = "AEBC-19TRN2021";
+
+        public const string AEBC_ASCL2021 = "AEBC-ASCL2021";
+
+        public const string AEB_19TRLS2021 = "AEB-19TRLS2021";
+
+        public const string AEB_ASLS2021 = "AEB-ASLS2021";
+
+        public const string AEB_19TRN2021 = "AEB-19TRN2021";
+
+        public const string AEB_AS2021 = "AEB-AS2021";
     }
 }
