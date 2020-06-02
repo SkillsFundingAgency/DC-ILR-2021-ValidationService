@@ -65,5 +65,7 @@
         public const string AEB_19TRN2021 = "AEB-19TRN2021";
 
         public const string AEB_AS2021 = "AEB-AS2021";
+
+        public const string APPS2021 = "APPS2021";
     }
 }
