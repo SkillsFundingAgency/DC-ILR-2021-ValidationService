@@ -83,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
             int? pHours = null;
             int fundModel = 25;
             int aimType = 1;
-            int progType = 30;
+            int progType = 31;
 
             var rule = NewRule().ConditionMet(startDate, pHours, fundModel, aimType, progType);
             rule.Should().BeTrue();
@@ -114,7 +114,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.PHours
                      AimType = 1,
                      PHoursNullable = null,
                      LearnStartDate = learnStartDate,
-                     ProgTypeNullable = 30
+                     ProgTypeNullable = 31
                  }
             };
 
