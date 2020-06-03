@@ -47,9 +47,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _dateTimeQueryService = dateTimeQueryService;
         }
 
-        public static DateTime ValidDeliveryDateRangeStart => new DateTime(2017, 07, 31);
+        public static DateTime ValidDeliveryDateRangeStart { get; } = new DateTime(2017, 07, 31);
 
-        public static DateTime ValidDeliveryDateRangeEnd => new DateTime(2020, 08, 01);
+        public static DateTime ValidDeliveryDateRangeEnd { get; } = new DateTime(2020, 08, 01);
 
         public static int MinimumViableAge => 19;
 
