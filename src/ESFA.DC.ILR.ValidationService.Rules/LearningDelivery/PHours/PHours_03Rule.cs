@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.PHours
         {
             return progType.HasValue
                    && fundModel == FundModels.Age16To19ExcludingApprenticeships
-                   && (progType == ProgTypes.TLevel || progType == ProgTypes.TLevelTransition);
+                   && progType == ProgTypes.TLevel;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel, int? plannedHours, int aimType)
