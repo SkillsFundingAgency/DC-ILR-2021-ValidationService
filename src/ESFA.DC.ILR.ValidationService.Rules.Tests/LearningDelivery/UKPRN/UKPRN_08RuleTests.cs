@@ -27,10 +27,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Theory]
-        [InlineData("2016-02-01", "2016-04-04", true)]
-        [InlineData("2016-04-03", "2016-04-04", true)]
-        [InlineData("2016-04-04", "2016-04-04", false)]
-        [InlineData("2016-04-05", "2016-04-04", false)]
+        [InlineData("2020-02-01", "2020-04-04", true)]
+        [InlineData("2020-04-03", "2020-04-04", true)]
+        [InlineData("2020-04-04", "2020-04-04", false)]
+        [InlineData("2020-04-05", "2020-04-04", false)]
         public void IsNotPartOfThisYearMeetExpectdation(string endDate, string commencementDate, bool expectation)
         {
             var mockItem = new Mock<ILearningDelivery>();
@@ -64,8 +64,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [Theory]
         [InlineData("ALLB1819", false)]
         [InlineData("ALLBC1819", false)]
-        [InlineData("ALLB1920", true)]
-        [InlineData("ALLBC1920", true)]
+        [InlineData("ALLB1920", false)]
+        [InlineData("ALLBC1920", false)]
+        [InlineData("ALLB2021", true)]
+        [InlineData("ALLBC2021", true)]
         [InlineData("AEBC1920", false)]
         [InlineData("AEBTO-TOL1920", false)]
         [InlineData("AEB-LS1920", false)]
@@ -186,8 +188,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Theory]
-        [InlineData("ALLB1920")]
-        [InlineData("ALLBC1920")]
+        [InlineData("ALLB2021")]
+        [InlineData("ALLBC2021")]
         public void ValidItemDoesNotRaiseValidationMessage(string candidate)
         {
             const string LearnRefNumber = "123456789X";

@@ -66,6 +66,10 @@
 
         public const string AEB_AS2021 = "AEB-AS2021";
 
+        public const string ALLB2021 = "ALLB2021";
+
+        public const string ALLBC2021 = "ALLBC2021";
+
         public const string APPS2021 = "APPS2021";
     }
 }
