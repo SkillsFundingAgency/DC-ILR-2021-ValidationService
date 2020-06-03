@@ -17,8 +17,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         private readonly string _learnDelFAMCode = LearningDeliveryFAMCodeConstants.LDM_ProcuredAdultEducationBudget;
         private readonly HashSet<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
-            FundingStreamPeriodCodeConstants.AEB_19TRN1920,
-            FundingStreamPeriodCodeConstants.AEB_AS1920
+            FundingStreamPeriodCodeConstants.AEB_19TRN2021,
+            FundingStreamPeriodCodeConstants.AEB_AS2021
         };
 
         private readonly DateTime _firstNov2017 = new DateTime(2017, 11, 01);
