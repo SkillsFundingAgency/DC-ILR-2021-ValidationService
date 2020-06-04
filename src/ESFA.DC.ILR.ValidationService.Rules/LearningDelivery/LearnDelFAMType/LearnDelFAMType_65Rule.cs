@@ -27,11 +27,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly IDerivedData_29Rule _derivedDataRule29;
         private readonly IDateTimeQueryService _dateTimeQueryService;
 
-        private readonly int[] _priorAttain = { 2, 3, 4, 5, 10, 11, 12, 13, 97, 98 };
+        private readonly HashSet<int> _priorAttain = new HashSet<int> { 2, 3, 4, 5, 10, 11, 12, 13, 97, 98 };
         private readonly DateTime _startDate = new DateTime(2017, 7, 31);
         private readonly DateTime _endDate = new DateTime(2020, 08, 01);
-        private readonly string[] _ldmTypeExcludedCodes = { "034", "328", "347", "363" };
-        private readonly string[] _nvqLevels = { "E", "1", "2" };
+        private readonly HashSet<string> _ldmTypeExcludedCodes = new HashSet<string> { "034", "328", "347", "363" };
+        private readonly HashSet<string> _nvqLevels = new HashSet<string> { "E", "1", "2" };
 
         private readonly int[] _basicSkillTypes =
             { 01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35 };
