@@ -29,6 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         private readonly int[] _priorAttain = { 2, 3, 4, 5, 10, 11, 12, 13, 97, 98 };
         private readonly DateTime _startDate = new DateTime(2017, 7, 31);
+        private readonly DateTime _endDate = new DateTime(2020, 08, 01);
         private readonly string[] _ldmTypeExcludedCodes = { "034", "328", "347", "363" };
         private readonly string[] _nvqLevels = { "E", "1", "2" };
 
@@ -66,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
                 if (learningDelivery.FundModel != FundingModel
-                    || learningDelivery.LearnStartDate <= _startDate
+                    || LearnStartDateIsOutsideValidDateRange(learningDelivery.LearnStartDate)
                     || learningDelivery.LearningDeliveryFAMs == null)
                 {
                     continue;
@@ -99,6 +100,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                     }
                 }
             }
+        }
+
+        public bool LearnStartDateIsOutsideValidDateRange(DateTime learnStartDate)
+        {
+            return learnStartDate <= _startDate || learnStartDate >= _endDate;
         }
 
         public bool IsBasicSkillsLearner(ILearningDelivery delivery)
