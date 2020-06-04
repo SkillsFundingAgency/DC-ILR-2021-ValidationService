@@ -33,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly HashSet<string> _ldmTypeExcludedCodes = new HashSet<string> { "034", "328", "347", "363" };
         private readonly HashSet<string> _nvqLevels = new HashSet<string> { "E", "1", "2" };
 
-        private readonly int[] _basicSkillTypes =
+        private readonly HashSet<int> _basicSkillTypes = new HashSet<int>
             { 01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35 };
 
         public LearnDelFAMType_65Rule(
