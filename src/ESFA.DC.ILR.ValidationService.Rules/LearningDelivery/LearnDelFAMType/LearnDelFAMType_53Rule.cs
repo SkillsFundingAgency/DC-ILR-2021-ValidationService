@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     {
         private readonly List<string> _fundingStreamPeriodCodes = new List<string>
         {
-            FundingStreamPeriodCodeConstants.ALLBC1920
+            FundingStreamPeriodCodeConstants.ALLBC2021
         };
 
         private readonly IFCSDataService _fcsDataService;
@@ -56,14 +56,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public virtual bool LearningDeliveryFAMsConditionMet(ILearningDeliveryFAM learningDeliveryFAM)
         {
-           if ((learningDeliveryFAM?.LearnDelFAMType == LearningDeliveryFAMTypeConstants.ALB && learningDeliveryFAM.LearnDelFAMCode.Equals("1"))
-                ||
-                (learningDeliveryFAM?.LearnDelFAMType == LearningDeliveryFAMTypeConstants.ALB && learningDeliveryFAM.LearnDelFAMCode.Equals("3")))
-            {
-                return true;
-            }
-
-            return false;
+            return learningDeliveryFAM?.LearnDelFAMType == LearningDeliveryFAMTypeConstants.ALB
+                    && (learningDeliveryFAM.LearnDelFAMCode == LearningDeliveryFAMCodeConstants.ALB_Rate_1
+                        || learningDeliveryFAM.LearnDelFAMCode == LearningDeliveryFAMCodeConstants.ALB_Rate_3);
         }
 
         public virtual bool FCTFundingConditionMet()
