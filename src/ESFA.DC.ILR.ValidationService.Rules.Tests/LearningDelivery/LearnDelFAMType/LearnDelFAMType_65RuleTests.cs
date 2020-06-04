@@ -823,6 +823,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .ExclusionsApply(learner.Object, learningDelivery.Object).Should().BeTrue();
         }
 
+        [Theory]
+        [InlineData("2016-08-01", true)]
+        [InlineData("2017-07-31", true)]
+        [InlineData("2017-08-01", false)]
+        [InlineData("2017-09-14", false)]
+        [InlineData("2020-07-31", false)]
+        [InlineData("2020-08-01", true)]
+        [InlineData("2021-08-01", true)]
+        public void LearnStartDateIsOutsideValidDateRange_MeetsExpectation(string candidate, bool expectation)
+        {
+            // arrange
+            var sut = NewRule();
+            var learnStartDate = DateTime.Parse(candidate);
+
+            // act
+            var result = sut.LearnStartDateIsOutsideValidDateRange(learnStartDate);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
         private LearnDelFAMType_65Rule NewRule(
             IValidationErrorHandler validationErrorHandler = null,
             ILARSDataService larsDataService = null,
