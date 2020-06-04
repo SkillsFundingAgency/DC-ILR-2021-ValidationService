@@ -56,8 +56,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public virtual bool LearningDeliveryFAMsConditionMet(ILearningDeliveryFAM learningDeliveryFAM)
         {
-            return (learningDeliveryFAM?.LearnDelFAMType == LearningDeliveryFAMTypeConstants.ALB && learningDeliveryFAM.LearnDelFAMCode.Equals("1"))
-                   || (learningDeliveryFAM?.LearnDelFAMType == LearningDeliveryFAMTypeConstants.ALB && learningDeliveryFAM.LearnDelFAMCode.Equals("3"));
+            return learningDeliveryFAM?.LearnDelFAMType == LearningDeliveryFAMTypeConstants.ALB
+                    && (learningDeliveryFAM.LearnDelFAMCode == LearningDeliveryFAMCodeConstants.ALB_Rate_1
+                        || learningDeliveryFAM.LearnDelFAMCode == LearningDeliveryFAMCodeConstants.ALB_Rate_3);
         }
 
         public virtual bool FCTFundingConditionMet()
