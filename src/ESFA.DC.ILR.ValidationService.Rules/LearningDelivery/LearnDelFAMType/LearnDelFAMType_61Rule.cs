@@ -47,7 +47,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _dateTimeQueryService = dateTimeQueryService;
         }
 
-        public static DateTime LastInviableDate => new DateTime(2017, 07, 31);
+        public static DateTime ValidDeliveryDateRangeStart { get; } = new DateTime(2017, 07, 31);
+
+        public static DateTime ValidDeliveryDateRangeEnd { get; } = new DateTime(2020, 08, 01);
 
         public static int MinimumViableAge => 19;
 
@@ -105,7 +107,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             delivery.FundModel == FundModels.AdultSkills;
 
         public bool IsViableStart(ILearningDelivery delivery) =>
-            delivery.LearnStartDate > LastInviableDate;
+            delivery.LearnStartDate > ValidDeliveryDateRangeStart && delivery.LearnStartDate < ValidDeliveryDateRangeEnd;
 
         public bool IsTargetAgeGroup(ILearner learner, ILearningDelivery delivery) =>
             learner.DateOfBirthNullable.HasValue
