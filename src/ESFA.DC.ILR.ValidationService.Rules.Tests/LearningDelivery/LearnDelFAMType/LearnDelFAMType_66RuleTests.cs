@@ -26,9 +26,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
-        public void LastInviableDateMeetsExpectation()
+        public void LastInviableStartDateMeetsExpectation()
         {
             Assert.Equal(DateTime.Parse("2017-07-31"), LearnDelFAMType_66Rule.StartDate);
+        }
+
+        [Fact]
+        public void LastInviableEndDateMeetsExpectation()
+        {
+            Assert.Equal(DateTime.Parse("2020-08-01"), LearnDelFAMType_66Rule.EndDate);
         }
 
         [Theory]
