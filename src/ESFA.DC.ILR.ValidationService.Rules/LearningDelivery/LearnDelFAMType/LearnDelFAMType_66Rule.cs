@@ -52,7 +52,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public static string FamCodeForError => "1";
 
-        public static DateTime LastInviableDate => new DateTime(2017, 07, 31);
+        public static DateTime StartDate => new DateTime(2017, 07, 31);
+
+        public static DateTime EndDate => new DateTime(2020, 08, 01);
 
         public static int MinimumViableAge => 24;
 
@@ -113,7 +115,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
            delivery.FundModel == FundModels.AdultSkills;
 
         public bool IsViableStart(ILearningDelivery delivery) =>
-            delivery.LearnStartDate > LastInviableDate;
+            delivery.LearnStartDate > StartDate && delivery.LearnStartDate < EndDate;
 
         public bool IsTargetAgeGroup(ILearner learner, ILearningDelivery delivery) =>
             learner.DateOfBirthNullable.HasValue
