@@ -53,6 +53,7 @@
             public const int BSI_ReceiptOfJSA = 1;
             public const int BSI_ReceiptOfUniversalCredit = 4;
             public const int BSI_ReceiptOfEmploymentAndSupport = 5;
+            public const int BSI_ReceiptOfOtherStateBenefits = 6;
 
             public const int PEI_InEducatonOrTrainingBeforeEnrollment = 1;
 

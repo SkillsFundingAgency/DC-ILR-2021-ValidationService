@@ -53,7 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         public bool EmpStatMonitoringCondition(ILearnerEmploymentStatus employmentStatus, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return _learnerEmploymentStatusMonitoringQueryService
-                .HasAnyEmploymentStatusMonitoringTypeAndCodeForEmploymentStatus(employmentStatus, LearnerEmploymentStatusConstants.ESMTypes.BSI_BenefitStatusIndicator, LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfEmploymentAndSupport)
+                .HasAnyEmploymentStatusMonitoringTypeAndCodeForEmploymentStatus(employmentStatus, LearnerEmploymentStatusConstants.ESMTypes.BSI_BenefitStatusIndicator, LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfOtherStateBenefits)
                 || (_learnerEmploymentStatusMonitoringQueryService
                 .HasAnyEmploymentStatusMonitoringTypeAndCodeForEmploymentStatus(employmentStatus, LearnerEmploymentStatusConstants.ESMTypes.BSI_BenefitStatusIndicator, LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfUniversalCredit)
                 && !_learningDeliveryFAMQueryService
