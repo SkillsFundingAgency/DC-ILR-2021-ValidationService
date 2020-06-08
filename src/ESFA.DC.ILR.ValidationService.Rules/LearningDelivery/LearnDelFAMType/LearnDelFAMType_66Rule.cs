@@ -48,17 +48,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _dateTimeQueryService = dateTimeQueryService;
         }
 
-        public static string FamTypeForError => Monitoring.Delivery.Types.FullOrCoFunding;
+        public static string FamTypeForError { get; } = Monitoring.Delivery.Types.FullOrCoFunding;
 
-        public static string FamCodeForError => "1";
+        public static string FamCodeForError { get; } = "1";
 
         public static DateTime StartDate { get; } = new DateTime(2017, 07, 31);
 
         public static DateTime EndDate { get; } = new DateTime(2020, 08, 01);
 
-        public static int MinimumViableAge => 24;
+        public static int MinimumViableAge { get; } = 24;
 
-        public static int MaximumViableAge => 99;
+        public static int MaximumViableAge { get; } = 99;
 
         public bool WithinViableAgeGroup(DateTime candidate, DateTime reference) =>
             _dateTimeQueryService.YearsBetween(candidate, reference).IsBetween(MinimumViableAge, MaximumViableAge);
