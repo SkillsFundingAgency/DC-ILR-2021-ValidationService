@@ -26,9 +26,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
-        public void LastInviableDateMeetsExpectation()
+        public void LastInviableStartDateMeetsExpectation()
         {
-            Assert.Equal(DateTime.Parse("2017-07-31"), LearnDelFAMType_66Rule.LastInviableDate);
+            Assert.Equal(DateTime.Parse("2017-07-31"), LearnDelFAMType_66Rule.StartDate);
+        }
+
+        [Fact]
+        public void LastInviableEndDateMeetsExpectation()
+        {
+            Assert.Equal(DateTime.Parse("2020-08-01"), LearnDelFAMType_66Rule.EndDate);
         }
 
         [Theory]
@@ -302,6 +308,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData("2017-07-31", false)]
         [InlineData("2017-08-01", true)]
         [InlineData("2017-09-14", true)]
+        [InlineData("2018-08-01", true)]
+        [InlineData("2019-07-31", true)]
+        [InlineData("2020-07-01", true)]
+        [InlineData("2021-08-14", false)]
+        [InlineData("2020-08-02", false)]
+        [InlineData("2020-08-01", false)]
+        [InlineData("2020-07-31", true)]
         public void IsViableStartMeetsExpectation(string candidate, bool expectation)
         {
             var sut = NewRule();
