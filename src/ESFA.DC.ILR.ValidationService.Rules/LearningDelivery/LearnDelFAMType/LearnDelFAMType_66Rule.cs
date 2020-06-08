@@ -52,9 +52,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public static string FamCodeForError => "1";
 
-        public static DateTime StartDate => new DateTime(2017, 07, 31);
+        public static DateTime StartDate { get; } = new DateTime(2017, 07, 31);
 
-        public static DateTime EndDate => new DateTime(2020, 08, 01);
+        public static DateTime EndDate { get; } = new DateTime(2020, 08, 01);
 
         public static int MinimumViableAge => 24;
 
