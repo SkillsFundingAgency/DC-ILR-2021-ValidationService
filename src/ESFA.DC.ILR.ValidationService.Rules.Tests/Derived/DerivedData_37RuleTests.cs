@@ -66,7 +66,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             };
 
             var empStatusQSMock = new Mock<ILearnerEmploymentStatusMonitoringQueryService>();
-            empStatusQSMock.Setup(x => x.HasAnyEmploymentStatusMonitoringTypeAndCodeForEmploymentStatus(empStatus, "BSI", 5)).Returns(mockOne);
+            empStatusQSMock.Setup(x => x.HasAnyEmploymentStatusMonitoringTypeAndCodeForEmploymentStatus(empStatus, "BSI", 6)).Returns(mockOne);
             empStatusQSMock.Setup(x => x.HasAnyEmploymentStatusMonitoringTypeAndCodeForEmploymentStatus(empStatus, "BSI", 4)).Returns(mockTwo);
 
             var learningDeliveryFAMQSMock = new Mock<ILearningDeliveryFAMQueryService>();
