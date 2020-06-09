@@ -15,6 +15,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         [InlineData("BSI2", true)]
         [InlineData("BSI3", true)]
         [InlineData("BSI4", true)]
+        [InlineData("BSI5", true)]
+        [InlineData("BSI6", true)]
         [InlineData("EII1", false)]
         [InlineData("EII2", false)]
         [InlineData("EII3", false)]
