@@ -15,7 +15,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             Monitoring.EmploymentStatus.InReceiptOfUniversalCredit,
             Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit,
             Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance,
-            Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance
+            Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance,
+            Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupport,
+            Monitoring.EmploymentStatus.InReceiptOfOtherStateBenefits
         };
 
         private readonly ILearnerEmploymentStatusQueryService _learnerEmploymentStatusQueryService;

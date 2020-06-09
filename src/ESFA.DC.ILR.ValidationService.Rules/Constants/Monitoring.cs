@@ -170,6 +170,10 @@
 
             public const string InReceiptOfUniversalCredit = "BSI4";
 
+            public const string InReceiptOfEmploymentAndSupport = "BSI5";
+
+            public const string InReceiptOfOtherStateBenefits = "BSI6";
+
             public const string InFulltimeEducationOrTrainingPriorToEnrolment = "PEI1";
 
             public const string SmallEmployer = "SEM1";

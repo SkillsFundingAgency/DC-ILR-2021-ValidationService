@@ -31,7 +31,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         private readonly HashSet<int> _esmCodesConditionTwo = new HashSet<int>()
         {
             LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfUniversalCredit,
-            LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfEmploymentAndSupport
+            LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfEmploymentAndSupport,
+            LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfOtherStateBenefits
         };
 
         private readonly HashSet<int> _esmEIICodesConditionThree = new HashSet<int>()
@@ -44,7 +45,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         private readonly HashSet<int> _esmBSICodesConditionThree = new HashSet<int>()
         {
             LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfUniversalCredit,
-            LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfEmploymentAndSupport
+            LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfEmploymentAndSupport,
+            LearnerEmploymentStatusConstants.ESMCodes.BSI_ReceiptOfOtherStateBenefits
         };
 
         [Fact]
