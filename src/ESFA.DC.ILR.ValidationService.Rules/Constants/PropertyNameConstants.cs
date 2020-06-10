@@ -112,5 +112,7 @@
         public const string WorkPlaceMode = "WorkPlaceMode";
 
         public const string DerivedData_06 = "DD06";
+
+        public const string LarsCategoryRef = "LarsCategoryRef";
     }
 }
