@@ -37,6 +37,7 @@
             public const int UnitESOLSpeakListen = 40;
             public const int UnitESOLReading = 41;
             public const int UnitESOLWriting = 42;
+            public const int EssentialDigitalSkill = 43;
 
             public static readonly int[] EnglishAndMathsList = new int[]
             {

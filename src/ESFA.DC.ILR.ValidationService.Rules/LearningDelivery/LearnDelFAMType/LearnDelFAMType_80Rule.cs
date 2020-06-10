@@ -59,7 +59,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics,
             LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage,
             LARSConstants.BasicSkills.InternationalGCSEMathematics,
-            LARSConstants.BasicSkills.FreeStandingMathematicsQualification
+            LARSConstants.BasicSkills.FreeStandingMathematicsQualification,
+            LARSConstants.BasicSkills.EssentialDigitalSkill
         };
 
         private readonly HashSet<string> _ldmExclusions = new HashSet<string>
@@ -76,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IDerivedData_07Rule _dd07;
         private readonly IDerivedData_29Rule _dd29;
-        private readonly IDerivedData_37Rule _dd37;
+        private readonly IDerivedData_38Rule _dd38;
 
         public LearnDelFAMType_80Rule(
             IValidationErrorHandler validationErrorHandler,
@@ -86,7 +87,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
             IDerivedData_07Rule dd07,
             IDerivedData_29Rule dd29,
-            IDerivedData_37Rule dd37)
+            IDerivedData_38Rule dd38)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_80)
         {
             _fileDataService = fileDataService;
@@ -95,7 +96,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _dd07 = dd07;
             _dd29 = dd29;
-            _dd37 = dd37;
+            _dd38 = dd38;
         }
 
         public void Validate(ILearner learner)
@@ -177,7 +178,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             return DD07Condition(learningDelivery.ProgTypeNullable)
                 || DD29Condition(learningDelivery)
-                || DD37Condition(learningDelivery.FundModel, learningDelivery.LearnStartDate, learnerEmploymentStatuses, learningDelivery.LearningDeliveryFAMs)
+                || DD38Condition(learningDelivery.FundModel, learningDelivery.LearnStartDate, learnerEmploymentStatuses)
                 || LearningDeliveryFAMExclusion(learningDelivery.LearningDeliveryFAMs)
                 || LARSExclusionCondition(larsLearningDelivery, learningDelivery.LearnStartDate);
         }
@@ -192,9 +193,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             return _dd29.IsInflexibleElementOfTrainingAimLearningDelivery(learningDelivery);
         }
 
-        public bool DD37Condition(int fundModel, DateTime learnStartDate, IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        public bool DD38Condition(int fundModel, DateTime learnStartDate, IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            return _dd37.Derive(fundModel, learnStartDate, learnerEmploymentStatuses, learningDeliveryFAMs);
+            return _dd38.Derive(fundModel, learnStartDate, learnerEmploymentStatuses);
         }
 
         public bool LearningDeliveryFAMExclusion(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)

@@ -18,36 +18,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 {
     public class LearnDelFAMType_81RuleTests : AbstractRuleTests<LearnDelFAMType_81Rule>
     {
-        private readonly HashSet<string> _nvq2Levels = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-        {
-            LARSConstants.NotionalNVQLevelV2Strings.EntryLevel,
-            LARSConstants.NotionalNVQLevelV2Strings.Level1,
-            LARSConstants.NotionalNVQLevelV2Strings.Level2,
-        };
-
-        private readonly HashSet<int?> _basicSkillTypes = new HashSet<int?>()
-        {
-            LARSConstants.BasicSkills.Certificate_AdultLiteracy,
-            LARSConstants.BasicSkills.Certificate_AdultNumeracy,
-            LARSConstants.BasicSkills.GCSE_EnglishLanguage,
-            LARSConstants.BasicSkills.GCSE_Mathematics,
-            LARSConstants.BasicSkills.KeySkill_Communication,
-            LARSConstants.BasicSkills.KeySkill_ApplicationOfNumbers,
-            LARSConstants.BasicSkills.FunctionalSkillsMathematics,
-            LARSConstants.BasicSkills.FunctionalSkillsEnglish,
-            LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultNumeracy,
-            LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultLiteracy,
-            LARSConstants.BasicSkills.NonNQF_QCFS4LLiteracy,
-            LARSConstants.BasicSkills.NonNQF_QCFS4LNumeracy,
-            LARSConstants.BasicSkills.QCFBasicSkillsEnglishLanguage,
-            LARSConstants.BasicSkills.QCFBasicSkillsMathematics,
-            LARSConstants.BasicSkills.UnitQCFBasicSkillsEnglishLanguage,
-            LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics,
-            LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage,
-            LARSConstants.BasicSkills.InternationalGCSEMathematics,
-            LARSConstants.BasicSkills.FreeStandingMathematicsQualification
-        };
-
         private readonly HashSet<string> _ldmExclusions = new HashSet<string>
         {
             LearningDeliveryFAMCodeConstants.LDM_OLASS,
@@ -339,8 +309,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             NewRule(learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object).LearningDeliveryFAMExclusion(testLearningDeliveryFAMs).Should().BeTrue();
         }
 
-        [Fact]
-        public void LARSExclusionCondition_True()
+        [Theory]
+        [InlineData(LARSConstants.BasicSkills.Certificate_AdultLiteracy)]
+        [InlineData(LARSConstants.BasicSkills.Certificate_AdultNumeracy)]
+        [InlineData(LARSConstants.BasicSkills.GCSE_EnglishLanguage)]
+        [InlineData(LARSConstants.BasicSkills.GCSE_Mathematics)]
+        [InlineData(LARSConstants.BasicSkills.KeySkill_Communication)]
+        [InlineData(LARSConstants.BasicSkills.KeySkill_ApplicationOfNumbers)]
+        [InlineData(LARSConstants.BasicSkills.FunctionalSkillsMathematics)]
+        [InlineData(LARSConstants.BasicSkills.FunctionalSkillsEnglish)]
+        [InlineData(LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultNumeracy)]
+        [InlineData(LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultLiteracy)]
+        [InlineData(LARSConstants.BasicSkills.NonNQF_QCFS4LLiteracy)]
+        [InlineData(LARSConstants.BasicSkills.NonNQF_QCFS4LNumeracy)]
+        [InlineData(LARSConstants.BasicSkills.QCFBasicSkillsEnglishLanguage)]
+        [InlineData(LARSConstants.BasicSkills.QCFBasicSkillsMathematics)]
+        [InlineData(LARSConstants.BasicSkills.UnitQCFBasicSkillsEnglishLanguage)]
+        [InlineData(LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics)]
+        [InlineData(LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage)]
+        [InlineData(LARSConstants.BasicSkills.InternationalGCSEMathematics)]
+        [InlineData(LARSConstants.BasicSkills.FreeStandingMathematicsQualification)]
+        [InlineData(LARSConstants.BasicSkills.EssentialDigitalSkill)]
+        public void LARSExclusionCondition_True(int? basicSkillsType)
         {
             var learnStartDate = new DateTime(2020, 8, 1);
             var larsLearningDelivery = new Data.External.LARS.Model.LearningDelivery
@@ -355,7 +345,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                     LearnAimRef = "AimRef",
                     EffectiveFrom = new DateTime(2020, 8, 1),
-                    BasicSkillsType = 20
+                    BasicSkillsType = basicSkillsType
                 },
                 new Data.External.LARS.Model.AnnualValue
                 {

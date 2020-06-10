@@ -44,7 +44,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics,
             LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage,
             LARSConstants.BasicSkills.InternationalGCSEMathematics,
-            LARSConstants.BasicSkills.FreeStandingMathematicsQualification
+            LARSConstants.BasicSkills.FreeStandingMathematicsQualification,
+            LARSConstants.BasicSkills.EssentialDigitalSkill
         };
 
         private readonly HashSet<string> _ldmExclusions = new HashSet<string>
