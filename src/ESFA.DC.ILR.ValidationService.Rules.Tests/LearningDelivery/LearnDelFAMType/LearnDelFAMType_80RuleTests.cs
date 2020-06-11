@@ -18,36 +18,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 {
     public class LearnDelFAMType_80RuleTests : AbstractRuleTests<LearnDelFAMType_80Rule>
     {
-        private readonly HashSet<string> _nvq2Levels = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-        {
-            LARSConstants.NotionalNVQLevelV2Strings.EntryLevel,
-            LARSConstants.NotionalNVQLevelV2Strings.Level1,
-            LARSConstants.NotionalNVQLevelV2Strings.Level2,
-        };
-
-        private readonly HashSet<int?> _basicSkillTypes = new HashSet<int?>()
-        {
-            LARSConstants.BasicSkills.Certificate_AdultLiteracy,
-            LARSConstants.BasicSkills.Certificate_AdultNumeracy,
-            LARSConstants.BasicSkills.GCSE_EnglishLanguage,
-            LARSConstants.BasicSkills.GCSE_Mathematics,
-            LARSConstants.BasicSkills.KeySkill_Communication,
-            LARSConstants.BasicSkills.KeySkill_ApplicationOfNumbers,
-            LARSConstants.BasicSkills.FunctionalSkillsMathematics,
-            LARSConstants.BasicSkills.FunctionalSkillsEnglish,
-            LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultNumeracy,
-            LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultLiteracy,
-            LARSConstants.BasicSkills.NonNQF_QCFS4LLiteracy,
-            LARSConstants.BasicSkills.NonNQF_QCFS4LNumeracy,
-            LARSConstants.BasicSkills.QCFBasicSkillsEnglishLanguage,
-            LARSConstants.BasicSkills.QCFBasicSkillsMathematics,
-            LARSConstants.BasicSkills.UnitQCFBasicSkillsEnglishLanguage,
-            LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics,
-            LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage,
-            LARSConstants.BasicSkills.InternationalGCSEMathematics,
-            LARSConstants.BasicSkills.FreeStandingMathematicsQualification
-        };
-
         private readonly HashSet<string> _ldmExclusions = new HashSet<string>
         {
             LearningDeliveryFAMCodeConstants.LDM_OLASS,
@@ -292,25 +262,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
-        public void DD37Condition_True()
+        public void DD38Condition_True()
         {
             var learningDelivery = new TestLearningDelivery();
 
-            var dd37Mock = new Mock<IDerivedData_37Rule>();
-            dd37Mock.Setup(dd => dd.Derive(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>(), It.IsAny<IEnumerable<ILearningDeliveryFAM>>())).Returns(true);
+            var dd38Mock = new Mock<IDerivedData_38Rule>();
+            dd38Mock.Setup(dd => dd.Derive(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>())).Returns(true);
 
-            NewRule(dd37: dd37Mock.Object).DD37Condition(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>(), It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeTrue();
+            NewRule(dd38: dd38Mock.Object).DD38Condition(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>()).Should().BeTrue();
         }
 
         [Fact]
-        public void DD37Condition_False()
+        public void DD38Condition_False()
         {
             var learningDelivery = new TestLearningDelivery();
 
-            var dd37Mock = new Mock<IDerivedData_37Rule>();
-            dd37Mock.Setup(dd => dd.Derive(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>(), It.IsAny<IEnumerable<ILearningDeliveryFAM>>())).Returns(false);
+            var dd38Mock = new Mock<IDerivedData_38Rule>();
+            dd38Mock.Setup(dd => dd.Derive(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>())).Returns(false);
 
-            NewRule(dd37: dd37Mock.Object).DD37Condition(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>(), It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeFalse();
+            NewRule(dd38: dd38Mock.Object).DD38Condition(35, new DateTime(2019, 8, 1), It.IsAny<IEnumerable<ILearnerEmploymentStatus>>()).Should().BeFalse();
         }
 
         [Fact]
@@ -356,8 +326,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             NewRule(learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object).LearningDeliveryFAMExclusion(testLearningDeliveryFAMs).Should().BeTrue();
         }
 
-        [Fact]
-        public void LARSExclusionCondition_True()
+        [Theory]
+        [InlineData(LARSConstants.BasicSkills.Certificate_AdultLiteracy)]
+        [InlineData(LARSConstants.BasicSkills.Certificate_AdultNumeracy)]
+        [InlineData(LARSConstants.BasicSkills.GCSE_EnglishLanguage)]
+        [InlineData(LARSConstants.BasicSkills.GCSE_Mathematics)]
+        [InlineData(LARSConstants.BasicSkills.KeySkill_Communication)]
+        [InlineData(LARSConstants.BasicSkills.KeySkill_ApplicationOfNumbers)]
+        [InlineData(LARSConstants.BasicSkills.FunctionalSkillsMathematics)]
+        [InlineData(LARSConstants.BasicSkills.FunctionalSkillsEnglish)]
+        [InlineData(LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultNumeracy)]
+        [InlineData(LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultLiteracy)]
+        [InlineData(LARSConstants.BasicSkills.NonNQF_QCFS4LLiteracy)]
+        [InlineData(LARSConstants.BasicSkills.NonNQF_QCFS4LNumeracy)]
+        [InlineData(LARSConstants.BasicSkills.QCFBasicSkillsEnglishLanguage)]
+        [InlineData(LARSConstants.BasicSkills.QCFBasicSkillsMathematics)]
+        [InlineData(LARSConstants.BasicSkills.UnitQCFBasicSkillsEnglishLanguage)]
+        [InlineData(LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics)]
+        [InlineData(LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage)]
+        [InlineData(LARSConstants.BasicSkills.InternationalGCSEMathematics)]
+        [InlineData(LARSConstants.BasicSkills.FreeStandingMathematicsQualification)]
+        [InlineData(LARSConstants.BasicSkills.EssentialDigitalSkill)]
+        public void LARSExclusionCondition_True(int? basicSkillsType)
         {
             var learnStartDate = new DateTime(2020, 8, 1);
             var larsLearningDelivery = new Data.External.LARS.Model.LearningDelivery
@@ -372,7 +362,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                     LearnAimRef = "AimRef",
                     EffectiveFrom = new DateTime(2020, 8, 1),
-                    BasicSkillsType = 20
+                    BasicSkillsType = basicSkillsType
                 },
                 new Data.External.LARS.Model.AnnualValue
                 {
@@ -485,7 +475,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData(true, true, false, false, true)]
         [InlineData(false, true, false, true, true)]
         [InlineData(true, true, true, true, true)]
-        public void Excluded_True(bool dd07, bool dd29, bool dd37, bool deliveryFAMS, bool lars)
+        public void Excluded_True(bool dd07, bool dd29, bool dd38, bool deliveryFAMS, bool lars)
         {
             var learnStartDate = new DateTime(2020, 8, 1);
             var fundModel = 35;
@@ -536,8 +526,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock.Setup(dd => dd.IsInflexibleElementOfTrainingAimLearningDelivery(learningDelivery)).Returns(dd29);
 
-            var dd37Mock = new Mock<IDerivedData_37Rule>();
-            dd37Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses, learningDeliveryFAMs)).Returns(dd37);
+            var dd38Mock = new Mock<IDerivedData_38Rule>();
+            dd38Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses)).Returns(dd38);
 
             var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFAMsQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(deliveryFAMS);
@@ -553,7 +543,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             NewRule(
                 dd07: dd07Mock.Object,
                 dd29: dd29Mock.Object,
-                dd37: dd37Mock.Object,
+                dd38: dd38Mock.Object,
                 learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object,
                 larsDataService: larsMock.Object,
                 dateTimeQueryService: dateTimeQSMock.Object)
@@ -611,8 +601,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock.Setup(dd => dd.IsInflexibleElementOfTrainingAimLearningDelivery(learningDelivery)).Returns(false);
 
-            var dd37Mock = new Mock<IDerivedData_37Rule>();
-            dd37Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses, learningDeliveryFAMs)).Returns(false);
+            var dd38Mock = new Mock<IDerivedData_38Rule>();
+            dd38Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses)).Returns(false);
 
             var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFAMsQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
@@ -628,7 +618,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             NewRule(
                 dd07: dd07Mock.Object,
                 dd29: dd29Mock.Object,
-                dd37: dd37Mock.Object,
+                dd38: dd38Mock.Object,
                 learningDeliveryFAMQueryService: learningDeliveryFAMsQueryServiceMock.Object,
                 larsDataService: larsMock.Object,
                 dateTimeQueryService: dateTimeQSMock.Object)
@@ -826,8 +816,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock.Setup(dd => dd.IsInflexibleElementOfTrainingAimLearningDelivery(learningDelivery)).Returns(false);
 
-            var dd37Mock = new Mock<IDerivedData_37Rule>();
-            dd37Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses, learningDeliveryFAMs)).Returns(false);
+            var dd38Mock = new Mock<IDerivedData_38Rule>();
+            dd38Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses)).Returns(false);
 
             var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFAMsQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
@@ -851,7 +841,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                     learningDeliveryFAMsQueryServiceMock.Object,
                     dd07Mock.Object,
                     dd29Mock.Object,
-                    dd37Mock.Object).Validate(learner);
+                    dd38Mock.Object).Validate(learner);
             }
         }
 
@@ -920,8 +910,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var dd29Mock = new Mock<IDerivedData_29Rule>();
             dd29Mock.Setup(dd => dd.IsInflexibleElementOfTrainingAimLearningDelivery(learningDelivery)).Returns(false);
 
-            var dd37Mock = new Mock<IDerivedData_37Rule>();
-            dd37Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses, learningDeliveryFAMs)).Returns(false);
+            var dd38Mock = new Mock<IDerivedData_38Rule>();
+            dd38Mock.Setup(dd => dd.Derive(fundModel, learnStartDate, employmentStatuses)).Returns(false);
 
             var learningDeliveryFAMsQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFAMsQueryServiceMock.Setup(x => x.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")).Returns(false);
@@ -946,7 +936,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                     learningDeliveryFAMsQueryServiceMock.Object,
                     dd07Mock.Object,
                     dd29Mock.Object,
-                    dd37Mock.Object).Validate(learner);
+                    dd38Mock.Object).Validate(learner);
             }
         }
 
@@ -977,7 +967,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
             IDerivedData_07Rule dd07 = null,
             IDerivedData_29Rule dd29 = null,
-            IDerivedData_37Rule dd37 = null)
+            IDerivedData_38Rule dd38 = null)
         {
             return new LearnDelFAMType_80Rule(
                 validationErrorHandler,
@@ -987,7 +977,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 learningDeliveryFAMQueryService,
                 dd07,
                 dd29,
-                dd37);
+                dd38);
         }
     }
 }
