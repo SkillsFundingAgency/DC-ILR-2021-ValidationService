@@ -182,6 +182,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         }
 
         [Fact]
+        public void Validate_NoError_NullESM()
+        {
+            var learner = new TestLearner
+            {
+                LearnerEmploymentStatuses = null,
+                LearningDeliveries = new List<TestLearningDelivery>
+                {
+                    new TestLearningDelivery
+                    {
+                        ProgTypeNullable = 25,
+                    },
+                }
+            };
+
+            var learnerEmploymentStatusMonitoringQueryServiceMock = new Mock<ILearnerEmploymentStatusMonitoringQueryService>();
+            learnerEmploymentStatusMonitoringQueryServiceMock
+                .Setup(ds => ds.HasAnyEmploymentStatusMonitoringTypeAndCodeForEmploymentStatus(It.IsAny<ILearnerEmploymentStatus>(), "SEM", 2))
+                .Returns(false);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(learnerEmploymentStatusMonitoringQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void BuildErrorMessageParameters()
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
