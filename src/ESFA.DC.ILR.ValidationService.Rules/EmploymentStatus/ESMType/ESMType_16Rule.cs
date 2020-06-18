@@ -31,6 +31,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
                 return;
             }
 
+            if (objectToValidate.LearnerEmploymentStatuses == null)
+            {
+                return;
+            }
+
             var learnerEmploymentStatuses = GetLearnerEmploymentStatuses(objectToValidate.LearnerEmploymentStatuses);
 
             foreach (var learnerEmploymentStatus in learnerEmploymentStatuses)
