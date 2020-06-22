@@ -109,17 +109,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         [InlineData("2016-09-01", "2017-09-30", false)]
         [InlineData("2017-01-01", "2017-06-30", true)]
         [InlineData("2017-02-01", "2017-07-31", true)]
-        [InlineData("2017-02-26", "2017-09-30", false)]
-        [InlineData("2017-03-14", "2017-09-30", false)]
-        [InlineData("2017-03-31", "2017-10-01", false)]
+        [InlineData("2017-02-26", "2017-09-30", true)]
+        [InlineData("2017-03-14", "2017-09-30", true)]
+        [InlineData("2017-03-31", "2017-10-01", true)]
         [InlineData("2017-03-31", "2017-09-30", true)]
         [InlineData("2017-04-01", "2017-09-30", true)]
-        [InlineData("2017-04-01", "2017-10-02", false)]
+        [InlineData("2017-04-01", "2017-10-02", true)]
         [InlineData("2015-04-01", "2017-10-02", false)]
         [InlineData("2015-07-31", "2015-10-01", true)]
         [InlineData("2015-08-01", "2016-02-01", true)]
         [InlineData("2016-02-01", "2016-08-01", true)]
-        [InlineData("2016-02-01", "2016-08-02", false)]
+        [InlineData("2016-02-01", "2016-08-02", true)]
         [InlineData("2015-08-01", "2016-01-30", true)]
         public void ConditionMetWithLearningDeliveriesContainingFundModelsMeetsExpectation(string startDate, string endDate, bool expectation)
         {
@@ -139,7 +139,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         }
 
         [Theory]
-        [InlineData("2016-08-01", "2017-09-30")]
+        [InlineData("2016-08-01", "2017-08-02")]
         [InlineData("2016-01-01", "2017-06-30")]
         [InlineData("2016-02-01", "2017-07-31")]
         [InlineData("2015-08-01", "2017-07-31")]
