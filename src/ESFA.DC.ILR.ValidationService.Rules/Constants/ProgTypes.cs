@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 
         public const int TLevelTransition = 30;
 
-        public static int MaximumTrainingDuration => -6;
+        public static int MaximumTrainingDuration => -12;
 
         public static int MaximumOpenTrainingDuration => -8;
 
