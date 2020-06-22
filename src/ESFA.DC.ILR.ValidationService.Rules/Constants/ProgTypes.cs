@@ -24,9 +24,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 
         public const int TLevelTransition = 30;
 
-        public static int MaximumTrainingDuration => -12;
+        public const int MaximumTrainingDurationInMonths = -12;
 
-        public static int MaximumOpenTrainingDuration => -8;
+        public const int MaximumOpenTrainingDurationInMonths = -8;
 
         public static DateTime MininumViableTrainingStartDate => new DateTime(2015, 08, 01);
 
@@ -45,10 +45,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
         public static bool IsViableApprenticeship(DateTime forThisStart) => forThisStart >= MininumViableTrainingStartDate;
 
         public static bool WithinMaxmimumTrainingDuration(DateTime fromStart, DateTime toFinish) =>
-            (toFinish - fromStart) <= MonthsDiffernential(toFinish, MaximumTrainingDuration);
+            (toFinish - fromStart) <= MonthsDiffernential(toFinish, MaximumTrainingDurationInMonths);
 
         public static bool WithinMaxmimumOpenTrainingDuration(DateTime fromStart, DateTime toFinish) =>
-            (toFinish - fromStart) <= MonthsDiffernential(toFinish, MaximumOpenTrainingDuration);
+            (toFinish - fromStart) <= MonthsDiffernential(toFinish, MaximumOpenTrainingDurationInMonths);
 
         public static TimeSpan MonthsDiffernential(DateTime usingDate, int offset) =>
             ((usingDate.Year - 1) * 12 + usingDate.Month) >= Math.Abs(offset) ? usingDate - usingDate.AddMonths(offset) : TimeSpan.MinValue;
