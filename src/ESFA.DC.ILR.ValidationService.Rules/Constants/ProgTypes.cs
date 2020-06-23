@@ -26,7 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 
         public const int MaximumTrainingDurationInMonths = -12;
 
-        public const int MaximumOpenTrainingDurationInMonths = -8;
+        public const int MaximumOpenTrainingDurationInMonths = -14;
 
         public static DateTime MininumViableTrainingStartDate => new DateTime(2015, 08, 01);
 
