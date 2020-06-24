@@ -33,6 +33,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId
 
         public void Validate(ILearner objectToValidate)
         {
+            if (objectToValidate.LearnerEmploymentStatuses == null)
+            {
+                return;
+            }
+
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 if (ConditionMet(learningDelivery.ProgTypeNullable))
