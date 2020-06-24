@@ -77,12 +77,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
             NewRule().ConditionMet(36).Should().BeFalse();
         }
 
-        [Theory]
-        [InlineData(25, 31)]
-        [InlineData(25, 30)]
-        public void ConditionMet_False_Excluded(int fundModel, int? progType)
+        [Fact]
+        public void ConditionMet_False_Excluded()
         {
-            NewRule().Excluded(fundModel, progType).Should().BeTrue();
+            NewRule().Excluded(25, 31).Should().BeTrue();
         }
 
         [Fact]

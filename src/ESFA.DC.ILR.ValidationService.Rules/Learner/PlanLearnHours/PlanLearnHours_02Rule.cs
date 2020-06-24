@@ -8,7 +8,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 {
     public class PlanLearnHours_02Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly HashSet<long> _fundModels = new HashSet<long> { 10, 25, 82, 35, 36, 81, 99 };
+        private readonly HashSet<long> _fundModels = new HashSet<long> { 10, 25, 35, 36, 81, 99 };
 
         public PlanLearnHours_02Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.PlanLearnHours_02)
@@ -47,9 +47,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 
         public bool Excluded(int fundModel, int? progType)
         {
-            return progType.HasValue
-                   && fundModel == FundModels.Age16To19ExcludingApprenticeships
-                   && (progType == ProgTypes.TLevel || progType == ProgTypes.TLevelTransition);
+            return fundModel == FundModels.Age16To19ExcludingApprenticeships
+                   && progType == ProgTypes.TLevel;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? planLearnHours, int fundModel)

@@ -31,9 +31,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 
         public bool Excluded(int fundModel, int? progType)
         {
-            return progType.HasValue
-                   && fundModel == FundModels.Age16To19ExcludingApprenticeships
-                   && (progType == ProgTypes.TLevel || progType == ProgTypes.TLevelTransition);
+            return fundModel == FundModels.Other16To19
+                || (fundModel == FundModels.Age16To19ExcludingApprenticeships && progType == ProgTypes.TLevel);
         }
 
         public int PlanLearnHoursValue(int? planLearnHours)
