@@ -38,7 +38,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
         [Theory]
         [InlineData(10)]
         [InlineData(25)]
-        [InlineData(82)]
         [InlineData(35)]
         [InlineData(36)]
         [InlineData(81)]
@@ -57,7 +56,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
         [Theory]
         [InlineData(0, 10, 0)]
         [InlineData(0, 25, 0)]
-        [InlineData(0, 82, 0)]
         [InlineData(0, 35, 0)]
         [InlineData(0, 36, 0)]
         [InlineData(0, 81, 0)]
@@ -99,12 +97,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
             NewRule().ConditionMet(0, 100, 0).Should().BeFalse();
         }
 
-        [Theory]
-        [InlineData(0, 25, 31)]
-        [InlineData(0, 25, 30)]
-        public void ConditionMet_False_Excluded(int? planLearnHours, int fundModel, int? progType)
+        [Fact]
+        public void ConditionMet_False_Excluded()
         {
-            NewRule().ConditionMet(planLearnHours, fundModel, progType).Should().BeFalse();
+            NewRule().ConditionMet(0, 25, 31).Should().BeFalse();
         }
 
         [Fact]
