@@ -78,7 +78,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanEEPHours
         {
             return progType.HasValue
                    && fundModel == FundModels.Age16To19ExcludingApprenticeships
-                   && (progType == ProgTypes.TLevel || progType == ProgTypes.TLevelTransition);
+                   && progType == ProgTypes.TLevel;
         }
 
         public bool AllLearningAimsClosedExcludeConditionMet(IEnumerable<ILearningDelivery> learningDeliveries)

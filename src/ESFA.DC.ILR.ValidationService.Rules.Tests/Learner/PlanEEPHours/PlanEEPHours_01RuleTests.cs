@@ -80,7 +80,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanEEPHours
         }
 
         [Theory]
-        [InlineData(25, 30)]
         [InlineData(25, 31)]
         public void TLevelExcludeConditionMet_True(int fundModel, int? progType)
         {
