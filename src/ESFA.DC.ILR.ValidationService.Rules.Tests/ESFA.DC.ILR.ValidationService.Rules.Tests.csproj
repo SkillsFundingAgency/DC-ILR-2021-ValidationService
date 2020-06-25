@@ -417,6 +417,7 @@
     <Compile Include="LearningDelivery\EPAOrgID\EPAOrgID_02RuleTests.cs" />
     <Compile Include="LearningDelivery\EPAOrgID\EPAOrgID_03RuleTests.cs" />
     <Compile Include="LearningDelivery\FundModel\FundModel_10RuleTests.cs" />
+    <Compile Include="LearningDelivery\FundModel\FundModel_11RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_72RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_73RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_81RuleTests.cs" />
