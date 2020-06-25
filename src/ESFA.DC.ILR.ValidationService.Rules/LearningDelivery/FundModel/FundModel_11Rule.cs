@@ -15,6 +15,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
 
         public void Validate(ILearner objectToValidate)
         {
+            if (objectToValidate.LearningDeliveries == null)
+            {
+                return;
+            }
+
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 if (ConditionMet(learningDelivery.FundModel, learningDelivery.ProgTypeNullable))
