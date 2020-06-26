@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -20,7 +21,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             AimTypes.References.SupportedInternship16To19,
             AimTypes.References.WorkExperience,
             AimTypes.References.IndustryPlacement
-        };
+        }.ToCaseInsensitiveHashSet();
 
         public LearnAimRef_90Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.LearnAimRef_90)

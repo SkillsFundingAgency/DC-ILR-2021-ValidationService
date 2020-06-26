@@ -26,6 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         [InlineData("Z0002347")]
         [InlineData("ZWRKX001")]
         [InlineData("ZWRKX002")]
+        [InlineData("zwrkx002")]
         public void ConditionMet_True(string learnAimRef)
         {
             NewRule().ConditionMet(learnAimRef, 31).Should().BeTrue();
