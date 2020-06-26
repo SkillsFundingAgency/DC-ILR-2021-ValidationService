@@ -389,6 +389,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnAimRef_87Rule),
                 typeof(LearnAimRef_88Rule),
                 typeof(LearnAimRef_89Rule),
+                typeof(LearnAimRef_90Rule),
                 typeof(LearnDelFAMDateFrom_01Rule),
                 typeof(LearnDelFAMDateFrom_02Rule),
                 typeof(LearnDelFAMDateFrom_03Rule),

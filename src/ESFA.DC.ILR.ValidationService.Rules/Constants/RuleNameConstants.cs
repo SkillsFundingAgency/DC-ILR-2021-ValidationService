@@ -245,6 +245,7 @@
         public const string LearnAimRef_87 = "LearnAimRef_87";
         public const string LearnAimRef_88 = "LearnAimRef_88";
         public const string LearnAimRef_89 = "LearnAimRef_89";
+        public const string LearnAimRef_90 = "LearnAimRef_90";
 
         public const string LearnDelFAMDateFrom_01 = "LearnDelFAMDateFrom_01";
         public const string LearnDelFAMDateFrom_02 = "LearnDelFAMDateFrom_02";
