@@ -439,6 +439,7 @@
 
         public const string PHours_01 = "PHours_01";
         public const string PHours_03 = "PHours_03";
+        public const string PHours_04 = "PHours_04";
 
         public const string PlanLearnHours_01 = "PlanLearnHours_01";
         public const string PlanLearnHours_02 = "PlanLearnHours_02";
