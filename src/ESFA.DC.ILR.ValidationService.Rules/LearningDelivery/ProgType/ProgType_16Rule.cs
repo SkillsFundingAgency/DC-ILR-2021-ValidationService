@@ -10,7 +10,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
     public class ProgType_16Rule : AbstractRule, IRule<ILearner>
     {
         private readonly ILARSDataService _larsDataService;
-        private readonly string[] _validLearnAimRefTypes = { "1468" };
+        private readonly string[] _validLearnAimRefTypes = { LARSConstants.LearnAimRefTypes.TLevelTechnicalQualification };
 
         public ProgType_16Rule(IValidationErrorHandler validationErrorHandler, ILARSDataService larsDataService)
             : base(validationErrorHandler, RuleNameConstants.ProgType_16)
@@ -42,7 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool ProgTypeConditionMet(int? progType)
         {
-            return progType == null || progType != 31;
+            return progType == null || progType != ProgTypes.TLevel;
         }
 
         public bool LARSConditionMet(string learnAimRef)
