@@ -160,6 +160,7 @@
             public const string GCEAppliedA2DoubleAward = "1435";
             public const string GCEALevelWithGCEAdvancedSubsidiary = "1453";
             public const string ShortCourseGCSE = "2999";
+            public const string TLevelTechnicalQualification = "1468";
         }
 
         public static class NotionalNVQLevelV2Strings

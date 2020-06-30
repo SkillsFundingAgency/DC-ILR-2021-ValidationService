@@ -503,6 +503,7 @@
     <Compile Include="LearningDelivery\ProgType\ProgType_12RuleTests.cs" />
     <Compile Include="LearningDelivery\ProgType\ProgType_17RuleTests.cs" />
     <Compile Include="LearningDelivery\ProgType\ProgType_15RuleTests.cs" />
+    <Compile Include="LearningDelivery\ProgType\ProgType_16RuleTests.cs" />
     <Compile Include="LearningDelivery\ProvSpecDelMonOccur\ProvSpecDelMonOccur_01RuleTests.cs" />
     <Compile Include="LearningDelivery\UKPRN\UKPRN_05RuleTests.cs" />
     <Compile Include="LearningDelivery\UKPRN\UKPRN_09RuleTests.cs" />
