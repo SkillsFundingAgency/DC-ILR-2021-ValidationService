@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Model;
@@ -182,6 +183,46 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 
             // Assert
             result.Should().Equals(expectedResult);
+        }
+
+        public static IEnumerable<object[]> MatchingLearningDeliveries_TestData()
+        {
+            yield return new object[] { FundModels.ApprenticeshipsFrom1May2017, new TestLearningDeliveryFAM { LearnDelFAMType = LearningDeliveryFAMTypeConstants.RES }, false };
+            yield return new object[] { FundModels.ApprenticeshipsFrom1May2017, new TestLearningDeliveryFAM { LearnDelFAMType = LearningDeliveryFAMTypeConstants.ALB }, true };
+            yield return new object[] { FundModels.ApprenticeshipsFrom1May2017, null, true };
+            yield return new object[] { FundModels.AdultSkills, new TestLearningDeliveryFAM { LearnDelFAMType = LearningDeliveryFAMTypeConstants.RES }, false };
+        }
+
+        [Theory]
+        [MemberData(nameof(MatchingLearningDeliveries_TestData))]
+        public void MatchingLearningDeliveries_FiltersOnFundModelAndFAMType(int fundModel, ILearningDeliveryFAM learningDeliveryFAM, bool returned)
+        {
+            var learningDeliveryFAMs =
+                learningDeliveryFAM != null ? new ILearningDeliveryFAM[] { learningDeliveryFAM } : null;
+
+            var learningDeliveries = new TestLearningDelivery[]
+            {
+                // Arrange
+                new TestLearningDelivery()
+                {
+                    ConRefNumber = "ConRef1",
+                    FundModel = fundModel,
+                    LearningDeliveryFAMs = learningDeliveryFAMs
+                }
+            };
+
+            // Act
+            var filteredResult = NewRule().MatchingLearningDeliveries(learningDeliveries);
+
+            // Assert
+            if (returned)
+            {
+                filteredResult.Should().NotBeEmpty();
+            }
+            else
+            {
+                filteredResult.Should().BeEmpty();
+            }
         }
 
         public static IEnumerable<object[]> Validate_TestData()
