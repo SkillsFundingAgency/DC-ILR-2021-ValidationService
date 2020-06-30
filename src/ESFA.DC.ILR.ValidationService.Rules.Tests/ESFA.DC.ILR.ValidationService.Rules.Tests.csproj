@@ -408,6 +408,7 @@
     <Compile Include="LearningDelivery\AFinDate\AFinDate_12RuleTests.cs" />
     <Compile Include="LearningDelivery\AFinType\AFinType_01RuleTests.cs" />
     <Compile Include="LearningDelivery\AFinType\AFinType_07RuleTests.cs" />
+    <Compile Include="LearningDelivery\AimType\AimType_08RuleTests.cs" />
     <Compile Include="LearningDelivery\CompStatus\CompStatus_07RuleTests.cs" />
     <Compile Include="LearningDelivery\DelLocPostCode\DelLocPostCode_15RuleTests.cs" />
     <Compile Include="LearningDelivery\DelLocPostCode\DelLocPostCode_18RuleTests.cs" />

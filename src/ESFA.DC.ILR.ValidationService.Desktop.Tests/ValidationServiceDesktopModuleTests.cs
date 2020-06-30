@@ -225,6 +225,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(AimType_01Rule),
                 typeof(AimType_05Rule),
                 typeof(AimType_07Rule),
+                typeof(AimType_08Rule),
                 typeof(ALSCost_02Rule),
                 typeof(CampId_01Rule),
                 typeof(CampId_02Rule),
