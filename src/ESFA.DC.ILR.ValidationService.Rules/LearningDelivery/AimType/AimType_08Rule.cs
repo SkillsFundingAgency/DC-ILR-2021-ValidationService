@@ -23,6 +23,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AimType
 
         public void Validate(ILearner objectToValidate)
         {
+            if (objectToValidate.LearningDeliveries == null)
+            {
+                return;
+            }
+
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 if (ConditionMet(learningDelivery.LearnAimRef, learningDelivery.ProgTypeNullable, learningDelivery.AimType))
@@ -34,8 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AimType
 
         public bool ConditionMet(string learnAimRef, int? progType, int aimType)
         {
-            return _larsDataService.LearnAimRefExists(learnAimRef)
-                   && _larsDataService.GetDeliveryFor(learnAimRef).LearnAimRefType == _larsLearnAimRefType
+            return _larsDataService.GetDeliveryFor(learnAimRef)?.LearnAimRefType == _larsLearnAimRefType
                    && progType.HasValue && progType == _tLevelProgType
                    && aimType != _coreAimType;
         }

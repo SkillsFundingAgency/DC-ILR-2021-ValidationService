@@ -71,6 +71,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AimType
         }
 
         [Fact]
+        public void Validate_NoError_NoLearningDeliveries()
+        {
+            var learner = new TestLearner();
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandler: validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void Validate_NoError_SuccessfulLars()
         {
             var learningDelivery = new TestLearningDelivery()
@@ -141,12 +152,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AimType
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
 
-            larsDataServiceMock.Setup(x => x.LearnAimRefExists(_larsLearnAimReference))
-                .Returns(true);
-            larsDataServiceMock.Setup(x => x.LearnAimRefExists(_nonLarsLearnAimReference))
-                .Returns(false);
             larsDataServiceMock.Setup(x => x.GetDeliveryFor(_larsLearnAimReference))
                 .Returns(larsLearningDelivery);
+
+            larsDataServiceMock.Setup(x => x.GetDeliveryFor(_nonLarsLearnAimReference))
+                .Returns((ILARSLearningDelivery)null);
 
             return new AimType_08Rule(validationErrorHandler, larsDataServiceMock.Object);
         }
