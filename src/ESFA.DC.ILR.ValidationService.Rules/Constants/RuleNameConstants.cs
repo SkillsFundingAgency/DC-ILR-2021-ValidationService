@@ -50,6 +50,7 @@
         public const string AimType_01 = "AimType_01";
         public const string AimType_05 = "AimType_05";
         public const string AimType_07 = "AimType_07";
+        public const string AimType_08 = "AimType_08";
 
         public const string CampId_01 = "CampId_01";
         public const string CampId_02 = "CampId_02";
@@ -439,6 +440,7 @@
 
         public const string PHours_01 = "PHours_01";
         public const string PHours_03 = "PHours_03";
+        public const string PHours_04 = "PHours_04";
 
         public const string PlanLearnHours_01 = "PlanLearnHours_01";
         public const string PlanLearnHours_02 = "PlanLearnHours_02";
@@ -480,6 +482,7 @@
         public const string ProgType_14 = "ProgType_14";
         public const string ProgType_15 = "ProgType_15";
         public const string ProgType_16 = "ProgType_16";
+        public const string ProgType_17 = "ProgType_17";
 
         public const string ProvSpecDelMonOccur_01 = "ProvSpecDelMonOccur_01";
 

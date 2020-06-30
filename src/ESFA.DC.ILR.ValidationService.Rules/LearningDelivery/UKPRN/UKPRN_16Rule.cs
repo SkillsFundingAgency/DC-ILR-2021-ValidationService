@@ -55,13 +55,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 return;
             }
 
-            foreach (var learningDelivery in objectToValidate.LearningDeliveries.Where(d => d.FundModel == _learnDelFundModel))
+            // containing a learning delivery with FundModel = 36 and LearningDeliveryFAM.LearnDelFAMType = RES
+            var filterLearningDeliveries = MatchingLearningDeliveries(objectToValidate.LearningDeliveries);
+
+            foreach (var learningDelivery in filterLearningDeliveries)
             {
                 if (ConditionMet(learningDelivery.LearnStartDate, filteredContractAllocations))
                 {
                     HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.FundModel, ukprn, learningDelivery.LearnStartDate));
                 }
             }
+        }
+
+        public IEnumerable<ILearningDelivery> MatchingLearningDeliveries(IReadOnlyCollection<ILearningDelivery> learningDeliveries)
+        {
+            return learningDeliveries
+                .Where(d => d.FundModel == _learnDelFundModel)
+                .Where(ld => ld.LearningDeliveryFAMs == null || !ld.LearningDeliveryFAMs.Any(ldf => ldf.LearnDelFAMType == LearningDeliveryFAMTypeConstants.RES));
         }
 
         public IEnumerable<IFcsContractAllocation> ContractAllocationsForUkprnAndFundingStreamPeriodCodes(int ukprn)
