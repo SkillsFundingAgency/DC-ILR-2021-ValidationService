@@ -45,6 +45,8 @@
 
             public const string TLevelWorkExperience = "ZWRKX003";
 
+            public const string TLevelOccupationalSpecialism = "ZTLOS";
+
             public const string ESFLearnerStartandAssessment = "ZESF0001";
 
             public static string[] AsWorkPlacementCodes => new[]
