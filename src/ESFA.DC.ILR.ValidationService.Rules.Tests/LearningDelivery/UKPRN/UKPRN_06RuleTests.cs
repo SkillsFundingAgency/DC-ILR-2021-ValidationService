@@ -26,7 +26,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             FundingStreamPeriodCodeConstants.AEB_19TRLS2021,
             FundingStreamPeriodCodeConstants.AEB_ASLS2021,
             FundingStreamPeriodCodeConstants.AEB_19TRN2021,
-            FundingStreamPeriodCodeConstants.AEB_AS2021
+            FundingStreamPeriodCodeConstants.AEB_AS2021,
+            FundingStreamPeriodCodeConstants.STFI2021,
+            FundingStreamPeriodCodeConstants.STFIC2021
         };
 
         [Fact]
