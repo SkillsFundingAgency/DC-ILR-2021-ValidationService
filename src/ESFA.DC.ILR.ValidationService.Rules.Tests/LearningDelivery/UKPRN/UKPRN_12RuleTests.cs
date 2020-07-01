@@ -21,7 +21,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         private readonly HashSet<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
             FundingStreamPeriodCodeConstants.AEB_19TRN2021,
-            FundingStreamPeriodCodeConstants.AEB_AS2021
+            FundingStreamPeriodCodeConstants.AEB_AS2021,
+            FundingStreamPeriodCodeConstants.STFI2021,
         };
 
         [Fact]

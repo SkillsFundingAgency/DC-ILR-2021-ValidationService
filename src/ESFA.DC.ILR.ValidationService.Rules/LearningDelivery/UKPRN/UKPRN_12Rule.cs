@@ -18,7 +18,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         private readonly HashSet<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
             FundingStreamPeriodCodeConstants.AEB_19TRN2021,
-            FundingStreamPeriodCodeConstants.AEB_AS2021
+            FundingStreamPeriodCodeConstants.AEB_AS2021,
+            FundingStreamPeriodCodeConstants.STFI2021
         };
 
         private readonly DateTime _firstNov2017 = new DateTime(2017, 11, 01);

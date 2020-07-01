@@ -71,5 +71,9 @@
         public const string ALLBC2021 = "ALLBC2021";
 
         public const string APPS2021 = "APPS2021";
+
+        public const string STFIC2021 = "STFIC2021";
+
+        public const string STFI2021 = "STFI2021";
     }
 }
