@@ -16,8 +16,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IFCSDataService _fcsData;
 
-        private readonly HashSet<string> _fundingStreams = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { FundingStreamPeriodCodeConstants.C16_18TRN2021 };
-
         public UKPRN_17Rule(
             IValidationErrorHandler validationErrorHandler,
             IFileDataService fileDataService,
@@ -65,7 +63,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 .NullSafeAny(x => HasFundingRelationship(x) && hasStartedAfterStopDate(x));
 
         public bool HasFundingRelationship(IFcsContractAllocation theAllocation) =>
-            _fundingStreams.Contains(theAllocation.FundingStreamPeriodCode);
+            theAllocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.C16_18TRN2021);
 
         public bool HasStartedAfterStopDate(IFcsContractAllocation theAllocation, ILearningDelivery theDelivery) =>
             theDelivery.LearnStartDate >= theAllocation.StopNewStartsFromDate;
