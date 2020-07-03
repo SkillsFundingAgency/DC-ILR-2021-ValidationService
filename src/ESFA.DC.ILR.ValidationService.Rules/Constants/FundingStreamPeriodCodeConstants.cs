@@ -54,6 +54,8 @@
 
         public const string C16_18TRN1920 = "16-18TRN1920";
 
+        public const string C16_18TRN2021 = "16-18TRN2021";
+
         public const string AEBC_19TRN2021 = "AEBC-19TRN2021";
 
         public const string AEBC_ASCL2021 = "AEBC-ASCL2021";
