@@ -108,6 +108,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Message.FileLevel.Header;
 using ESFA.DC.ILR.ValidationService.Rules.Message.UKPRN;
 using FluentAssertions;
 using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlacement;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
@@ -681,6 +682,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(WorkPlaceStartDate_02Rule),
                 typeof(WorkPlaceStartDate_03Rule),
                 typeof(WorkPlaceStartDate_04Rule),
+                typeof(WorkPlacement_01Rule),
                 typeof(WorkPlaceMode_01Rule),
                 typeof(WorkPlaceEmpId_01Rule),
                 typeof(WorkPlaceEmpId_02Rule),
