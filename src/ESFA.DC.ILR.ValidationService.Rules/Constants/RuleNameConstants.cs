@@ -622,6 +622,8 @@
         public const string WorkPlaceEndDate_01 = "WorkPlaceEndDate_01";
         public const string WorkPlaceEndDate_02 = "WorkPlaceEndDate_02";
 
+        public const string WorkPlacement_01 = "WorkPlacement_01";
+
         public const string WorkPlaceMode_01 = "WorkPlaceMode_01";
 
         public const string WorkPlaceStartDate_01 = "WorkPlaceStartDate_01";
