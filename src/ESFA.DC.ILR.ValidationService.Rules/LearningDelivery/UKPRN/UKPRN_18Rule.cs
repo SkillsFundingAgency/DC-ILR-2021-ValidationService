@@ -18,8 +18,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         private readonly HashSet<string> _fundingStreams = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            FundingStreamPeriodCodeConstants.AEBC_19TRN1920,
-            FundingStreamPeriodCodeConstants.AEBC_ASCL1920
+            FundingStreamPeriodCodeConstants.AEBC_19TRN2021,
+            FundingStreamPeriodCodeConstants.AEBC_ASCL2021
         };
 
         public UKPRN_18Rule(
@@ -50,13 +50,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 && IsESFAAdultFunding(theDelivery)
                 && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
 
-        public bool IsExcluded(ILearningDelivery theDelivery) =>
-           _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+        public bool IsExcluded(ILearningDelivery theDelivery)
+        {
+            return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
                 theDelivery.LearningDeliveryFAMs,
                 LearningDeliveryFAMTypeConstants.LDM,
-                LearningDeliveryFAMCodeConstants.LDM_ProcuredAdultEducationBudget);
+                LearningDeliveryFAMCodeConstants.LDM_ProcuredAdultEducationBudget)
+                || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(
+                    theDelivery.LearningDeliveryFAMs,
+                    LearningDeliveryFAMTypeConstants.RES);
+        }
 
-        public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
+               public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
             theDelivery.FundModel == FundModels.AdultSkills;
 
         public bool IsESFAAdultFunding(ILearningDelivery theDelivery) =>

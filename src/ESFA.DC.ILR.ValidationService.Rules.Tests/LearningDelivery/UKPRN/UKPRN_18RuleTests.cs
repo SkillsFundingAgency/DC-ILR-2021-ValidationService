@@ -140,8 +140,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [InlineData(FundingStreamPeriodCodeConstants.NONLEVY2019, false)]
         [InlineData(FundingStreamPeriodCodeConstants.AEBC1819, false)]
         [InlineData(FundingStreamPeriodCodeConstants.AEBC1920, false)]
-        [InlineData(FundingStreamPeriodCodeConstants.AEBC_19TRN1920, true)]
-        [InlineData(FundingStreamPeriodCodeConstants.AEBC_ASCL1920, true)]
         [InlineData(FundingStreamPeriodCodeConstants.AEBTO_TOL1819, false)]
         [InlineData(FundingStreamPeriodCodeConstants.AEBTO_TOL1920, false)]
         [InlineData(FundingStreamPeriodCodeConstants.AEB_19TRLS1920, false)]
@@ -155,6 +153,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [InlineData(FundingStreamPeriodCodeConstants.ALLB1819, false)]
         [InlineData(FundingStreamPeriodCodeConstants.ALLB1920, false)]
         [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_19TRN1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_ASCL1920, false)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_19TRN2021, true)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_ASCL2021, true)]
         public void HasFundingRelationshipMeetsExpectation(string candidate, bool expectation)
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
@@ -211,8 +213,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Theory]
-        [InlineData(FundingStreamPeriodCodeConstants.AEBC_19TRN1920)]
-        [InlineData(FundingStreamPeriodCodeConstants.AEBC_ASCL1920)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_19TRN2021)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_ASCL2021)]
         public void InvalidItemRaisesValidationMessage(string candidate)
         {
             const string LearnRefNumber = "123456789X";
@@ -273,32 +275,38 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.GetContractAllocationsFor(TestProviderID))
                 .Returns(new IFcsContractAllocation[] { allocation.Object });
 
-            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
-            learningDeliveryFAMQS
+            var learningDeliveryFamqs = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFamqs
                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
                    delivery.Object.LearningDeliveryFAMs,
                    "SOF",
                    "105"))
                .Returns(true);
-            learningDeliveryFAMQS
+            learningDeliveryFamqs
                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
                    delivery.Object.LearningDeliveryFAMs,
                    "LDM",
                    "357"))
                .Returns(false);
 
-            var sut = new UKPRN_18Rule(handler.Object, fileData.Object, learningDeliveryFAMQS.Object, fcsData.Object);
+            learningDeliveryFamqs
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    delivery.Object.LearningDeliveryFAMs,
+                    "RES"))
+                .Returns(false);
+
+            var sut = new UKPRN_18Rule(handler.Object, fileData.Object, learningDeliveryFamqs.Object, fcsData.Object);
             sut.Validate(learner.Object);
 
             handler.VerifyAll();
-            learningDeliveryFAMQS.VerifyAll();
+            learningDeliveryFamqs.VerifyAll();
             fileData.VerifyAll();
             fcsData.VerifyAll();
         }
 
         [Theory]
-        [InlineData(FundingStreamPeriodCodeConstants.AEBC_19TRN1920)]
-        [InlineData(FundingStreamPeriodCodeConstants.AEBC_ASCL1920)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_19TRN2021)]
+        [InlineData(FundingStreamPeriodCodeConstants.AEBC_ASCL2021)]
         public void ValidItemDoesNotRaiseValidationMessage(string candidate)
         {
             const string LearnRefNumber = "123456789X";
@@ -342,26 +350,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Setup(x => x.GetContractAllocationsFor(TestProviderID))
                 .Returns(new IFcsContractAllocation[] { allocation.Object });
 
-            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
-            learningDeliveryFAMQS
+            var learningDeliveryFamqs = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFamqs
                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
                    delivery.Object.LearningDeliveryFAMs,
                    "SOF",
                    "105"))
                .Returns(false);
-            learningDeliveryFAMQS
+            learningDeliveryFamqs
                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
                    delivery.Object.LearningDeliveryFAMs,
                    "LDM",
                    "357"))
                .Returns(false);
 
-            var sut = new UKPRN_18Rule(handler.Object, fileData.Object, learningDeliveryFAMQS.Object, fcsData.Object);
+            learningDeliveryFamqs
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    delivery.Object.LearningDeliveryFAMs,
+                    "RES"))
+                .Returns(false);
+
+            var sut = new UKPRN_18Rule(handler.Object, fileData.Object, learningDeliveryFamqs.Object, fcsData.Object);
 
             sut.Validate(learner.Object);
 
             handler.VerifyAll();
-            learningDeliveryFAMQS.VerifyAll();
+            learningDeliveryFamqs.VerifyAll();
             fileData.VerifyAll();
         }
 
