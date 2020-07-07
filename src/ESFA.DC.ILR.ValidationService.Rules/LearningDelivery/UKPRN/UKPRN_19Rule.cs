@@ -18,8 +18,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         private readonly HashSet<string> _fundingStreams = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            FundingStreamPeriodCodeConstants.AEB_19TRN1920,
-            FundingStreamPeriodCodeConstants.AEB_AS1920
+            FundingStreamPeriodCodeConstants.AEB_19TRN2021,
+            FundingStreamPeriodCodeConstants.AEB_AS2021
         };
 
         public UKPRN_19Rule(
@@ -45,10 +45,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         }
 
         public bool IsNotValid(ILearningDelivery theDelivery) =>
-            HasQualifyingModel(theDelivery)
+            HasNoRestartFamType(theDelivery.LearningDeliveryFAMs)
+            && HasQualifyingModel(theDelivery)
                 && IsESFAAdultFunding(theDelivery)
                 && IsAdultEducationBudgets(theDelivery)
                 && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
+
+        public bool HasNoRestartFamType(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams) =>
+            !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.RES);
 
         public bool IsAdultEducationBudgets(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
