@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
                 return;
             }
 
-            var aim = objectToValidate.LearningDeliveries.FirstOrDefault(l => l.ProgTypeNullable.GetValueOrDefault() == ProgTypes.TLevelTransition);
+            var aim = objectToValidate.LearningDeliveries.FirstOrDefault(l => l.ProgTypeNullable == ProgTypes.TLevelTransition);
 
             if (aim != null)
             {
