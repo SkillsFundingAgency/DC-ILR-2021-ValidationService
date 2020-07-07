@@ -483,6 +483,7 @@
         public const string ProgType_15 = "ProgType_15";
         public const string ProgType_16 = "ProgType_16";
         public const string ProgType_17 = "ProgType_17";
+        public const string ProgType_18 = "ProgType_18";
 
         public const string ProvSpecDelMonOccur_01 = "ProvSpecDelMonOccur_01";
 

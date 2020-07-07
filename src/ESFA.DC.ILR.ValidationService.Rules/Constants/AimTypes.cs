@@ -49,6 +49,8 @@
 
             public const string TLevelOccupationalSpecialism = "ZTLOS";
 
+            public const string TLevelTransitionAimClassCode = "ZTPR";
+
             public const string ESFLearnerStartandAssessment = "ZESF0001";
 
             public static string[] AsWorkPlacementCodes => new[]

@@ -574,6 +574,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(ProgType_15Rule),
                 typeof(ProgType_16Rule),
                 typeof(ProgType_17Rule),
+                typeof(ProgType_18Rule),
                 typeof(ProvSpecDelMonOccur_01Rule),
                 typeof(PwayCode_02Rule),
                 typeof(PwayCode_03Rule),
