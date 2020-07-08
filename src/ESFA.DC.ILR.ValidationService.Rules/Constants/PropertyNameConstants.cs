@@ -47,6 +47,7 @@
         public const string HEPostcode = "HEPostCode";
         public const string LearnActEndDate = "LearnActEndDate";
         public const string LearnAimRef = "LearnAimRef";
+        public const string LarsLearnAimRefType = "LarsLearnAimRefType";
         public const string LearnDelFAMCode = "LearnDelFAMCode";
         public const string LearnDelFAMDateFrom = "LearnDelFAMDateFrom";
         public const string LearnDelFAMDateTo = "LearnDelFAMDateTo";
