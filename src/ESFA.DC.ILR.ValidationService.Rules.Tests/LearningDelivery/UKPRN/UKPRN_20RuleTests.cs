@@ -204,18 +204,65 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         public void ConditionMet(string contractAllocationNumber, DateTime? stopNewStartsFromDate, bool expectedResult)
         {
             // Arrange
-            var conRef = "TestValue1";
-            var learnStartDate = new DateTime(2019, 01, 01);
             var contractAllocations = new List<IFcsContractAllocation>
             {
                 new FcsContractAllocation { ContractAllocationNumber = contractAllocationNumber, StopNewStartsFromDate = stopNewStartsFromDate }
             };
+            var learningDelivery = new TestLearningDelivery
+            {
+                ConRefNumber = "TestValue1",
+                LearnStartDate = new DateTime(2019, 01, 01)
+            };
 
             // Act
-            var result = NewRule().ConditionMet(conRef, learnStartDate, contractAllocations);
+            var result = NewRule().ConditionMet(learningDelivery, contractAllocations);
 
             // Assert
-            result.Should().Equals(expectedResult);
+            result.Should().Be(expectedResult);
+        }
+
+        [Fact]
+        public void ConditionMet_Fail_Uses_Latest_Contract_Allocation()
+        {
+            // Arrange
+            var contractAllocations = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation { ContractAllocationNumber = "TestValue1", StartDate = new DateTime(2019, 01, 01), StopNewStartsFromDate = new DateTime(2019, 12, 31) },
+                new FcsContractAllocation { ContractAllocationNumber = "TestValue1", StartDate = new DateTime(2019, 02, 01), StopNewStartsFromDate = null }
+            };
+            var learningDelivery = new TestLearningDelivery
+            {
+                ConRefNumber = "TestValue1",
+                LearnStartDate = new DateTime(2019, 01, 01)
+            };
+
+            // Act
+            var result = NewRule().ConditionMet(learningDelivery, contractAllocations);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_Pass_Uses_Latest_Contract_Allocation()
+        {
+            // Arrange
+            var contractAllocations = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation { ContractAllocationNumber = "TestValue1", StartDate = new DateTime(2019, 02, 01), StopNewStartsFromDate = new DateTime(2019, 12, 31) },
+                new FcsContractAllocation { ContractAllocationNumber = "TestValue1", StartDate = new DateTime(2019, 01, 01), StopNewStartsFromDate = null }
+            };
+            var learningDelivery = new TestLearningDelivery
+            {
+                ConRefNumber = "TestValue1",
+                LearnStartDate = new DateTime(2019, 01, 01)
+            };
+
+            // Act
+            var result = NewRule().ConditionMet(learningDelivery, contractAllocations);
+
+            // Assert
+            result.Should().BeFalse();
         }
 
         public static IEnumerable<object[]> Validate_TestData()
