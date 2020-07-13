@@ -119,6 +119,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.Outcome
         }
 
         [Fact]
+        public void ValidateNoError_Null_learningDeliveries()
+        {
+            var learner = new TestLearner
+            {
+                LearningDeliveries = null
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void BuildErrorMessageParameters()
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
