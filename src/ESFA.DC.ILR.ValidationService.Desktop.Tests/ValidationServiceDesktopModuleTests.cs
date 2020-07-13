@@ -521,6 +521,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(Outcome_07Rule),
                 typeof(Outcome_08Rule),
                 typeof(Outcome_09Rule),
+                typeof(Outcome_10Rule),
                 typeof(OutGrade_01Rule),
                 typeof(OutGrade_04Rule),
                 typeof(OutGrade_05Rule),
