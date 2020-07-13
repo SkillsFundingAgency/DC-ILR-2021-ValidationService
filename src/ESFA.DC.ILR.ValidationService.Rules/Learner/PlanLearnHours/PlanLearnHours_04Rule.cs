@@ -19,7 +19,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
             {
                 if (!Excluded(learningDelivery.FundModel, learningDelivery.ProgTypeNullable) && ConditionMet(objectToValidate.PlanLearnHoursNullable, objectToValidate.PlanEEPHoursNullable))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(objectToValidate.PMUKPRNNullable, objectToValidate.PlanEEPHoursNullable));
+                    HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters(objectToValidate.PlanLearnHoursNullable, objectToValidate.PlanEEPHoursNullable));
                 }
             }
         }
