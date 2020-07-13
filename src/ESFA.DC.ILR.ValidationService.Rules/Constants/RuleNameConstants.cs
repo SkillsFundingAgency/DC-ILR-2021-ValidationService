@@ -399,6 +399,7 @@
         public const string Outcome_07 = "Outcome_07";
         public const string Outcome_08 = "Outcome_08";
         public const string Outcome_09 = "Outcome_09";
+        public const string Outcome_10 = "Outcome_10";
 
         public const string OutEndDate_01 = "OutEndDate_01";
 

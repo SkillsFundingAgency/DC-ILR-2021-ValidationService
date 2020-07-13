@@ -491,6 +491,7 @@
     <Compile Include="LearningDelivery\Outcome\Outcome_01RuleTests.cs" />
     <Compile Include="LearningDelivery\Outcome\Outcome_04RuleTests.cs" />
     <Compile Include="LearningDelivery\Outcome\Outcome_05RuleTests.cs" />
+    <Compile Include="LearningDelivery\Outcome\Outcome_10RuleTests.cs" />
     <Compile Include="LearningDelivery\Outcome\Outcome_09RuleTests.cs" />
     <Compile Include="LearningDelivery\OutGrade\OutGrade_04RuleTests.cs" />
     <Compile Include="LearningDelivery\OutGrade\OutGrade_05RuleTests.cs" />
