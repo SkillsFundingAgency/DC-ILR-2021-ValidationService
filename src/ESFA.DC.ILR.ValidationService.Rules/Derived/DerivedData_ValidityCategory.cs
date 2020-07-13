@@ -15,19 +15,29 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
         private readonly IDerivedData_07Rule _dd07;
         private readonly IDerivedData_11Rule _dd11;
+        private readonly IDerivedData_35Rule _dd35;
 
         public DerivedData_ValidityCategory(
              ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
              IDerivedData_07Rule dd07,
-             IDerivedData_11Rule dd11)
+             IDerivedData_11Rule dd11,
+             IDerivedData_35Rule dd35)
         {
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
             _dd07 = dd07;
             _dd11 = dd11;
+            _dd35 = dd35;
         }
 
         public string Derive(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
+            //Check MCA Adult skills first as this is the only condition that doesn't exclude RES
+
+            if (McaAdultSkillsMatch(learningDelivery))
+            {
+                return LARSConstants.Validities.AdultSkills;
+            }
+
             if (HasRestartFAMType(learningDelivery.LearningDeliveryFAMs))
             {
                 return null;
@@ -124,7 +134,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         {
             return learningDelivery.FundModel == FundModels.AdultSkills
                 && !HasOlassFAMTypeAndCode(learningDelivery.LearningDeliveryFAMs)
-                && !HasDD07(learningDelivery.ProgTypeNullable);
+                && !HasDD07(learningDelivery.ProgTypeNullable)
+                && !HasDD35(learningDelivery);
+        }
+
+        public bool McaAdultSkillsMatch(ILearningDelivery learningDelivery)
+        {
+            return learningDelivery.FundModel == FundModels.AdultSkills
+                && HasDD35(learningDelivery);
         }
 
         public bool ApprenticeshipsMatch(ILearningDelivery learningDelivery)
@@ -153,6 +170,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         private bool HasDD07(int? progType)
         {
             return _dd07.IsApprenticeship(progType);
+        }
+
+        private bool HasDD35(ILearningDelivery learningDelivery)
+        {
+            return _dd35.IsCombinedAuthorities(learningDelivery);
         }
 
         private bool HasRestartFAMType(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)

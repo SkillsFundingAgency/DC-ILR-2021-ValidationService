@@ -194,20 +194,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 }
             };
 
+            var delivery = new TestLearningDelivery { FundModel = 35, LearningDeliveryFAMs = learningDeliveryFAMs };
+
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             var dd07Mock = new Mock<IDerivedData_07Rule>();
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "LDM", "034")).Returns(false);
             dd07Mock.Setup(qs => qs.IsApprenticeship(null)).Returns(false);
+            dd35Mock.Setup(qs => qs.IsCombinedAuthorities(delivery)).Returns(false);
 
-            NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07Mock.Object).AdultSkillsMatch(new TestLearningDelivery { FundModel = 35, LearningDeliveryFAMs = learningDeliveryFAMs }).Should().BeTrue();
+            NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07Mock.Object, null, dd35Mock.Object).AdultSkillsMatch(delivery).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(99, null, false, false)]
-        [InlineData(35, 25, false, true)]
-        [InlineData(35, 25, true, true)]
-        [InlineData(35, null, true, false)]
-        public void AdultSkillsMatch_False(int fundModel, int? progType, bool mockReturnLDM, bool mockReturnDD07)
+        [InlineData(99, null, false, false, false)]
+        [InlineData(35, 25, false, true, false)]
+        [InlineData(35, 25, true, true, false)]
+        [InlineData(35, null, true, false, false)]
+        [InlineData(35, null, true, false, true)]
+        public void AdultSkillsMatch_False(int fundModel, int? progType, bool mockReturnLDM, bool mockReturnDD07, bool mockReturnDD35)
         {
             var learningDeliveryFAMs = new List<ILearningDeliveryFAM>
             {
@@ -218,12 +223,41 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 }
             };
 
+            var delivery = new TestLearningDelivery { FundModel = fundModel, ProgTypeNullable = progType, LearningDeliveryFAMs = learningDeliveryFAMs };
+
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             var dd07Mock = new Mock<IDerivedData_07Rule>();
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "LDM", "034")).Returns(mockReturnLDM);
             dd07Mock.Setup(qs => qs.IsApprenticeship(progType)).Returns(mockReturnDD07);
+            dd35Mock.Setup(qs => qs.IsCombinedAuthorities(delivery)).Returns(mockReturnDD35);
 
-            NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07Mock.Object).AdultSkillsMatch(new TestLearningDelivery { FundModel = fundModel, ProgTypeNullable = progType, LearningDeliveryFAMs = learningDeliveryFAMs }).Should().BeFalse();
+            NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07Mock.Object, null, dd35Mock.Object).AdultSkillsMatch(delivery).Should().BeFalse();
+        }
+
+        [Fact]
+        public void McaAdultSkillsMatch_True()
+        {
+            var delivery = new TestLearningDelivery { FundModel = 35 };
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+            dd35Mock.Setup(qs => qs.IsCombinedAuthorities(delivery)).Returns(true);
+
+            NewDDRule(dd35: dd35Mock.Object).McaAdultSkillsMatch(delivery).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(35, false)]
+        [InlineData(99, true)]
+        [InlineData(99, false)]
+        public void McaAdultSkillsMatch_False(int fundModel, bool mock)
+        {
+            var delivery = new TestLearningDelivery { FundModel = fundModel };
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+            dd35Mock.Setup(qs => qs.IsCombinedAuthorities(delivery)).Returns(mock);
+
+            NewDDRule(dd35: dd35Mock.Object).McaAdultSkillsMatch(delivery).Should().BeFalse();
         }
 
         [Theory]
@@ -339,17 +373,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(LARSConstants.Validities.CommunityLearning, 10, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.EuropeanSocialFund, 70, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.EFA16To19, 25, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.AdvancedLearnerLoan, 99, true, false, false, false)]
-        [InlineData(LARSConstants.Validities.Any, 99, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.OLASSAdult, 35, false, true, false, false)]
-        [InlineData(LARSConstants.Validities.AdultSkills, 35, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.Apprenticeships, 36, false, false, true, false)]
-        [InlineData(LARSConstants.Validities.Unemployed, 35, false, false, false, true)]
-        [InlineData(null, 900, false, false, false, false)]
-        public void GetValidityCategory(string expectedCategory, int fundModel, bool famTypeMock, bool ldmFamMock, bool dd07Mock, bool dd11Mock)
+        [InlineData(LARSConstants.Validities.CommunityLearning, 10, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.EuropeanSocialFund, 70, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.EFA16To19, 25, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.AdvancedLearnerLoan, 99, true, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.Any, 99, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.OLASSAdult, 35, false, true, false, false, false)]
+        [InlineData(LARSConstants.Validities.AdultSkills, 35, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.Apprenticeships, 36, false, false, true, false, false)]
+        [InlineData(LARSConstants.Validities.Unemployed, 35, false, false, false, true, false)]
+        [InlineData(null, 900, false, false, false, false, false)]
+        public void GetValidityCategory(string expectedCategory, int fundModel, bool famTypeMock, bool ldmFamMock, bool dd07Mock, bool dd11Mock, bool dd35Mock)
         {
             var delivery = new TestLearningDelivery
             {
@@ -372,21 +406,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var dd11RuleMock = new Mock<IDerivedData_11Rule>();
             dd11RuleMock.Setup(qs => qs.IsAdultFundedOnBenefitsAtStartOfAim(delivery, employmentStatuses)).Returns(dd11Mock);
 
-            NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07RuleMock.Object, dd11RuleMock.Object).GetValidityCategory(delivery, employmentStatuses).Should().Be(expectedCategory);
+            var dd35RuleMock = new Mock<IDerivedData_35Rule>();
+            dd35RuleMock.Setup(qs => qs.IsCombinedAuthorities(delivery)).Returns(dd35Mock);
+
+            NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07RuleMock.Object, dd11RuleMock.Object, dd35RuleMock.Object).GetValidityCategory(delivery, employmentStatuses).Should().Be(expectedCategory);
         }
 
         [Theory]
-        [InlineData(LARSConstants.Validities.CommunityLearning, 10, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.EuropeanSocialFund, 70, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.EFA16To19, 25, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.AdvancedLearnerLoan, 99, true, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.Any, 99, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.OLASSAdult, 35, false, true, false, false, false)]
-        [InlineData(LARSConstants.Validities.AdultSkills, 35, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.Apprenticeships, 36, false, false, true, false, false)]
-        [InlineData(LARSConstants.Validities.Unemployed, 35, false, false, false, true, false)]
-        [InlineData(null, 10, false, false, false, false, true)]
-        public void Derive(string expectedCategory, int fundModel, bool famTypeMock, bool ldmFamMock, bool dd07Mock, bool dd11Mock, bool resMock)
+        [InlineData(LARSConstants.Validities.CommunityLearning, 10, false, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.EuropeanSocialFund, 70, false, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.EFA16To19, 25, false, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.AdvancedLearnerLoan, 99, true, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.Any, 99, false, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.OLASSAdult, 35, false, true, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.AdultSkills, 35, false, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.AdultSkills, 35, false, false, false, false, true, false)]
+        [InlineData(LARSConstants.Validities.Apprenticeships, 36, false, false, true, false, false, false)]
+        [InlineData(LARSConstants.Validities.Unemployed, 35, false, false, false, true, false, false)]
+        [InlineData(null, 10, false, false, false, false, false, true)]
+        public void Derive(string expectedCategory, int fundModel, bool famTypeMock, bool ldmFamMock, bool dd07Mock, bool dd11Mock, bool dd35Mock, bool resMock)
         {
             var delivery = new TestLearningDelivery
             {
@@ -410,15 +448,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var dd11RuleMock = new Mock<IDerivedData_11Rule>();
             dd11RuleMock.Setup(qs => qs.IsAdultFundedOnBenefitsAtStartOfAim(delivery, employmentStatuses)).Returns(dd11Mock);
 
-            NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07RuleMock.Object, dd11RuleMock.Object).Derive(delivery, employmentStatuses).Should().Be(expectedCategory);
+            var dd35RuleMock = new Mock<IDerivedData_35Rule>();
+            dd35RuleMock.Setup(qs => qs.IsCombinedAuthorities(delivery)).Returns(dd35Mock);
+
+            NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07RuleMock.Object, dd11RuleMock.Object, dd35RuleMock.Object).Derive(delivery, employmentStatuses).Should().Be(expectedCategory);
         }
 
         private DerivedData_ValidityCategory NewDDRule(
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
             IDerivedData_07Rule dd07 = null,
-            IDerivedData_11Rule dd11 = null)
+            IDerivedData_11Rule dd11 = null,
+            IDerivedData_35Rule dd35 = null)
         {
-            return new DerivedData_ValidityCategory(learningDeliveryFAMQueryService, dd07, dd11);
+            return new DerivedData_ValidityCategory(learningDeliveryFAMQueryService, dd07, dd11, dd35);
         }
     }
 }

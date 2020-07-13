@@ -82,6 +82,7 @@
             public const int LegalEntitlementLevel2 = 37;
             public const int OnlyForLegalEntitlementAtLevel3 = 38;
             public const int LicenseToPractice = 20;
+            public const int McaGlaAim = 41;
         }
 
         public static class CommonComponents

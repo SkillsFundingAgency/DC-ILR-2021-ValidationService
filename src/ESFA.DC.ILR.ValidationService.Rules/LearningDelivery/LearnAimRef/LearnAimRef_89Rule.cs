@@ -16,17 +16,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
     {
         private readonly ILARSDataService _larsDataService;
         private readonly IDerivedData_ValidityCategory _ddValidityCategory;
+        private readonly IDerivedData_CategoryRef _ddCategoryRef;
         private readonly IAcademicYearDataService _academicYearDataService;
 
         public LearnAimRef_89Rule(
             ILARSDataService larsDataService,
             IDerivedData_ValidityCategory ddValidityCategory,
+            IDerivedData_CategoryRef ddCategoryRef,
             IAcademicYearDataService academicYearDataService,
             IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.LearnAimRef_89)
         {
             _larsDataService = larsDataService;
             _ddValidityCategory = ddValidityCategory;
+            _ddCategoryRef = ddCategoryRef;
             _academicYearDataService = academicYearDataService;
         }
 
@@ -45,17 +48,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime previousYearEnd)
         {
-            var category = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
-
-            if (category == null)
+            if (CategoryRefConditionMet(learningDelivery))
             {
                 return false;
             }
 
-            return LarsConditionMet(category, learningDelivery.LearnAimRef, previousYearEnd);
+            var validityCategory = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
+
+            if (validityCategory == null)
+            {
+                return false;
+            }
+
+            return LarsValidityCategoryConditionMet(validityCategory, learningDelivery.LearnAimRef, previousYearEnd);
         }
 
-        public bool LarsConditionMet(string category, string learnAimRef, DateTime previousYearEnd)
+        public bool CategoryRefConditionMet(ILearningDelivery learningDelivery)
+        {
+            var ddLookup = _ddCategoryRef.Derive(learningDelivery);
+            var larsCategoryRefs = _larsDataService.GetCategoriesFor(learningDelivery.LearnAimRef);
+
+            return larsCategoryRefs.Any(x => x.CategoryRef == ddLookup);
+        }
+
+        public bool LarsValidityCategoryConditionMet(string category, string learnAimRef, DateTime previousYearEnd)
         {
             var larsValidities = _larsDataService?.GetValiditiesFor(learnAimRef)
                 .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)) ?? Enumerable.Empty<ILARSLearningDeliveryValidity>();
