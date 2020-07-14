@@ -37,13 +37,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         public void Validate(ILearner objectToValidate)
         {
+            if (objectToValidate?.LearningDeliveries == null)
+            { // If there are no Learning deliveries then do not progress. No Error
+                return;
+            }
+
             var ukprn = _fileDataService.UKPRN();
 
             // prepare contract allocations list before iterating the learning deliveries
             var filteredContractAllocations = ContractAllocationsForUkprnAndFundingStreamPeriodCodes(ukprn);
 
-            if (filteredContractAllocations == null || objectToValidate.LearningDeliveries == null)
-            { // If there are no Contract Allocations or Learning deliveries then do not progress. No Error
+            if (filteredContractAllocations == null)
+            { // If there are no Contract Allocations then do not progress. No Error
                 return;
             }
 
