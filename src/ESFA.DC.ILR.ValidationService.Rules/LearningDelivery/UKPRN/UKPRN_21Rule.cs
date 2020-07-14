@@ -12,25 +12,25 @@ using ESFA.DC.ILR.ValidationService.Rules.Constants;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
-    public class UKPRN_20Rule : AbstractRule, IRule<ILearner>
+    public class UKPRN_21Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _learnDelFundModel = FundModels.EuropeanSocialFund;
-        private readonly string _fundingStreamPeriodCode = FundingStreamPeriodCodeConstants.ESF1420;
+        private readonly int _learnDelFundModel = FundModels.ApprenticeshipsFrom1May2017;
+        private readonly string[] _fundingStreamPeriodCodes = { FundingStreamPeriodCodeConstants.LEVY1799, FundingStreamPeriodCodeConstants.NONLEVY2019 };
 
         private readonly IFileDataService _fileDataService;
         private readonly IFCSDataService _fcsDataService;
 
-        public UKPRN_20Rule(
+        public UKPRN_21Rule(
             IFileDataService fileDataService,
             IFCSDataService fcsDataService,
             IValidationErrorHandler validationErrorHandler)
-            : base(validationErrorHandler, RuleNameConstants.UKPRN_20)
+            : base(validationErrorHandler, RuleNameConstants.UKPRN_21)
         {
             _fileDataService = fileDataService;
             _fcsDataService = fcsDataService;
         }
 
-        public UKPRN_20Rule()
+        public UKPRN_21Rule()
            : base(null, null)
         {
         }
@@ -81,8 +81,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         {
             var contractAllocations = _fcsDataService.GetContractAllocationsFor(ukprn);
 
-            return contractAllocations?.Where(ca => ca != null
-            && _fundingStreamPeriodCode.Equals(ca.FundingStreamPeriodCode, StringComparison.OrdinalIgnoreCase)).ToList();
+            return contractAllocations
+                ?.Where(ca => ca != null && _fundingStreamPeriodCodes.Contains(ca.FundingStreamPeriodCode, StringComparer.OrdinalIgnoreCase))
+                .ToList();
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int learningDeliveryFundModel, string learningDeliveryConRefNumber, int learningProviderUKPRN, DateTime learningDeliveryStartDate)
