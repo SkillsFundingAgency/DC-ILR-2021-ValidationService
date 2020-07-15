@@ -44,6 +44,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType
         {
             return !Exclusion(learningDelivery.FundModel, learningDelivery.ProgTypeNullable)
                 && learningDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard
+                && learningDelivery.AimType == AimTypes.ProgrammeAim
                 && AppFinRecordConditionMet(learningDelivery);
         }
 
