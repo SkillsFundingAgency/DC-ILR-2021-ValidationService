@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Interface.Enum;
 using ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler.Model;
@@ -7,6 +9,8 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler
 {
     public class ValidationErrorHandler : IValidationErrorHandler
     {
+        public static readonly IFormatProvider RequiredCulture = new CultureInfo("en-GB");
+
         private readonly IValidationErrorCache _validationErrorCache;
         private readonly IValidationErrorsDataService _validationErrorsDataService;
 
@@ -35,8 +39,16 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.ErrorHandler
             };
         }
 
+        public static string AsRequiredCultureDate(DateTime? candidate) =>
+            candidate?.ToString("d", RequiredCulture);
+
         public IErrorMessageParameter BuildErrorMessageParameter(string propertyName, object value)
         {
+            if (value is DateTime dateTime)
+            {
+                return new ErrorMessageParameter(propertyName, AsRequiredCultureDate(dateTime));
+            }
+
             return new ErrorMessageParameter(propertyName, value?.ToString());
         }
     }
