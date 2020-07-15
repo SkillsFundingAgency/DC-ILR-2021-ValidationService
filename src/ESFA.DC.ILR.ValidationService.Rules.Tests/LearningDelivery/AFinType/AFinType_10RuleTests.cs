@@ -111,6 +111,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var learningDelivery = new TestLearningDelivery()
             {
                 ProgTypeNullable = 25,
+                AimType = 1,
                 AppFinRecords = appFinRecords
             };
 
@@ -136,6 +137,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var learningDelivery = new TestLearningDelivery()
             {
                 ProgTypeNullable = 25,
+                AimType = 1,
                 AppFinRecords = appFinRecords
             };
 
@@ -161,6 +163,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var learningDelivery = new TestLearningDelivery()
             {
                 ProgTypeNullable = 25,
+                AimType = 1,
                 FundModel = 99,
                 AppFinRecords = appFinRecords
             };
@@ -187,6 +190,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var learningDelivery = new TestLearningDelivery()
             {
                 ProgTypeNullable = 25,
+                AimType = 1,
                 AppFinRecords = appFinRecords
             };
 
@@ -223,6 +227,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var learningDelivery = new TestLearningDelivery()
             {
                 ProgTypeNullable = 24,
+                AimType = 1,
                 AppFinRecords = appFinRecords
             };
 
@@ -259,6 +264,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var learningDelivery = new TestLearningDelivery()
             {
                 ProgTypeNullable = 25,
+                AimType = 1,
                 FundModel = 99,
                 AppFinRecords = appFinRecords
             };
@@ -296,6 +302,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
             var learningDelivery = new TestLearningDelivery()
             {
                 ProgTypeNullable = 25,
+                AimType = 1,
                 AppFinRecords = appFinRecords
             };
 
