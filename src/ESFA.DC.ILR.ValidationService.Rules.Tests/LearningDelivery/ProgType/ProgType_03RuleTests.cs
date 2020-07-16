@@ -1,5 +1,6 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
+using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType;
@@ -56,9 +57,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
         [InlineData(ProgTypes.HigherApprenticeshipLevel7Plus, true)]
         [InlineData(ProgTypes.IntermediateLevelApprenticeship, true)]
         [InlineData(ProgTypes.Traineeship, true)]
+        [InlineData(ProgTypes.TLevel, true)]
+        [InlineData(ProgTypes.TLevelTransition, true)]
         public void ConditionMetWithLearningDeliveriesContainingProgTypeMeetsExpectation(int progType, bool expectation)
         {
-            var sut = NewRule();
+            var lookupMock = new Mock<IProvideLookupDetails>();
+            lookupMock.Setup(x => x.Contains(TypeOfIntegerCodedLookup.ProgType, progType)).Returns(expectation);
+
+            var sut = NewRule(lookupMock.Object);
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.ProgTypeNullable)
@@ -122,7 +128,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
                     Moq.It.Is<DateTime>(y => y == startDate)))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var sut = new ProgType_03Rule(mockHandler.Object);
+            var lookupMock = new Mock<IProvideLookupDetails>();
+
+            var sut = new ProgType_03Rule(mockHandler.Object, lookupMock.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -160,19 +168,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.ProgType
                 .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var lookupMock = new Mock<IProvideLookupDetails>();
+            lookupMock.Setup(x => x.Contains(TypeOfIntegerCodedLookup.ProgType, It.IsAny<int>())).Returns(true);
 
-            var sut = new ProgType_03Rule(mockHandler.Object);
+            var sut = new ProgType_03Rule(mockHandler.Object, lookupMock.Object);
 
             sut.Validate(mockLearner.Object);
 
             mockHandler.VerifyAll();
         }
 
-        public ProgType_03Rule NewRule()
+        public ProgType_03Rule NewRule(IProvideLookupDetails lookupDetails = null)
         {
-            var mock = new Mock<IValidationErrorHandler>();
+            var handlerMock = new Mock<IValidationErrorHandler>();
 
-            return new ProgType_03Rule(mock.Object);
+            return new ProgType_03Rule(handlerMock.Object, lookupDetails);
         }
     }
 }

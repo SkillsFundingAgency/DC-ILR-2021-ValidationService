@@ -30,18 +30,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 
         public static DateTime MininumViableTrainingStartDate => new DateTime(2015, 08, 01);
 
-        public static int[] TypeOfLearningProgrammesCollection => new[]
-        {
-            AdvancedLevelApprenticeship,
-            IntermediateLevelApprenticeship,
-            HigherApprenticeshipLevel4,
-            HigherApprenticeshipLevel5,
-            HigherApprenticeshipLevel6,
-            HigherApprenticeshipLevel7Plus,
-            Traineeship,
-            ApprenticeshipStandard
-        };
-
         public static bool IsViableApprenticeship(DateTime forThisStart) => forThisStart >= MininumViableTrainingStartDate;
 
         public static bool WithinMaxmimumTrainingDuration(DateTime fromStart, DateTime toFinish) =>
