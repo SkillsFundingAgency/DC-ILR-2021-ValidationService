@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
+using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 
@@ -14,17 +15,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public const string Name = RuleNameConstants.ESMType_01;
 
         private readonly IValidationErrorHandler _messageHandler;
+        private readonly IProvideLookupDetails _lookupDetails;
 
-        public ESMType_01Rule(
-            IValidationErrorHandler validationErrorHandler)
+        public ESMType_01Rule(IValidationErrorHandler validationErrorHandler, IProvideLookupDetails lookupDetails)
         {
             _messageHandler = validationErrorHandler;
+            _lookupDetails = lookupDetails;
         }
 
         public string RuleName => Name;
 
         public bool IsInvalidDomainItem(IEmploymentStatusMonitoring monitor) =>
-            !Monitoring.EmploymentStatus.StatusesCollection.Contains($"{monitor.ESMType}{monitor.ESMCode}");
+            !_lookupDetails.Contains(TypeOfStringCodedLookup.ESMType, $"{monitor.ESMType}{monitor.ESMCode}");
 
         public void Validate(ILearner objectToValidate)
         {

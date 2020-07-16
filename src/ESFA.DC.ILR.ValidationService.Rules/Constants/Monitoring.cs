@@ -178,34 +178,6 @@
 
             public const string SmallEmployer = "SEM1";
 
-            public static string[] StatusesCollection => new string[]
-            {
-                SelfEmployed,
-                EmployedFor16HoursOrMorePW,
-                EmployedForLessThan16HoursPW,
-                EmployedFor16To19HoursPW,
-                EmployedFor20HoursOrMorePW,
-                EmployedFor0To10HourPW,
-                EmployedFor11To20HoursPW,
-                EmployedFor21To30HoursPW,
-                EmployedFor31PlusHoursPW,
-                UnemployedForLessThan6M,
-                UnemployedFor6To11M,
-                UnemployedFor12To23M,
-                UnemployedFor24To35M,
-                UnemployedFor36MPlus,
-                EmployedForUpTo3M,
-                EmployedFor4To6M,
-                EmployedFor7To12M,
-                EmployedForMoreThan12M,
-                InReceiptOfJobSeekersAllowance,
-                InReceiptOfEmploymentAndSupportAllowance,
-                InReceiptOfAnotherStateBenefit,
-                InReceiptOfUniversalCredit,
-                InFulltimeEducationOrTrainingPriorToEnrolment,
-                SmallEmployer
-            };
-
             public static class Types
             {
                 public const string SelfEmploymentIndicator = "SEI";

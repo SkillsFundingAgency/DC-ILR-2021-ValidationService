@@ -1,4 +1,5 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType;
@@ -62,7 +63,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData("SEM2", true)]
         public void IsInvalidDomainItemMeetsExpectation(string candidate, bool expectation)
         {
-            var sut = NewRule();
             var mockItem = new Mock<IEmploymentStatusMonitoring>();
             mockItem
                 .SetupGet(y => y.ESMType)
@@ -71,7 +71,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(candidate.Substring(3)));
 
-            var result = sut.IsInvalidDomainItem(mockItem.Object);
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+            lookupDetailsMock.Setup(x => x.Contains(TypeOfStringCodedLookup.ESMType, candidate)).Returns(!expectation);
+
+            var result = NewRule(lookupDetailsMock.Object).IsInvalidDomainItem(mockItem.Object);
 
             Assert.Equal(expectation, result);
         }
@@ -142,7 +145,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                     esmCode))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var sut = new ESMType_01Rule(handler.Object);
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+            lookupDetailsMock.Setup(x => x.Contains(TypeOfStringCodedLookup.ESMType, candidate)).Returns(false);
+
+            var sut = new ESMType_01Rule(handler.Object, lookupDetailsMock.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -163,6 +169,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData(Monitoring.EmploymentStatus.EmployedForMoreThan12M)]
         [InlineData(Monitoring.EmploymentStatus.EmployedForUpTo3M)]
         [InlineData(Monitoring.EmploymentStatus.InFulltimeEducationOrTrainingPriorToEnrolment)]
+        [InlineData(Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupport)]
+        [InlineData(Monitoring.EmploymentStatus.InReceiptOfOtherStateBenefits)]
         [InlineData(Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit)]
         [InlineData(Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance)]
         [InlineData(Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance)]
@@ -206,8 +214,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+            lookupDetailsMock.Setup(x => x.Contains(TypeOfStringCodedLookup.ESMType, candidate)).Returns(true);
 
-            var sut = new ESMType_01Rule(handler.Object);
+            var sut = new ESMType_01Rule(handler.Object, lookupDetailsMock.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -230,8 +240,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
 
-            var sut = new ESMType_01Rule(handler.Object);
+            var sut = new ESMType_01Rule(handler.Object, lookupDetailsMock.Object);
 
             sut.Validate(mockLearner.Object);
 
@@ -249,19 +260,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(LearnRefNumber);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
 
-            var sut = new ESMType_01Rule(handler.Object);
+            var sut = new ESMType_01Rule(handler.Object, lookupDetailsMock.Object);
 
             sut.Validate(mockLearner.Object);
 
             handler.VerifyAll();
         }
 
-        public ESMType_01Rule NewRule()
+        public ESMType_01Rule NewRule(IProvideLookupDetails lookupDetails = null)
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            return new ESMType_01Rule(handler.Object);
+            return new ESMType_01Rule(handler.Object, lookupDetails);
         }
     }
 }
