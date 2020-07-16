@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
+using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 
@@ -16,10 +17,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         public const string Name = RuleNameConstants.ProgType_03;
 
         private readonly IValidationErrorHandler _messageHandler;
+        private readonly IProvideLookupDetails _lookupDetails;
 
-        public ProgType_03Rule(IValidationErrorHandler validationErrorHandler)
+        public ProgType_03Rule(IValidationErrorHandler validationErrorHandler, IProvideLookupDetails lookupDetails)
         {
             _messageHandler = validationErrorHandler;
+            _lookupDetails = lookupDetails;
         }
 
         public string RuleName => Name;
@@ -44,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         public bool ConditionMet(ILearningDelivery thisDelivery)
         {
             return thisDelivery != null
-                ? thisDelivery.ProgTypeNullable.HasValue && ProgTypes.TypeOfLearningProgrammesCollection.Contains((int)thisDelivery.ProgTypeNullable)
+                ? thisDelivery.ProgTypeNullable.HasValue && _lookupDetails.Contains(TypeOfIntegerCodedLookup.ProgType, thisDelivery.ProgTypeNullable.Value)
                 : true;
         }
 
