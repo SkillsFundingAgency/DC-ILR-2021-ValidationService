@@ -26,7 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public string RuleName => Name;
 
         public bool IsInvalidDomainItem(IEmploymentStatusMonitoring monitor) =>
-            !_lookupDetails.Contains(TypeOfStringCodedLookup.ESMType, $"{monitor.ESMType}{monitor.ESMCode}");
+            !_lookupDetails.Contains(TypeOfStringCodedLookup.ESMType, string.Concat(monitor.ESMType, monitor.ESMCode));
 
         public void Validate(ILearner objectToValidate)
         {
