@@ -185,7 +185,10 @@
     <Compile Include="Derived\DerivedData_31RuleTests.cs" />
     <Compile Include="Derived\DerivedData_17RuleTests.cs" />
     <Compile Include="Derived\DerivedData_32RuleTests.cs" />
-    <Compile Include="Derived\DerivedData_ValidityCategoryTests.cs" />
+    <Compile Include="Derived\DerivedData_CategoryRef_01Tests.cs" />
+    <Compile Include="Derived\DerivedData_CategoryRef_02Tests.cs" />
+    <Compile Include="Derived\DerivedData_ValidityCategory_02Tests.cs" />
+    <Compile Include="Derived\DerivedData_ValidityCategory_01Tests.cs" />
     <Compile Include="Derived\DerivedData_35RuleTests.cs" />
     <Compile Include="DestinationAndProgression\OutCollDate\OutCollDate_01RuleTests.cs" />
     <Compile Include="DestinationAndProgression\OutCollDate\OutCollDate_02RuleTests.cs" />

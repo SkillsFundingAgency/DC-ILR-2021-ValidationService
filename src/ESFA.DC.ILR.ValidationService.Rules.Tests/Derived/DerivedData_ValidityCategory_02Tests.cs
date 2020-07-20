@@ -12,7 +12,7 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 {
-    public class DerivedData_ValidityCategoryTests
+    public class DerivedData_ValidityCategory_02Tests
     {
         [Fact]
         public void CommunityLearningMatch_True()
@@ -413,18 +413,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(LARSConstants.Validities.CommunityLearning, 10, false, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.EuropeanSocialFund, 70, false, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.EFA16To19, 25, false, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.AdvancedLearnerLoan, 99, true, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.Any, 99, false, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.OLASSAdult, 35, false, true, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.AdultSkills, 35, false, false, false, false, false, false)]
-        [InlineData(LARSConstants.Validities.AdultSkills, 35, false, false, false, false, true, false)]
-        [InlineData(LARSConstants.Validities.Apprenticeships, 36, false, false, true, false, false, false)]
-        [InlineData(LARSConstants.Validities.Unemployed, 35, false, false, false, true, false, false)]
-        [InlineData(null, 10, false, false, false, false, false, true)]
-        public void Derive(string expectedCategory, int fundModel, bool famTypeMock, bool ldmFamMock, bool dd07Mock, bool dd11Mock, bool dd35Mock, bool resMock)
+        [InlineData(LARSConstants.Validities.CommunityLearning, 10, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.EuropeanSocialFund, 70, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.EFA16To19, 25, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.AdvancedLearnerLoan, 99, true, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.Any, 99, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.OLASSAdult, 35, false, true, false, false, false)]
+        [InlineData(LARSConstants.Validities.AdultSkills, 35, false, false, false, false, false)]
+        [InlineData(LARSConstants.Validities.AdultSkills, 35, false, false, false, false, true)]
+        [InlineData(LARSConstants.Validities.Apprenticeships, 36, false, false, true, false, false)]
+        [InlineData(LARSConstants.Validities.Unemployed, 35, false, false, false, true, false)]
+        [InlineData(null, 7, false, false, false, false, false)]
+        public void Derive(string expectedCategory, int fundModel, bool famTypeMock, bool ldmFamMock, bool dd07Mock, bool dd11Mock, bool dd35Mock)
         {
             var delivery = new TestLearningDelivery
             {
@@ -439,7 +439,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "ADL")).Returns(famTypeMock);
-            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES")).Returns(resMock);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "LDM", "034")).Returns(ldmFamMock);
 
             var dd07RuleMock = new Mock<IDerivedData_07Rule>();
@@ -454,13 +453,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07RuleMock.Object, dd11RuleMock.Object, dd35RuleMock.Object).Derive(delivery, employmentStatuses).Should().Be(expectedCategory);
         }
 
-        private DerivedData_ValidityCategory_01 NewDDRule(
+        private DerivedData_ValidityCategory_02 NewDDRule(
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
             IDerivedData_07Rule dd07 = null,
             IDerivedData_11Rule dd11 = null,
             IDerivedData_35Rule dd35 = null)
         {
-            return new DerivedData_ValidityCategory_01(learningDeliveryFAMQueryService, dd07, dd11, dd35);
+            return new DerivedData_ValidityCategory_02(learningDeliveryFAMQueryService, dd07, dd11, dd35);
         }
     }
 }
