@@ -15,14 +15,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
     public class LearnAimRef_89Rule : AbstractRule, IRule<ILearner>
     {
         private readonly ILARSDataService _larsDataService;
-        private readonly IDerivedData_ValidityCategory _ddValidityCategory;
-        private readonly IDerivedData_CategoryRef _ddCategoryRef;
+        private readonly IDerivedData_ValidityCategory_01 _ddValidityCategory;
+        private readonly IDerivedData_CategoryRef_01 _ddCategoryRef;
         private readonly IAcademicYearDataService _academicYearDataService;
 
         public LearnAimRef_89Rule(
             ILARSDataService larsDataService,
-            IDerivedData_ValidityCategory ddValidityCategory,
-            IDerivedData_CategoryRef ddCategoryRef,
+            IDerivedData_ValidityCategory_01 ddValidityCategory,
+            IDerivedData_CategoryRef_01 ddCategoryRef,
             IAcademicYearDataService academicYearDataService,
             IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.LearnAimRef_89)

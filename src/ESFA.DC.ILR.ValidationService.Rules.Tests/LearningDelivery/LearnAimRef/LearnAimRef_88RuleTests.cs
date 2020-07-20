@@ -232,7 +232,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 LearnStartDate = new DateTime(2019, 08, 31)
             };
 
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_01>();
             ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns((int?)null);
 
             NewRule(ddCategoryRef: ddCategoryMock.Object).CategoryRefConditionMet(learningDelivery).Should().BeFalse();
@@ -260,7 +260,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 }
             };
 
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_01>();
             ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(41);
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
@@ -291,7 +291,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 }
             };
 
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_01>();
             ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(41);
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
@@ -313,7 +313,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var categories = new List<LearningDeliveryCategory>();
 
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_01>();
             ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(41);
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
@@ -345,7 +345,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 }
             };
 
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
             ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns((string)null);
 
             NewRule(ddValidityCategory: ddValidityMock.Object).ValidityCategoryConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeFalse();
@@ -374,7 +374,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 }
             };
 
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
             ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
@@ -406,7 +406,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 }
             };
 
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
             ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ANY");
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
@@ -428,7 +428,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             var validities = new List<LARSValidity>();
 
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
             ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
@@ -460,7 +460,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
 
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
             ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
@@ -502,8 +502,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_01>();
 
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
             ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
@@ -536,7 +536,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
 
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
             ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ANY");
@@ -578,8 +578,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_01>();
 
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
             ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
@@ -629,8 +629,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_01>();
 
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
             larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(larsCategories);
@@ -683,8 +683,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_01>();
 
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
             larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(larsCategories);
@@ -737,8 +737,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory>();
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_01>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_01>();
 
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
             larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(larsCategories);
@@ -766,8 +766,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
         private LearnAimRef_88Rule NewRule(
             ILARSDataService larsDataService = null,
-            IDerivedData_ValidityCategory ddValidityCategory = null,
-            IDerivedData_CategoryRef ddCategoryRef = null,
+            IDerivedData_ValidityCategory_01 ddValidityCategory = null,
+            IDerivedData_CategoryRef_01 ddCategoryRef = null,
             IValidationErrorHandler validationErrorHandler = null)
         {
             return new LearnAimRef_88Rule(larsDataService, ddValidityCategory, ddCategoryRef, validationErrorHandler);

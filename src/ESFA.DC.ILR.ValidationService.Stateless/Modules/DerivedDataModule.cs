@@ -34,7 +34,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
             builder.RegisterType<DerivedData_36Rule>().As<IDerivedData_36Rule>().InstancePerLifetimeScope();
             builder.RegisterType<DerivedData_37Rule>().As<IDerivedData_37Rule>().InstancePerLifetimeScope();
             builder.RegisterType<DerivedData_38Rule>().As<IDerivedData_38Rule>().InstancePerLifetimeScope();
-            builder.RegisterType<DerivedData_ValidityCategory>().As<IDerivedData_ValidityCategory>().InstancePerLifetimeScope();
+            builder.RegisterType<DerivedData_ValidityCategory_01>().As<IDerivedData_ValidityCategory_01>().InstancePerLifetimeScope();
         }
     }
 }

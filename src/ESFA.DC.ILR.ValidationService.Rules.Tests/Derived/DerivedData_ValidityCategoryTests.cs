@@ -454,13 +454,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07RuleMock.Object, dd11RuleMock.Object, dd35RuleMock.Object).Derive(delivery, employmentStatuses).Should().Be(expectedCategory);
         }
 
-        private DerivedData_ValidityCategory NewDDRule(
+        private DerivedData_ValidityCategory_01 NewDDRule(
             ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null,
             IDerivedData_07Rule dd07 = null,
             IDerivedData_11Rule dd11 = null,
             IDerivedData_35Rule dd35 = null)
         {
-            return new DerivedData_ValidityCategory(learningDeliveryFAMQueryService, dd07, dd11, dd35);
+            return new DerivedData_ValidityCategory_01(learningDeliveryFAMQueryService, dd07, dd11, dd35);
         }
     }
 }

@@ -4,11 +4,11 @@ using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
-    public class DerivedData_CategoryRef : IDerivedData_CategoryRef
+    public class DerivedData_CategoryRef_01 : IDerivedData_CategoryRef_01
     {
         private readonly IDerivedData_35Rule _dd35;
 
-        public DerivedData_CategoryRef(IDerivedData_35Rule dd35)
+        public DerivedData_CategoryRef_01(IDerivedData_35Rule dd35)
         {
             _dd35 = dd35;
         }

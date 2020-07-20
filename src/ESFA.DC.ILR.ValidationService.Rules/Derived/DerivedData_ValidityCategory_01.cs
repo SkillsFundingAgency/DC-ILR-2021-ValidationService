@@ -7,7 +7,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
-    public class DerivedData_ValidityCategory : IDerivedData_ValidityCategory
+    public class DerivedData_ValidityCategory_01 : IDerivedData_ValidityCategory_01
     {
         private readonly DateTime _firstAugust2011 = new DateTime(2011, 08, 01);
         private readonly DateTime _firstAugust2016 = new DateTime(2016, 08, 01);
@@ -17,7 +17,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         private readonly IDerivedData_11Rule _dd11;
         private readonly IDerivedData_35Rule _dd35;
 
-        public DerivedData_ValidityCategory(
+        public DerivedData_ValidityCategory_01(
              ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
              IDerivedData_07Rule dd07,
              IDerivedData_11Rule dd11,
