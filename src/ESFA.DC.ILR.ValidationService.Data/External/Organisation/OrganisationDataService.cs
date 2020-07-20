@@ -14,6 +14,11 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation
             _referenceDataCache = referenceDataCache;
         }
 
+        public IOrganisation GetOrganisationFor(long ukprn)
+        {
+            return _referenceDataCache.Organisations.GetValueOrDefault(ukprn);
+        }
+
         public bool LegalOrgTypeMatchForUkprn(long ukprn, string legalOrgType)
         {
             return legalOrgType == GetLegalOrgTypeForUkprn(ukprn);

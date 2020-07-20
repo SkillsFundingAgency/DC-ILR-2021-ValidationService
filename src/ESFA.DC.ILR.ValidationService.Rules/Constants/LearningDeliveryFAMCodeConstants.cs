@@ -73,6 +73,10 @@
         public const string LDM_Pilot = "358";
         public const string LDM_CareerLearningPilot = "359";
         public const string LDM_LowWages = "363";
+        public const string LDM_370 = "370";
+        public const string LDM_371 = "371";
+        public const string LDM_372 = "372";
+        public const string LDM_373 = "373";
 
         public const string NSA_FashionRetail = "1";
         public const string NSA_Manufacturing = "2";
