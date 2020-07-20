@@ -26,7 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                         Reason = stfi.Reason,
                         EffectiveFrom = stfi.EffectiveFrom,
                         EffectiveTo = stfi.EffectiveTo
-                    }) ?? new List<ShortTermFundingInitiative>()
+                    }).ToList() ?? new List<ShortTermFundingInitiative>()
                 });
         }
 
