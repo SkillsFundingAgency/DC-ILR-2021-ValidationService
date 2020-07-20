@@ -185,7 +185,10 @@
     <Compile Include="Derived\DerivedData_31RuleTests.cs" />
     <Compile Include="Derived\DerivedData_17RuleTests.cs" />
     <Compile Include="Derived\DerivedData_32RuleTests.cs" />
-    <Compile Include="Derived\DerivedData_ValidityCategoryTests.cs" />
+    <Compile Include="Derived\DerivedData_CategoryRef_01Tests.cs" />
+    <Compile Include="Derived\DerivedData_CategoryRef_02Tests.cs" />
+    <Compile Include="Derived\DerivedData_ValidityCategory_02Tests.cs" />
+    <Compile Include="Derived\DerivedData_ValidityCategory_01Tests.cs" />
     <Compile Include="Derived\DerivedData_35RuleTests.cs" />
     <Compile Include="DestinationAndProgression\OutCollDate\OutCollDate_01RuleTests.cs" />
     <Compile Include="DestinationAndProgression\OutCollDate\OutCollDate_02RuleTests.cs" />
@@ -428,6 +431,7 @@
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_85RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_84RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_79RuleTests.cs" />
+    <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_91RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_90RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMDateTo\LearnDelFAMDateTo_05RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_04RuleTests.cs" />

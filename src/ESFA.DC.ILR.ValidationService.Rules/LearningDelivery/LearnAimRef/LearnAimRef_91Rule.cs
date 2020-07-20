@@ -4,6 +4,7 @@ using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
@@ -11,19 +12,22 @@ using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
-    public class LearnAimRef_88Rule : AbstractRule, IRule<ILearner>
+    public class LearnAimRef_91Rule : AbstractRule, IRule<ILearner>
     {
+        private readonly IAcademicYearDataService _academicYearDataService;
         private readonly ILARSDataService _larsDataService;
-        private readonly IDerivedData_ValidityCategory_01 _ddValidityCategory;
-        private readonly IDerivedData_CategoryRef_01 _ddCategoryRef;
+        private readonly IDerivedData_ValidityCategory_02 _ddValidityCategory;
+        private readonly IDerivedData_CategoryRef_02 _ddCategoryRef;
 
-        public LearnAimRef_88Rule(
+        public LearnAimRef_91Rule(
+            IAcademicYearDataService academicYearDataService,
             ILARSDataService larsDataService,
-            IDerivedData_ValidityCategory_01 ddValidityCategory,
-            IDerivedData_CategoryRef_01 ddCategoryRef,
+            IDerivedData_ValidityCategory_02 ddValidityCategory,
+            IDerivedData_CategoryRef_02 ddCategoryRef,
             IValidationErrorHandler validationErrorHandler)
-            : base(validationErrorHandler, RuleNameConstants.LearnAimRef_88)
+            : base(validationErrorHandler, RuleNameConstants.LearnAimRef_91)
         {
+            _academicYearDataService = academicYearDataService;
             _larsDataService = larsDataService;
             _ddValidityCategory = ddValidityCategory;
             _ddCategoryRef = ddCategoryRef;
@@ -33,11 +37,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
         {
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
+                if (LearnActEndDateCondition(learningDelivery.LearnActEndDateNullable))
+                {
+                    return;
+                }
+
                 if (ConditionMet(learningDelivery, objectToValidate.LearnerEmploymentStatuses))
                 {
                     HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.LearnStartDate, learningDelivery.LearnAimRef));
                 }
             }
+        }
+
+        public bool LearnActEndDateCondition(DateTime? learnActEndDate)
+        {
+            return learnActEndDate == null || learnActEndDate < _academicYearDataService.Start();
         }
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
