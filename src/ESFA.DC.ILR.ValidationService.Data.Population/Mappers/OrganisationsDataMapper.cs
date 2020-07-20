@@ -18,7 +18,15 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                     UKPRN = o.UKPRN,
                     LegalOrgType = o.LegalOrgType,
                     PartnerUKPRN = o.PartnerUKPRN,
-                    LongTermResid = o.LongTermResid
+                    LongTermResid = o.LongTermResid,
+                    ShortTermFundingInitiatives = o.OrganisationShortTermFundingInitiatives?.Select(stfi => new ShortTermFundingInitiative
+                    {
+                        UKPRN = stfi.UKPRN,
+                        LdmCode = stfi.LdmCode,
+                        Reason = stfi.Reason,
+                        EffectiveFrom = stfi.EffectiveFrom,
+                        EffectiveTo = stfi.EffectiveTo
+                    }) ?? new List<ShortTermFundingInitiative>()
                 });
         }
 
