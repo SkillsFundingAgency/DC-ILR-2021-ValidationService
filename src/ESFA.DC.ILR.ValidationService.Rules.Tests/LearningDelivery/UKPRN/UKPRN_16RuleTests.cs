@@ -151,12 +151,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             // Assert
             filtered.Should().NotBeNull();
             filtered.Should().NotBeEmpty();
-            filtered.Should().HaveCount(4);
+            filtered.Should().HaveCount(2);
             filtered.Should().OnlyContain(ca =>
                 ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.C1618_NLAP2018 ||
-                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.ANLAP2018 ||
-                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.LEVY1799 ||
-                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.NONLEVY2019);
+                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.ANLAP2018);
         }
 
         public static IEnumerable<object[]> ConditionMet_TestData()
@@ -185,20 +183,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             result.Should().Equals(expectedResult);
         }
 
-        public static IEnumerable<object[]> MatchingLearningDeliveries_TestData()
+        [Fact]
+        public void MatchingLearningDeliveries()
         {
-            yield return new object[] { FundModels.ApprenticeshipsFrom1May2017, new TestLearningDeliveryFAM { LearnDelFAMType = LearningDeliveryFAMTypeConstants.RES }, false };
-            yield return new object[] { FundModels.ApprenticeshipsFrom1May2017, new TestLearningDeliveryFAM { LearnDelFAMType = LearningDeliveryFAMTypeConstants.ALB }, true };
-            yield return new object[] { FundModels.ApprenticeshipsFrom1May2017, null, true };
-            yield return new object[] { FundModels.AdultSkills, new TestLearningDeliveryFAM { LearnDelFAMType = LearningDeliveryFAMTypeConstants.RES }, false };
-        }
-
-        [Theory]
-        [MemberData(nameof(MatchingLearningDeliveries_TestData))]
-        public void MatchingLearningDeliveries_FiltersOnFundModelAndFAMType(int fundModel, ILearningDeliveryFAM learningDeliveryFAM, bool returned)
-        {
-            var learningDeliveryFAMs =
-                learningDeliveryFAM != null ? new ILearningDeliveryFAM[] { learningDeliveryFAM } : null;
+            var deliveryFams = new List<TestLearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                    LearnDelFAMCode = "2"
+                }
+            };
 
             var learningDeliveries = new TestLearningDelivery[]
             {
@@ -206,23 +201,110 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 new TestLearningDelivery()
                 {
                     ConRefNumber = "ConRef1",
-                    FundModel = fundModel,
-                    LearningDeliveryFAMs = learningDeliveryFAMs
+                    FundModel = 36,
+                    AimType = 1,
+                    LearningDeliveryFAMs = deliveryFams
                 }
             };
 
             // Act
             var filteredResult = NewRule().MatchingLearningDeliveries(learningDeliveries);
 
-            // Assert
-            if (returned)
+            filteredResult.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void MatchingLearningDeliveries_NoneHasRestart()
+        {
+            var deliveryFams = new List<TestLearningDeliveryFAM>()
             {
-                filteredResult.Should().NotBeEmpty();
-            }
-            else
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.RES
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                    LearnDelFAMCode = "2"
+                }
+            };
+
+            var learningDeliveries = new TestLearningDelivery[]
             {
-                filteredResult.Should().BeEmpty();
-            }
+                // Arrange
+                new TestLearningDelivery()
+                {
+                    ConRefNumber = "ConRef1",
+                    FundModel = 36,
+                    AimType = 1,
+                    LearningDeliveryFAMs = deliveryFams
+                }
+            };
+
+            // Act
+            var filteredResult = NewRule().MatchingLearningDeliveries(learningDeliveries);
+
+            filteredResult.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void MatchingLearningDeliveries_NoneAimType()
+        {
+            var deliveryFams = new List<TestLearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                    LearnDelFAMCode = "2"
+                }
+            };
+
+            var learningDeliveries = new TestLearningDelivery[]
+            {
+                // Arrange
+                new TestLearningDelivery()
+                {
+                    ConRefNumber = "ConRef1",
+                    FundModel = 36,
+                    AimType = 2,
+                    LearningDeliveryFAMs = deliveryFams
+                }
+            };
+
+            // Act
+            var filteredResult = NewRule().MatchingLearningDeliveries(learningDeliveries);
+
+            filteredResult.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void MatchingLearningDeliveries_NoneNoValidDeliveryFam()
+        {
+            var deliveryFams = new List<TestLearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                    LearnDelFAMCode = "3"
+                }
+            };
+
+            var learningDeliveries = new TestLearningDelivery[]
+            {
+                // Arrange
+                new TestLearningDelivery()
+                {
+                    ConRefNumber = "ConRef1",
+                    FundModel = 36,
+                    AimType = 1,
+                    LearningDeliveryFAMs = deliveryFams
+                }
+            };
+
+            // Act
+            var filteredResult = NewRule().MatchingLearningDeliveries(learningDeliveries);
+
+            filteredResult.Should().BeEmpty();
         }
 
         public static IEnumerable<object[]> Validate_TestData()
@@ -264,7 +346,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     {
                         ConRefNumber = "ConRef1",
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        LearnStartDate = new DateTime(2019, 01, 01)
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2019, 01, 01),
+                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                                LearnDelFAMCode = "2"
+                            }
+                        }
                     }
                 }
             };
