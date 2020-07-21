@@ -241,12 +241,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                    "105"))
                .Returns(true);
 
-            learningDeliveryFamqs
-                .Setup(x => x.HasLearningDeliveryFAMType(
-                    delivery.Object.LearningDeliveryFAMs,
-                    "RES"))
-                .Returns(false);
-
             var sut = new UKPRN_17Rule(handler.Object, fileData.Object, learningDeliveryFamqs.Object, fcsData.Object);
 
             sut.Validate(learner.Object);
@@ -255,40 +249,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             learningDeliveryFamqs.VerifyAll();
             fileData.VerifyAll();
             fcsData.VerifyAll();
-        }
-
-        [Fact]
-        public void HasNoRestartFamType_Fails()
-        {
-            IEnumerable<ILearningDeliveryFAM> deliveryFams = new List<TestLearningDeliveryFAM>()
-            {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "RES" }
-            };
-
-            var mockFamQuerySrvc = new Mock<ILearningDeliveryFAMQueryService>();
-            mockFamQuerySrvc.Setup(x => x.HasLearningDeliveryFAMType(deliveryFams, "RES")).Returns(true);
-
-            var result = NewRule(null, null, mockFamQuerySrvc.Object, null).HasNoRestartFamType(deliveryFams);
-
-            result.Should().BeFalse();
-            mockFamQuerySrvc.Verify(x => x.HasLearningDeliveryFAMType(deliveryFams, "RES"), Times.Exactly(1));
-        }
-
-        [Fact]
-        public void HasNoRestartFamType_Pass()
-        {
-            IEnumerable<ILearningDeliveryFAM> deliveryFams = new List<TestLearningDeliveryFAM>()
-            {
-                new TestLearningDeliveryFAM() { LearnDelFAMType = "ADL" }
-            };
-
-            var mockFamQuerySrvc = new Mock<ILearningDeliveryFAMQueryService>();
-            mockFamQuerySrvc.Setup(x => x.HasLearningDeliveryFAMType(deliveryFams, "RES")).Returns(false);
-
-            var result = NewRule(null, null, mockFamQuerySrvc.Object, null).HasNoRestartFamType(deliveryFams);
-
-            result.Should().BeTrue();
-            mockFamQuerySrvc.Verify(x => x.HasLearningDeliveryFAMType(deliveryFams, "RES"), Times.Exactly(1));
         }
 
         [Theory]
@@ -346,12 +306,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                    "SOF",
                    "105"))
                .Returns(true);
-
-            learningDeliveryFamqs
-                .Setup(x => x.HasLearningDeliveryFAMType(
-                    delivery.Object.LearningDeliveryFAMs,
-                    "RES"))
-                .Returns(false);
 
             var sut = new UKPRN_17Rule(handler.Object, fileData.Object, learningDeliveryFamqs.Object, fcsData.Object);
 

@@ -39,8 +39,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         }
 
         public bool IsNotValid(ILearningDelivery theDelivery) =>
-                HasNoRestartFamType(theDelivery.LearningDeliveryFAMs)
-                && HasQualifyingModel(theDelivery)
+                HasQualifyingModel(theDelivery)
                 && IsTraineeship(theDelivery)
                 && IsESFAAdultFunding(theDelivery)
                 && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
@@ -65,11 +64,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public bool HasFundingRelationship(IFcsContractAllocation theAllocation) =>
             theAllocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.C16_18TRN2021);
 
-        public bool HasStartedAfterStopDate(IFcsContractAllocation theAllocation, ILearningDelivery theDelivery) =>
-            theDelivery.LearnStartDate >= theAllocation.StopNewStartsFromDate;
-
-        public bool HasNoRestartFamType(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams) =>
-            !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.RES);
+        public bool HasStartedAfterStopDate(IFcsContractAllocation theAllocation, ILearningDelivery theDelivery)
+        {
+            var x = theDelivery.LearnStartDate >= theAllocation.StopNewStartsFromDate;
+            return theDelivery.LearnStartDate >= theAllocation.StopNewStartsFromDate;
+        }
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
             HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
