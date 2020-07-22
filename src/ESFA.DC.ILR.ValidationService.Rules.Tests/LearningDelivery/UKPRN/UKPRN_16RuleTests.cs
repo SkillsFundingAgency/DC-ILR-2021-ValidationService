@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Model;
@@ -307,6 +306,105 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             filteredResult.Should().BeEmpty();
         }
 
+        [Fact]
+        public void ConditionMet_True()
+        {
+            var learnStartDate = new DateTime(2019, 08, 01);
+
+            var contractAllocations = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 01),
+                    StartDate = new DateTime(2019, 01, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 03),
+                    StartDate = new DateTime(2019, 03, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 02),
+                    StartDate = new DateTime(2019, 02, 01)
+                }
+            };
+
+            NewRule().ConditionMet(learnStartDate, contractAllocations).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMet_False_NullStopStarts()
+        {
+            var learnStartDate = new DateTime(2019, 08, 01);
+
+            var contractAllocations = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = null,
+                    StartDate = new DateTime(2019, 01, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = null,
+                    StartDate = new DateTime(2019, 03, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = null,
+                    StartDate = new DateTime(2019, 02, 01)
+                }
+            };
+
+            NewRule().ConditionMet(learnStartDate, contractAllocations).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_LearnStartDateLessThan()
+        {
+            var learnStartDate = new DateTime(2018, 08, 01);
+
+            var contractAllocations = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 01),
+                    StartDate = new DateTime(2019, 01, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 03),
+                    StartDate = new DateTime(2019, 03, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 02),
+                    StartDate = new DateTime(2019, 02, 01)
+                }
+            };
+
+            NewRule().ConditionMet(learnStartDate, contractAllocations).Should().BeFalse();
+        }
+
         public static IEnumerable<object[]> Validate_TestData()
         {
             yield return new object[] { FundingStreamPeriodCodeConstants.C1618_NLAP2018, null, false };
@@ -331,7 +429,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 {
                     DeliveryUKPRN = 42,
                     FundingStreamPeriodCode = fundingStreamPeriodCode,
-                    StopNewStartsFromDate = stopNewStartsFromDate
+                    StopNewStartsFromDate = stopNewStartsFromDate,
+                    StartDate = new DateTime(2019, 08, 01)
                 }
             };
 
