@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
@@ -39,11 +40,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         }
 
         public bool IsNotValid(ILearningDelivery theDelivery) =>
-                HasNoRestartFamType(theDelivery.LearningDeliveryFAMs)
-                && HasQualifyingModel(theDelivery)
-                && IsTraineeship(theDelivery)
-                && IsESFAAdultFunding(theDelivery)
-                && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
+            HasNoRestartFamType(theDelivery.LearningDeliveryFAMs)
+            && HasQualifyingModel(theDelivery)
+            && IsTraineeship(theDelivery)
+            && IsESFAAdultFunding(theDelivery)
+            && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
 
         public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
             theDelivery.FundModel == FundModels.Age16To19ExcludingApprenticeships;
@@ -57,10 +58,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                  LearningDeliveryFAMTypeConstants.SOF,
                  LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
 
-        public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate) =>
-            _fcsData
+        public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate)
+        {
+            var fcsRecord = _fcsData
                 .GetContractAllocationsFor(ProviderUKPRN)
-                .NullSafeAny(x => HasFundingRelationship(x) && hasStartedAfterStopDate(x));
+                .OrderByDescending(x => x.StartDate)
+                .FirstOrDefault();
+
+            if (fcsRecord == null)
+            {
+                return false;
+            }
+
+            return HasFundingRelationship(fcsRecord) && hasStartedAfterStopDate(fcsRecord);
+        }
 
         public bool HasFundingRelationship(IFcsContractAllocation theAllocation) =>
             theAllocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.C16_18TRN2021);

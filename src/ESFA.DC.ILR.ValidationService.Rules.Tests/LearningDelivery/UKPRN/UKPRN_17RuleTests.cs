@@ -135,6 +135,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN2021, true)]
         public void HasFundingRelationshipMeetsExpectation(string candidate, bool expectation)
         {
+            var thresholdDate = DateTime.Parse("2017-05-01");
+
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
 
@@ -147,6 +149,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             allocation
                 .SetupGet(x => x.FundingStreamPeriodCode)
                 .Returns(candidate);
+            allocation
+                .SetupGet(x => x.StartDate)
+                .Returns(thresholdDate);
 
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             fcsData
@@ -226,6 +231,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Returns(candidate);
             allocation
                 .SetupGet(x => x.StopNewStartsFromDate)
+                .Returns(thresholdDate);
+            allocation
+                .SetupGet(x => x.StartDate)
                 .Returns(thresholdDate);
 
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
@@ -334,10 +342,164 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .SetupGet(x => x.StopNewStartsFromDate)
                 .Returns(thresholdDate.AddDays(1));
 
+            allocation
+                .SetupGet(x => x.StartDate)
+                .Returns(thresholdDate);
+
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             fcsData
                 .Setup(x => x.GetContractAllocationsFor(TestProviderID))
                 .Returns(new IFcsContractAllocation[] { allocation.Object });
+
+            var learningDeliveryFamqs = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFamqs
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "SOF",
+                   "105"))
+               .Returns(true);
+
+            learningDeliveryFamqs
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    delivery.Object.LearningDeliveryFAMs,
+                    "RES"))
+                .Returns(false);
+
+            var sut = new UKPRN_17Rule(handler.Object, fileData.Object, learningDeliveryFamqs.Object, fcsData.Object);
+
+            sut.Validate(learner.Object);
+
+            handler.VerifyAll();
+            learningDeliveryFamqs.VerifyAll();
+            fileData.VerifyAll();
+            fcsData.VerifyAll();
+        }
+
+        [Theory]
+        [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN2021)]
+        public void ValidItemNoPreviousContractAllocationDoesNotRaiseValidationMessage(string candidate)
+        {
+            const string LearnRefNumber = "123456789X";
+            var thresholdDate = DateTime.Parse("2017-05-01");
+
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(thresholdDate);
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(25);
+            delivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(24);
+
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
+
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+            fcsData
+                .Setup(x => x.GetContractAllocationsFor(TestProviderID))
+                .Returns(new IFcsContractAllocation[] { });
+
+            var learningDeliveryFamqs = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFamqs
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "SOF",
+                   "105"))
+               .Returns(true);
+
+            learningDeliveryFamqs
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    delivery.Object.LearningDeliveryFAMs,
+                    "RES"))
+                .Returns(false);
+
+            var sut = new UKPRN_17Rule(handler.Object, fileData.Object, learningDeliveryFamqs.Object, fcsData.Object);
+
+            sut.Validate(learner.Object);
+
+            handler.VerifyAll();
+            learningDeliveryFamqs.VerifyAll();
+            fileData.VerifyAll();
+            fcsData.VerifyAll();
+        }
+
+        [Theory]
+        [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN2021)]
+        public void ValidItemMultipleContractsDoesNotRaiseValidationMessage(string candidate)
+        {
+            const string LearnRefNumber = "123456789X";
+            var thresholdDate = DateTime.Parse("2017-05-01");
+
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(thresholdDate);
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(25);
+            delivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(24);
+
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
+
+            var allocation = new Mock<IFcsContractAllocation>(MockBehavior.Strict);
+            allocation
+                .SetupGet(x => x.FundingStreamPeriodCode)
+                .Returns(candidate);
+            allocation
+                .SetupGet(x => x.StopNewStartsFromDate)
+                .Returns(thresholdDate.AddDays(1));
+            allocation
+                .SetupGet(x => x.StartDate)
+                .Returns(thresholdDate);
+
+            var allocation2 = new Mock<IFcsContractAllocation>(MockBehavior.Strict);
+            allocation2
+                .SetupGet(x => x.FundingStreamPeriodCode)
+                .Returns(candidate);
+            allocation2
+                .SetupGet(x => x.StopNewStartsFromDate)
+                .Returns((DateTime?)null);
+            allocation2
+                .SetupGet(x => x.StartDate)
+                .Returns(thresholdDate.AddDays(1));
+
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+            fcsData
+                .Setup(x => x.GetContractAllocationsFor(TestProviderID))
+                .Returns(new IFcsContractAllocation[] { allocation.Object, allocation2.Object });
 
             var learningDeliveryFamqs = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
             learningDeliveryFamqs
