@@ -448,7 +448,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
             fcsData
                 .Setup(x => x.GetContractAllocationsFor(TestProviderID))
-                .Returns(new IFcsContractAllocation[] { allocation.Object });
+                .Returns(new IFcsContractAllocation[] { allocation.Object, allocation2.Object });
 
             var learningDeliveryFamqs = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
             learningDeliveryFamqs
