@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
@@ -49,7 +50,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             && HasQualifyingModel(theDelivery)
                 && IsESFAAdultFunding(theDelivery)
                 && IsAdultEducationBudgets(theDelivery)
-                && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
+                && HasDisQualifyingFundingRelationship(x => HasStartedBeforeStopDate(x, theDelivery));
 
         public bool HasNoRestartFamType(IEnumerable<ILearningDeliveryFAM> learningDeliveryFams) =>
             !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.RES);
@@ -69,16 +70,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 LearningDeliveryFAMTypeConstants.SOF,
                 LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
 
-        public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate) =>
-            _fcsData
+        public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate)
+        {
+            var fcsRecord = _fcsData
                 .GetContractAllocationsFor(ProviderUKPRN)
-                .NullSafeAny(x => HasFundingRelationship(x) && hasStartedAfterStopDate(x));
+                .OrderBy(x => x.StartDate)
+                .FirstOrDefault();
+
+            if (fcsRecord == null)
+            {
+                return false;
+            }
+
+            return HasFundingRelationship(fcsRecord) && hasStartedAfterStopDate(fcsRecord);
+        }
 
         public bool HasFundingRelationship(IFcsContractAllocation theAllocation) =>
             _fundingStreams.Contains(theAllocation.FundingStreamPeriodCode);
 
-        public bool HasStartedAfterStopDate(IFcsContractAllocation theAllocation, ILearningDelivery theDelivery) =>
-            theDelivery.LearnStartDate >= theAllocation.StopNewStartsFromDate;
+        public bool HasStartedBeforeStopDate(IFcsContractAllocation theAllocation, ILearningDelivery theDelivery) =>
+            theDelivery.LearnStartDate < theAllocation.StopNewStartsFromDate;
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery) =>
             HandleValidationError(learnRefNumber, theDelivery.AimSeqNumber, BuildMessageParametersFor(theDelivery));
