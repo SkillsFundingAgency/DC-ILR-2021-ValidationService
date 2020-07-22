@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
@@ -46,22 +47,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         public bool IsNotValid(ILearningDelivery theDelivery) =>
             !IsExcluded(theDelivery)
-                && HasQualifyingModel(theDelivery)
-                && IsESFAAdultFunding(theDelivery)
-                && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
+            && HasQualifyingModel(theDelivery)
+            && IsESFAAdultFunding(theDelivery)
+            && HasDisQualifyingFundingRelationship(x => HasStartedAfterStopDate(x, theDelivery));
 
         public bool IsExcluded(ILearningDelivery theDelivery)
         {
             return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
-                theDelivery.LearningDeliveryFAMs,
-                LearningDeliveryFAMTypeConstants.LDM,
-                LearningDeliveryFAMCodeConstants.LDM_ProcuredAdultEducationBudget)
-                || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(
-                    theDelivery.LearningDeliveryFAMs,
-                    LearningDeliveryFAMTypeConstants.RES);
+                       theDelivery.LearningDeliveryFAMs,
+                       LearningDeliveryFAMTypeConstants.LDM,
+                       LearningDeliveryFAMCodeConstants.LDM_ProcuredAdultEducationBudget)
+                   || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(
+                       theDelivery.LearningDeliveryFAMs,
+                       LearningDeliveryFAMTypeConstants.RES);
         }
 
-               public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
+        public bool HasQualifyingModel(ILearningDelivery theDelivery) =>
             theDelivery.FundModel == FundModels.AdultSkills;
 
         public bool IsESFAAdultFunding(ILearningDelivery theDelivery) =>
@@ -70,10 +71,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 LearningDeliveryFAMTypeConstants.SOF,
                 LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
 
-        public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate) =>
-            _fcsData
+        public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate)
+        {
+            var fcsRecord = _fcsData
                 .GetContractAllocationsFor(ProviderUKPRN)
-                .NullSafeAny(x => HasFundingRelationship(x) && hasStartedAfterStopDate(x));
+                .OrderBy(x => x.StartDate)
+                .FirstOrDefault();
+
+            if (fcsRecord == null)
+            {
+                return false;
+            }
+
+            return HasFundingRelationship(fcsRecord) && hasStartedAfterStopDate(fcsRecord);
+        }
 
         public bool HasFundingRelationship(IFcsContractAllocation theAllocation) =>
             _fundingStreams.Contains(theAllocation.FundingStreamPeriodCode);
