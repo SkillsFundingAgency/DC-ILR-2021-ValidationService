@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -12,13 +13,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
     public class UKPRN_16Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _learnDelFundModel = FundModels.ApprenticeshipsFrom1May2017;
         private readonly HashSet<string> _fundingStreamPeriodCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             FundingStreamPeriodCodeConstants.C1618_NLAP2018,
-            FundingStreamPeriodCodeConstants.ANLAP2018,
-            FundingStreamPeriodCodeConstants.LEVY1799,
-            FundingStreamPeriodCodeConstants.NONLEVY2019
+            FundingStreamPeriodCodeConstants.ANLAP2018
         };
 
         private readonly IFileDataService _fileDataService;
@@ -47,15 +45,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         {
             var ukprn = _fileDataService.UKPRN();
 
-            // prepare contract allocations list before iterating the learning deliveries
             var filteredContractAllocations = ContractAllocationsForUkprnAndFundingStreamPeriodCodes(ukprn);
 
             if (filteredContractAllocations == null || objectToValidate.LearningDeliveries == null)
-            { // If there are no Contract Allocations or Learning deliveries then do not progress. No Error
+            {
                 return;
             }
 
-            // containing a learning delivery with FundModel = 36 and LearningDeliveryFAM.LearnDelFAMType = RES
             var filterLearningDeliveries = MatchingLearningDeliveries(objectToValidate.LearningDeliveries);
 
             foreach (var learningDelivery in filterLearningDeliveries)
@@ -70,8 +66,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         public IEnumerable<ILearningDelivery> MatchingLearningDeliveries(IReadOnlyCollection<ILearningDelivery> learningDeliveries)
         {
             return learningDeliveries
-                .Where(d => d.FundModel == _learnDelFundModel)
-                .Where(ld => ld.LearningDeliveryFAMs == null || !ld.LearningDeliveryFAMs.Any(ldf => ldf.LearnDelFAMType == LearningDeliveryFAMTypeConstants.RES));
+                .Where(d => d.FundModel == FundModels.ApprenticeshipsFrom1May2017
+                            && d.AimType == AimTypes.ProgrammeAim
+                            && d.LearningDeliveryFAMs != null
+                            && d.LearningDeliveryFAMs.Any(ldf =>
+                                                            ldf.LearnDelFAMCode.CaseInsensitiveEquals(LearningDeliveryFAMCodeConstants.ACT_ContractESFA)
+                                                            && ldf.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.ACT))
+                            && !d.LearningDeliveryFAMs.Any(ldf => ldf.LearnDelFAMType == LearningDeliveryFAMTypeConstants.RES)); // Exclusion
         }
 
         public IEnumerable<IFcsContractAllocation> ContractAllocationsForUkprnAndFundingStreamPeriodCodes(int ukprn)
@@ -83,7 +84,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         public bool ConditionMet(DateTime learnStartDate, IEnumerable<IFcsContractAllocation> contractAllocations)
         {
-            return contractAllocations.Any(ca => (ca.StopNewStartsFromDate ?? DateTime.MaxValue) <= learnStartDate);
+            var latestStopNewStartsFromDate = contractAllocations?
+                .Where(ca => ca.StopNewStartsFromDate.HasValue && ca.StartDate.HasValue)
+                .OrderByDescending(ca => ca.StartDate)
+                .FirstOrDefault()?
+                .StopNewStartsFromDate;
+
+            return learnStartDate >= latestStopNewStartsFromDate;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int learningDeliveryFundModel, int learningProviderUKPRN, DateTime learningDeliveryStartDate)
