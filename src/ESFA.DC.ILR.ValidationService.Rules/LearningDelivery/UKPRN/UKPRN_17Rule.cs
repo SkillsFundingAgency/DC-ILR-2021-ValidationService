@@ -58,12 +58,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                  LearningDeliveryFAMTypeConstants.SOF,
                  LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
 
-        public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate) =>
-            _fcsData
+        public bool HasDisQualifyingFundingRelationship(Func<IFcsContractAllocation, bool> hasStartedAfterStopDate)
+        {
+            var fcsRecord = _fcsData
                 .GetContractAllocationsFor(ProviderUKPRN)
                 .OrderByDescending(x => x.StartDate)
-                .Take(1)
-                .NullSafeAny(x => HasFundingRelationship(x) && hasStartedAfterStopDate(x));
+                .FirstOrDefault();
+
+            if (fcsRecord == null)
+            {
+                return false;
+            }
+
+            return HasFundingRelationship(fcsRecord) && hasStartedAfterStopDate(fcsRecord);
+        }
 
         public bool HasFundingRelationship(IFcsContractAllocation theAllocation) =>
             theAllocation.FundingStreamPeriodCode.CaseInsensitiveEquals(FundingStreamPeriodCodeConstants.C16_18TRN2021);

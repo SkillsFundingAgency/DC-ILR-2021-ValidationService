@@ -377,6 +377,70 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 
         [Theory]
         [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN2021)]
+        public void ValidItemNoPreviousContractAllocationDoesNotRaiseValidationMessage(string candidate)
+        {
+            const string LearnRefNumber = "123456789X";
+            var thresholdDate = DateTime.Parse("2017-05-01");
+
+            var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.LearnStartDate)
+                .Returns(thresholdDate);
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(25);
+            delivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(24);
+
+            var deliveries = new ILearningDelivery[] { delivery.Object };
+
+            var learner = new Mock<ILearner>();
+            learner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            learner
+                .SetupGet(x => x.LearningDeliveries)
+                .Returns(deliveries);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+
+            var fileData = new Mock<IFileDataService>(MockBehavior.Strict);
+            fileData
+                .Setup(x => x.UKPRN())
+                .Returns(TestProviderID);
+
+            var fcsData = new Mock<IFCSDataService>(MockBehavior.Strict);
+            fcsData
+                .Setup(x => x.GetContractAllocationsFor(TestProviderID))
+                .Returns(new IFcsContractAllocation[] { });
+
+            var learningDeliveryFamqs = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFamqs
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   delivery.Object.LearningDeliveryFAMs,
+                   "SOF",
+                   "105"))
+               .Returns(true);
+
+            learningDeliveryFamqs
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    delivery.Object.LearningDeliveryFAMs,
+                    "RES"))
+                .Returns(false);
+
+            var sut = new UKPRN_17Rule(handler.Object, fileData.Object, learningDeliveryFamqs.Object, fcsData.Object);
+
+            sut.Validate(learner.Object);
+
+            handler.VerifyAll();
+            learningDeliveryFamqs.VerifyAll();
+            fileData.VerifyAll();
+            fcsData.VerifyAll();
+        }
+
+        [Theory]
+        [InlineData(FundingStreamPeriodCodeConstants.C16_18TRN2021)]
         public void ValidItemMultipleContractsDoesNotRaiseValidationMessage(string candidate)
         {
             const string LearnRefNumber = "123456789X";
