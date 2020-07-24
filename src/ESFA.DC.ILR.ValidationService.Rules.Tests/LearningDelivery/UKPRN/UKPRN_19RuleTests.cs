@@ -251,7 +251,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
         }
 
         [Fact]
-        public void HasStartBeforeStopDateWithNullDateReturnsFalse()
+        public void HasStartAfterStopDateWithNullDateReturnsFalse()
         {
             var allocation = new Mock<IFcsContractAllocation>(MockBehavior.Strict);
             allocation
@@ -265,7 +265,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 
             var sut = NewRule();
 
-            var result = sut.HasStartedBeforeStopDate(allocation.Object, delivery.Object);
+            var result = sut.HasStartedAfterStopDate(allocation.Object, delivery.Object);
 
             Assert.False(result);
 
@@ -332,7 +332,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Returns(candidate);
             allocation
                 .SetupGet(x => x.StopNewStartsFromDate)
-                .Returns(thresholdDate.AddDays(1));
+                .Returns(thresholdDate);
             allocation
                 .SetupGet(x => x.StartDate)
                 .Returns(thresholdDate);
@@ -383,7 +383,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var delivery = new Mock<ILearningDelivery>();
             delivery
                 .SetupGet(y => y.LearnStartDate)
-                .Returns(thresholdDate);
+                .Returns(thresholdDate.AddDays(-1));
             delivery
                 .SetupGet(y => y.FundModel)
                 .Returns(35);
@@ -411,7 +411,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 .Returns(candidate);
             allocation
                 .SetupGet(x => x.StopNewStartsFromDate)
-                .Returns(thresholdDate.AddDays(-1));
+                .Returns(thresholdDate);
             allocation
                 .SetupGet(x => x.StartDate)
                 .Returns(thresholdDate);
@@ -462,7 +462,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             var delivery = new Mock<ILearningDelivery>();
             delivery
                 .SetupGet(y => y.LearnStartDate)
-                .Returns(thresholdDate);
+                .Returns(thresholdDate.AddDays(-1));
             delivery
                 .SetupGet(y => y.FundModel)
                 .Returns(35);
