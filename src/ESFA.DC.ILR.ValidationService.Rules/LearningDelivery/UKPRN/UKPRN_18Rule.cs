@@ -75,15 +75,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         {
             var fcsRecord = _fcsData
                 .GetContractAllocationsFor(ProviderUKPRN)
-                .OrderBy(x => x.StartDate)
-                .FirstOrDefault();
+                .OrderByDescending(x => x.StartDate)
+                .FirstOrDefault(HasFundingRelationship);
 
-            if (fcsRecord == null)
-            {
-                return false;
-            }
-
-            return HasFundingRelationship(fcsRecord) && hasStartedAfterStopDate(fcsRecord);
+            return fcsRecord != null && hasStartedAfterStopDate(fcsRecord);
         }
 
         public bool HasFundingRelationship(IFcsContractAllocation theAllocation) =>
