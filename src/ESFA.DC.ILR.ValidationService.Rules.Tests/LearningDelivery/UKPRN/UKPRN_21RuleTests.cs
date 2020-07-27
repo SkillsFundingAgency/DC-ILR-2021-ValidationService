@@ -193,7 +193,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 
         public static IEnumerable<object[]> ConditionMet_TestData()
         {
-            yield return new object[] { "TestValue2", new DateTime(2018, 12, 31), false };
+            yield return new object[] { "TestValue2", new DateTime(2018, 12, 31), true };
             yield return new object[] { "TestValue2", null, false };
             yield return new object[] { "TestValue1", null, false };
             yield return new object[] { "TestValue1", new DateTime(2019, 12, 31), false };
@@ -269,7 +269,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 
         public static IEnumerable<object[]> Validate_TestData()
         {
-            yield return new object[] { "ConRef2", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2018, 12, 31), false };
+            yield return new object[] { "ConRef2", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2018, 12, 31), true };
             yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.AEBTO_TOL1920, new DateTime(2018, 12, 31), false };
             yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2019, 12, 31), false };
             yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2019, 01, 02), false };

@@ -69,7 +69,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
             }
 
             var latestStopNewStartsDate = filteredContractAllocations
-                .Where(a => learningDelivery.ConRefNumber.CaseInsensitiveEquals(a.ContractAllocationNumber))
                 .OrderBy(a => a.StartDate)
                 .LastOrDefault()
                 ?.StopNewStartsFromDate;
