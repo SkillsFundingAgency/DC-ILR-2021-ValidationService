@@ -20,7 +20,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceme
         [Fact]
         public void ConditionMet_True()
         {
-            var learnAimRef = "ZWRK003";
+            var learnAimRef = "ZWRKX003";
             var workPlacements = new List<TestLearningDeliveryWorkPlacement>();
 
             NewRule().ConditionMet(learnAimRef, workPlacements).Should().BeTrue();
@@ -29,7 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceme
         [Fact]
         public void ConditionMet_TrueNullWorkPlacements()
         {
-            var learnAimRef = "ZWRK003";
+            var learnAimRef = "ZWRKX003";
 
             NewRule().ConditionMet(learnAimRef, null).Should().BeTrue();
         }
@@ -46,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceme
         [Fact]
         public void ConditionMet_FalseHasWorkPlacements()
         {
-            var learnAimRef = "ZWRK003";
+            var learnAimRef = "ZWRKX003";
             var workPlacements = new List<TestLearningDeliveryWorkPlacement>()
             {
                 new TestLearningDeliveryWorkPlacement()
@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceme
                 {
                     new TestLearningDelivery()
                     {
-                        LearnAimRef = "ZWRK003",
+                        LearnAimRef = "ZWRKX003",
                         LearningDeliveryWorkPlacements = new List<TestLearningDeliveryWorkPlacement>()
                     }
                 }
@@ -103,7 +103,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceme
         [Fact]
         public void BuildErrorMessageParameters()
         {
-            var learnAimRef = "ZWRK003";
+            var learnAimRef = "ZWRKX003";
 
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
