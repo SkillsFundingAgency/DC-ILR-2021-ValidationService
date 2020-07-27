@@ -37,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlacement
 
         public bool ConditionMet(string learnAimRef, IReadOnlyCollection<ILearningDeliveryWorkPlacement> workPlacements)
         {
-            return learnAimRef.CaseInsensitiveEquals(AimTypes.References.TLevelIndustryPlacement)
+            return learnAimRef.CaseInsensitiveEquals(AimTypes.References.TLevelWorkExperience)
                 && (workPlacements == null || !workPlacements.Any());
         }
 
@@ -45,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlacement
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, AimTypes.References.TLevelIndustryPlacement)
+                BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, AimTypes.References.TLevelWorkExperience)
             };
         }
     }
