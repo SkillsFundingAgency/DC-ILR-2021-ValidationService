@@ -20,12 +20,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private const int MaxAge = 23;
 
         private const string InvalidFamCode = "1";
+        private const string FamCode = "023";
 
         private readonly ILARSDataService _larsDataService;
         private readonly IDerivedData_07Rule _dd07;
         private readonly IDerivedData_28Rule _derivedDataRule28;
         private readonly IDerivedData_29Rule _derivedDataRule29;
         private readonly IDateTimeQueryService _dateTimeQueryService;
+        private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
         private readonly HashSet<int> _priorAttain = new HashSet<int> { 2, 3, 4, 5, 10, 11, 12, 13, 97, 98 };
         private readonly DateTime _startDate = new DateTime(2017, 7, 31);
@@ -36,13 +38,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly HashSet<int> _basicSkillTypes = new HashSet<int>
             { 01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35 };
 
+        private HashSet<ILearningDeliveryFAM> _learningDeliveryFAMsHS;
+
         public LearnDelFAMType_65Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsDataService,
             IDerivedData_07Rule dd07,
             IDerivedData_28Rule derivedDataRule28,
             IDerivedData_29Rule derivedDataRule29,
-            IDateTimeQueryService dateTimeQueryService)
+            IDateTimeQueryService dateTimeQueryService,
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_65)
         {
             _larsDataService = larsDataService;
@@ -50,6 +55,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _derivedDataRule28 = derivedDataRule28;
             _derivedDataRule29 = derivedDataRule29;
             _dateTimeQueryService = dateTimeQueryService;
+            _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
         public void Validate(ILearner learner)
@@ -90,16 +96,30 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                     continue;
                 }
 
-                foreach (var deliveryFam in learningDelivery.LearningDeliveryFAMs)
+                if (ConditionMet(learningDelivery.LearningDeliveryFAMs))
                 {
-                    if (deliveryFam.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.FFI)
-                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(InvalidFamCode)
-                        && !IsDevolvedLevel2or3ExcludedLearning(deliveryFam))
-                    {
-                        RaiseValidationMessage(learner, learningDelivery, deliveryFam);
-                    }
+                    RaiseValidationMessage(learner, learningDelivery, _learningDeliveryFAMsHS);
                 }
             }
+        }
+
+        public bool ConditionMet(IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs)
+        {
+            _learningDeliveryFAMsHS = new HashSet<ILearningDeliveryFAM>();
+            return IsFFIandOne(learningDeliveryFAMs)
+                && !IsDAMand23(learningDeliveryFAMs);
+        }
+
+        public bool IsFFIandOne(IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs)
+        {
+            _learningDeliveryFAMsHS.Add(learningDeliveryFAMs.FirstOrDefault(fams => fams.LearnDelFAMType == LearningDeliveryFAMTypeConstants.FFI && fams.LearnDelFAMCode == InvalidFamCode));
+            return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.FFI, InvalidFamCode);
+        }
+
+        public bool IsDAMand23(IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs)
+        {
+            _learningDeliveryFAMsHS.Add(learningDeliveryFAMs.FirstOrDefault(fams => fams.LearnDelFAMType == LearningDeliveryFAMTypeConstants.DAM && fams.LearnDelFAMCode != FamCode));
+            return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, FamCode);
         }
 
         public bool LearnStartDateIsOutsideValidDateRange(DateTime learnStartDate)
@@ -119,9 +139,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             return _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, larsLearningDelivery.EffectiveFrom, larsLearningDelivery.EffectiveTo ?? DateTime.MaxValue)
                 && _larsDataService.BasicSkillsTypeMatchForLearnAimRef(_basicSkillTypes, delivery.LearnAimRef);
         }
-
-        public bool IsDevolvedLevel2or3ExcludedLearning(ILearningDeliveryFAM monitor) =>
-            Monitoring.Delivery.DevolvedLevelTwoOrThree.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
 
         public bool ExclusionsApply(ILearner learner, ILearningDelivery learningDelivery)
         {
@@ -154,16 +171,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             return IsBasicSkillsLearner(learningDelivery);
         }
 
-        private void RaiseValidationMessage(ILearner learner, ILearningDelivery learningDelivery, ILearningDeliveryFAM learningDeliveryFam)
+        private void RaiseValidationMessage(ILearner learner, ILearningDelivery learningDelivery, HashSet<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            var parameters = new List<IErrorMessageParameter>
-            {
+            var parameters = new List<IErrorMessageParameter>() {
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, learningDelivery.FundModel),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, learningDeliveryFam.LearnDelFAMType),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, learningDeliveryFam.LearnDelFAMCode),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learningDelivery.LearnStartDate),
                 BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, learner.DateOfBirthNullable)
             };
+
+            foreach (var learningDeliveryFam in learningDeliveryFAMs)
+            {
+                parameters.Add(BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, learningDeliveryFam.LearnDelFAMType));
+                parameters.Add(BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, learningDeliveryFam.LearnDelFAMCode));
+            }
 
             HandleValidationError(learner.LearnRefNumber, learningDelivery.AimSeqNumber, parameters);
         }
