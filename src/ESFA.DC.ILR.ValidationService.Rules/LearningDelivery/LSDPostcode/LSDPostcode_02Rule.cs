@@ -108,14 +108,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public bool PostcodeConditionMet(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode, bool dd35) =>
             PostcodeConditionOne(devolvedPostcodes, dd35)
-            || PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode)
-            || PostcodeConditionThree(devolvedPostcodes, learnStartDate, sofCode);
+                   || PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode)
+                   || PostcodeConditionThree(devolvedPostcodes, learnStartDate, sofCode);
 
         public bool PostcodeConditionOne(IEnumerable<IDevolvedPostcode> devolvedPostcodes, bool dd35) =>
             (devolvedPostcodes == null || !devolvedPostcodes.Any()) && dd35;
 
         public bool PostcodeConditionTwo(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
-            devolvedPostcodes != null && devolvedPostcodes.Any(dp => sofCode != dp.SourceOfFunding);
+            devolvedPostcodes != null && !devolvedPostcodes.Any(dp => sofCode == dp.SourceOfFunding);
 
         public bool PostcodeConditionThree(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode) =>
             devolvedPostcodes != null && devolvedPostcodes.Any(dp => sofCode == dp.SourceOfFunding && !(learnStartDate >= dp.EffectiveFrom && learnStartDate <= (dp.EffectiveTo ?? DateTime.MaxValue)));
