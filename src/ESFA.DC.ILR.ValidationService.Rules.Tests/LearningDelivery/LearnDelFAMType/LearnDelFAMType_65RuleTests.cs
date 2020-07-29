@@ -74,6 +74,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
+            var famServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            famServiceMock
+                .Setup(m => m.HasLearningDeliveryFAMCodeForType(It.IsAny<IReadOnlyCollection<ILearningDeliveryFAM>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(false);
+
             var testLearner = new TestLearner
             {
                 DateOfBirthNullable = new DateTime(1997, 8, 1),
@@ -97,7 +102,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object)
+            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object, famServiceMock.Object)
                 .Validate(testLearner);
         }
 
@@ -743,6 +748,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
+            var famServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            famServiceMock
+                .Setup(m => m.HasLearningDeliveryFAMCodeForType(It.IsAny<IReadOnlyCollection<ILearningDeliveryFAM>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(true);
+
             var testLearner = new TestLearner
             {
                 DateOfBirthNullable = new DateTime(1997, 8, 1),
@@ -766,7 +776,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object)
+            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object, famServiceMock.Object)
                 .Validate(testLearner);
         }
 
@@ -818,6 +828,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
+            var famServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            famServiceMock
+                .Setup(m => m.HasLearningDeliveryFAMCodeForType(It.IsAny<IReadOnlyCollection<ILearningDeliveryFAM>>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(true);
+
             var testLearner = new TestLearner
             {
                 DateOfBirthNullable = new DateTime(1997, 8, 1),
@@ -837,11 +852,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                                 LearnDelFAMCode = "1"
                             }
                         }
+                    },
+                    new TestLearningDelivery
+                    {
+                        FundModel = 35,
+                        LearnAimRef = "00103212",
+                        LearnStartDate = new DateTime(2017, 8, 1),
+                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
+                        {
+                            new TestLearningDeliveryFAM
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM,
+                                LearnDelFAMCode = "22"
+                            }
+                        }
                     }
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object)
+            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object, famServiceMock.Object)
                 .Validate(testLearner);
         }
 
