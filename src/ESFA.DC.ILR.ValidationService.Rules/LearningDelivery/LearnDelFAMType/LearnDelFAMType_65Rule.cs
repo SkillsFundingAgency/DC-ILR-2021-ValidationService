@@ -38,8 +38,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly HashSet<int> _basicSkillTypes = new HashSet<int>
             { 01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35 };
 
-        private HashSet<ILearningDeliveryFAM> _learningDeliveryFAMsHS;
-
         public LearnDelFAMType_65Rule(
             IValidationErrorHandler validationErrorHandler,
             ILARSDataService larsDataService,
@@ -96,29 +94,26 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                     continue;
                 }
 
-                if (ConditionMet(learningDelivery.LearningDeliveryFAMs))
+                HashSet<ILearningDeliveryFAM> learningDeliveryFAMsHS = new HashSet<ILearningDeliveryFAM>();
+                if (ConditionMet(learningDelivery.LearningDeliveryFAMs, learningDeliveryFAMsHS))
                 {
-                    RaiseValidationMessage(learner, learningDelivery, _learningDeliveryFAMsHS);
+                    RaiseValidationMessage(learner, learningDelivery, learningDeliveryFAMsHS);
                 }
             }
         }
 
-        public bool ConditionMet(IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs)
-        {
-            _learningDeliveryFAMsHS = new HashSet<ILearningDeliveryFAM>();
-            return IsFFIandOne(learningDeliveryFAMs)
-                && !IsDAMand23(learningDeliveryFAMs);
-        }
+        public bool ConditionMet(IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs, HashSet<ILearningDeliveryFAM> learningDeliveryFAMsHS) =>
+            IsFFIandOne(learningDeliveryFAMs, learningDeliveryFAMsHS) && !IsDAMand23(learningDeliveryFAMs, learningDeliveryFAMsHS);
 
-        public bool IsFFIandOne(IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs)
+        public bool IsFFIandOne(IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs, HashSet<ILearningDeliveryFAM> learningDeliveryFAMsHS)
         {
-            _learningDeliveryFAMsHS.Add(learningDeliveryFAMs.FirstOrDefault(fams => fams.LearnDelFAMType == LearningDeliveryFAMTypeConstants.FFI && fams.LearnDelFAMCode == InvalidFamCode));
+            learningDeliveryFAMsHS.Add(learningDeliveryFAMs.FirstOrDefault(fams => fams.LearnDelFAMType == LearningDeliveryFAMTypeConstants.FFI && fams.LearnDelFAMCode == InvalidFamCode));
             return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.FFI, InvalidFamCode);
         }
 
-        public bool IsDAMand23(IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs)
+        public bool IsDAMand23(IReadOnlyCollection<ILearningDeliveryFAM> learningDeliveryFAMs, HashSet<ILearningDeliveryFAM> learningDeliveryFAMsHS)
         {
-            _learningDeliveryFAMsHS.Add(learningDeliveryFAMs.FirstOrDefault(fams => fams.LearnDelFAMType == LearningDeliveryFAMTypeConstants.DAM && fams.LearnDelFAMCode != FamCode));
+            learningDeliveryFAMsHS.Add(learningDeliveryFAMs.FirstOrDefault(fams => fams.LearnDelFAMType == LearningDeliveryFAMTypeConstants.DAM && fams.LearnDelFAMCode != FamCode));
             return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.DAM, FamCode);
         }
 
