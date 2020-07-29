@@ -19,8 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private const int MinAge = 19;
         private const int MaxAge = 23;
 
-        private const string InvalidFamCode = "1";
-
         private readonly ILARSDataService _larsDataService;
         private readonly IDerivedData_07Rule _dd07;
         private readonly IDerivedData_28Rule _derivedDataRule28;
@@ -93,7 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 foreach (var deliveryFam in learningDelivery.LearningDeliveryFAMs)
                 {
                     if (deliveryFam.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.FFI)
-                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(InvalidFamCode))
+                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(LearningDeliveryFAMCodeConstants.FFI_Fully))
                     {
                         RaiseValidationMessage(learner, learningDelivery, deliveryFam);
                     }
