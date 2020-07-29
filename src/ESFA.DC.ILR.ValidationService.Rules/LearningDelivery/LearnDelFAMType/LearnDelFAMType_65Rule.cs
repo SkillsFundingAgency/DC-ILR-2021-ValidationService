@@ -19,8 +19,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private const int MinAge = 19;
         private const int MaxAge = 23;
 
-        private const string InvalidFamCode = "1";
-
         private readonly ILARSDataService _larsDataService;
         private readonly IDerivedData_07Rule _dd07;
         private readonly IDerivedData_28Rule _derivedDataRule28;
@@ -93,8 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 foreach (var deliveryFam in learningDelivery.LearningDeliveryFAMs)
                 {
                     if (deliveryFam.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.FFI)
-                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(InvalidFamCode)
-                        && !IsDevolvedLevel2or3ExcludedLearning(deliveryFam))
+                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(LearningDeliveryFAMCodeConstants.FFI_Fully))
                     {
                         RaiseValidationMessage(learner, learningDelivery, deliveryFam);
                     }
@@ -120,9 +117,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 && _larsDataService.BasicSkillsTypeMatchForLearnAimRef(_basicSkillTypes, delivery.LearnAimRef);
         }
 
-        public bool IsDevolvedLevel2or3ExcludedLearning(ILearningDeliveryFAM monitor) =>
-            Monitoring.Delivery.DevolvedLevelTwoOrThree.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
-
         public bool ExclusionsApply(ILearner learner, ILearningDelivery learningDelivery)
         {
             if (_dd07.IsApprenticeship(learningDelivery.ProgTypeNullable))
@@ -147,6 +141,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             }
 
             if (learningDelivery.LearningDeliveryFAMs.Any(ldf => ldf.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.RES)))
+            {
+                return true;
+            }
+
+            if (learningDelivery.LearningDeliveryFAMs.Any(ldf => ldf.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.DAM) && ldf.LearnDelFAMCode == LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion))
             {
                 return true;
             }
