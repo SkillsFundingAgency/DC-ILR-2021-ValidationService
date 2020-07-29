@@ -117,9 +117,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 && _larsDataService.BasicSkillsTypeMatchForLearnAimRef(_basicSkillTypes, delivery.LearnAimRef);
         }
 
-        public bool IsDevolvedLevel2or3ExcludedLearning(ILearningDeliveryFAM monitor) =>
-            Monitoring.Delivery.DevolvedLevelTwoOrThree.CaseInsensitiveEquals($"{monitor.LearnDelFAMType}{monitor.LearnDelFAMCode}");
-
         public bool ExclusionsApply(ILearner learner, ILearningDelivery learningDelivery)
         {
             if (_dd07.IsApprenticeship(learningDelivery.ProgTypeNullable))
