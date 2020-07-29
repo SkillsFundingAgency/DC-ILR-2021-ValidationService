@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
@@ -74,11 +73,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
-            var famServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            famServiceMock
-                .Setup(m => m.HasLearningDeliveryFAMCodeForType(It.IsAny<IReadOnlyCollection<ILearningDeliveryFAM>>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(false);
-
             var testLearner = new TestLearner
             {
                 DateOfBirthNullable = new DateTime(1997, 8, 1),
@@ -102,7 +96,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object, famServiceMock.Object)
+            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object)
                 .Validate(testLearner);
         }
 
@@ -471,6 +465,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Validate(testLearner);
         }
 
+        [Theory]
+        [InlineData(Monitoring.Delivery.OLASSOffendersInCustody, false)]
+        [InlineData(Monitoring.Delivery.FullyFundedLearningAim, false)]
+        [InlineData(Monitoring.Delivery.DevolvedLevelTwoOrThree, true)]
+        [InlineData(Monitoring.Delivery.MandationToSkillsTraining, false)]
+        [InlineData(Monitoring.Delivery.ReleasedOnTemporaryLicence, false)]
+        [InlineData(Monitoring.Delivery.SteelIndustriesRedundancyTraining, false)]
+        public void IsDevolvedLevel2or3MeetsExpectation(string candidate, bool expectation)
+        {
+            // arrange
+            var sut = NewRule();
+            var mockItem = new Mock<ILearningDeliveryFAM>();
+            mockItem
+                .SetupGet(y => y.LearnDelFAMType)
+                .Returns(candidate.Substring(0, 3));
+            mockItem
+                .SetupGet(y => y.LearnDelFAMCode)
+                .Returns(candidate.Substring(3));
+
+            // act
+            var result = sut.IsDevolvedLevel2or3ExcludedLearning(mockItem.Object);
+
+            // assert
+            Assert.Equal(expectation, result);
+        }
+
         [Fact]
         public void ValidationPasses_AgeException()
         {
@@ -536,83 +556,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                             {
                                 LearnDelFAMType = LearningDeliveryFAMTypeConstants.FFI,
                                 LearnDelFAMCode = "1"
-                            }
-                        }
-                    }
-                }
-            };
-
-            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object)
-                .Validate(testLearner);
-        }
-
-        [Fact]
-        public void ValidationPasses_WhereFamCodeIs23()
-        {
-            var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError();
-
-            var mockLARSLearningDelivery = new Mock<ILARSLearningDelivery>();
-            mockLARSLearningDelivery
-                .SetupGet(x => x.LearnAimRef)
-                .Returns("00103212");
-            mockLARSLearningDelivery
-                .SetupGet(x => x.EffectiveFrom)
-                .Returns(new DateTime(2018, 08, 01));
-            mockLARSLearningDelivery
-                .SetupGet(x => x.EffectiveTo)
-                .Returns(new DateTime(2022, 08, 01));
-
-            var larsService = new Mock<ILARSDataService>();
-            larsService
-                .Setup(m => m.BasicSkillsMatchForLearnAimRefAndStartDate(
-                        It.IsAny<IEnumerable<int>>(),
-                        It.IsAny<string>(),
-                        It.IsAny<DateTime>()))
-                .Returns(false);
-            larsService
-                .Setup(m => m.GetNotionalNVQLevelv2ForLearnAimRef(It.IsAny<string>()))
-                .Returns("1");
-            larsService
-                .Setup(x => x.GetDeliveryFor(It.IsAny<string>()))
-                .Returns(mockLARSLearningDelivery.Object);
-
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-            dd07Mock
-                .Setup(m => m.IsApprenticeship(It.IsAny<int?>()))
-                .Returns(false);
-
-            var dd28Mock = new Mock<IDerivedData_28Rule>();
-            dd28Mock
-                .Setup(m => m.IsAdultFundedUnemployedWithBenefits(It.IsAny<ILearningDelivery>(), It.IsAny<ILearner>()))
-                .Returns(false);
-
-            var dd29Mock = new Mock<IDerivedData_29Rule>();
-            dd29Mock
-                .Setup(m => m.IsInflexibleElementOfTrainingAimLearningDelivery(It.IsAny<ILearningDelivery>()))
-                .Returns(false);
-
-            var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock
-                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
-                .Returns(20);
-
-            var testLearner = new TestLearner
-            {
-                DateOfBirthNullable = new DateTime(1997, 8, 1),
-                PriorAttainNullable = 2,
-                LearningDeliveries = new List<TestLearningDelivery>
-                {
-                    new TestLearningDelivery
-                    {
-                        FundModel = 35,
-                        LearnAimRef = "00103212",
-                        LearnStartDate = new DateTime(2017, 7, 31),
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.FFI,
-                                LearnDelFAMCode = "23"
                             }
                         }
                     }
@@ -748,11 +691,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
-            var famServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            famServiceMock
-                .Setup(m => m.HasLearningDeliveryFAMCodeForType(It.IsAny<IReadOnlyCollection<ILearningDeliveryFAM>>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(true);
-
             var testLearner = new TestLearner
             {
                 DateOfBirthNullable = new DateTime(1997, 8, 1),
@@ -776,7 +714,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object, famServiceMock.Object)
+            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object)
                 .Validate(testLearner);
         }
 
@@ -828,11 +766,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
-            var famServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            famServiceMock
-                .Setup(m => m.HasLearningDeliveryFAMCodeForType(It.IsAny<IReadOnlyCollection<ILearningDeliveryFAM>>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(true);
-
             var testLearner = new TestLearner
             {
                 DateOfBirthNullable = new DateTime(1997, 8, 1),
@@ -852,25 +785,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                                 LearnDelFAMCode = "1"
                             }
                         }
-                    },
-                    new TestLearningDelivery
-                    {
-                        FundModel = 35,
-                        LearnAimRef = "00103212",
-                        LearnStartDate = new DateTime(2017, 8, 1),
-                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
-                        {
-                            new TestLearningDeliveryFAM
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.DAM,
-                                LearnDelFAMCode = "22"
-                            }
-                        }
                     }
                 }
             };
 
-            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object, famServiceMock.Object)
+            NewRule(validationErrorHandlerMock.Object, larsService.Object, dd07Mock.Object, dd28Mock.Object, dd29Mock.Object, dateTimeServiceMock.Object)
                 .Validate(testLearner);
         }
 
@@ -931,10 +850,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             IDerivedData_07Rule dd07 = null,
             IDerivedData_28Rule derivedData28Rule = null,
             IDerivedData_29Rule derivedData29Rule = null,
-            IDateTimeQueryService dateTimeQueryService = null,
-            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null)
+            IDateTimeQueryService dateTimeQueryService = null)
         {
-            return new LearnDelFAMType_65Rule(validationErrorHandler, larsDataService, dd07, derivedData28Rule, derivedData29Rule, dateTimeQueryService, learningDeliveryFAMQueryService);
+            return new LearnDelFAMType_65Rule(validationErrorHandler, larsDataService, dd07, derivedData28Rule, derivedData29Rule, dateTimeQueryService);
         }
     }
 }
