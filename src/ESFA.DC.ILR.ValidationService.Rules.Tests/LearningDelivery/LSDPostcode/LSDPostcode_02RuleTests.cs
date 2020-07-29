@@ -88,6 +88,31 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         [Fact]
+        public void PostcodeConditionTwo_FalseMultiple()
+        {
+            var learnStartDate = new DateTime(2020, 7, 1);
+            var sofCode = "117";
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = "CA8 7HA",
+                    EffectiveFrom = new DateTime(2019, 8, 1),
+                    EffectiveTo = new DateTime(2019, 9, 1),
+                    SourceOfFunding = "105"
+                },
+                new DevolvedPostcode
+                {
+                    Postcode = "CA8 7HA",
+                    EffectiveFrom = new DateTime(2019, 9, 1),
+                    SourceOfFunding = "117"
+                }
+            };
+
+            NewRule().PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
+        }
+
+        [Fact]
         public void PostcodeConditionTwo_False()
         {
             var learnStartDate = new DateTime(2019, 9, 1);
@@ -112,7 +137,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
             var sofCode = "105";
             var devolvedPostcodes = new List<IDevolvedPostcode>();
 
-            NewRule().PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
+            NewRule().PostcodeConditionTwo(devolvedPostcodes, learnStartDate, sofCode).Should().BeTrue();
         }
 
         [Fact]
@@ -221,17 +246,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         {
             var learnStartDate = new DateTime(2019, 9, 1);
             var sofCode = "105";
-            var devolvedPostcodes = new List<IDevolvedPostcode>
-            {
-                new DevolvedPostcode
-                {
-                    Postcode = "Postcode",
-                    EffectiveFrom = new DateTime(2019, 9, 1),
-                    SourceOfFunding = sofCode
-                }
-            };
+            var devolvedPostcodes = new List<IDevolvedPostcode>();
 
-            NewRule().PostcodeConditionMet(Array.Empty<IDevolvedPostcode>(), learnStartDate, sofCode, false).Should().BeFalse();
+            NewRule().PostcodeConditionMet(Array.Empty<IDevolvedPostcode>(), learnStartDate, sofCode, false).Should().BeTrue();
         }
 
         [Fact]
