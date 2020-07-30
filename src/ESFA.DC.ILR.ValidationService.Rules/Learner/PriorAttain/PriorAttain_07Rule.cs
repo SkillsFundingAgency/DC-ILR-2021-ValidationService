@@ -48,7 +48,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
             var conditionStartDate = new DateTime(2016, 07, 31);
             var priorStartDate = new DateTime(2020, 07, 31);
 
-            return learnStartDate > conditionStartDate && learnStartDate < priorStartDate;
+            return learnStartDate >= conditionStartDate && learnStartDate <= priorStartDate;
         }
 
         public bool FundModelConditionMet(int fundModel)
