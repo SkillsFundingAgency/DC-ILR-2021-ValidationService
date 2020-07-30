@@ -65,10 +65,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            return ValidityConditionMet(learningDelivery, learnerEmploymentStatuses) || CategoryConditionMet(learningDelivery);
+            var validityCheck = ValidityCategoryConditionMet(learningDelivery, learnerEmploymentStatuses);
+            var categoryCheck = CategoryRefConditionMet(learningDelivery);
+
+            if (validityCheck)
+            {
+                return categoryCheck;
+            }
+
+            return false;
         }
 
-        public bool ValidityConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
+        public bool ValidityCategoryConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
             var category = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
 
@@ -88,7 +96,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             return !larsValidity.Any() || (learnStartDate == null && larsValidity.Any(l => _fileDataService.FilePreparationDate() > l.EndDate));
         }
 
-        public bool CategoryConditionMet(ILearningDelivery learningDelivery)
+        public bool CategoryRefConditionMet(ILearningDelivery learningDelivery)
         {
             var categoryRef = _ddCategoryRef.Derive(learningDelivery);
 
