@@ -69,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
             ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns((string)null);
 
-            NewRule(ddValidityCategory: ddValidityMock.Object).ValidityConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeFalse();
+            NewRule(ddValidityCategory: ddValidityMock.Object).ValidityCategoryConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeFalse();
         }
 
         [Fact]
@@ -338,7 +338,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var fileDataServiceMock = new Mock<IFileDataService>();
             fileDataServiceMock.Setup(ds => ds.FilePreparationDate()).Returns(new DateTime(2020, 08, 01));
 
-            NewRule(larsDataServiceMock.Object, fileDataService: fileDataServiceMock.Object, ddCategoryRef: ddCategoryMock.Object).CategoryConditionMet(learningDelivery).Should().BeFalse();
+            NewRule(larsDataServiceMock.Object, fileDataService: fileDataServiceMock.Object, ddCategoryRef: ddCategoryMock.Object).CategoryRefConditionMet(learningDelivery).Should().BeFalse();
         }
 
         [Fact]
@@ -369,7 +369,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
 
-            NewRule(larsDataServiceMock.Object, ddCategoryRef: ddCategoryMock.Object).CategoryConditionMet(learningDelivery).Should().BeTrue();
+            NewRule(larsDataServiceMock.Object, ddCategoryRef: ddCategoryMock.Object).CategoryRefConditionMet(learningDelivery).Should().BeTrue();
         }
 
         [Fact]
@@ -391,7 +391,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
 
-            NewRule(larsDataServiceMock.Object, ddCategoryRef: ddCategoryMock.Object).CategoryConditionMet(learningDelivery).Should().BeTrue();
+            NewRule(larsDataServiceMock.Object, ddCategoryRef: ddCategoryMock.Object).CategoryRefConditionMet(learningDelivery).Should().BeTrue();
         }
 
         [Fact]
@@ -426,7 +426,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var fileDataServiceMock = new Mock<IFileDataService>();
             fileDataServiceMock.Setup(dc => dc.FilePreparationDate()).Returns(new DateTime(2020, 7, 30));
 
-            NewRule(larsDataServiceMock.Object, fileDataService: fileDataServiceMock.Object, ddValidityCategory: ddValidityMock.Object).ValidityConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeFalse();
+            NewRule(larsDataServiceMock.Object, fileDataService: fileDataServiceMock.Object, ddValidityCategory: ddValidityMock.Object).ValidityCategoryConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeFalse();
         }
 
         [Fact]
@@ -458,7 +458,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
 
-            NewRule(larsDataServiceMock.Object, ddValidityCategory: ddValidityMock.Object).ValidityConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
+            NewRule(larsDataServiceMock.Object, ddValidityCategory: ddValidityMock.Object).ValidityCategoryConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
         }
 
         [Fact]
@@ -480,7 +480,195 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
 
-            NewRule(ddValidityCategory: ddValidityMock.Object).ValidityConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
+            NewRule(ddValidityCategory: ddValidityMock.Object).ValidityCategoryConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMet_True()
+        {
+            var learnAimRef = "learnAimRef";
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnAimRef = learnAimRef,
+                LearnStartDate = new DateTime(2019, 12, 31)
+            };
+
+            var validities = new List<LARSValidity>
+            {
+                new LARSValidity
+                {
+                    LearnAimRef = learnAimRef,
+                    ValidityCategory = "ADULT_SKILLS",
+                    StartDate = new DateTime(2019, 8, 1),
+                    LastNewStartDate = new DateTime(2019, 10, 1),
+                    EndDate = new DateTime(2020, 7, 31),
+                }
+            };
+
+            var categories = new List<LearningDeliveryCategory>
+            {
+                new LearningDeliveryCategory
+                {
+                    LearnAimRef = learnAimRef,
+                    CategoryRef = 50,
+                    EffectiveFrom = new DateTime(2020, 1, 1),
+                    EffectiveTo = new DateTime(2020, 7, 31),
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_02>();
+            var fileDataServiceMock = new Mock<IFileDataService>();
+
+            fileDataServiceMock.Setup(ds => ds.FilePreparationDate()).Returns(new DateTime(2020, 8, 1));
+            larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
+            ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
+            ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(41);
+            larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
+
+            NewRule(larsDataServiceMock.Object, fileDataServiceMock.Object, ddValidityMock.Object, ddCategoryMock.Object).ConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMet_True_NoValidityMatch_CategoryRefDates()
+        {
+            var learnAimRef = "learnAimRef";
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnAimRef = learnAimRef,
+                LearnStartDate = new DateTime(2020, 8, 1)
+            };
+
+            var validities = new List<LARSValidity>
+            {
+                new LARSValidity
+                {
+                    LearnAimRef = learnAimRef,
+                    ValidityCategory = "ADULT_SKILLS",
+                    StartDate = new DateTime(2019, 8, 1),
+                    LastNewStartDate = new DateTime(2019, 10, 1),
+                    EndDate = new DateTime(2020, 7, 31),
+                }
+            };
+
+            var categories = new List<LearningDeliveryCategory>
+            {
+                new LearningDeliveryCategory
+                {
+                    LearnAimRef = learnAimRef,
+                    CategoryRef = 41,
+                    EffectiveFrom = new DateTime(2020, 1, 1),
+                    EffectiveTo = new DateTime(2020, 7, 31),
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_02>();
+            var fileDataServiceMock = new Mock<IFileDataService>();
+
+            fileDataServiceMock.Setup(ds => ds.FilePreparationDate()).Returns(new DateTime(2020, 8, 1));
+            larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
+            ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
+            ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(41);
+            larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
+
+            NewRule(larsDataServiceMock.Object, fileDataServiceMock.Object, ddValidityMock.Object, ddCategoryMock.Object).ConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMet_False_ValidityPasses()
+        {
+            var learnAimRef = "learnAimRef";
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnAimRef = learnAimRef,
+                LearnStartDate = new DateTime(2019, 12, 31)
+            };
+
+            var validities = new List<LARSValidity>
+            {
+                new LARSValidity
+                {
+                    LearnAimRef = learnAimRef,
+                    ValidityCategory = "ADULT_SKILLS",
+                    StartDate = new DateTime(2019, 8, 1),
+                    LastNewStartDate = new DateTime(2019, 12, 31),
+                    EndDate = new DateTime(2020, 8, 31),
+                }
+            };
+
+            var categories = new List<LearningDeliveryCategory>
+            {
+                new LearningDeliveryCategory
+                {
+                    LearnAimRef = learnAimRef,
+                    CategoryRef = 41,
+                    EffectiveFrom = new DateTime(2019, 1, 1),
+                    EffectiveTo = new DateTime(2020, 7, 31),
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_02>();
+            var fileDataServiceMock = new Mock<IFileDataService>();
+
+            fileDataServiceMock.Setup(ds => ds.FilePreparationDate()).Returns(new DateTime(2020, 8, 1));
+            larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
+            ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
+            ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(50);
+            larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
+
+            NewRule(larsDataServiceMock.Object, fileDataServiceMock.Object, ddValidityMock.Object, ddCategoryMock.Object).ConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False()
+        {
+            var learnAimRef = "learnAimRef";
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnAimRef = learnAimRef,
+                FundModel = 35,
+                LearnStartDate = new DateTime(2019, 08, 31)
+            };
+
+            var validities = new List<LARSValidity>
+            {
+                new LARSValidity
+                {
+                    LearnAimRef = learnAimRef,
+                    ValidityCategory = "ADULT_SKILLS",
+                    StartDate = new DateTime(2019, 8, 1),
+                    LastNewStartDate = new DateTime(2019, 10, 1),
+                    EndDate = new DateTime(2020, 8, 31),
+                }
+            };
+            var categories = new List<LearningDeliveryCategory>
+            {
+                new LearningDeliveryCategory
+                {
+                    LearnAimRef = learnAimRef,
+                    CategoryRef = 41,
+                    EffectiveFrom = new DateTime(2019, 8, 1),
+                    EffectiveTo = new DateTime(2020, 8, 31),
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_02>();
+            var fileDataServiceMock = new Mock<IFileDataService>();
+
+            fileDataServiceMock.Setup(ds => ds.FilePreparationDate()).Returns(new DateTime(2020, 8, 1));
+            larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
+            ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
+            ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(41);
+            larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
+
+            NewRule(larsDataServiceMock.Object, fileDataServiceMock.Object, ddValidityMock.Object, ddCategoryMock.Object).ConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeFalse();
         }
 
         [Fact]

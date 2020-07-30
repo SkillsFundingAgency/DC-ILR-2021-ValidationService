@@ -56,7 +56,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            return ValidityCategoryConditionMet(learningDelivery, learnerEmploymentStatuses) || CategoryRefConditionMet(learningDelivery);
+            if (ValidityCategoryConditionMet(learningDelivery, learnerEmploymentStatuses))
+            {
+                return CategoryRefConditionMet(learningDelivery);
+            }
+
+            return false;
         }
 
         public bool CategoryRefConditionMet(ILearningDelivery learningDelivery)
