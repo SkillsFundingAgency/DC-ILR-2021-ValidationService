@@ -52,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 return;
             }
 
-            foreach (var learningDelivery in objectToValidate.LearningDeliveries.Where(d => d.FundModel == _learnDelFundModel))
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries.Where(d => IsOnServiceApprenticeship(d) && d.FundModel == _learnDelFundModel))
             {
                 if (ConditionMet(learningDelivery, filteredContractAllocations))
                 {
@@ -75,6 +75,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
             return latestStopNewStartsDate != null && latestStopNewStartsDate <= learningDelivery.LearnStartDate;
         }
+
+        public bool IsOnServiceApprenticeship(ILearningDelivery learningDelivery) =>
+            learningDelivery.LearningDeliveryFAMs.Any(fam => fam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.ACT && fam.LearnDelFAMCode == LearningDeliveryFAMCodeConstants.ACT_ContractEmployer);
 
         public IList<IFcsContractAllocation> ContractAllocationsForUkprnAndFundingStreamPeriodCodes(int ukprn)
         {

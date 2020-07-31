@@ -77,7 +77,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     {
                         ConRefNumber = "ConRef1",
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        LearnStartDate = new DateTime(2019, 01, 01)
+                        LearnStartDate = new DateTime(2019, 01, 01),
+                        LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                                LearnDelFAMCode = LearningDeliveryFAMCodeConstants.ACT_ContractESFA
+                            }
+                        }
                     }
                 }
             };
@@ -115,7 +123,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     {
                         ConRefNumber = null,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        LearnStartDate = new DateTime(2019, 01, 01)
+                        LearnStartDate = new DateTime(2019, 01, 01),
+                        LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                                LearnDelFAMCode = LearningDeliveryFAMCodeConstants.ACT_ContractESFA
+                            }
+                        }
                     }
                 }
             };
@@ -307,7 +323,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     {
                         ConRefNumber = "ConRef1",
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        LearnStartDate = new DateTime(2019, 01, 01)
+                        LearnStartDate = new DateTime(2019, 01, 01),
+                        LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                                LearnDelFAMCode = LearningDeliveryFAMCodeConstants.ACT_ContractEmployer
+                            }
+                        }
                     }
                 }
             };
@@ -341,7 +365,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
-                        LearnStartDate = new DateTime(2019, 01, 01)
+                        LearnStartDate = new DateTime(2019, 01, 01),
+                        LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                                LearnDelFAMCode = LearningDeliveryFAMCodeConstants.ACT_ContractESFA
+                            }
+                        }
                     }
                 }
             };
