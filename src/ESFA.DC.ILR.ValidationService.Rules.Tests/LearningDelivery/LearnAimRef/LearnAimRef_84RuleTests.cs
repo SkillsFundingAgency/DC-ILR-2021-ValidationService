@@ -219,6 +219,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                    "347"))
                .Returns(false);
             learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   mockDelivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "376"))
+               .Returns(false);
+            learningDeliveryFAMQS
                 .Setup(x => x.HasLearningDeliveryFAMCodeForType(
                   mockDelivery.Object.LearningDeliveryFAMs,
                   "LDM",
@@ -314,6 +320,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                    mockDelivery.Object.LearningDeliveryFAMs,
                    "LDM",
                    "347"))
+               .Returns(false);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   mockDelivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "376"))
                .Returns(false);
             learningDeliveryFAMQS
                 .Setup(x => x.HasLearningDeliveryFAMCodeForType(
