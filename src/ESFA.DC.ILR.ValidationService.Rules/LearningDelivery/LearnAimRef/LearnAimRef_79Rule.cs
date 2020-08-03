@@ -61,6 +61,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 delivery.LearningDeliveryFAMs,
                 LearningDeliveryFAMTypeConstants.LDM,
                 LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)
+            || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                delivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.DAM,
+                LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion)
             || _dd07.IsApprenticeship(delivery.ProgTypeNullable);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
