@@ -121,10 +121,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         }
 
         [Fact]
-        public void LearnActEndDateConditionMet_False_AsEqualsto372Days()
+        public void LearnActEndDateConditionMet_False_AsEqualsto365Days()
         {
             var learnStartDate = new DateTime(2018, 08, 01);
-            var learnActEndDate = new DateTime(2019, 08, 08);
+            var learnActEndDate = new DateTime(2019, 08, 01);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnActEndDate)).Returns(372);
@@ -134,7 +134,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         }
 
         [Theory]
-        [InlineData("2017-05-01", "2018-04-30", 371)]
+        [InlineData("2017-05-01", "2018-04-23", 364)]
         [InlineData("2017-09-01", "2017-09-01", 1)]
         public void LearnActEndDateConditionMet_True(string learnStartDate, string learnActEndDate, double totalDays)
         {
