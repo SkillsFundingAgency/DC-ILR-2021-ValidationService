@@ -66,12 +66,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             && _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, FirstViableDate, DateTime.MaxValue);
 
         public bool IsExcluded(ILearningDelivery delivery) =>
-            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(delivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)
+            _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(
+                delivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.RES)
             || _dd07.IsApprenticeship(delivery.ProgTypeNullable)
+            || delivery.ProgTypeNullable == ProgTypes.Traineeship
             || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
                 delivery.LearningDeliveryFAMs,
                 LearningDeliveryFAMTypeConstants.DAM,
-                LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion);
+                LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion)
+            || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
+                delivery.LearningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_376);
 
         public bool IsNotValid(ILearningDelivery delivery) =>
             !IsExcluded(delivery)
