@@ -395,6 +395,7 @@
     <Compile Include="Learner\PriorAttain\PriorAttain_03RuleTests.cs" />
     <Compile Include="Learner\PriorAttain\PriorAttain_04RuleTests.cs" />
     <Compile Include="Learner\PriorAttain\PriorAttain_06RuleTests.cs" />
+    <Compile Include="Learner\PriorAttain\PriorAttain_08RuleTests.cs" />
     <Compile Include="Learner\PriorAttain\PriorAttain_07RuleTests.cs" />
     <Compile Include="Learner\Sex\Sex_01RuleTests.cs" />
     <Compile Include="Learner\ProvSpecLearnMonOccur\ProvSpecLearnMonOccur_01RuleTests.cs" />

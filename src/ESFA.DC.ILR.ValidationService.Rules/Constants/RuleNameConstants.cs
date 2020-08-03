@@ -472,6 +472,7 @@
         public const string PriorAttain_04 = "PriorAttain_04";
         public const string PriorAttain_06 = "PriorAttain_06";
         public const string PriorAttain_07 = "PriorAttain_07";
+        public const string PriorAttain_08 = "PriorAttain_08";
 
         public const string PriorLearnFundAdj_01 = "PriorLearnFundAdj_01";
 
