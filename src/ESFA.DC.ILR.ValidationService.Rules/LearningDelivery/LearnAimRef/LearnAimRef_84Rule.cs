@@ -81,6 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 delivery.LearningDeliveryFAMs,
                 LearningDeliveryFAMTypeConstants.DAM,
                 LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion)
+            || delivery.ProgTypeNullable == ProgTypes.Traineeship
             || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(
                 delivery.LearningDeliveryFAMs,
                 LearningDeliveryFAMTypeConstants.LDM,
