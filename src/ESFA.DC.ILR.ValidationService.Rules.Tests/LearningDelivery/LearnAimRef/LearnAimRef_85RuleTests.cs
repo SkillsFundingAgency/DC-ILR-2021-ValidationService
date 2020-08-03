@@ -119,6 +119,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             mockDelivery
                 .SetupGet(y => y.FundModel)
                 .Returns(FundModels.AdultSkills);
+            mockDelivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(ProgTypes.AdvancedLevelApprenticeship);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -166,6 +169,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                     mockDelivery.Object.LearningDeliveryFAMs,
                     "RES"))
                 .Returns(false);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   mockDelivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "376"))
+               .Returns(false);
             learningDeliveryFAMQS
                 .Setup(x => x.HasLearningDeliveryFAMCodeForType(
                     mockDelivery.Object.LearningDeliveryFAMs,
@@ -219,6 +228,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             mockDelivery
                 .SetupGet(y => y.FundModel)
                 .Returns(FundModels.AdultSkills);
+            mockDelivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(ProgTypes.AdvancedLevelApprenticeship);
 
             var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
@@ -258,6 +270,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                     "DAM",
                     "023"))
                 .Returns(false);
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   mockDelivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "376"))
+               .Returns(false);
 
             var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             dd07
