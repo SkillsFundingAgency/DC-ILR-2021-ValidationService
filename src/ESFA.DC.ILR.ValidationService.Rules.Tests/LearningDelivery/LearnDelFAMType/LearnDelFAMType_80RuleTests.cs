@@ -24,6 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             LearningDeliveryFAMCodeConstants.LDM_RoTL,
             LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy,
             LearningDeliveryFAMCodeConstants.LDM_LowWages,
+            LearningDeliveryFAMCodeConstants.LDM_376
         };
 
         [Fact]
