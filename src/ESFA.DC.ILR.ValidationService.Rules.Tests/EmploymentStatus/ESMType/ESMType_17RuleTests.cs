@@ -151,6 +151,33 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         }
 
         [Fact]
+        public void Validate_NoError_NoEmploymentStatuses()
+        {
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new TestLearningDelivery[]
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearningDeliveryFAMs = new ILearningDeliveryFAM[]
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                                LearnDelFAMCode = LearningDeliveryFAMCodeConstants.LDM_375
+                            }
+                        }
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void BuildErrorMessageParameters()
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();

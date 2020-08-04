@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         public IEnumerable<IEmploymentStatusMonitoring> GetLearnerEmploymentStatusesMonitorings(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
             return learnerEmploymentStatuses?
-                .Where(x => x.EmploymentStatusMonitorings.Any(e => e.ESMType == Monitoring.EmploymentStatus.Types.BenefitStatusIndicator))
+                .Where(x => x.EmploymentStatusMonitorings != null && x.EmploymentStatusMonitorings.Any(e => e.ESMType == Monitoring.EmploymentStatus.Types.BenefitStatusIndicator))
                 .SelectMany(s => s.EmploymentStatusMonitorings);
         }
 
