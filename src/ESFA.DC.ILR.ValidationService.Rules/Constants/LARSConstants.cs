@@ -1,4 +1,6 @@
-﻿namespace ESFA.DC.ILR.ValidationService.Rules.Constants
+﻿using System.Runtime.CompilerServices;
+
+namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 {
     public static class LARSConstants
     {
@@ -83,6 +85,7 @@
             public const int OnlyForLegalEntitlementAtLevel3 = 38;
             public const int LicenseToPractice = 20;
             public const int McaGlaAim = 41;
+            public const int Covid19SkillsOffer = 43;
         }
 
         public static class CommonComponents
