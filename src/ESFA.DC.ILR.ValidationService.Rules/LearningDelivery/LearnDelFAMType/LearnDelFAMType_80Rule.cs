@@ -69,6 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             LearningDeliveryFAMCodeConstants.LDM_RoTL,
             LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy,
             LearningDeliveryFAMCodeConstants.LDM_LowWages,
+            LearningDeliveryFAMCodeConstants.LDM_376
         };
 
         private readonly IFileDataService _fileDataService;
