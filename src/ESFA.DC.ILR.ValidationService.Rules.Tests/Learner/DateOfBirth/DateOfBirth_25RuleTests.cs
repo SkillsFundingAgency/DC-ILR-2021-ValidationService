@@ -143,15 +143,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             NewRule(learningDeliveryFamQueryService: learningDeliveryFAMQueryServiceMock.Object).LearningDeliveryFAMConditionMet(learningDeliveryFAMs).Should().BeTrue();
         }
 
-        [Fact]
-        public void LearningDeliveryFAMConditionMet_False()
+        [Theory]
+        [InlineData("034")]
+        [InlineData("376")]
+        public void LearningDeliveryFAMConditionMet_False(string learnDelFamCode)
         {
             var learningDeliveryFAMs = new List<TestLearningDeliveryFAM>
             {
                 new TestLearningDeliveryFAM
                 {
                     LearnDelFAMType = "LDM",
-                    LearnDelFAMCode = "034"
+                    LearnDelFAMCode = learnDelFamCode
                 },
                 new TestLearningDeliveryFAM
                 {
