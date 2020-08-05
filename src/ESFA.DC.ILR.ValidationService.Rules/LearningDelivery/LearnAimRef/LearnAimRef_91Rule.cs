@@ -56,36 +56,33 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            if (ValidityCategoryConditionMet(learningDelivery, learnerEmploymentStatuses))
-            {
-                return CategoryRefConditionMet(learningDelivery);
-            }
-
-            return false;
-        }
-
-        public bool CategoryRefConditionMet(ILearningDelivery learningDelivery)
-        {
+            var validityCategory = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
             var categoryRef = _ddCategoryRef.Derive(learningDelivery);
 
-            if (categoryRef == null)
+            if (validityCategory == null && categoryRef == null)
             {
-                return false;
+                return true;
             }
 
-            return LarsCategoryConditionMet(categoryRef.Value, learningDelivery.LearnAimRef, learningDelivery.LearnStartDate);
+            var validityCheck = validityCategory != null ?
+                LarsValidityConditionMet(validityCategory, learningDelivery.LearnAimRef, learningDelivery.LearnStartDate) :
+                false;
+
+            var categoryCheck = categoryRef != null ?
+               LarsCategoryConditionMet(categoryRef.Value, learningDelivery.LearnAimRef, learningDelivery.LearnStartDate) :
+               false;
+
+            return TriggerOnValidityCategory(validityCategory, validityCheck) ? TriggerOnCategoryRef(categoryRef, categoryCheck) : false;
         }
 
-        public bool ValidityCategoryConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
+        public bool TriggerOnCategoryRef(int? categoryRef, bool categoryCheck)
         {
-            var category = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
+            return categoryRef == null || (categoryRef != null && categoryCheck) ? true : false;
+        }
 
-            if (category == null)
-            {
-                return false;
-            }
-
-            return LarsValidityConditionMet(category, learningDelivery.LearnAimRef, learningDelivery.LearnStartDate);
+        public bool TriggerOnValidityCategory(string validityCategory, bool validityCheck)
+        {
+            return validityCategory != null && validityCheck;
         }
 
         public bool LarsCategoryConditionMet(int categoryRef, string learnAimRef, DateTime learnStartDate)

@@ -44,6 +44,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 return;
             }
 
+            var filePrepDate = _fileDataService.FilePreparationDate();
+
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 if (LearnActEndDateCondition(learningDelivery.LearnActEndDateNullable))
@@ -51,74 +53,73 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                     return;
                 }
 
-                if (ConditionMet(learningDelivery, objectToValidate.LearnerEmploymentStatuses))
+                var dateToCompare = learningDelivery.LearnActEndDateNullable.HasValue ? learningDelivery.LearnActEndDateNullable.Value : filePrepDate;
+
+                if (ConditionMet(learningDelivery, objectToValidate.LearnerEmploymentStatuses, dateToCompare))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.LearnStartDate, learningDelivery.LearnAimRef));
+                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.LearnActEndDateNullable, learningDelivery.LearnAimRef));
                 }
             }
         }
 
         public bool LearnActEndDateCondition(DateTime? learnActEndDate)
         {
-            return learnActEndDate == null || learnActEndDate < _academicYearDataService.Start();
+            return learnActEndDate < _academicYearDataService.Start();
         }
 
-        public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
+        public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime dateToCompare)
         {
-            if (ValidityCategoryConditionMet(learningDelivery, learnerEmploymentStatuses))
+            var validityCategory = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
+            var categoryRef = _ddCategoryRef.Derive(learningDelivery);
+
+            if (validityCategory == null && categoryRef == null)
             {
-                return CategoryRefConditionMet(learningDelivery);
+                return true;
             }
 
-            return false;
+            var validityCheck = validityCategory != null ?
+                LarsValidityConditionMet(validityCategory, learningDelivery.LearnAimRef, dateToCompare) :
+                false;
+
+            var categoryCheck = categoryRef != null ?
+               LarsCategoryConditionMet(categoryRef.Value, learningDelivery.LearnAimRef, dateToCompare) :
+               false;
+
+            return TriggerOnValidityCategory(validityCategory, validityCheck) ? TriggerOnCategoryRef(categoryRef, categoryCheck) : false;
         }
 
-        public bool ValidityCategoryConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
+        public bool TriggerOnCategoryRef(int? categoryRef, bool categoryCheck)
         {
-            var category = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
-
-            if (category == null)
-            {
-                return false;
-            }
-
-            return LarsValidityConditionMet(category, learningDelivery.LearnAimRef, learningDelivery.LearnActEndDateNullable);
+            return categoryRef == null || (categoryRef != null && categoryCheck) ? true : false;
         }
 
-        public bool LarsValidityConditionMet(string category, string learnAimRef, DateTime? learnStartDate)
+        public bool TriggerOnValidityCategory(string validityCategory, bool validityCheck)
+        {
+            return validityCategory != null && validityCheck;
+        }
+
+        public bool LarsValidityConditionMet(string category, string learnAimRef, DateTime dateToCompare)
         {
             var larsValidity = _larsDataService?.GetValiditiesFor(learnAimRef)
                 .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)) ?? Enumerable.Empty<ILARSLearningDeliveryValidity>();
 
-            return !larsValidity.Any() || (learnStartDate == null && larsValidity.Any(l => _fileDataService.FilePreparationDate() > l.EndDate));
+            return !larsValidity.Any() || larsValidity.Any(l => dateToCompare > l.EndDate);
         }
 
-        public bool CategoryRefConditionMet(ILearningDelivery learningDelivery)
-        {
-            var categoryRef = _ddCategoryRef.Derive(learningDelivery);
-
-            if (categoryRef == null)
-            {
-                return false;
-            }
-
-            return LarsCategoryConditionMet(categoryRef.Value, learningDelivery.LearnAimRef, learningDelivery.LearnActEndDateNullable);
-        }
-
-        public bool LarsCategoryConditionMet(int categoryRef, string learnAimRef, DateTime? learnActEndDate)
+        public bool LarsCategoryConditionMet(int categoryRef, string learnAimRef, DateTime dateToCompare)
         {
             var larsCategories = _larsDataService?
                .GetCategoriesFor(learnAimRef)
                .Where(x => x.CategoryRef == categoryRef) ?? Enumerable.Empty<ILARSLearningCategory>();
 
-            return !larsCategories.Any() || (learnActEndDate == null && larsCategories.Any(l => _fileDataService.FilePreparationDate() > l.EndDate));
+            return !larsCategories.Any() || larsCategories.Any(l => dateToCompare > l.EndDate);
         }
 
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, string learnAimRef)
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? learnActEndDate, string learnAimRef)
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learnStartDate),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, learnActEndDate),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnAimRef, learnAimRef)
             };
         }
