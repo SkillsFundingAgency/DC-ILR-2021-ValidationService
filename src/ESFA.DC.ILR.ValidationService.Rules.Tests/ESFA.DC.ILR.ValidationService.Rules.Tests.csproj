@@ -473,6 +473,7 @@
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_78RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_77RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_82RuleTests.cs" />
+    <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_85RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnDelFAMType\LearnDelFAMType_83RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnPlanEndDate\LearnPlanEndDate_03RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnPlanEndDate\LearnPlanEndDate_02RuleTests.cs" />
