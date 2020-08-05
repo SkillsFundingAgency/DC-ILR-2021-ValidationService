@@ -181,6 +181,7 @@
         public const string ESMType_14 = "ESMType_14";
         public const string ESMType_15 = "ESMType_15";
         public const string ESMType_16 = "ESMType_16";
+        public const string ESMType_17 = "ESMType_17";
 
         public const string FamilyName_01 = "FamilyName_01";
         public const string FamilyName_02 = "FamilyName_02";
