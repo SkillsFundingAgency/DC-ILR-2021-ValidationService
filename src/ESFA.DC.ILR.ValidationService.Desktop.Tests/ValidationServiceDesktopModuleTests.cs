@@ -460,6 +460,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnDelFAMType_84Rule),
                 typeof(LearnDelFamType_85Rule),
                 typeof(LearnDelFamType_86Rule),
+                typeof(LearnDelFAMType_87Rule),
                 typeof(LearningDeliveryHE_02Rule),
                 typeof(LearningDeliveryHE_03Rule),
                 typeof(LearningDeliveryHE_06Rule),
