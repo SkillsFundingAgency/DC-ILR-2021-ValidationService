@@ -65,24 +65,33 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            if (ValidityCategoryConditionMet(learningDelivery, learnerEmploymentStatuses))
+            var validityCategory = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
+            var categoryRef = _ddCategoryRef.Derive(learningDelivery);
+
+            if (validityCategory == null && categoryRef == null)
             {
-                return CategoryRefConditionMet(learningDelivery);
+                return true;
             }
 
-            return false;
+            var validityCheck = validityCategory != null ?
+                LarsValidityConditionMet(validityCategory, learningDelivery.LearnAimRef, learningDelivery.LearnActEndDateNullable) :
+                false;
+
+            var categoryCheck = categoryRef != null ?
+               LarsCategoryConditionMet(categoryRef.Value, learningDelivery.LearnAimRef, learningDelivery.LearnActEndDateNullable) :
+               false;
+
+            return TriggerOnValidityCategory(validityCategory, validityCheck) ? TriggerOnCategoryRef(categoryRef, categoryCheck) : false;
         }
 
-        public bool ValidityCategoryConditionMet(ILearningDelivery learningDelivery, IReadOnlyCollection<ILearnerEmploymentStatus> learnerEmploymentStatuses)
+        public bool TriggerOnCategoryRef(int? categoryRef, bool categoryCheck)
         {
-            var category = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
+            return categoryRef == null || (categoryRef != null && categoryCheck) ? true : false;
+        }
 
-            if (category == null)
-            {
-                return false;
-            }
-
-            return LarsValidityConditionMet(category, learningDelivery.LearnAimRef, learningDelivery.LearnActEndDateNullable);
+        public bool TriggerOnValidityCategory(string validityCategory, bool validityCheck)
+        {
+            return validityCategory != null && validityCheck;
         }
 
         public bool LarsValidityConditionMet(string category, string learnAimRef, DateTime? learnStartDate)
@@ -91,18 +100,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 .Where(v => v.ValidityCategory.CaseInsensitiveEquals(category)) ?? Enumerable.Empty<ILARSLearningDeliveryValidity>();
 
             return !larsValidity.Any() || (learnStartDate == null && larsValidity.Any(l => _fileDataService.FilePreparationDate() > l.EndDate));
-        }
-
-        public bool CategoryRefConditionMet(ILearningDelivery learningDelivery)
-        {
-            var categoryRef = _ddCategoryRef.Derive(learningDelivery);
-
-            if (categoryRef == null)
-            {
-                return false;
-            }
-
-            return LarsCategoryConditionMet(categoryRef.Value, learningDelivery.LearnAimRef, learningDelivery.LearnActEndDateNullable);
         }
 
         public bool LarsCategoryConditionMet(int categoryRef, string learnAimRef, DateTime? learnActEndDate)

@@ -44,35 +44,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Fact]
-        public void ValidityCategoryConditionMet_False()
-        {
-            var learnAimRef = "learnAimRef";
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = learnAimRef,
-                FundModel = 35,
-                LearnStartDate = new DateTime(2019, 08, 31)
-            };
-
-            var validities = new List<LARSValidity>
-            {
-                new LARSValidity
-                {
-                    LearnAimRef = learnAimRef,
-                    ValidityCategory = "ADULT_SKILLS",
-                    StartDate = new DateTime(2019, 8, 1),
-                    LastNewStartDate = new DateTime(2019, 10, 1),
-                    EndDate = new DateTime(2020, 7, 31),
-                }
-            };
-
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
-            ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns((string)null);
-
-            NewRule(ddValidityCategory: ddValidityMock.Object).ValidityCategoryConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeFalse();
-        }
-
-        [Fact]
         public void LarsValidityConditionMet_True_NoValiditiesMatch()
         {
             var learnAimRef = "learnAimRef";
@@ -306,181 +277,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             NewRule(larsDataServiceMock.Object).LarsCategoryConditionMet(41, learnAimRef, new DateTime(2019, 12, 31)).Should().BeTrue();
         }
 
-        [Fact]
-        public void CategoryConditionMet_False_Lars()
+        [Theory]
+        [InlineData(null, false, false)]
+        [InlineData("string", false, false)]
+        [InlineData("string", true, true)]
+        [InlineData(null, true, false)]
+        public void TriggerOnValidityCategory(string validityCategory, bool validityCheck, bool expectation)
         {
-            var learnAimRef = "learnAimRef";
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = learnAimRef,
-                FundModel = 35,
-                LearnStartDate = new DateTime(2019, 08, 31),
-                LearnActEndDateNullable = new DateTime(2020, 8, 1)
-            };
-
-            var categories = new List<LearningDeliveryCategory>
-            {
-                new LearningDeliveryCategory
-                {
-                    LearnAimRef = learnAimRef,
-                    CategoryRef = 41,
-                    EffectiveFrom = new DateTime(2018, 8, 1),
-                    EffectiveTo = new DateTime(2020, 7, 31),
-                }
-            };
-
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_02>();
-            ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(41);
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
-
-            var fileDataServiceMock = new Mock<IFileDataService>();
-            fileDataServiceMock.Setup(ds => ds.FilePreparationDate()).Returns(new DateTime(2020, 08, 01));
-
-            NewRule(larsDataServiceMock.Object, fileDataService: fileDataServiceMock.Object, ddCategoryRef: ddCategoryMock.Object).CategoryRefConditionMet(learningDelivery).Should().BeFalse();
+            NewRule().TriggerOnValidityCategory(validityCategory, validityCheck).Should().Be(expectation);
         }
 
-        [Fact]
-        public void CategoryConditionMet_True_LarsMismatch()
+        [Theory]
+        [InlineData(null, false, true)]
+        [InlineData(null, true, true)]
+        [InlineData(10, true, true)]
+        [InlineData(10, false, false)]
+        public void TriggerOnCategoryRef(int? categoryRef, bool categoryRefCheck, bool expectation)
         {
-            var learnAimRef = "learnAimRef";
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = learnAimRef,
-                FundModel = 35,
-                LearnStartDate = new DateTime(2019, 08, 31)
-            };
-
-            var categories = new List<LearningDeliveryCategory>
-            {
-                new LearningDeliveryCategory
-                {
-                    LearnAimRef = learnAimRef,
-                    CategoryRef = 50,
-                    EffectiveFrom = new DateTime(2018, 8, 1),
-                    EffectiveTo = new DateTime(2020, 7, 31),
-                }
-            };
-
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_02>();
-            ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(41);
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
-
-            NewRule(larsDataServiceMock.Object, ddCategoryRef: ddCategoryMock.Object).CategoryRefConditionMet(learningDelivery).Should().BeTrue();
-        }
-
-        [Fact]
-        public void CategoryConditionMet_True_LarsNoCategories()
-        {
-            var learnAimRef = "learnAimRef";
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = learnAimRef,
-                FundModel = 35,
-                LearnStartDate = new DateTime(2019, 08, 31)
-            };
-
-            var categories = new List<LearningDeliveryCategory>();
-
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_02>();
-            ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(41);
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
-
-            NewRule(larsDataServiceMock.Object, ddCategoryRef: ddCategoryMock.Object).CategoryRefConditionMet(learningDelivery).Should().BeTrue();
-        }
-
-        [Fact]
-        public void ValidityCategoryConditionMet_False_Lars()
-        {
-            var learnAimRef = "learnAimRef";
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = learnAimRef,
-                FundModel = 35,
-                LearnStartDate = new DateTime(2019, 08, 31)
-            };
-
-            var validities = new List<LARSValidity>
-            {
-                new LARSValidity
-                {
-                    LearnAimRef = learnAimRef,
-                    ValidityCategory = "ADULT_SKILLS",
-                    StartDate = new DateTime(2019, 8, 1),
-                    LastNewStartDate = new DateTime(2019, 10, 1),
-                    EndDate = new DateTime(2020, 7, 31),
-                }
-            };
-
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
-            ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
-
-            var fileDataServiceMock = new Mock<IFileDataService>();
-            fileDataServiceMock.Setup(dc => dc.FilePreparationDate()).Returns(new DateTime(2020, 7, 30));
-
-            NewRule(larsDataServiceMock.Object, fileDataService: fileDataServiceMock.Object, ddValidityCategory: ddValidityMock.Object).ValidityCategoryConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeFalse();
-        }
-
-        [Fact]
-        public void ValidityCategoryConditionMet_True_LarsMismatch()
-        {
-            var learnAimRef = "learnAimRef";
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = learnAimRef,
-                FundModel = 35,
-                LearnStartDate = new DateTime(2019, 08, 31)
-            };
-
-            var validities = new List<LARSValidity>
-            {
-                new LARSValidity
-                {
-                    LearnAimRef = learnAimRef,
-                    ValidityCategory = "ADULT_SKILLS",
-                    StartDate = new DateTime(2019, 8, 1),
-                    LastNewStartDate = new DateTime(2019, 10, 1),
-                    EndDate = new DateTime(2020, 7, 31),
-                }
-            };
-
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
-            ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ANY");
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
-
-            NewRule(larsDataServiceMock.Object, ddValidityCategory: ddValidityMock.Object).ValidityCategoryConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
-        }
-
-        [Fact]
-        public void ValidityCategoryConditionMet_True_LarsNoValidities()
-        {
-            var learnAimRef = "learnAimRef";
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = learnAimRef,
-                FundModel = 35,
-                LearnStartDate = new DateTime(2019, 08, 31)
-            };
-
-            var validities = new List<LARSValidity>();
-
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
-            ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
-
-            NewRule(ddValidityCategory: ddValidityMock.Object).ValidityCategoryConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
+            NewRule().TriggerOnCategoryRef(categoryRef, categoryRefCheck).Should().Be(expectation);
         }
 
         [Fact]
@@ -526,6 +340,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns("ADULT_SKILLS");
             ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns(41);
             larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
+
+            NewRule(larsDataServiceMock.Object, fileDataServiceMock.Object, ddValidityMock.Object, ddCategoryMock.Object).ConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMet_True_NullDDs()
+        {
+            var learnAimRef = "learnAimRef";
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnAimRef = learnAimRef,
+                LearnStartDate = new DateTime(2019, 12, 31)
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
+            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_02>();
+            var fileDataServiceMock = new Mock<IFileDataService>();
+
+            fileDataServiceMock.Setup(ds => ds.FilePreparationDate()).Returns(new DateTime(2020, 8, 1));
+            ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns((string)null);
+            ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns((int?)null);
 
             NewRule(larsDataServiceMock.Object, fileDataServiceMock.Object, ddValidityMock.Object, ddCategoryMock.Object).ConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>()).Should().BeTrue();
         }
