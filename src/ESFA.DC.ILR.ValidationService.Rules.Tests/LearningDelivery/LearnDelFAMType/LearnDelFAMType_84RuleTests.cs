@@ -144,6 +144,42 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             }
         }
 
+        [Fact]
+        public void ConditionMet_True()
+        {
+            var dateOfBirth = new DateTime(2001, 07, 31);
+            var fundModel = 35;
+
+            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
+            academicYearDataServiceMock.Setup(x => x.Start()).Returns(new DateTime(2020, 08, 01));
+
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock
+               .Setup(ds => ds.AddYearsToDate(new DateTime(2020, 08, 01), -19))
+               .Returns(new DateTime(2001, 08, 01));
+
+            NewRule(academicYearDataService: academicYearDataServiceMock.Object, dateTimeQueryService: dateTimeQueryServiceMock.Object).ConditionMet(dateOfBirth, fundModel).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("2001-08-02", 35)] // incorrect dob correct FundModel
+        [InlineData("2001-07-31", 25)] // correct dob incorrect FundModel
+        public void ConditionMet_False(string dob, int fm)
+        {
+            var dateOfBirth = DateTime.Parse(dob);
+            var fundModel = fm;
+
+            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
+            academicYearDataServiceMock.Setup(x => x.Start()).Returns(new DateTime(2020, 08, 01));
+
+            var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
+            dateTimeQueryServiceMock
+               .Setup(ds => ds.AddYearsToDate(new DateTime(2020, 08, 01), -19))
+               .Returns(new DateTime(2001, 08, 01));
+
+            NewRule(academicYearDataService: academicYearDataServiceMock.Object, dateTimeQueryService: dateTimeQueryServiceMock.Object).ConditionMet(dateOfBirth, fundModel).Should().BeFalse();
+        }
+
         [Theory]
         [InlineData("2001-08-02")] // Is younger than 19 before current teaching year but not LDM 376
         [InlineData("2001-08-01")] // Is younger than 19 before current teaching year but is LDM 376
@@ -174,6 +210,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                .Returns(new DateTime(2001, 08, 01));
 
             NewRule(academicYearDataService: academicYearDataServiceMock.Object, dateTimeQueryService: dateTimeQueryServiceMock.Object).IsOutsideDateOfBirthRange(dob).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(25)]
+        [InlineData(36)]
+        [InlineData(70)]
+        public void IsAdultSkillsFundingModel_False(int fundModel)
+        {
+            NewRule().IsAdultSkillsFundingModel(fundModel).Should().BeFalse();
+        }
+
+        [Fact]
+        public void IsAdultSkillsFundingModel_True()
+        {
+            int fundModel = 35;
+            NewRule().IsAdultSkillsFundingModel(fundModel).Should().BeTrue();
         }
 
         private LearnDelFAMType_84Rule NewRule(

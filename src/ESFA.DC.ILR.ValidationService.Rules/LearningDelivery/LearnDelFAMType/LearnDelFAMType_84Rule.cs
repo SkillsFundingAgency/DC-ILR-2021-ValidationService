@@ -43,39 +43,40 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 return;
             }
 
-            learner.LearningDeliveries.Where(ld => ld.FundModel == FundModels.AdultSkills).ForEach(ld =>
+            foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                var learningDeliveryFams = _learningDeliveryFAMQueryService.GetLearningDeliveryFAMsForTypeAndCodes(
-                    ld.LearningDeliveryFAMs,
-                    LearningDeliveryFAMTypeConstants.LDM,
-                    _ldmCodes);
-
-                if (learningDeliveryFams.Any())
+                if (!_learningDeliveryFAMQueryService.GetLearningDeliveryFAMsForTypeAndCodes(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, _ldmCodes).Any())
                 {
-                    learningDeliveryFams.ForEach(ldf =>
-                    {
-                        if (IsOutsideDateOfBirthRange(learner.DateOfBirthNullable))
-                        {
-                            HandleValidationError(
-                                learner.LearnRefNumber,
-                                ld.AimSeqNumber,
-                                BuildErrorMessageParameters(ldf.LearnDelFAMCode, learner.DateOfBirthNullable, ld.FundModel));
-                        }
-                    });
+                    continue;
                 }
-            });
+
+                if (ConditionMet(learner.DateOfBirthNullable, learningDelivery.FundModel))
+                {
+                    HandleValidationError(
+                        learner.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(learner.DateOfBirthNullable));
+                }
+            }
         }
+
+        public bool ConditionMet(DateTime? dateOfBirth, int fundModel) =>
+            IsOutsideDateOfBirthRange(dateOfBirth)
+            && IsAdultSkillsFundingModel(fundModel);
 
         public bool IsOutsideDateOfBirthRange(DateTime? dateOfBirth) =>
             dateOfBirth < _dateTimeQueryService.AddYearsToDate(_academicYearService.Start(), AgeOffset);
 
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string delFamCode, DateTime? dateOfBirth, int fundModel)
+        public bool IsAdultSkillsFundingModel(int fundModel) =>
+            fundModel == FundModels.AdultSkills;
+
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? dateOfBirth)
         {
             return new[]
             {
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.LDM),
-                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, delFamCode),
-                BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, LearningDeliveryFAMCodeConstants.LDM_376),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.AdultSkills),
                 BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, dateOfBirth),
             };
         }
