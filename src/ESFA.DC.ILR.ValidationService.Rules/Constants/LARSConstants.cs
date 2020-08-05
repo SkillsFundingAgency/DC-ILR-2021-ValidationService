@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace ESFA.DC.ILR.ValidationService.Rules.Constants
+﻿namespace ESFA.DC.ILR.ValidationService.Rules.Constants
 {
     public static class LARSConstants
     {
