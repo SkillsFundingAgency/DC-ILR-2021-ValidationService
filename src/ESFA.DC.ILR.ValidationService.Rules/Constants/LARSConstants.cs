@@ -83,6 +83,7 @@
             public const int OnlyForLegalEntitlementAtLevel3 = 38;
             public const int LicenseToPractice = 20;
             public const int McaGlaAim = 41;
+            public const int Covid19SkillsOffer = 43;
         }
 
         public static class CommonComponents
