@@ -258,28 +258,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
         }
 
         [Fact]
-        public void ConditionMet_True_NullDDs()
-        {
-            var learnAimRef = "learnAimRef";
-            var learningDelivery = new TestLearningDelivery
-            {
-                LearnAimRef = learnAimRef,
-                LearnActEndDateNullable = new DateTime(2019, 12, 31)
-            };
-
-            var larsDataServiceMock = new Mock<ILARSDataService>();
-            var ddValidityMock = new Mock<IDerivedData_ValidityCategory_02>();
-            var ddCategoryMock = new Mock<IDerivedData_CategoryRef_02>();
-            var fileDataServiceMock = new Mock<IFileDataService>();
-
-            fileDataServiceMock.Setup(ds => ds.FilePreparationDate()).Returns(new DateTime(2020, 8, 1));
-            ddValidityMock.Setup(d => d.Derive(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>())).Returns((string)null);
-            ddCategoryMock.Setup(x => x.Derive(learningDelivery)).Returns((int?)null);
-
-            NewRule(larsDataServiceMock.Object, fileDataServiceMock.Object, ddValidityMock.Object, ddCategoryMock.Object).ConditionMet(learningDelivery, It.IsAny<IReadOnlyCollection<ILearnerEmploymentStatus>>(), new DateTime(2019, 12, 31)).Should().BeTrue();
-        }
-
-        [Fact]
         public void ConditionMet_True_NoValidityMatch_CategoryRefDates()
         {
             var learnAimRef = "learnAimRef";

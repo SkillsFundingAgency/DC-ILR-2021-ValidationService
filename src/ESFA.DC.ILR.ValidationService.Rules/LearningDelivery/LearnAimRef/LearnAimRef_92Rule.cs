@@ -72,11 +72,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             var validityCategory = _ddValidityCategory.Derive(learningDelivery, learnerEmploymentStatuses);
             var categoryRef = _ddCategoryRef.Derive(learningDelivery);
 
-            if (validityCategory == null && categoryRef == null)
-            {
-                return true;
-            }
-
             var validityCheck = validityCategory != null ?
                 LarsValidityConditionMet(validityCategory, learningDelivery.LearnAimRef, dateToCompare) :
                 false;
