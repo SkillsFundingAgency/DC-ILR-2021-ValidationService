@@ -77,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
         }
 
         public bool IsOnServiceApprenticeship(ILearningDelivery learningDelivery) =>
-            learningDelivery.LearningDeliveryFAMs.Any(fam => fam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.ACT && fam.LearnDelFAMCode == LearningDeliveryFAMCodeConstants.ACT_ContractEmployer);
+            learningDelivery.LearningDeliveryFAMs?.Any(fam => fam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.ACT && fam.LearnDelFAMCode == LearningDeliveryFAMCodeConstants.ACT_ContractEmployer) ?? false;
 
         public IList<IFcsContractAllocation> ContractAllocationsForUkprnAndFundingStreamPeriodCodes(int ukprn)
         {
