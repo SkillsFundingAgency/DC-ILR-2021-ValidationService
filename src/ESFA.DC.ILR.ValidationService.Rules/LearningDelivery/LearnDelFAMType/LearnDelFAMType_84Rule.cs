@@ -45,7 +45,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if (!_learningDeliveryFAMQueryService.GetLearningDeliveryFAMsForTypeAndCodes(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, _ldmCodes).Any())
+                var filteredFams = _learningDeliveryFAMQueryService.GetLearningDeliveryFAMsForTypeAndCodes(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, _ldmCodes);
+
+                if (filteredFams == null || !filteredFams.Any())
                 {
                     continue;
                 }
@@ -65,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             && IsAdultSkillsFundingModel(fundModel);
 
         public bool IsOutsideDateOfBirthRange(DateTime? dateOfBirth) =>
-            dateOfBirth < _dateTimeQueryService.AddYearsToDate(_academicYearService.Start(), AgeOffset);
+            dateOfBirth < _dateTimeQueryService.AddYearsToDate(_academicYearService.AugustThirtyFirst(), AgeOffset);
 
         public bool IsAdultSkillsFundingModel(int fundModel) =>
             fundModel == FundModels.AdultSkills;

@@ -73,12 +73,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(ldmLearnDelFams);
 
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock.Setup(x => x.Start()).Returns(new DateTime(2020, 08, 01));
+            academicYearDataServiceMock.Setup(x => x.AugustThirtyFirst()).Returns(new DateTime(2020, 08, 31));
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock
-               .Setup(ds => ds.AddYearsToDate(new DateTime(2020, 08, 01), -19))
-               .Returns(new DateTime(2001, 08, 01));
+               .Setup(ds => ds.AddYearsToDate(new DateTime(2020, 08, 31), -19))
+               .Returns(new DateTime(2001, 08, 31));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
@@ -151,12 +151,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var fundModel = 35;
 
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock.Setup(x => x.Start()).Returns(new DateTime(2020, 08, 01));
+            academicYearDataServiceMock.Setup(x => x.AugustThirtyFirst()).Returns(new DateTime(2020, 08, 31));
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock
-               .Setup(ds => ds.AddYearsToDate(new DateTime(2020, 08, 01), -19))
-               .Returns(new DateTime(2001, 08, 01));
+               .Setup(ds => ds.AddYearsToDate(new DateTime(2020, 08, 31), -19))
+               .Returns(new DateTime(2001, 08, 31));
 
             NewRule(academicYearDataService: academicYearDataServiceMock.Object, dateTimeQueryService: dateTimeQueryServiceMock.Object).ConditionMet(dateOfBirth, fundModel).Should().BeTrue();
         }
@@ -202,12 +202,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var dob = new DateTime(2001, 07, 31);
 
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock.Setup(x => x.Start()).Returns(new DateTime(2020, 08, 01));
+            academicYearDataServiceMock.Setup(x => x.AugustThirtyFirst()).Returns(new DateTime(2020, 08, 31));
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock
-               .Setup(ds => ds.AddYearsToDate(new DateTime(2020, 08, 01), -19))
-               .Returns(new DateTime(2001, 08, 01));
+               .Setup(ds => ds.AddYearsToDate(new DateTime(2020, 08, 31), -19))
+               .Returns(new DateTime(2001, 08, 31));
 
             NewRule(academicYearDataService: academicYearDataServiceMock.Object, dateTimeQueryService: dateTimeQueryServiceMock.Object).IsOutsideDateOfBirthRange(dob).Should().BeTrue();
         }
