@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using Autofac.Core.Lifetime;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
@@ -29,21 +30,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
                 return;
             }
 
-            if (objectToValidate.LearnerEmploymentStatuses == null)
+            if (ConditionMet(objectToValidate.LearnerEmploymentStatuses))
             {
-                return;
-            }
-
-            var learnerEmploymentStatusMonitorings = GetLearnerEmploymentStatusesMonitorings(objectToValidate.LearnerEmploymentStatuses);
-
-            foreach (var employmentStatusMonitoring in learnerEmploymentStatusMonitorings)
-            {
-                if (ConditionMet(employmentStatusMonitoring))
-                {
-                    HandleValidationError(
-                        objectToValidate.LearnRefNumber,
-                        errorMessageParameters: BuildErrorMessageParameters(employmentStatusMonitoring.ESMCode));
-                }
+                HandleValidationError(objectToValidate.LearnRefNumber, errorMessageParameters: BuildErrorMessageParameters());
             }
         }
 
@@ -53,26 +42,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
                        .Any(ld => ld.LearningDeliveryFAMs?.Any(fam => fam.LearnDelFAMType == LearningDeliveryFAMTypeConstants.LDM && fam.LearnDelFAMCode == LearningDeliveryFAMCodeConstants.LDM_375) ?? false) ?? false;
         }
 
-        public bool ConditionMet(IEmploymentStatusMonitoring employmentStatusMonitoring)
+        public bool ConditionMet(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            return !_esmCodes.Contains(employmentStatusMonitoring.ESMCode);
+            var allESMs = learnerEmploymentStatuses?.SelectMany(s => s.EmploymentStatusMonitorings);
+
+            var matchingESMs = allESMs?.Where(e => e.ESMType == Monitoring.EmploymentStatus.Types.BenefitStatusIndicator && _esmCodes.Contains(e.ESMCode));
+
+            return matchingESMs == null || !matchingESMs.Any();
         }
 
-        public IEnumerable<IEmploymentStatusMonitoring> GetLearnerEmploymentStatusesMonitorings(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
-        {
-            return learnerEmploymentStatuses?
-                .Where(x => x.EmploymentStatusMonitorings != null && x.EmploymentStatusMonitorings.Any(e => e.ESMType == Monitoring.EmploymentStatus.Types.BenefitStatusIndicator))
-                .SelectMany(s => s.EmploymentStatusMonitorings);
-        }
-
-        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? esmCode)
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters()
         {
             return new[]
             {
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.LDM),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, LearningDeliveryFAMCodeConstants.LDM_375),
-                BuildErrorMessageParameter(PropertyNameConstants.ESMType, Monitoring.EmploymentStatus.Types.BenefitStatusIndicator),
-                BuildErrorMessageParameter(PropertyNameConstants.ESMCode, esmCode),
+                BuildErrorMessageParameter(PropertyNameConstants.ESMType, Monitoring.EmploymentStatus.Types.BenefitStatusIndicator)
             };
         }
     }
