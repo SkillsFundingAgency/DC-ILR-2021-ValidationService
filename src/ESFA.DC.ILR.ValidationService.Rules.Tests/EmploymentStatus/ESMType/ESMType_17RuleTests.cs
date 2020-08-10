@@ -151,7 +151,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         }
 
         [Fact]
-        public void Validate_NoError_NoEmploymentStatuses()
+        public void Validate_Error_NoEmploymentStatuses()
         {
             var learner = new TestLearner
             {
@@ -174,14 +174,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 },
             };
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
                 NewRule(validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
         [Fact]
-        public void Validate_NoError_NullEmploymentStatuses()
+        public void Validate_Error_NullEmploymentStatuses()
         {
             var learner = new TestLearner
             {
@@ -201,7 +201,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 }
             };
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
                 NewRule(validationErrorHandlerMock.Object).Validate(learner);
             }
@@ -215,9 +215,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
             validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnDelFAMType", LearningDeliveryFAMTypeConstants.LDM)).Verifiable();
             validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("LearnDelFAMCode", LearningDeliveryFAMCodeConstants.LDM_375)).Verifiable();
             validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("ESMType", Monitoring.EmploymentStatus.Types.BenefitStatusIndicator)).Verifiable();
-            validationErrorHandlerMock.Setup(veh => veh.BuildErrorMessageParameter("ESMCode", 6)).Verifiable();
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(6);
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters();
 
             validationErrorHandlerMock.Verify();
         }
