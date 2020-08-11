@@ -232,6 +232,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             Assert.Equal(expectation, result);
         }
 
+        [Theory]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.InPaidEmployment, false)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.NotKnownProvided, false)]
+        public void IsNotEmployedMeetsExpectation(int candidate, bool expectation)
+        {
+            var sut = NewRule();
+            var mockDelivery = new Mock<ILearnerEmploymentStatus>();
+            mockDelivery
+                .SetupGet(y => y.EmpStat)
+                .Returns(candidate);
+
+            var result = sut.IsNotEmployed(mockDelivery.Object);
+
+            Assert.Equal(expectation, result);
+        }
+
         public DerivedData_28Rule NewRule()
         {
             var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>(MockBehavior.Strict);
