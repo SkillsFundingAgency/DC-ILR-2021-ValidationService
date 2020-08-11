@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool IsNotEmployed(ILearnerEmploymentStatus candidate) =>
             candidate.EmpStat == EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable
-                && candidate.EmpStat == EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable;
+                || candidate.EmpStat == EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable;
 
         public bool IsNotEmployedWithBenefits(ILearnerEmploymentStatus candidate)
         {
