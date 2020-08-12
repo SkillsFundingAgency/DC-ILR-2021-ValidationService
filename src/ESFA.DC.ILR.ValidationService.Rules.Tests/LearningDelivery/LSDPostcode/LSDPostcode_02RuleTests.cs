@@ -159,6 +159,31 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         [Fact]
+        public void PostcodeConditionThree_False_Multiple_SOF()
+        {
+            var learnStartDate = new DateTime(2019, 9, 1);
+            var sofCode = "105";
+            var devolvedPostcodes = new List<IDevolvedPostcode>
+            {
+                new DevolvedPostcode
+                {
+                    Postcode = "Postcode",
+                    EffectiveFrom = new DateTime(2018, 9, 1),
+                    EffectiveTo = new DateTime(2018, 10, 1),
+                    SourceOfFunding = "105"
+                },
+                new DevolvedPostcode
+                {
+                    Postcode = "Postcode",
+                    EffectiveFrom = new DateTime(2019, 9, 1),
+                    SourceOfFunding = "105"
+                }
+            };
+
+            NewRule().PostcodeConditionThree(devolvedPostcodes, learnStartDate, sofCode).Should().BeFalse();
+        }
+
+        [Fact]
         public void PostcodeConditionThree_False_DateWithinRange()
         {
             var learnStartDate = new DateTime(2019, 10, 1);
