@@ -124,7 +124,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
                 return false;
             }
 
-            var matchingSofCodes = devolvedPostcodes.Where(w => w.SourceOfFunding == sofCode);
+            var matchingSofCodes = devolvedPostcodes.Where(w => w.SourceOfFunding == sofCode).ToList();
 
             return matchingSofCodes.Any() && !matchingSofCodes.Any(dp =>
                        learnStartDate >= dp.EffectiveFrom && learnStartDate <= (dp.EffectiveTo ?? DateTime.MaxValue));
