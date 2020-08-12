@@ -119,6 +119,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public bool PostcodeConditionThree(IEnumerable<IDevolvedPostcode> devolvedPostcodes, DateTime learnStartDate, string sofCode)
         {
+            if (devolvedPostcodes == null)
+            {
+                return false;
+            }
+
             var matchingSofCodes = devolvedPostcodes.Where(w => w.SourceOfFunding == sofCode);
 
             return matchingSofCodes.Any() && !matchingSofCodes.Any(dp =>

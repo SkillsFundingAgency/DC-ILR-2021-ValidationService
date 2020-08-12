@@ -249,6 +249,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LSDPostcode
         }
 
         [Fact]
+        public void PostcodeConditionThree_FalseWhenNull()
+        {
+            var learnStartDate = new DateTime(2019, 12, 1);
+            var sofCode = "105";
+
+            NewRule().PostcodeConditionThree(null, learnStartDate, sofCode).Should().BeFalse();
+        }
+
+        [Fact]
         public void PostcodeConditionMet_False_StartDate()
         {
             var learnStartDate = new DateTime(2019, 9, 1);
