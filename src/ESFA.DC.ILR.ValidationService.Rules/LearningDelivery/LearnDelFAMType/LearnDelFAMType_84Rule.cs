@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             && IsAdultSkillsFundingModel(fundModel);
 
         public bool IsOutsideDateOfBirthRange(DateTime? dateOfBirth) =>
-            dateOfBirth < _dateTimeQueryService.AddYearsToDate(_academicYearService.AugustThirtyFirst(), AgeOffset);
+            _dateTimeQueryService.AddYearsToDate(_academicYearService.AugustThirtyFirst(), AgeOffset) < dateOfBirth;
 
         public bool IsAdultSkillsFundingModel(int fundModel) =>
             fundModel == FundModels.AdultSkills;
