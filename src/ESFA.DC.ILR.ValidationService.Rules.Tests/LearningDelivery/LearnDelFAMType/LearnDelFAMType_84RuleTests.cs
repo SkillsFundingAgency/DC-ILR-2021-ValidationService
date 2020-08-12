@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             var learner = new TestLearner()
             {
-                DateOfBirthNullable = new DateTime(2000, 09, 01),
+                DateOfBirthNullable = new DateTime(2001, 09, 01),
                 LearningDeliveries = new List<TestLearningDelivery>()
                 {
                     new TestLearningDelivery()
@@ -131,7 +131,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(ldmLearnDelFams);
 
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock.Setup(x => x.Start()).Returns(new DateTime(2020, 08, 31));
+            academicYearDataServiceMock.Setup(x => x.AugustThirtyFirst()).Returns(new DateTime(2020, 08, 31));
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock
@@ -170,7 +170,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var fundModel = fm;
 
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock.Setup(x => x.Start()).Returns(new DateTime(2020, 08, 31));
+            academicYearDataServiceMock.Setup(x => x.AugustThirtyFirst()).Returns(new DateTime(2020, 08, 31));
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock
@@ -186,7 +186,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void IsOutsideDateOfBirthRange_False(string dob)
         {
             var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock.Setup(x => x.Start()).Returns(new DateTime(2020, 08, 01));
+            academicYearDataServiceMock.Setup(x => x.AugustThirtyFirst()).Returns(new DateTime(2020, 08, 31));
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeQueryServiceMock
