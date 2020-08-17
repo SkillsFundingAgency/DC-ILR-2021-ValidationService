@@ -10,7 +10,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
 {
     public class PriorAttain_07Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly DateTime _startDate = new DateTime(2016, 07, 31);
+        private readonly DateTime _startDate = new DateTime(2016, 08, 01);
         private readonly DateTime _endDate = new DateTime(2020, 07, 31);
         private readonly HashSet<int> _priorAttains = new HashSet<int> { 3, 4, 5, 10, 11, 12, 13, 97, 98 };
 
