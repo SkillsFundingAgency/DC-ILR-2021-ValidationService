@@ -52,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 return;
             }
 
-            foreach (var learningDelivery in objectToValidate.LearningDeliveries.Where(d => d.FundModel == _learnDelFundModel && IsOnServiceApprenticeship(d)))
+            foreach (var learningDelivery in objectToValidate.LearningDeliveries.Where(d => d.FundModel == _learnDelFundModel && d.AimType == AimTypes.ProgrammeAim && IsOnServiceApprenticeship(d)))
             {
                 if (ConditionMet(learningDelivery, filteredContractAllocations))
                 {
