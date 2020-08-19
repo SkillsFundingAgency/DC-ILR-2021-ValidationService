@@ -285,17 +285,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 
         public static IEnumerable<object[]> Validate_TestData()
         {
-            yield return new object[] { "ConRef2", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2018, 12, 31), true };
-            yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.AEBTO_TOL1920, new DateTime(2018, 12, 31), false };
-            yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2019, 12, 31), false };
-            yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2019, 01, 02), false };
-            yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2019, 01, 01), true };
-            yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2018, 12, 31), true };
+            yield return new object[] { "ConRef2", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2018, 12, 31), 1, true };
+            yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.AEBTO_TOL1920, new DateTime(2018, 12, 31), 1, false };
+            yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2019, 12, 31), 1, false };
+            yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2019, 01, 02), 1, false };
+            yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2019, 01, 01), 1, true };
+            yield return new object[] { "ConRef1", FundingStreamPeriodCodeConstants.LEVY1799, new DateTime(2018, 12, 31), 1, true };
         }
 
         [Theory]
         [MemberData(nameof(Validate_TestData))]
-        public void Validate(string contractAllocationNumber, string fundingStreamPeriodCode, DateTime? stopNewStartsFromDate, bool expectViolation)
+        public void Validate(string contractAllocationNumber, string fundingStreamPeriodCode, DateTime? stopNewStartsFromDate, int aimType, bool expectViolation)
         {
             // Arrange
             var fileDataServiceMock = new Mock<IFileDataService>();
@@ -322,6 +322,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = "ConRef1",
+                        AimType = aimType,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearnStartDate = new DateTime(2019, 01, 01),
                         LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
@@ -364,6 +365,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 {
                     new TestLearningDelivery()
                     {
+                        AimType = 1,
                         FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearnStartDate = new DateTime(2019, 01, 01),
                         LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
