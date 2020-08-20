@@ -28,9 +28,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public void Validate(ILearner learner)
         {
-            if (learner is null)
+            if (learner?.LearningDeliveries == null)
             {
-                throw new ArgumentNullException(nameof(learner));
+                return;
             }
 
             foreach (var learningDelivery in learner.LearningDeliveries)
