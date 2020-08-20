@@ -40,11 +40,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                var larsCatrgories = _larsDataService.GetCategoriesFor(learningDelivery.LearnAimRef);
+                var larsCategories = _larsDataService.GetCategoriesFor(learningDelivery.LearnAimRef);
 
-                if (ConditionMet(learningDelivery, larsCatrgories))
+                if (ConditionMet(learningDelivery, larsCategories))
                 {
-                    HandleValidationError(learner.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(larsCatrgories));
+                    HandleValidationError(learner.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(larsCategories));
                 }
             }
         }
