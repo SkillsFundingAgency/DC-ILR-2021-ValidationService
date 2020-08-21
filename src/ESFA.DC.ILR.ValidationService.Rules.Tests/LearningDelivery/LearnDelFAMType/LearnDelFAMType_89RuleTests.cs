@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             {
                 new LearningDeliveryCategory()
                 {
-                    CategoryRef = LARSConstants.Categories.Covid19SkillsOffer
+                    CategoryRef = LARSConstants.Categories.Covid19SkillsOfferOnly
                 }
             };
 
@@ -110,7 +110,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             {
                 new LearningDeliveryCategory()
                 {
-                    CategoryRef = LARSConstants.Categories.Covid19SkillsOffer
+                    CategoryRef = LARSConstants.Categories.Covid19SkillsOfferOnly
                 }
             };
 
@@ -191,7 +191,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             {
                 new LearningDeliveryCategory()
                 {
-                    CategoryRef = LARSConstants.Categories.Covid19SkillsOffer
+                    CategoryRef = LARSConstants.Categories.Covid19SkillsOfferOnly
                 }
             };
 
