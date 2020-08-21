@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool IsCovid19SkillsOffer(IEnumerable<ILARSLearningCategory> larsLearningCategories)
         {
-            return larsLearningCategories != null && larsLearningCategories.Any(l => l.CategoryRef == LARSConstants.Categories.Covid19SkillsOffer);
+            return larsLearningCategories != null && larsLearningCategories.Any(l => l.CategoryRef == LARSConstants.Categories.Covid19SkillsOfferOnly);
         }
 
         public bool IsAdultSkills(ILearningDelivery learningDelivery) =>

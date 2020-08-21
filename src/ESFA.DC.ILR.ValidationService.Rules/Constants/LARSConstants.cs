@@ -84,6 +84,7 @@
             public const int LicenseToPractice = 20;
             public const int McaGlaAim = 41;
             public const int Covid19SkillsOffer = 43;
+            public const int Covid19SkillsOfferOnly = 44;
         }
 
         public static class CommonComponents
