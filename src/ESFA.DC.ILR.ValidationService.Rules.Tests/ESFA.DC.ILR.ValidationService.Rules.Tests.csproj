@@ -486,6 +486,7 @@
     <Compile Include="LearningDelivery\LearnStartDate\LearnStartDate_03RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_78RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnStartDate\LearnStartDate_05RuleTests.cs" />
+    <Compile Include="LearningDelivery\LearnStartDate\LearnStartDate_18RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnStartDate\LearnStartDate_17RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnStartDate\LearnStartDate_16RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnStartDate\LearnStartDate_15RuleTests.cs" />
