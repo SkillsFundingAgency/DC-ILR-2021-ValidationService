@@ -52,7 +52,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
             if (larsStandard != null)
             {
-                return larsStandard.LastDateStarts.HasValue && learnStartDate > larsStandard.LastDateStarts;
+                return learnStartDate > larsStandard.LastDateStarts;
             }
 
             return false;
