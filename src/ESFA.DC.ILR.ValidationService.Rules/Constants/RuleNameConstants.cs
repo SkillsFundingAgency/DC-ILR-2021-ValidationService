@@ -358,6 +358,7 @@
         public const string LearnStartDate_15 = "LearnStartDate_15";
         public const string LearnStartDate_16 = "LearnStartDate_16";
         public const string LearnStartDate_17 = "LearnStartDate_17";
+        public const string LearnStartDate_18 = "LearnStartDate_18";
 
         public const string LearnPlanEndDate_02 = "LearnPlanEndDate_02";
         public const string LearnPlanEndDate_03 = "LearnPlanEndDate_03";
