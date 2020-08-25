@@ -8,6 +8,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
+using FluentAssertions;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -29,16 +30,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         }
 
         [Theory]
-        [InlineData(LearningDeliveryFAMTypeConstants.ACT, "2018-07-31", false)] // LearnStartDate < LARS.LastDateStarts and !RES
-        [InlineData(LearningDeliveryFAMTypeConstants.ACT, "2018-08-01", false)] // LearnStartDate == LARS.LastDateStarts and !RES
-        [InlineData(LearningDeliveryFAMTypeConstants.RES, "2018-08-02", true)] // LearnStartDate > LATS.LastDateStarts and == RES
-        public void Validate_NoError(string famType, string startDate, bool returns)
+        [InlineData(1, LearningDeliveryFAMTypeConstants.ACT, "2018-07-31", false)] // LearnStartDate < LARS.LastDateStarts and !RES
+        [InlineData(1, LearningDeliveryFAMTypeConstants.ACT, "2018-08-01", false)] // LearnStartDate == LARS.LastDateStarts and !RES
+        [InlineData(1, LearningDeliveryFAMTypeConstants.RES, "2018-08-02", true)] // LearnStartDate > LATS.LastDateStarts and == RES
+        public void Validate_NoError(int? stdCode, string famType, string startDate, bool returns)
         {
-            int stdCode = 1;
-
             var larsStandard = new LARSStandard()
             {
-                StandardCode = stdCode,
+                StandardCode = stdCode.Value,
                 LastDateStarts = new DateTime(2018, 08, 01)
             };
 
@@ -62,12 +61,48 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             };
 
             var larsDataServiceMock = new Mock<ILARSDataService>();
-            larsDataServiceMock.Setup(l => l.GetStandardFor(stdCode)).Returns(larsStandard);
+            larsDataServiceMock.Setup(l => l.GetStandardFor(stdCode.Value)).Returns(larsStandard);
 
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             learningDeliveryFAMQueryServiceMock
                 .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
                 .Returns(returns);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_StdCode()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        StdCodeNullable = 0,
+                        LearnStartDate = new DateTime(2018, 08, 01),
+                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT
+                            }
+                        }
+                    }
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock.Setup(l => l.GetStandardFor(0)).Returns(new LARSStandard());
+
+            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFAMQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
@@ -116,6 +151,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             {
                 NewRule(larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
+        }
+
+        [Fact]
+        public void StdCodeExists_False()
+        {
+            NewRule().StdCodeExists(null).Should().BeFalse();
+        }
+
+        [Fact]
+        public void StdCodeExists_True()
+        {
+            NewRule().StdCodeExists(25).Should().BeTrue();
         }
 
         private LearnStartDate_18Rule NewRule(
