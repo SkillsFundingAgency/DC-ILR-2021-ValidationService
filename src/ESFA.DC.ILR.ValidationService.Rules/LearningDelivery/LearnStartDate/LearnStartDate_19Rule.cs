@@ -45,6 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
             return learningDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard
                 && learningDelivery.AimType == AimTypes.ComponentAimInAProgramme
                 && !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)
+                && learningDelivery.StdCodeNullable.HasValue
                 && LARSConditionMet(learningDelivery.StdCodeNullable.Value, learningDelivery.LearnStartDate);
         }
 
