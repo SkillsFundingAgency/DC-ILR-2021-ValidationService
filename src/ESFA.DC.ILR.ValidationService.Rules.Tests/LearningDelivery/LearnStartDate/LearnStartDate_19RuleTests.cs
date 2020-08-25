@@ -8,6 +8,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
+using FluentAssertions;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -120,6 +121,44 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             {
                 NewRule(larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
+        }
+
+        [Fact]
+        public void ProgTypeConditionMet_True()
+        {
+            NewRule().ProgTypeConditionMet(25).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(0)]
+        public void ProgTypeConditionMet_False(int? progType)
+        {
+            NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AimTypeConditionMet_True()
+        {
+            NewRule().AimTypeConditionMet(3).Should().BeTrue();
+        }
+
+        [Fact]
+        public void AimTypeConditionMet_False()
+        {
+            NewRule().AimTypeConditionMet(0).Should().BeFalse();
+        }
+
+        [Fact]
+        public void StandardCodeExists_True()
+        {
+            NewRule().StdCodeExists(1).Should().BeTrue();
+        }
+
+        [Fact]
+        public void StandardCodeExists_False()
+        {
+            NewRule().StdCodeExists(null).Should().BeFalse();
         }
 
         private LearnStartDate_19Rule NewRule(
