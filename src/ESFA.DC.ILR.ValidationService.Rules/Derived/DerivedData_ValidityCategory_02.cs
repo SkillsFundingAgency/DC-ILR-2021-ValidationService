@@ -130,7 +130,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             return learningDelivery.FundModel == FundModels.AdultSkills
                 && !HasOlassFAMTypeAndCode(learningDelivery.LearningDeliveryFAMs)
                 && !HasDD07(learningDelivery.ProgTypeNullable)
-                && !HasDD35(learningDelivery);
+                && !HasDD35(learningDelivery)
+                && !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_376);
         }
 
         public bool McaAdultSkillsMatch(ILearningDelivery learningDelivery)
