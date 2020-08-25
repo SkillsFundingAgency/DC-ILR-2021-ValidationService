@@ -42,10 +42,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         public bool ConditionMet(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.StdCodeNullable.HasValue
+            return StdCodeExists(learningDelivery.StdCodeNullable)
                 && !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)
                 && LARSConditionMet(learningDelivery.StdCodeNullable.Value, learningDelivery.LearnStartDate);
         }
+
+        public bool StdCodeExists(int? stdCode) =>
+            stdCode.HasValue;
 
         public bool LARSConditionMet(int stdCode, DateTime learnStartDate)
         {
