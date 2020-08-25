@@ -207,12 +207,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         }
 
         [Theory]
-        [InlineData(99, null, false, false, false)]
-        [InlineData(35, 25, false, true, false)]
-        [InlineData(35, 25, true, true, false)]
-        [InlineData(35, null, true, false, false)]
-        [InlineData(35, null, true, false, true)]
-        public void AdultSkillsMatch_False(int fundModel, int? progType, bool mockReturnLDM, bool mockReturnDD07, bool mockReturnDD35)
+        [InlineData(99, null, false, false, false, false)]
+        [InlineData(35, 25, false, true, false, false)]
+        [InlineData(35, 25, true, true, false, false)]
+        [InlineData(35, null, true, false, false, false)]
+        [InlineData(35, null, true, false, true, false)]
+        [InlineData(35, 25, false, false, false, true)]
+        public void AdultSkillsMatch_False(int fundModel, int? progType, bool mockReturnLDM034, bool mockReturnDD07, bool mockReturnDD35, bool mockReturnLDM376)
         {
             var learningDeliveryFAMs = new List<ILearningDeliveryFAM>
             {
@@ -220,6 +221,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 {
                     LearnDelFAMType = "LDM",
                     LearnDelFAMCode = "035"
+                },
+                new TestLearningDeliveryFAM
+                {
+                    LearnDelFAMType = "LDM",
+                    LearnDelFAMCode = "376"
                 }
             };
 
@@ -228,9 +234,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
             var dd07Mock = new Mock<IDerivedData_07Rule>();
             var dd35Mock = new Mock<IDerivedData_35Rule>();
-            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "LDM", "034")).Returns(mockReturnLDM);
+            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "LDM", "034")).Returns(mockReturnLDM034);
             dd07Mock.Setup(qs => qs.IsApprenticeship(progType)).Returns(mockReturnDD07);
             dd35Mock.Setup(qs => qs.IsCombinedAuthorities(delivery)).Returns(mockReturnDD35);
+            learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, "LDM", "376")).Returns(mockReturnLDM376);
 
             NewDDRule(learningDeliveryFAMQueryServiceMock.Object, dd07Mock.Object, null, dd35Mock.Object).AdultSkillsMatch(delivery).Should().BeFalse();
         }
