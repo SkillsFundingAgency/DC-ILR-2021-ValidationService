@@ -132,10 +132,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool AdultSkillsMatch(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == FundModels.AdultSkills
-                && !HasOlassFAMTypeAndCode(learningDelivery.LearningDeliveryFAMs)
-                && !HasDD07(learningDelivery.ProgTypeNullable)
-                && !HasDD35(learningDelivery);
+            var result = learningDelivery.FundModel == FundModels.AdultSkills
+                         && !HasOlassFAMTypeAndCode(learningDelivery.LearningDeliveryFAMs)
+                         && !HasDD07(learningDelivery.ProgTypeNullable)
+                         && !HasDD35(learningDelivery)
+                         && !Has376FAMTypeAndCode(learningDelivery.LearningDeliveryFAMs);
+            return result;
         }
 
         public bool McaAdultSkillsMatch(ILearningDelivery learningDelivery)
@@ -190,6 +192,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
         private bool HasOlassFAMTypeAndCode(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
             return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_OLASS);
+        }
+
+        private bool Has376FAMTypeAndCode(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        {
+            return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, LearningDeliveryFAMCodeConstants.LDM_376);
         }
     }
 }
