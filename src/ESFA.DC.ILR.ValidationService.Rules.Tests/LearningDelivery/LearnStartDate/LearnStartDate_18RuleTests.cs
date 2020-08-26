@@ -48,6 +48,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                     new TestLearningDelivery()
                     {
                         StdCodeNullable = stdCode,
+                        AimType = 1,
+                        ProgTypeNullable = 25,
                         LearnStartDate = DateTime.Parse(startDate),
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
                         {
@@ -84,6 +86,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                     new TestLearningDelivery()
                     {
                         StdCodeNullable = 0,
+                        AimType = 1,
+                        ProgTypeNullable = 25,
                         LearnStartDate = new DateTime(2018, 08, 01),
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
                         {
@@ -127,6 +131,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                     new TestLearningDelivery()
                     {
                         StdCodeNullable = stdCode,
+                        ProgTypeNullable = 25,
+                        AimType = 1,
                         LearnStartDate = new DateTime(2018, 08, 02),
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
                         {
@@ -151,6 +157,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             {
                 NewRule(larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
+        }
+
+        [Fact]
+        public void ProgTypeConditionMet_True()
+        {
+            NewRule().ProgTypeConditionMet(25).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(0)]
+        public void ProgTypeConditionMet_False(int? progType)
+        {
+            NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AimTypeConditionMet_True()
+        {
+            NewRule().AimTypeConditionMet(1).Should().BeTrue();
+        }
+
+        [Fact]
+        public void AimTypeConditionMet_False()
+        {
+            NewRule().AimTypeConditionMet(0).Should().BeFalse();
         }
 
         [Fact]
