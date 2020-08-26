@@ -49,6 +49,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                     new TestLearningDelivery()
                     {
                         StdCodeNullable = stdCode,
+                        AimType = 1,
+                        ProgTypeNullable = 25,
                         LearnStartDate = DateTime.Parse(startDate),
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
                         {
@@ -76,6 +78,44 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
         }
 
         [Fact]
+        public void Validate_NoError_StdCode()
+        {
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        StdCodeNullable = 0,
+                        AimType = 1,
+                        ProgTypeNullable = 25,
+                        LearnStartDate = new DateTime(2018, 08, 01),
+                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT
+                            }
+                        }
+                    }
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock.Setup(l => l.GetStandardFor(0)).Returns(new LARSStandard());
+
+            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFAMQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(false);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void Validate_Error()
         {
             int stdCode = 1;
@@ -92,6 +132,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                     new TestLearningDelivery()
                     {
                         StdCodeNullable = stdCode,
+                        ProgTypeNullable = 25,
+                        AimType = 1,
                         LearnStartDate = new DateTime(2018, 08, 02),
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
                         {
@@ -116,6 +158,44 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             {
                 NewRule(larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
+        }
+
+        [Fact]
+        public void ProgTypeConditionMet_True()
+        {
+            NewRule().ProgTypeConditionMet(25).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(0)]
+        public void ProgTypeConditionMet_False(int? progType)
+        {
+            NewRule().ProgTypeConditionMet(progType).Should().BeFalse();
+        }
+
+        [Fact]
+        public void AimTypeConditionMet_True()
+        {
+            NewRule().AimTypeConditionMet(1).Should().BeTrue();
+        }
+
+        [Fact]
+        public void AimTypeConditionMet_False()
+        {
+            NewRule().AimTypeConditionMet(0).Should().BeFalse();
+        }
+
+        [Fact]
+        public void StdCodeExists_False()
+        {
+            NewRule().StdCodeExists(null).Should().BeFalse();
+        }
+
+        [Fact]
+        public void StdCodeExists_True()
+        {
+            NewRule().StdCodeExists(25).Should().BeTrue();
         }
 
         private LearnStartDate_18Rule NewRule(

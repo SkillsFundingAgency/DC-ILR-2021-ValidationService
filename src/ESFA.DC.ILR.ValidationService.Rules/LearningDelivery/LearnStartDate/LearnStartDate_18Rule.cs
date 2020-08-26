@@ -42,9 +42,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         public bool ConditionMet(ILearningDelivery learningDelivery)
         {
-            return !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)
+            return ProgTypeConditionMet(learningDelivery.ProgTypeNullable)
+                && AimTypeConditionMet(learningDelivery.AimType)
+                && StdCodeExists(learningDelivery.StdCodeNullable)
+                && !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)
                 && LARSConditionMet(learningDelivery.StdCodeNullable.Value, learningDelivery.LearnStartDate);
         }
+
+        public bool ProgTypeConditionMet(int? progType) =>
+            progType == ProgTypes.ApprenticeshipStandard;
+
+        public bool AimTypeConditionMet(int aimType) =>
+            aimType == AimTypes.ProgrammeAim;
+
+        public bool StdCodeExists(int? stdCode) =>
+            stdCode.HasValue;
 
         public bool LARSConditionMet(int stdCode, DateTime learnStartDate)
         {
