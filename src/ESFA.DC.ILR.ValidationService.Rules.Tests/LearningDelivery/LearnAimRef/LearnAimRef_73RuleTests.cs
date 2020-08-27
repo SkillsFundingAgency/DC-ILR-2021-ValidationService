@@ -69,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns("max");
 
             // act
-            var result = sut.HasDisqualifyingSubjectSector(null, new IEsfEligibilityRuleSectorSubjectAreaLevel[] { mockAreaLevel.Object });
+            var result = sut.HasDisqualifyingSubjectSector(null, new List<IEsfEligibilityRuleSectorSubjectAreaLevel>() { mockAreaLevel.Object });
 
             // assert
             Assert.True(result);

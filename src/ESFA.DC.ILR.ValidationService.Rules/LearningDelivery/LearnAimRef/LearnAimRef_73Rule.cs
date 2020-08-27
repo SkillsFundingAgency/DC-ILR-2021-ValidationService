@@ -27,10 +27,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 
         public void Validate(ILearner thisLearner)
         {
+            if (thisLearner?.LearningDeliveries == null)
+            {
+                return;
+            }
+
             var learnRefNumber = thisLearner.LearnRefNumber;
 
-            thisLearner.LearningDeliveries
-                .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));
+            foreach (var learningDelivery in thisLearner.LearningDeliveries)
+            {
+                if (IsNotValid(learningDelivery))
+                {
+                    RaiseValidationMessage(learnRefNumber, learningDelivery);
+                }
+            }
         }
 
         public bool IsNotValid(ILearningDelivery thisDelivery)
@@ -61,10 +71,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 return false;
             }
 
-            var filteredAreaLevels = subjectAreaLevels.Where(x => SubjectAreaTierFilter(x, larsDelivery));
+            if (larsDelivery == null)
+            {
+                return true;
+            }
 
-            return larsDelivery == null
-                   || (!filteredAreaLevels.Any() || filteredAreaLevels.Any(x => HasDisqualifyingSubjectSector(x, larsDelivery)));
+            var filteredAreaLevels = subjectAreaLevels.Where(x => SubjectAreaTierFilter(x, larsDelivery)).ToList();
+
+            return !filteredAreaLevels.Any() || filteredAreaLevels.Any(x => HasDisqualifyingSubjectSector(x, larsDelivery));
         }
 
         public bool SubjectAreaTierFilter(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, ILARSLearningDelivery larsDelivery)
