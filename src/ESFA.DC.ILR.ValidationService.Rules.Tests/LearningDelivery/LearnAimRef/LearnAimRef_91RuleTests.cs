@@ -42,7 +42,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
 
-            NewRule(larsDataServiceMock.Object).LarsValidityConditionMet("ADULT_SKILLS", learnAimRef, new DateTime(2019, 7, 31)).Should().BeFalse();
+            NewRule(larsDataServiceMock.Object).LarsValidityConditionMet("ADULT_SKILLS", learnAimRef, new DateTime(2019, 7, 30)).Should().BeFalse();
         }
 
         [Fact]
@@ -119,7 +119,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                     LearnAimRef = learnAimRef,
                     ValidityCategory = "ADULT_SKILLS",
                     StartDate = new DateTime(2019, 8, 1),
-                    LastNewStartDate = new DateTime(2019, 10, 1),
                     EndDate = new DateTime(2020, 7, 31),
                 }
             };
@@ -128,7 +127,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 
             larsDataServiceMock.Setup(ds => ds.GetValiditiesFor(learnAimRef)).Returns(validities);
 
-            NewRule(larsDataServiceMock.Object).LarsValidityConditionMet("ADULT_SKILLS", learnAimRef, new DateTime(2019, 12, 31)).Should().BeTrue();
+            NewRule(larsDataServiceMock.Object).LarsValidityConditionMet("ADULT_SKILLS", learnAimRef, new DateTime(2020, 12, 31)).Should().BeTrue();
         }
 
         [Fact]
@@ -162,7 +161,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
 
-            NewRule(larsDataServiceMock.Object).LarsCategoryConditionMet(41, learnAimRef, new DateTime(2019, 7, 31)).Should().BeFalse();
+            NewRule(larsDataServiceMock.Object).LarsCategoryConditionMet(41, learnAimRef, new DateTime(2019, 07, 30)).Should().BeFalse();
         }
 
         [Fact]
@@ -183,7 +182,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var larsDataServiceMock = new Mock<ILARSDataService>();
             larsDataServiceMock.Setup(ds => ds.GetCategoriesFor(learnAimRef)).Returns(categories);
 
-            NewRule(larsDataServiceMock.Object).LarsCategoryConditionMet(50, learnAimRef, new DateTime(2019, 7, 31)).Should().BeTrue();
+            NewRule(larsDataServiceMock.Object).LarsCategoryConditionMet(50, learnAimRef, new DateTime(2020, 7, 31)).Should().BeTrue();
         }
 
         [Fact]
@@ -267,7 +266,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
             var learningDelivery = new TestLearningDelivery
             {
                 LearnAimRef = learnAimRef,
-                LearnStartDate = new DateTime(2019, 12, 31)
+                LearnStartDate = new DateTime(2019, 7, 30)
             };
 
             var validities = new List<LARSValidity>
