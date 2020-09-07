@@ -23,6 +23,8 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Context
 
         public string IlrReferenceDataKey => _jobContextMessage.KeyValuePairs[ILRContextKeys.IlrReferenceData].ToString();
 
+        public string LearnerReferenceDataKey => _jobContextMessage.KeyValuePairs[ILRContextKeys.LearnerReferenceData].ToString();
+
         public string InvalidLearnRefNumbersKey => _jobContextMessage.KeyValuePairs[ILRContextKeys.InvalidLearnRefNumbers].ToString();
 
         public string ValidLearnRefNumbersKey => _jobContextMessage.KeyValuePairs[ILRContextKeys.ValidLearnRefNumbers].ToString();

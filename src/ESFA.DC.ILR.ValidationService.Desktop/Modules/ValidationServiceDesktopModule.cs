@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using ESFA.DC.ILR.Desktop.Interface;
 using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ReferenceDataService.Model.Learner;
 using ESFA.DC.ILR.ValidationService.Data.Modules;
 using ESFA.DC.ILR.ValidationService.Data.Population.Modules;
 using ESFA.DC.ILR.ValidationService.Desktop.Context;
@@ -23,6 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Modules
             builder.RegisterModule<RuleSetModule<ILearner>>();
             builder.RegisterModule<RuleSetModule<ILearnerDestinationAndProgression>>();
             builder.RegisterModule<RuleSetModule<IMessage>>();
+            builder.RegisterModule<CrossYearRuleSetModule<ILearner>>();
             builder.RegisterModule<QueryServiceModule>();
             builder.RegisterModule<ValidationServicesModule>();
 
@@ -30,6 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Modules
             builder.RegisterType<ValidationExecutionProvider>().As<IValidationExecutionProvider>().InstancePerLifetimeScope();
             builder.RegisterType<DesktopContextValidationContextFactory>().As<IValidationContextFactory<IDesktopContext>>();
             builder.RegisterType<EnabledRulesProvider>().As<IEnabledRulesProvider>().InstancePerLifetimeScope();
+            builder.RegisterType<LearnerReferenceDataFileProviderService>().As<IProvider<LearnerReferenceData>>().InstancePerLifetimeScope();
         }
     }
 }

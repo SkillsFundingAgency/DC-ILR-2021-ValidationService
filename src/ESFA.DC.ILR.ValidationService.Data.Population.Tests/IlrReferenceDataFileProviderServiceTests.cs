@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.FileService.Interface;
 using ESFA.DC.ILR.ReferenceDataService.Model;
+using ESFA.DC.ILR.ValidationService.Data.Population.FileProvider;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.Serialization.Interfaces;
 using FluentAssertions;

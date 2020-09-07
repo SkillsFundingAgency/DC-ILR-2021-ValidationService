@@ -3,6 +3,7 @@ using Autofac.Features.AttributeFilters;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ReferenceDataService.Model;
+using ESFA.DC.ILR.ReferenceDataService.Model.Learner;
 using ESFA.DC.ILR.ValidationService.Data;
 using ESFA.DC.ILR.ValidationService.Data.Cache;
 using ESFA.DC.ILR.ValidationService.Data.External;
@@ -28,7 +29,10 @@ using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Learner;
+using ESFA.DC.ILR.ValidationService.Data.Learner.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population;
+using ESFA.DC.ILR.ValidationService.Data.Population.FileProvider;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Population.Mappers;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -62,13 +66,19 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
             builder.RegisterType<ActorValidationExecutionProvider>().As<IValidationExecutionProvider>().InstancePerLifetimeScope();
             builder.RegisterType<EnabledRulesProvider>().As<IEnabledRulesProvider>().InstancePerLifetimeScope();
 
-            builder.RegisterType<PreValidationPopulationService>().As<IPopulationService>().InstancePerLifetimeScope();
+            builder.RegisterType<LearnerReferenceDataFileProviderService>().As<IProvider<LearnerReferenceData>>().InstancePerLifetimeScope();
+            builder.RegisterType<CrossYearRuleSetOrchestrationService<ILearner>>().As<ICrossYearRuleSetOrchestrationService<ILearner>>();
+            builder.RegisterType<CrossYearAutoFacRuleSetResolutionService<ILearner>>().As<ICrossYearRuleSetResolutionService<ILearner>>();
+            builder.RegisterType<CrossYearRuleSetExecutionService<ILearner>>().As<ICrossYearRuleSetExecutionService<ILearner>>();
+            builder.RegisterModule<CrossYearRuleSetModule<ILearner>>();
+
             builder.RegisterModule<RuleSetModule<IMessage>>();
             builder.RegisterModule<DerivedDataModule>();
             builder.RegisterModule<QueryServiceModule>();
 
             builder.RegisterType<InternalDataCachePopulationService>().As<IInternalDataCachePopulationService>().InstancePerLifetimeScope();
             builder.RegisterType<ExternalDataCachePopulationService>().As<IExternalDataCachePopulationService>().InstancePerLifetimeScope();
+            builder.RegisterType<LearnerReferenceDataCachePopulationService>().As<ILearnerReferenceDataCachePopulationService>().InstancePerLifetimeScope();
             builder.RegisterType<FileDataCachePopulationService>().As<IFileDataCachePopulationService>().InstancePerLifetimeScope();
             builder.RegisterType<MessageCachePopulationService>().As<IMessageCachePopulationService>().InstancePerLifetimeScope();
 
@@ -78,6 +88,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
             builder.RegisterType<InternalDataCache>().As<IInternalDataCache>().InstancePerLifetimeScope();
             builder.RegisterType<FileDataCache>().As<IFileDataCache>().InstancePerLifetimeScope();
             builder.RegisterType<Cache<IMessage>>().As<ICache<IMessage>>().InstancePerLifetimeScope();
+            builder.RegisterType<LearnerReferenceDataCache>().As<ILearnerReferenceDataCache>().InstancePerLifetimeScope();
 
             builder.RegisterType<FileDataService>().As<IFileDataService>().InstancePerLifetimeScope();
             builder.RegisterType<LARSDataService>().As<ILARSDataService>().InstancePerLifetimeScope();
@@ -88,6 +99,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
             builder.RegisterType<ValidationErrorsDataService>().As<IValidationErrorsDataService>();
             builder.RegisterType<FCSDataService>().As<IFCSDataService>().InstancePerLifetimeScope();
             builder.RegisterType<EmployersDataService>().As<IEmployersDataService>().InstancePerLifetimeScope();
+            builder.RegisterType<LearnerReferenceDataService>().As<ILearnerReferenceDataService>().InstancePerLifetimeScope();
 
             builder.RegisterType<AcademicYearDataService>().As<IAcademicYearDataService>().InstancePerLifetimeScope();
             builder.RegisterType<LookupDetailsProvider>().As<IProvideLookupDetails>().InstancePerLifetimeScope();
@@ -102,6 +114,7 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
             builder.RegisterType<UlnDataMapper>().As<IUlnDataMapper>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationErrorsDataMapper>().As<IValidationErrorsDataMapper>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationRulesDataMapper>().As<IValidationRulesDataMapper>().InstancePerLifetimeScope();
+            //builder.RegisterType<ValidationRulesDataMapper>().As<IValidationRulesDataMapper>().InstancePerLifetimeScope();
         }
     }
 }

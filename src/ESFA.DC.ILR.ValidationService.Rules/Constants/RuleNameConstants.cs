@@ -190,6 +190,8 @@
         public const string FinType_01 = "FINTYPE_01";
         public const string FinType_02 = "FINTYPE_02";
 
+        public const string FRM_04 = "FRM_04";
+
         public const string FUNDCOMP_01 = "FUNDCOMP_01";
 
         public const string FUNDLEV_01 = "FUNDLEV_01";

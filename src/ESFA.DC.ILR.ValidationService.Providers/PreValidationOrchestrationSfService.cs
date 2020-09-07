@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ReferenceDataService.Model;
+using ESFA.DC.ILR.ReferenceDataService.Model.Learner;
 using ESFA.DC.ILR.ValidationService.Data.Population.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Interface.Enum;
@@ -18,10 +20,12 @@ namespace ESFA.DC.ILR.ValidationService.Providers
         private readonly IPopulationService _preValidationPopulationService;
         private readonly IProvider<IMessage> _messageProvider;
         private readonly IProvider<ReferenceDataRoot> _referenceDataRootProvider;
+        private readonly IProvider<LearnerReferenceData> _learnerReferenceDataProvider;
         private readonly IValidationErrorCache _validationErrorCache;
         private readonly IValidationOutputService _validationOutputService;
         private readonly IValidIlrFileOutputService _validIlrFileOutputService;
-        private readonly IRuleSetOrchestrationService<IMessage> _ruleSetOrchestrationService;
+        private readonly IRuleSetOrchestrationService<IMessage> _messageRuleSetOrchestrationService;
+        private readonly ICrossYearRuleSetOrchestrationService<ILearner> _crossYearRuleSetOrchestrationService;
         private readonly IValidationExecutionProvider _validationExecutionProvider;
         private readonly ILogger _logger;
 
@@ -29,20 +33,24 @@ namespace ESFA.DC.ILR.ValidationService.Providers
             IPopulationService preValidationPopulationService,
             IProvider<IMessage> messageProvider,
             IProvider<ReferenceDataRoot> referenceDataRootProvider,
+            IProvider<LearnerReferenceData> learnerReferenceDataProvider,
             IValidationErrorCache validationErrorCache,
             IValidationOutputService validationOutputService,
             IValidIlrFileOutputService validIlrFileOutputService,
-            IRuleSetOrchestrationService<IMessage> ruleSetOrchestrationService,
+            IRuleSetOrchestrationService<IMessage> messageRuleSetOrchestrationService,
+            ICrossYearRuleSetOrchestrationService<ILearner> crossYearRuleSetOrchestrationService,
             IValidationExecutionProvider validationExecutionProvider,
             ILogger logger)
         {
             _preValidationPopulationService = preValidationPopulationService;
             _messageProvider = messageProvider;
             _referenceDataRootProvider = referenceDataRootProvider;
+            _learnerReferenceDataProvider = learnerReferenceDataProvider;
             _validationErrorCache = validationErrorCache;
             _validationOutputService = validationOutputService;
             _validIlrFileOutputService = validIlrFileOutputService;
-            _ruleSetOrchestrationService = ruleSetOrchestrationService;
+            _messageRuleSetOrchestrationService = messageRuleSetOrchestrationService;
+            _crossYearRuleSetOrchestrationService = crossYearRuleSetOrchestrationService;
             _validationExecutionProvider = validationExecutionProvider;
             _logger = logger;
         }
@@ -63,13 +71,23 @@ namespace ESFA.DC.ILR.ValidationService.Providers
 
                 var message = await _messageProvider.ProvideAsync(validationContext, cancellationToken);
                 var referenceDataRoot = await _referenceDataRootProvider.ProvideAsync(validationContext, cancellationToken);
+                var learnerReferenceData = await _learnerReferenceDataProvider.ProvideAsync(validationContext, cancellationToken);
 
-                _preValidationPopulationService.Populate(validationContext, message, referenceDataRoot);
+                _preValidationPopulationService.Populate(validationContext, message, referenceDataRoot, learnerReferenceData);
 
                 _logger.LogDebug($"Population service completed in: {stopWatch.ElapsedMilliseconds}");
-                
-                // File Validation
-                await _ruleSetOrchestrationService.ExecuteAsync(message, cancellationToken).ConfigureAwait(false);
+
+                // Stateless Validation
+                var statelessValidationTasks = new List<Task>
+                {
+                    _messageRuleSetOrchestrationService.ExecuteAsync(message, cancellationToken),
+                    _crossYearRuleSetOrchestrationService.ExecuteAsync(message.Learners, cancellationToken)
+                };
+
+                await Task.WhenAll(statelessValidationTasks).ConfigureAwait(false);
+
+                // FRM Validation
+                await _messageRuleSetOrchestrationService.ExecuteAsync(message, cancellationToken).ConfigureAwait(false);
 
                 cancellationToken.ThrowIfCancellationRequested();
 

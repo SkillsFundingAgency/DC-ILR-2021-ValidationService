@@ -5,7 +5,7 @@ using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.Serialization.Interfaces;
 
-namespace ESFA.DC.ILR.ValidationService.Data.Population
+namespace ESFA.DC.ILR.ValidationService.Data.Population.FileProvider
 {
     public class IlrReferenceDataFileProviderService : IProvider<ReferenceDataRoot>
     {
