@@ -1,6 +1,6 @@
 ﻿namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface IAbstractRule<T>
+    public interface IValidationRule<T>
     {
         string RuleName { get; }
 

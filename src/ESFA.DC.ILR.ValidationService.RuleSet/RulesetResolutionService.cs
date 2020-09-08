@@ -7,7 +7,7 @@ using ESFA.DC.ILR.ValidationService.Interface;
 namespace ESFA.DC.ILR.ValidationService.RuleSet
 {
     public class RuleSetResolutionService<TRule, T> : IRuleSetResolutionService<TRule, T>
-        where TRule : IAbstractRule<T> 
+        where TRule : IValidationRule<T> 
         where T : class
     {
         private readonly ILifetimeScope _lifetimeScope;

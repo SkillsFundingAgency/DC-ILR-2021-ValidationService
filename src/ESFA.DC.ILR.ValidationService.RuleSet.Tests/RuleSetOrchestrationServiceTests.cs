@@ -58,7 +58,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             IRuleSetResolutionService<TRule, T> ruleSetResolutionService = null,
             IRuleSetExecutionService<TRule, T> ruleSetExecutionService = null,
             IValidationErrorCache validationErrorCache = null)
-            where TRule : IAbstractRule<T>
+            where TRule : IValidationRule<T>
             where T : class
         {
             return new RuleSetOrchestrationService<TRule, T>(

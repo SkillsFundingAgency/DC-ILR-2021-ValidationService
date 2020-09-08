@@ -6,7 +6,7 @@ using Module = Autofac.Module;
 namespace ESFA.DC.ILR.ValidationService.Rules.Modules
 {
     public class RuleSetModule<TRule, T> : Module
-        where TRule : IAbstractRule<T>
+        where TRule : IValidationRule<T>
         where T : class
     {
         protected override void Load(ContainerBuilder builder)
