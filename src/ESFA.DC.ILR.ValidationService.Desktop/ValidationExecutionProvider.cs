@@ -9,12 +9,12 @@ namespace ESFA.DC.ILR.ValidationService.Desktop
     public class ValidationExecutionProvider : IValidationExecutionProvider
     {
         private readonly ILogger _logger;
-        private readonly IRuleSetOrchestrationService<ILearner> _learneRuleSetOrchestrationService;
-        private readonly IRuleSetOrchestrationService<ILearnerDestinationAndProgression> _learnerDPRuleSetOrchestrationService;
+        private readonly IRuleSetOrchestrationService<IRule<ILearner>, ILearner> _learneRuleSetOrchestrationService;
+        private readonly IRuleSetOrchestrationService<IRule<ILearnerDestinationAndProgression>, ILearnerDestinationAndProgression> _learnerDPRuleSetOrchestrationService;
 
         public ValidationExecutionProvider(
-            IRuleSetOrchestrationService<ILearner> learnerRuleSetOrchestrationService,
-            IRuleSetOrchestrationService<ILearnerDestinationAndProgression> learnerDPRuleSetOrchestrationService,
+            IRuleSetOrchestrationService<IRule<ILearner>, ILearner> learnerRuleSetOrchestrationService,
+            IRuleSetOrchestrationService<IRule<ILearnerDestinationAndProgression>, ILearnerDestinationAndProgression> learnerDPRuleSetOrchestrationService,
             ILogger logger)
         {
             _learneRuleSetOrchestrationService = learnerRuleSetOrchestrationService;

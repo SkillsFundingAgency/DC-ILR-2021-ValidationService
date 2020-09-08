@@ -19,12 +19,12 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             IValidationErrorCache validationErrorCache = new ValidationErrorCache();
 
-            var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<string>>();
+            var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<IRule<string>, string>>();
             ruleSetResolutionServiceMock.Setup(rs => rs.Resolve()).Returns(new List<IRule<string>>() { new RuleOne(validationErrorCache), new RuleTwo(validationErrorCache) });
 
             var cancellationToken = CancellationToken.None;
 
-            var ruleSetExecutionService = new RuleSetExecutionService<string>();
+            var ruleSetExecutionService = new RuleSetExecutionService<IRule<string>, string>();
 
             var service = NewService(ruleSetResolutionServiceMock.Object, validationErrorCache: validationErrorCache, ruleSetExecutionService: ruleSetExecutionService);
 
@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             var ruleSet = new List<IRule<string>> { new RuleOne(validationErrorCache), new RuleTwo(validationErrorCache) };
 
-            var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<string>>();
+            var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<IRule<string>, string>>();
             ruleSetResolutionServiceMock.Setup(rs => rs.Resolve()).Returns(ruleSet);
 
             const string one = "one";
@@ -47,20 +47,21 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
 
             var cancellationToken = CancellationToken.None;
 
-            var ruleSetExecutionService = new RuleSetExecutionService<string>();
+            var ruleSetExecutionService = new RuleSetExecutionService<IRule<string>, string>();
 
             var service = NewService(ruleSetResolutionServiceMock.Object, ruleSetExecutionService, validationErrorCache);
 
             (await service.ExecuteAsync(validationItems, cancellationToken)).Should().HaveCount(6);
         }
 
-        private RuleSetOrchestrationService<T> NewService<T>(
-            IRuleSetResolutionService<T> ruleSetResolutionService = null,
-            IRuleSetExecutionService<T> ruleSetExecutionService = null,
+        private RuleSetOrchestrationService<TRule, T> NewService<TRule, T>(
+            IRuleSetResolutionService<TRule, T> ruleSetResolutionService = null,
+            IRuleSetExecutionService<TRule, T> ruleSetExecutionService = null,
             IValidationErrorCache validationErrorCache = null)
+            where TRule : IAbstractRule<T>
             where T : class
         {
-            return new RuleSetOrchestrationService<T>(
+            return new RuleSetOrchestrationService<TRule, T>(
                 ruleSetResolutionService,
                 ruleSetExecutionService,
                 validationErrorCache);

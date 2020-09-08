@@ -43,14 +43,15 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<RuleSetOrchestrationService<ILearner>>().As<IRuleSetOrchestrationService<ILearner>>();
-            builder.RegisterType<RuleSetOrchestrationService<ILearnerDestinationAndProgression>>().As<IRuleSetOrchestrationService<ILearnerDestinationAndProgression>>();
-            builder.RegisterType<AutoFacRuleSetResolutionService<ILearner>>().As<IRuleSetResolutionService<ILearner>>();
-            builder.RegisterType<AutoFacRuleSetResolutionService<ILearnerDestinationAndProgression>>().As<IRuleSetResolutionService<ILearnerDestinationAndProgression>>();
-            builder.RegisterType<AutoFacRuleSetResolutionService<IMessage>>().As<IRuleSetResolutionService<IMessage>>();
-            builder.RegisterType<RuleSetExecutionService<ILearner>>().As<IRuleSetExecutionService<ILearner>>();
-            builder.RegisterType<RuleSetExecutionService<ILearnerDestinationAndProgression>>().As<IRuleSetExecutionService<ILearnerDestinationAndProgression>>();
-            builder.RegisterType<RuleSetExecutionService<IMessage>>().As<IRuleSetExecutionService<IMessage>>();
+            builder.RegisterType<RuleSetOrchestrationService<IRule<ILearner>, ILearner>>().As<IRuleSetOrchestrationService<IRule<ILearner>, ILearner>>();
+            builder.RegisterType<RuleSetOrchestrationService<IRule<ILearnerDestinationAndProgression>, ILearnerDestinationAndProgression>>().As<IRuleSetOrchestrationService<IRule<ILearnerDestinationAndProgression>, ILearnerDestinationAndProgression>>();
+
+            builder.RegisterType<RuleSetResolutionService<IRule<IMessage>, IMessage>>().As<IRuleSetResolutionService<IRule<IMessage>, IMessage>>();
+            builder.RegisterType<RuleSetResolutionService<IRule<ILearner>, ILearner>>().As<IRuleSetResolutionService<IRule<ILearner>, ILearner>>();
+            builder.RegisterType<RuleSetResolutionService<IRule<ILearnerDestinationAndProgression>, ILearnerDestinationAndProgression>>().As<IRuleSetResolutionService<IRule<ILearnerDestinationAndProgression>, ILearnerDestinationAndProgression>>();
+            builder.RegisterType<RuleSetExecutionService<IRule<IMessage>, IMessage>>().As<IRuleSetExecutionService<IRule<IMessage>, IMessage>>();
+            builder.RegisterType<RuleSetExecutionService<IRule<ILearner>, ILearner>>().As<IRuleSetExecutionService<IRule<ILearner>, ILearner>>();
+            builder.RegisterType<RuleSetExecutionService<IRule<ILearnerDestinationAndProgression>, ILearnerDestinationAndProgression>>().As<IRuleSetExecutionService<IRule<ILearnerDestinationAndProgression>, ILearnerDestinationAndProgression>>();
             builder.RegisterType<ValidationErrorHandler>().As<IValidationErrorHandler>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>().InstancePerLifetimeScope();
             builder.RegisterType<EnabledRulesProvider>().As<IEnabledRulesProvider>().InstancePerLifetimeScope();
@@ -58,7 +59,7 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor.Modules
             builder.RegisterType<JsonSerializationService>().As<IJsonSerializationService>().InstancePerLifetimeScope();
             builder.RegisterType<XmlSerializationService>().As<IXmlSerializationService>().InstancePerLifetimeScope();
 
-            builder.RegisterModule<RuleSetModule<ILearner>>();
+            builder.RegisterModule<RuleSetModule<IRule<ILearner>, ILearner>>();
             builder.RegisterModule<DerivedDataModule>();
             builder.RegisterModule<QueryServiceModule>();
 

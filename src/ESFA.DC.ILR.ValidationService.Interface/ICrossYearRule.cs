@@ -1,10 +1,7 @@
 ﻿namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface ICrossYearRule<in T>
+    public interface ICrossYearRule<T> : IAbstractRule<T>
         where T : class
     {
-        string RuleName { get; }
-
-        void Validate(T objectToValidate);
     }
 }

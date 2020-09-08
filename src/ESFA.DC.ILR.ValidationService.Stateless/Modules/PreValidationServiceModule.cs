@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Features.AttributeFilters;
 using ESFA.DC.DateTimeProvider.Interface;
+using ESFA.DC.ILR.Model;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ReferenceDataService.Model.Learner;
@@ -51,28 +52,29 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Modules
         {
             builder.RegisterType<PreValidationOrchestrationSfService>().As<IPreValidationOrchestrationService>().InstancePerLifetimeScope();
 
-            builder.RegisterType<MessageFileProviderService>().As<IProvider<IMessage>>().InstancePerLifetimeScope();
-            builder.RegisterType<IlrReferenceDataFileProviderService>().As<IProvider<ReferenceDataRoot>>().InstancePerLifetimeScope();
+            builder.RegisterType<XmlFileProviderService<Message>>().As<IFileProvider<Message>>().InstancePerLifetimeScope();
+            builder.RegisterType<JsonFileProviderService<ReferenceDataRoot>>().As<IFileProvider<ReferenceDataRoot>>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationOutputService>().As<IValidationOutputService>().WithAttributeFiltering().InstancePerLifetimeScope();
             builder.RegisterType<ValidIlrFileOutputService>().As<IValidIlrFileOutputService>().InstancePerLifetimeScope();
             builder.RegisterType<LearnerPerActorProviderService>().As<ILearnerPerActorProviderService>().InstancePerLifetimeScope();
             builder.RegisterType<LearnerDPPerActorProviderService>().As<ILearnerDPPerActorProviderService>().InstancePerLifetimeScope();
             builder.RegisterType<ValidationErrorCache>().As<IValidationErrorCache>().InstancePerLifetimeScope();
             builder.RegisterType<PreValidationPopulationService>().As<IPopulationService>().InstancePerLifetimeScope();
-            builder.RegisterType<RuleSetOrchestrationService<IMessage>>().As<IRuleSetOrchestrationService<IMessage>>();
-            builder.RegisterType<AutoFacRuleSetResolutionService<IMessage>>().As<IRuleSetResolutionService<IMessage>>();
-            builder.RegisterType<RuleSetExecutionService<IMessage>>().As<IRuleSetExecutionService<IMessage>>();
+            builder.RegisterType<RuleSetExecutionService<IRule<IMessage>, IMessage>>().As<IRuleSetExecutionService<IRule<IMessage>, IMessage>>();
             builder.RegisterType<ValidationErrorHandler>().As<IValidationErrorHandler>().InstancePerLifetimeScope();
             builder.RegisterType<ActorValidationExecutionProvider>().As<IValidationExecutionProvider>().InstancePerLifetimeScope();
             builder.RegisterType<EnabledRulesProvider>().As<IEnabledRulesProvider>().InstancePerLifetimeScope();
 
-            builder.RegisterType<LearnerReferenceDataFileProviderService>().As<IProvider<LearnerReferenceData>>().InstancePerLifetimeScope();
-            builder.RegisterType<CrossYearRuleSetOrchestrationService<ILearner>>().As<ICrossYearRuleSetOrchestrationService<ILearner>>();
-            builder.RegisterType<CrossYearAutoFacRuleSetResolutionService<ILearner>>().As<ICrossYearRuleSetResolutionService<ILearner>>();
-            builder.RegisterType<CrossYearRuleSetExecutionService<ILearner>>().As<ICrossYearRuleSetExecutionService<ILearner>>();
-            builder.RegisterModule<CrossYearRuleSetModule<ILearner>>();
+            builder.RegisterType<RuleSetResolutionService<ICrossYearRule<ILearner>, ILearner>>().As<IRuleSetResolutionService<ICrossYearRule<ILearner>, ILearner>>();
+            builder.RegisterType<RuleSetResolutionService<IRule<IMessage>, IMessage>>().As<IRuleSetResolutionService<IRule<IMessage>, IMessage>>();
 
-            builder.RegisterModule<RuleSetModule<IMessage>>();
+            builder.RegisterType<RuleSetOrchestrationService<ICrossYearRule<ILearner>, ILearner>>().As<IRuleSetOrchestrationService<ICrossYearRule<ILearner>, ILearner>>();
+            builder.RegisterType<RuleSetOrchestrationService<IRule<IMessage>, IMessage>>().As<IRuleSetOrchestrationService<IRule<IMessage>, IMessage>>();
+
+            builder.RegisterType<JsonFileProviderService<LearnerReferenceData>>().As<IFileProvider<LearnerReferenceData>>().InstancePerLifetimeScope();
+            builder.RegisterType<RuleSetExecutionService<ICrossYearRule<ILearner>, ILearner>>().As<IRuleSetExecutionService<ICrossYearRule<ILearner>, ILearner>>();
+            builder.RegisterModule<RuleSetModule<IRule<IMessage>, IMessage>>();
+            builder.RegisterModule<RuleSetModule<ICrossYearRule<ILearner>, ILearner>>();
             builder.RegisterModule<DerivedDataModule>();
             builder.RegisterModule<QueryServiceModule>();
 

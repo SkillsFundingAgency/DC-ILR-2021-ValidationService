@@ -141,9 +141,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             }
         }
 
-        private IRuleSetResolutionService<string> NewService(ILifetimeScope lifetimeScope, IEnabledRulesProvider enabledRulesProvider)
+        private RuleSetResolutionService<IRule<string>, string> NewService(ILifetimeScope lifetimeScope, IEnabledRulesProvider enabledRulesProvider)
         {
-            return new AutoFacRuleSetResolutionService<string>(lifetimeScope, enabledRulesProvider);
+            return new RuleSetResolutionService<IRule<string>, string>(lifetimeScope, enabledRulesProvider);
         }
     }
 }

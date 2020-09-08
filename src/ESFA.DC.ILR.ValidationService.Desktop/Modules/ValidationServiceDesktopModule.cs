@@ -21,10 +21,10 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Modules
             builder.RegisterModule<DataPopulationModule>();
             builder.RegisterModule<DataServicesModule>();
             builder.RegisterModule<DerivedDataModule>();
-            builder.RegisterModule<RuleSetModule<ILearner>>();
-            builder.RegisterModule<RuleSetModule<ILearnerDestinationAndProgression>>();
-            builder.RegisterModule<RuleSetModule<IMessage>>();
-            builder.RegisterModule<CrossYearRuleSetModule<ILearner>>();
+            builder.RegisterModule<RuleSetModule<IRule<IMessage>, IMessage>>();
+            builder.RegisterModule<RuleSetModule<IRule<ILearner>, ILearner>>();
+            builder.RegisterModule<RuleSetModule<IRule<ILearnerDestinationAndProgression>, ILearnerDestinationAndProgression>>();
+            builder.RegisterModule<RuleSetModule<ICrossYearRule<ILearner>, ILearner>>();
             builder.RegisterModule<QueryServiceModule>();
             builder.RegisterModule<ValidationServicesModule>();
 
@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Modules
             builder.RegisterType<ValidationExecutionProvider>().As<IValidationExecutionProvider>().InstancePerLifetimeScope();
             builder.RegisterType<DesktopContextValidationContextFactory>().As<IValidationContextFactory<IDesktopContext>>();
             builder.RegisterType<EnabledRulesProvider>().As<IEnabledRulesProvider>().InstancePerLifetimeScope();
-            builder.RegisterType<LearnerReferenceDataFileProviderService>().As<IProvider<LearnerReferenceData>>().InstancePerLifetimeScope();
+            builder.RegisterType<DesktopLearnerReferenceDataFileProviderService>().As<IFileProvider<LearnerReferenceData>>().InstancePerLifetimeScope();
         }
     }
 }

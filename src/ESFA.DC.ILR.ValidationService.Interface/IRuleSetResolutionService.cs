@@ -2,9 +2,10 @@
 
 namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface IRuleSetResolutionService<in T>
+    public interface IRuleSetResolutionService<TRule, T>
+        where TRule : IAbstractRule<T>
         where T : class
     {
-        IEnumerable<IRule<T>> Resolve();
+        IEnumerable<TRule> Resolve();
     }
 }

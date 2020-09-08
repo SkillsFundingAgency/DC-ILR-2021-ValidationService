@@ -2,9 +2,10 @@
 
 namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface IRuleSetExecutionService<T>
+    public interface IRuleSetExecutionService<TRule, T>
+        where TRule : IAbstractRule<T>
         where T : class
     {
-        void Execute(IEnumerable<IRule<T>> ruleSet, T objectToValidate);
+        void Execute(IEnumerable<TRule> ruleSet, T objectToValidate);
     }
 }

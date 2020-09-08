@@ -152,8 +152,8 @@ namespace ESFA.DC.ILR.ValidationService.ValidationActor
                 try
                 {
                     jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} started learners: {message.Learners.Count}");
-                    IRuleSetOrchestrationService<ILearner> preValidationOrchestrationService = childLifeTimeScope
-                        .Resolve<IRuleSetOrchestrationService<ILearner>>();
+                    IRuleSetOrchestrationService<IRule<ILearner>, ILearner> preValidationOrchestrationService = childLifeTimeScope
+                        .Resolve<IRuleSetOrchestrationService<IRule<ILearner>, ILearner>>();
 
                     errors = await preValidationOrchestrationService.ExecuteAsync(message.Learners, cancellationToken);
                     jobLogger.LogDebug($"{nameof(ValidationActor)} {_actorId} {GC.GetGeneration(actorModel)} {executionContext.TaskKey} validation done");

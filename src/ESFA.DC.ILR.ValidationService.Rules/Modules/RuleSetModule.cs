@@ -5,13 +5,14 @@ using Module = Autofac.Module;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Modules
 {
-    public class RuleSetModule<T> : Module
+    public class RuleSetModule<TRule, T> : Module
+        where TRule : IAbstractRule<T>
         where T : class
     {
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                .Where(t => t.IsAssignableTo<IRule<T>>())
+                .Where(t => t.IsAssignableTo<TRule>())
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
         }

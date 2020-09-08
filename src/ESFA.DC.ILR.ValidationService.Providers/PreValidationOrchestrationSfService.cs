@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.ILR.Model;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ReferenceDataService.Model;
 using ESFA.DC.ILR.ReferenceDataService.Model.Learner;
@@ -18,27 +19,27 @@ namespace ESFA.DC.ILR.ValidationService.Providers
     public class PreValidationOrchestrationSfService : IPreValidationOrchestrationService
     {
         private readonly IPopulationService _preValidationPopulationService;
-        private readonly IProvider<IMessage> _messageProvider;
-        private readonly IProvider<ReferenceDataRoot> _referenceDataRootProvider;
-        private readonly IProvider<LearnerReferenceData> _learnerReferenceDataProvider;
+        private readonly IFileProvider<Message> _messageProvider;
+        private readonly IFileProvider<ReferenceDataRoot> _referenceDataRootProvider;
+        private readonly IFileProvider<LearnerReferenceData> _learnerReferenceDataProvider;
         private readonly IValidationErrorCache _validationErrorCache;
         private readonly IValidationOutputService _validationOutputService;
         private readonly IValidIlrFileOutputService _validIlrFileOutputService;
-        private readonly IRuleSetOrchestrationService<IMessage> _messageRuleSetOrchestrationService;
-        private readonly ICrossYearRuleSetOrchestrationService<ILearner> _crossYearRuleSetOrchestrationService;
+        private readonly IRuleSetOrchestrationService<IRule<IMessage>, IMessage> _messageRuleSetOrchestrationService;
+        private readonly IRuleSetOrchestrationService<ICrossYearRule<ILearner>, ILearner> _crossYearRuleSetOrchestrationService;
         private readonly IValidationExecutionProvider _validationExecutionProvider;
         private readonly ILogger _logger;
 
         public PreValidationOrchestrationSfService(
             IPopulationService preValidationPopulationService,
-            IProvider<IMessage> messageProvider,
-            IProvider<ReferenceDataRoot> referenceDataRootProvider,
-            IProvider<LearnerReferenceData> learnerReferenceDataProvider,
+            IFileProvider<Message> messageProvider,
+            IFileProvider<ReferenceDataRoot> referenceDataRootProvider,
+            IFileProvider<LearnerReferenceData> learnerReferenceDataProvider,
             IValidationErrorCache validationErrorCache,
             IValidationOutputService validationOutputService,
             IValidIlrFileOutputService validIlrFileOutputService,
-            IRuleSetOrchestrationService<IMessage> messageRuleSetOrchestrationService,
-            ICrossYearRuleSetOrchestrationService<ILearner> crossYearRuleSetOrchestrationService,
+            IRuleSetOrchestrationService<IRule<IMessage>, IMessage> messageRuleSetOrchestrationService,
+            IRuleSetOrchestrationService<ICrossYearRule<ILearner>, ILearner> crossYearRuleSetOrchestrationService,
             IValidationExecutionProvider validationExecutionProvider,
             ILogger logger)
         {
@@ -69,9 +70,9 @@ namespace ESFA.DC.ILR.ValidationService.Providers
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var message = await _messageProvider.ProvideAsync(validationContext, cancellationToken);
-                var referenceDataRoot = await _referenceDataRootProvider.ProvideAsync(validationContext, cancellationToken);
-                var learnerReferenceData = await _learnerReferenceDataProvider.ProvideAsync(validationContext, cancellationToken);
+                var message = await _messageProvider.ProvideAsync(validationContext.Filename, validationContext.Container, cancellationToken);
+                var referenceDataRoot = await _referenceDataRootProvider.ProvideAsync(validationContext.IlrReferenceDataKey, validationContext.Container, cancellationToken);
+                var learnerReferenceData = await _learnerReferenceDataProvider.ProvideAsync(validationContext.LearnerReferenceDataKey, validationContext.Container, cancellationToken);
 
                 _preValidationPopulationService.Populate(validationContext, message, referenceDataRoot, learnerReferenceData);
 

@@ -179,8 +179,6 @@
   <ItemGroup>
     <Compile Include="External\ExternalDataCachePopulationServiceTests.cs" />
     <Compile Include="FileDataCachePopulationServiceTests.cs" />
-    <Compile Include="LearnerReferenceDataFileProviderServiceTests.cs" />
-    <Compile Include="IlrReferenceDataFileProviderServiceTests.cs" />
     <Compile Include="Mappers\LookupsDataMapperTests.cs" />
     <Compile Include="Mappers\EmployersDataMapperTests.cs" />
     <Compile Include="Mappers\FcsDataMapperTests.cs" />
@@ -192,7 +190,8 @@
     <Compile Include="Mappers\UlnDataMapperTests.cs" />
     <Compile Include="LearnerReferenceDataCachePopulationServiceTests.cs" />
     <Compile Include="MessageCachePopulationServiceTests.cs" />
-    <Compile Include="MessageFileProviderServiceTests.cs" />
+    <Compile Include="JsonFileProviderServiceTests.cs" />
+    <Compile Include="XmlFileProviderServiceTests.cs" />
     <Compile Include="PreValidationPopulationServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
