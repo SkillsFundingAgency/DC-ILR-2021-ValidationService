@@ -5,6 +5,7 @@ using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
@@ -21,19 +22,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         };
 
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
+        private readonly IDerivedData_35Rule _derivedData35;
 
         public LearnDelFAMType_09Rule(
             IValidationErrorHandler validationErrorHandler,
-            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService)
+            ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService,
+            IDerivedData_35Rule derivedData35)
             : base(validationErrorHandler, RuleNameConstants.LearnDelFAMType_09)
         {
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
+            _derivedData35 = derivedData35;
         }
-
-        public static DateTime FirstInviableDate => new DateTime(2019, 08, 01);
-
-        public bool HasQualifyingStart(ILearningDelivery theDelivery) =>
-            theDelivery.LearnStartDate < FirstInviableDate;
 
         public bool HasDisqualifyingMonitor(ILearningDelivery theDelivery) =>
             _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(theDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.SOF)
@@ -46,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _fundModels.Contains(theDelivery.FundModel);
 
         public bool IsNotValid(ILearningDelivery theDelivery) =>
-            HasQualifyingStart(theDelivery)
+            !_derivedData35.IsCombinedAuthorities(theDelivery)
             && HasQualifyingFunding(theDelivery)
             && HasDisqualifyingMonitor(theDelivery);
 
