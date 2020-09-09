@@ -15,6 +15,8 @@ namespace ESFA.DC.ILR.ValidationService.ValidationDPActor.Context
 
         public string IlrReferenceDataKey => throw new NotImplementedException();
 
+        public string LearnerReferenceDataKey => throw new NotImplementedException();
+
         public string InvalidLearnRefNumbersKey => throw new NotImplementedException();
 
         public string ValidLearnRefNumbersKey => throw new NotImplementedException();

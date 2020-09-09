@@ -4,6 +4,7 @@ using ESFA.DC.ILR.ValidationService.Data.External;
 using ESFA.DC.ILR.ValidationService.Data.File;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
+using ESFA.DC.ILR.ValidationService.Data.Learner;
 using Module = Autofac.Module;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Modules
@@ -15,6 +16,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Modules
             builder.RegisterType<ExternalDataCache>().As<IExternalDataCache>().InstancePerLifetimeScope();
             builder.RegisterType<FileDataCache>().As<IFileDataCache>().InstancePerLifetimeScope();
             builder.RegisterType<InternalDataCache>().As<IInternalDataCache>().InstancePerLifetimeScope();
+            builder.RegisterType<LearnerReferenceDataCache>().As<ILearnerReferenceDataCache>().InstancePerLifetimeScope();
 
             builder.RegisterGeneric(typeof(Cache<>)).As(typeof(ICache<>)).InstancePerLifetimeScope();
         }

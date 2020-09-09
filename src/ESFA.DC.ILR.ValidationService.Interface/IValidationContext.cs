@@ -8,6 +8,8 @@
 
         string IlrReferenceDataKey { get; }
 
+        string LearnerReferenceDataKey { get; }
+
         string InvalidLearnRefNumbersKey { get; }
 
         string ValidLearnRefNumbersKey { get; }

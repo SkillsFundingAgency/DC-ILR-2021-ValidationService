@@ -73,9 +73,9 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
             ruleThreeMock.Verify();
         }
 
-        private RuleSetExecutionService<string> NewService()
+        private RuleSetExecutionService<IRule<string>, string> NewService()
         {
-            return new RuleSetExecutionService<string>();
+            return new RuleSetExecutionService<IRule<string>, string>();
         }
     }
 }

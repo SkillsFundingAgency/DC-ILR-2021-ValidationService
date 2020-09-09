@@ -14,9 +14,9 @@
 
   <ItemGroup>
     <PackageReference Include="ESFA.DC.FileService.Interface" Version="0.1.18-beta0001" />
-    <PackageReference Include="ESFA.DC.ILR.2021.Model" Version="0.1.0-beta0001" />
-    <PackageReference Include="ESFA.DC.ILR.2021.Model.Interface" Version="0.1.0-beta0001" />
-    <PackageReference Include="ESFA.DC.ILR.2021.ReferenceDataService.Model" Version="0.1.320" />
+    <PackageReference Include="ESFA.DC.ILR.2021.Model" Version="0.1.5-beta0001" />
+    <PackageReference Include="ESFA.DC.ILR.2021.Model.Interface" Version="0.1.5-beta0001" />
+    <PackageReference Include="ESFA.DC.ILR.2021.ReferenceDataService.Model" Version="0.3.4" />
     <PackageReference Include="ESFA.DC.Serialization.Interfaces" Version="0.1.6-beta0001" />
   </ItemGroup>
 

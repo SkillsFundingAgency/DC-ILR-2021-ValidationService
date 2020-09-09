@@ -1,10 +1,7 @@
 ﻿namespace ESFA.DC.ILR.ValidationService.Interface
 {
-    public interface IRule<in T>
+    public interface IRule<T> : IValidationRule<T>
         where T : class
     {
-        string RuleName { get; }
-
-        void Validate(T objectToValidate);
     }
 }

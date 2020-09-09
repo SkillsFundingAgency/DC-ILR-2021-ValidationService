@@ -108,6 +108,7 @@ using ESFA.DC.ILR.ValidationService.Rules.Message.FileLevel.Header;
 using ESFA.DC.ILR.ValidationService.Rules.Message.UKPRN;
 using FluentAssertions;
 using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Rules.CrossYear;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlacement;
 using Xunit;
 
@@ -753,5 +754,34 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
 
             messageRules.Should().HaveCount(rules.Length);
         }
+
+        [Fact]
+        public void CrossYearLearnerRules_Resolve()
+        {
+            var containerBuilder = new ContainerBuilder();
+
+            containerBuilder.RegisterModule<ValidationServiceDesktopModule>();
+
+            containerBuilder.RegisterCommonServiceStubs();
+
+            var container = containerBuilder.Build();
+
+            var messageRules = container.Resolve<IEnumerable<ICrossYearRule<ILearner>>>();
+
+            messageRules.Should().NotBeNull();
+
+            var rules = new[]
+            {
+                typeof(FRM_04Rule),
+            };
+
+            foreach (var rule in rules)
+            {
+                messageRules.Should().Contain(x => x.GetType() == rule);
+            }
+
+            messageRules.Should().HaveCount(rules.Length);
+        }
+
     }
 }

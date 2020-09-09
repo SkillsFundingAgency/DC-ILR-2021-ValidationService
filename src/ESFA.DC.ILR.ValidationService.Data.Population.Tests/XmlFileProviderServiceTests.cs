@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.FileService.Interface;
 using ESFA.DC.ILR.Model;
+using ESFA.DC.ILR.ValidationService.Data.Population.FileProvider;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.Serialization.Interfaces;
 using FluentAssertions;
@@ -12,7 +13,7 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
 {
-    public class MessageFileProviderServiceTests
+    public class XmlFileProviderServiceTests
     {
         [Fact]
         public async Task ProvideAsync()
@@ -37,15 +38,15 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests
                 var xmlSerializationService = new Mock<IXmlSerializationService>();
                 xmlSerializationService.Setup(s => s.Deserialize<Message>(memoryStream)).Returns(message);
 
-                (await NewService(xmlSerializationService.Object, fileServiceeMock.Object).ProvideAsync(validationContextMock.Object, cancellationToken)).Should().BeSameAs(message);
+                (await NewService(xmlSerializationService.Object, fileServiceeMock.Object).ProvideAsync(input, container, cancellationToken)).Should().BeSameAs(message);
             }
         }
 
-        private MessageFileProviderService NewService(
+        private XmlFileProviderService<Message> NewService(
             IXmlSerializationService xmlSerializationService = null,
             IFileService fileService = null)
         {
-            return new MessageFileProviderService(xmlSerializationService, fileService);
+            return new XmlFileProviderService<Message>(xmlSerializationService, fileService);
         }
     }
 }

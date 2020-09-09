@@ -6,16 +6,17 @@ using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.RuleSet
 {
-    public class RuleSetOrchestrationService<T> : IRuleSetOrchestrationService<T>
+    public class RuleSetOrchestrationService<TRule, T> : IRuleSetOrchestrationService<TRule, T>
+        where TRule : IValidationRule<T>
         where T : class
     {
-        private readonly IRuleSetResolutionService<T> _ruleSetResolutionService;
-        private readonly IRuleSetExecutionService<T> _ruleSetExecutionService;
+        private readonly IRuleSetResolutionService<TRule, T> _ruleSetResolutionService;
+        private readonly IRuleSetExecutionService<TRule, T> _ruleSetExecutionService;
         private readonly IValidationErrorCache _validationErrorCache;
 
         public RuleSetOrchestrationService(
-            IRuleSetResolutionService<T> ruleSetResolutionService,
-            IRuleSetExecutionService<T> ruleSetExecutionService,
+            IRuleSetResolutionService<TRule, T> ruleSetResolutionService,
+            IRuleSetExecutionService<TRule, T> ruleSetExecutionService,
             IValidationErrorCache validationErrorCache)
         {
             _ruleSetResolutionService = ruleSetResolutionService;
@@ -25,7 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet
 
         public async Task<IEnumerable<IValidationError>> ExecuteAsync(IEnumerable<T> validationItems, CancellationToken cancellationToken)
         {
-            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve().ToList();
+            List<TRule> ruleSet = _ruleSetResolutionService.Resolve().ToList();
 
             foreach (T validationItem in validationItems)
             {
@@ -39,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet
 
         public async Task<IEnumerable<IValidationError>> ExecuteAsync(T validationItem, CancellationToken cancellationToken)
         {
-            List<IRule<T>> ruleSet = _ruleSetResolutionService.Resolve().ToList();
+            List<TRule> ruleSet = _ruleSetResolutionService.Resolve().ToList();
 
             cancellationToken.ThrowIfCancellationRequested();
 
