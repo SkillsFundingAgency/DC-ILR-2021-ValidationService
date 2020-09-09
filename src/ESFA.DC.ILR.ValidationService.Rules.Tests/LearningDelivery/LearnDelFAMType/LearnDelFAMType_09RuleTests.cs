@@ -1,6 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using Moq;
@@ -66,6 +67,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(y => y.LearningDeliveryFAMs)
                 .Returns(fams);
 
+            var dd35 = new Mock<IDerivedData_35Rule>(MockBehavior.Strict);
+            dd35.Setup(x => x.IsCombinedAuthorities(mockDelivery.Object)).Returns(false);
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
             learningDeliveryFAMQS
@@ -80,7 +83,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                    "105"))
                .Returns(false);
 
-            var result = new LearnDelFAMType_09Rule(handler.Object, learningDeliveryFAMQS.Object).HasDisqualifyingMonitor(mockDelivery.Object);
+            var result = new LearnDelFAMType_09Rule(handler.Object, learningDeliveryFAMQS.Object, dd35.Object).HasDisqualifyingMonitor(mockDelivery.Object);
 
             Assert.Equal(expectation, result);
         }
@@ -90,6 +93,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var mockDelivery = new Mock<ILearningDelivery>();
 
+            var dd35 = new Mock<IDerivedData_35Rule>(MockBehavior.Strict);
+            dd35.Setup(x => x.IsCombinedAuthorities(mockDelivery.Object)).Returns(false);
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
             learningDeliveryFAMQS
@@ -98,15 +103,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                    "SOF"))
                .Returns(false);
 
-            var result = new LearnDelFAMType_09Rule(handler.Object, learningDeliveryFAMQS.Object).HasDisqualifyingMonitor(mockDelivery.Object);
+            var result = new LearnDelFAMType_09Rule(handler.Object, learningDeliveryFAMQS.Object, dd35.Object).HasDisqualifyingMonitor(mockDelivery.Object);
 
             Assert.Equal(false, result);
-        }
-
-        [Fact]
-        public void FirstInviableDateMeetsExpectation()
-        {
-            Assert.Equal(DateTime.Parse("2019-08-01"), LearnDelFAMType_09Rule.FirstInviableDate);
         }
 
         [Fact]
@@ -187,6 +186,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.LearningDeliveries)
                 .Returns(deliveries);
 
+            var dd35 = new Mock<IDerivedData_35Rule>(MockBehavior.Strict);
+            dd35.Setup(x => x.IsCombinedAuthorities(delivery.Object)).Returns(false);
+
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
                 .Setup(x => x.Handle(RuleNameConstants.LearnDelFAMType_09, LearnRefNumber, 0, It.IsAny<IEnumerable<IErrorMessageParameter>>()));
@@ -213,7 +215,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                    "105"))
                    .Returns(false);
 
-            var sut = new LearnDelFAMType_09Rule(handler.Object, learningDeliveryFAMQS.Object);
+            var sut = new LearnDelFAMType_09Rule(handler.Object, learningDeliveryFAMQS.Object, dd35.Object);
 
             sut.Validate(learner.Object);
 
@@ -258,6 +260,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.LearningDeliveries)
                 .Returns(deliveries);
 
+            var dd35 = new Mock<IDerivedData_35Rule>(MockBehavior.Strict);
+            dd35.Setup(x => x.IsCombinedAuthorities(delivery.Object)).Returns(false);
+
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
             var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
@@ -267,7 +272,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                    "SOF"))
                .Returns(false);
 
-            var sut = new LearnDelFAMType_09Rule(handler.Object, learningDeliveryFAMQS.Object);
+            var sut = new LearnDelFAMType_09Rule(handler.Object, learningDeliveryFAMQS.Object, dd35.Object);
 
             sut.Validate(learner.Object);
 
@@ -279,8 +284,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            var dd35 = new Mock<IDerivedData_35Rule>(MockBehavior.Strict);
 
-            return new LearnDelFAMType_09Rule(handler.Object, learningDeliveryFAMQS.Object);
+            return new LearnDelFAMType_09Rule(handler.Object, learningDeliveryFAMQS.Object, dd35.Object);
         }
     }
 }
