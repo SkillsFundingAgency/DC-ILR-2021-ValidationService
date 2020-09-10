@@ -11,13 +11,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.GivenNames
 {
     public class GivenNames_04Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IULNDataService _ulnDataService;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
-        public GivenNames_04Rule(IULNDataService ulnDataService, ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService, IValidationErrorHandler validationErrorHandler)
+        public GivenNames_04Rule(ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService, IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.GivenNames_04)
         {
-            _ulnDataService = ulnDataService;
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
         }
 
@@ -49,14 +47,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.GivenNames
 
         public bool ULNConditionMet(long uln)
         {
-            return uln != ValidationConstants.TemporaryULN
-                && _ulnDataService.Exists(uln);
+            return uln != ValidationConstants.TemporaryULN;
         }
 
         public bool CrossLearningDeliveryConditionMet(IEnumerable<ILearningDelivery> learningDeliveries)
         {
-            return learningDeliveries.All(ld => ld.FundModel == 10
-                || learningDeliveries.All(ldf => ldf.FundModel == 99 && _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(ld.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.SOF, "108")));
+            return learningDeliveries.All(ld =>
+                ld.FundModel == FundModels.CommunityLearning
+                || (ld.FundModel == FundModels.NotFundedByESFA && _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(ld.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.SOF, LearningDeliveryFAMCodeConstants.SOF_LA)));
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string givenNames, int? planLearnHours)
