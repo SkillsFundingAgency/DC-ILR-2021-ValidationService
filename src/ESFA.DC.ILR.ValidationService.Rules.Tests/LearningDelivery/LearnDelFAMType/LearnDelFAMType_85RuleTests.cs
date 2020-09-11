@@ -78,6 +78,64 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
+        public void Validate_NoError_Excluded()
+        {
+            var ldmLearnDelFams = new List<TestLearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                    LearnDelFAMCode = LearningDeliveryFAMCodeConstants.LDM_376
+                }
+            };
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        FundModel = FundModels.AdultSkills,
+                        LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                                LearnDelFAMCode = LearningDeliveryFAMCodeConstants.LDM_376
+                            }
+                        }
+                    }
+                }
+            };
+
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock.Setup(f => f.GetLearningDeliveryFAMsForTypeAndCodes(It.IsAny<IReadOnlyCollection<ILearningDeliveryFAM>>(), It.IsAny<string>(), It.IsAny<HashSet<string>>()))
+                .Returns(ldmLearnDelFams);
+
+            var larsCategories = new List<ILARSLearningCategory>()
+            {
+                new LearningDeliveryCategory()
+                {
+                    CategoryRef = LARSConstants.Categories.LegalEntitlementLevel2
+                },
+                new LearningDeliveryCategory()
+                {
+                    CategoryRef = LARSConstants.Categories.Covid19SkillsOfferOnly
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock
+                .Setup(l => l.GetCategoriesFor(It.IsAny<string>()))
+                .Returns(larsCategories);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(learningDeliveryFamQueryServiceMock.Object, validationErrorHandlerMock.Object, larsDataServiceMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
         public void Validate_NoError()
         {
             var ldmLearnDelFams = new List<TestLearningDeliveryFAM>()

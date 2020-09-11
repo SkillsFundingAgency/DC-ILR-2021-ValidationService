@@ -61,7 +61,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IEnumerable<ILARSLearningCategory> larsLearningCategories)
         {
-            return IsAdultSkillsFundingModel(learningDelivery.FundModel)
+            return !IsExcluded(larsLearningCategories)
+                   && IsAdultSkillsFundingModel(learningDelivery.FundModel)
                    && !IsCovid19SkillsOffer(larsLearningCategories);
         }
 
@@ -77,6 +78,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             larsLearningCategories.ForEach(lc => errorList.Add(BuildErrorMessageParameter(PropertyNameConstants.LarsCategoryRef, lc.CategoryRef)));
 
             return errorList;
+        }
+
+        private bool IsExcluded(IEnumerable<ILARSLearningCategory> larsLearningCategories)
+        {
+            return larsLearningCategories != null && larsLearningCategories.Any(l => l.CategoryRef == LARSConstants.Categories.Covid19SkillsOfferOnly);
         }
 
         private bool IsCovid19SkillsOffer(IEnumerable<ILARSLearningCategory> larsLearningCategories)
