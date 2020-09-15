@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet
         {
             List<TRule> ruleSet = _ruleSetResolutionService.Resolve().ToList();
 
-            foreach (T validationItem in validationItems)
+            foreach (T validationItem in validationItems ?? Enumerable.Empty<T>())
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
