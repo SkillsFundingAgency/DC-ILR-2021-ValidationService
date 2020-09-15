@@ -87,9 +87,6 @@ namespace ESFA.DC.ILR.ValidationService.Providers
 
                 await Task.WhenAll(statelessValidationTasks).ConfigureAwait(false);
 
-                // FRM Validation
-                await _messageRuleSetOrchestrationService.ExecuteAsync(message, cancellationToken).ConfigureAwait(false);
-
                 cancellationToken.ThrowIfCancellationRequested();
 
                 if (_validationErrorCache.ValidationErrors.Any(IsFail))

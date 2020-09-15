@@ -32,6 +32,25 @@ namespace ESFA.DC.ILR.ValidationService.RuleSet.Tests
         }
 
         [Fact]
+        public async Task Execute_NoValidationItems_Null()
+        {
+            var output = new List<string> { "1", "2", "3" };
+
+            IValidationErrorCache validationErrorCache = new ValidationErrorCache();
+
+            var ruleSetResolutionServiceMock = new Mock<IRuleSetResolutionService<IRule<string>, string>>();
+            ruleSetResolutionServiceMock.Setup(rs => rs.Resolve()).Returns(new List<IRule<string>>() { new RuleOne(validationErrorCache), new RuleTwo(validationErrorCache) });
+
+            var cancellationToken = CancellationToken.None;
+
+            var ruleSetExecutionService = new RuleSetExecutionService<IRule<string>, string>();
+
+            var service = NewService(ruleSetResolutionServiceMock.Object, validationErrorCache: validationErrorCache, ruleSetExecutionService: ruleSetExecutionService);
+
+            (await service.ExecuteAsync((IEnumerable<string>)null, cancellationToken)).Should().BeEmpty();
+        }
+
+        [Fact]
         public async Task Execute()
         {
             IValidationErrorCache validationErrorCache = new ValidationErrorCache();
