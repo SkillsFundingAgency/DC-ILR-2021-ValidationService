@@ -128,6 +128,135 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         }
 
         [Fact]
+        public void GetLearningDeliveryFAMsForTypeAndCode_Null()
+        {
+            NewService().GetLearningDeliveryFAMsForTypeAndCodes(null, LearningDeliveryFAMTypeConstants.SOF, new[] { "1", "2" }).Should().BeNullOrEmpty();
+        }
+
+        [Fact]
+        public void GetLearningDeliveryFAMsForTypeAndCode_NoTypeMatch()
+        {
+            var testLearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "1"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                    LearnDelFAMCode = "100"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "2"
+                }
+            };
+
+            NewService().GetLearningDeliveryFAMsForTypeAndCodes(testLearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.SOF, new[] { "1", "2" }).Should().BeNullOrEmpty();
+        }
+
+        [Fact]
+        public void GetLearningDeliveryFAMsForTypeAndCode_NoCodeMatch()
+        {
+            var testLearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "100"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                    LearnDelFAMCode = "100"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "200"
+                }
+            };
+
+            NewService().GetLearningDeliveryFAMsForTypeAndCodes(testLearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.HHS, new[] { "1", "2" }).Should().BeNullOrEmpty();
+        }
+
+        [Fact]
+        public void GetLearningDeliveryFAMsForTypeAndCode_SingleMatch()
+        {
+            var testLearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "1"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                    LearnDelFAMCode = "100"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "200"
+                }
+            };
+
+            var expectedFAMs = new TestLearningDeliveryFAM[]
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "1"
+                }
+            };
+
+            NewService().GetLearningDeliveryFAMsForTypeAndCodes(testLearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.HHS, new[] { "1", "2" }).Should().BeEquivalentTo(expectedFAMs);
+        }
+
+        [Fact]
+        public void GetLearningDeliveryFAMsForTypeAndCode_MultipleMatch()
+        {
+            var testLearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "1"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "100"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "2"
+                }
+            };
+
+            var expectedFAMs = new TestLearningDeliveryFAM[]
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "1"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.HHS,
+                    LearnDelFAMCode = "2"
+                }
+            };
+
+            NewService().GetLearningDeliveryFAMsForTypeAndCodes(testLearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.HHS, new[] { "1", "2" }).Should().BeEquivalentTo(expectedFAMs);
+        }
+
+        [Fact]
         public void GetLearningDeliveryFAMsCountByFAMType_CountCheckForFound()
         {
             var testLearningDeliveryFAMs = new TestLearningDeliveryFAM[]
