@@ -27,6 +27,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Fact]
+        public void FundModelConditionMet_False()
+        {
+            NewRule().FundModelConditionMet(99).Should().BeFalse();
+        }
+
+        [Fact]
+        public void FundModelConditionMet_True()
+        {
+            NewRule().FundModelConditionMet(35).Should().BeTrue();
+        }
+
+        [Fact]
         public void StartDateCondition_True()
         {
             var academicYearService = new Mock<IAcademicYearDataService>();
@@ -152,6 +164,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learningDelivery = new TestLearningDelivery
             {
                 LearnAimRef = learnAimRef,
+                FundModel = 35,
                 LearnStartDate = new DateTime(2020, 8, 1),
                 LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
                 {
@@ -192,7 +205,49 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learningDelivery = new TestLearningDelivery
             {
                 LearnAimRef = learnAimRef,
+                FundModel = 35,
                 LearnStartDate = new DateTime(2019, 8, 1),
+                LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
+                {
+                    new TestLearningDeliveryFAM
+                    {
+                        LearnDelFAMType = "SOF",
+                        LearnDelFAMCode = "1"
+                    }
+                }
+            };
+
+            var academicYearService = new Mock<IAcademicYearDataService>();
+            academicYearService.Setup(dd => dd.Start()).Returns(new DateTime(2020, 8, 1));
+
+            var dd35Mock = new Mock<IDerivedData_35Rule>();
+            dd35Mock.Setup(dd => dd.IsCombinedAuthorities(learningDelivery)).Returns(false);
+
+            var larsMock = new Mock<ILARSDataService>();
+            larsMock.Setup(x => x.GetCategoriesFor(learnAimRef)).Returns(categories);
+
+            NewRule(academicYearService.Object, dd35Mock.Object, larsMock.Object).ConditionMet(learningDelivery).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_FundModel()
+        {
+            var learnAimRef = "LearnAimRef";
+
+            var categories = new List<ILARSLearningCategory>
+            {
+                new LearningDeliveryCategory
+                {
+                    LearnAimRef = learnAimRef,
+                    CategoryRef = 41
+                }
+            };
+
+            var learningDelivery = new TestLearningDelivery
+            {
+                LearnAimRef = learnAimRef,
+                FundModel = 99,
+                LearnStartDate = new DateTime(2020, 8, 1),
                 LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
                 {
                     new TestLearningDeliveryFAM
@@ -232,6 +287,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learningDelivery = new TestLearningDelivery
             {
                 LearnAimRef = learnAimRef,
+                FundModel = 35,
                 LearnStartDate = new DateTime(2020, 8, 1),
                 LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
                 {
@@ -272,6 +328,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learningDelivery = new TestLearningDelivery
             {
                 LearnAimRef = learnAimRef,
+                FundModel = 35,
                 LearnStartDate = new DateTime(2020, 8, 1),
                 LearningDeliveryFAMs = new TestLearningDeliveryFAM[]
                 {
@@ -321,6 +378,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learningDelivery = new TestLearningDelivery
             {
                 LearnAimRef = learnAimRef,
+                FundModel = 35,
                 LearnStartDate = new DateTime(2020, 8, 1),
                 LearningDeliveryFAMs = learningDeliveryFams
             };
@@ -390,6 +448,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             {
                 LearnAimRef = learnAimRef,
                 AimSeqNumber = 1,
+                FundModel = 35,
                 LearnStartDate = new DateTime(2020, 8, 1),
                 LearningDeliveryFAMs = learningDeliveryFams
             };
@@ -398,6 +457,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             {
                 LearnAimRef = learnAimRef,
                 AimSeqNumber = 1,
+                FundModel = 35,
                 LearnStartDate = new DateTime(2020, 8, 1),
                 LearningDeliveryFAMs = learningDeliveryFams
             };
@@ -464,6 +524,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learningDelivery = new TestLearningDelivery
             {
                 LearnAimRef = learnAimRef,
+                FundModel = 35,
                 LearnStartDate = new DateTime(2020, 8, 1),
                 LearningDeliveryFAMs = learningDeliveryFams
             };
@@ -523,6 +584,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learningDelivery = new TestLearningDelivery
             {
                 AimSeqNumber = aimSeqNumber,
+                FundModel = 35,
                 LearnStartDate = learnStartDate,
                 LearningDeliveryFAMs = learningDeliveryFams
             };
@@ -565,6 +627,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learningDelivery = new TestLearningDelivery
             {
                 AimSeqNumber = aimSeqNumber,
+                FundModel = 35,
                 LearnStartDate = learnStartDate,
                 LearningDeliveryFAMs = learningDeliveryFams
             };
@@ -589,6 +652,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learningDelivery = new TestLearningDelivery
             {
                 AimSeqNumber = aimSeqNumber,
+                FundModel = 35,
                 LearnStartDate = learnStartDate,
                 LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>
                 {
@@ -620,6 +684,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var learningDelivery = new TestLearningDelivery
             {
                 AimSeqNumber = aimSeqNumber,
+                FundModel = 35,
                 LearnStartDate = learnStartDate,
             };
 

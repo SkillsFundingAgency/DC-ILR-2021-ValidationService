@@ -54,8 +54,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool ConditionMet(ILearningDelivery learningDelivery)
         {
             return LearnStartDateConditionMet(learningDelivery.LearnStartDate)
-                && DD35ConditionMet(learningDelivery)
-                && LarsCategoryConditionMet(learningDelivery.LearnAimRef);
+                   && FundModelConditionMet(learningDelivery.FundModel)
+                   && DD35ConditionMet(learningDelivery)
+                   && LarsCategoryConditionMet(learningDelivery.LearnAimRef);
+        }
+
+        public bool FundModelConditionMet(int fundModel)
+        {
+            return fundModel == FundModels.AdultSkills;
         }
 
         public bool DD35ConditionMet(ILearningDelivery learningDelivery)
