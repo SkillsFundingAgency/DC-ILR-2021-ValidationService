@@ -151,57 +151,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         }
 
         [Fact]
-        public void Validate_Error_NoEmploymentStatuses()
+        public void Validate_NoError_Null()
         {
             var learner = new TestLearner
             {
-                LearningDeliveries = new TestLearningDelivery[]
-                {
-                    new TestLearningDelivery()
-                    {
-                        LearningDeliveryFAMs = new ILearningDeliveryFAM[]
-                        {
-                            new TestLearningDeliveryFAM()
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
-                                LearnDelFAMCode = LearningDeliveryFAMCodeConstants.LDM_375
-                            }
-                        }
-                    }
-                },
-                LearnerEmploymentStatuses = new ILearnerEmploymentStatus[]
-                {
-                },
+                LearningDeliveries = null,
+                LearnerEmploymentStatuses = null,
             };
 
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
-            {
-                NewRule(validationErrorHandlerMock.Object).Validate(learner);
-            }
-        }
-
-        [Fact]
-        public void Validate_Error_NullEmploymentStatuses()
-        {
-            var learner = new TestLearner
-            {
-                LearningDeliveries = new TestLearningDelivery[]
-                {
-                    new TestLearningDelivery()
-                    {
-                        LearningDeliveryFAMs = new ILearningDeliveryFAM[]
-                        {
-                            new TestLearningDeliveryFAM()
-                            {
-                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
-                                LearnDelFAMCode = LearningDeliveryFAMCodeConstants.LDM_375
-                            }
-                        }
-                    }
-                }
-            };
-
-            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
                 NewRule(validationErrorHandlerMock.Object).Validate(learner);
             }

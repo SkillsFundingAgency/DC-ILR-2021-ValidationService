@@ -25,6 +25,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public void Validate(ILearner objectToValidate)
         {
+            if (objectToValidate?.LearningDeliveries == null || objectToValidate?.LearnerEmploymentStatuses == null)
+            {
+                return;
+            }
+
             if (!LearningDeliveryConditionMet(objectToValidate.LearningDeliveries))
             {
                 return;
@@ -44,11 +49,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public bool ConditionMet(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            var allESMs = learnerEmploymentStatuses?.SelectMany(s => s.EmploymentStatusMonitorings);
+            var allESMs = learnerEmploymentStatuses.SelectMany(s => s.EmploymentStatusMonitorings);
 
-            var matchingESMs = allESMs?.Where(e => e.ESMType == Monitoring.EmploymentStatus.Types.BenefitStatusIndicator && _esmCodes.Contains(e.ESMCode));
-
-            return matchingESMs == null || !matchingESMs.Any();
+            return allESMs.Any(esm => esm.ESMType == Monitoring.EmploymentStatus.Types.BenefitStatusIndicator && !_esmCodes.Contains(esm.ESMCode));
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters()
