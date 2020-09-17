@@ -25,6 +25,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public void Validate(ILearner objectToValidate)
         {
+            if (objectToValidate?.LearningDeliveries == null || objectToValidate?.LearnerEmploymentStatuses == null)
+            {
+                return;
+            }
+
             if (!LearningDeliveryConditionMet(objectToValidate.LearningDeliveries))
             {
                 return;
