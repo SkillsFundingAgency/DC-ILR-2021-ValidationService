@@ -69,6 +69,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         }
 
         [Fact]
+        public void ConditionMet_Null()
+        {
+            var learnerEmploymentStatuses = new ILearnerEmploymentStatus[]
+            {
+                new TestLearnerEmploymentStatus()
+                {
+                    EmploymentStatusMonitorings = new IEmploymentStatusMonitoring[]
+                    {
+                        null
+                    }
+                }
+            };
+            NewRule().ConditionMet(learnerEmploymentStatuses).Should().BeFalse();
+        }
+
+        [Fact]
         public void Validate_Error()
         {
             var learner = new TestLearner

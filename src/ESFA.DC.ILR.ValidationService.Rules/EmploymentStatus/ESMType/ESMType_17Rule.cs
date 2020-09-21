@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
         {
             var allESMs = learnerEmploymentStatuses.SelectMany(s => s.EmploymentStatusMonitorings);
 
-            return allESMs.Any(esm => esm.ESMType == Monitoring.EmploymentStatus.Types.BenefitStatusIndicator && !_esmCodes.Contains(esm.ESMCode));
+            return allESMs.Any(esm => esm?.ESMType == Monitoring.EmploymentStatus.Types.BenefitStatusIndicator && !_esmCodes.Contains(esm.ESMCode));
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters()
