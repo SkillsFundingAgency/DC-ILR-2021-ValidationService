@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
-using Autofac.Core.Lifetime;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
@@ -49,9 +47,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType
 
         public bool ConditionMet(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            var allESMs = learnerEmploymentStatuses.SelectMany(s => s.EmploymentStatusMonitorings);
+            var allESMs = learnerEmploymentStatuses?.Where(les => les.EmploymentStatusMonitorings != null).SelectMany(s => s.EmploymentStatusMonitorings);
 
-            return allESMs.Any(esm => esm?.ESMType == Monitoring.EmploymentStatus.Types.BenefitStatusIndicator && !_esmCodes.Contains(esm.ESMCode));
+            return allESMs?.Any(esm => esm?.ESMType == Monitoring.EmploymentStatus.Types.BenefitStatusIndicator && !_esmCodes.Contains(esm.ESMCode)) ?? false;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters()
