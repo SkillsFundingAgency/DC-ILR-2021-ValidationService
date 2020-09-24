@@ -428,6 +428,7 @@
     <Compile Include="LearningDelivery\FundModel\FundModel_13RuleTests.cs" />
     <Compile Include="LearningDelivery\FundModel\FundModel_12RuleTests.cs" />
     <Compile Include="LearningDelivery\FundModel\FundModel_11RuleTests.cs" />
+    <Compile Include="LearningDelivery\FundModel\FundModel_14RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_72RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_73RuleTests.cs" />
     <Compile Include="LearningDelivery\LearnAimRef\LearnAimRef_81RuleTests.cs" />
