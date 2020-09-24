@@ -506,6 +506,7 @@
     <Compile Include="LearningDelivery\OrigLearnStartDate\OrigLearnStartDate_07RuleTests.cs" />
     <Compile Include="LearningDelivery\OrigLearnStartDate\OrigLearnStartDate_06RuleTests.cs" />
     <Compile Include="LearningDelivery\OrigLearnStartDate\OrigLearnStartDate_05RuleTests.cs" />
+    <Compile Include="LearningDelivery\OTJActHours\OTJActHours_01RuleTests.cs" />
     <Compile Include="LearningDelivery\Outcome\Outcome_07RuleTests.cs" />
     <Compile Include="LearningDelivery\Outcome\Outcome_08RuleTests.cs" />
     <Compile Include="LearningDelivery\Outcome\Outcome_01RuleTests.cs" />

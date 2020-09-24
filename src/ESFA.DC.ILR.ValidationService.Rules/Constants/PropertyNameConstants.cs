@@ -68,6 +68,7 @@
         public const string NINumber = "NINumber";
         public const string OrigLearnStartDate = "OrigLearnStartDate";
         public const string OtherFundAdj = "OtherFundAdj";
+        public const string OtjActHours = "OTJActHours";
         public const string OutCode = "OutCode";
         public const string OutCollDate = "OutCollDate";
         public const string Outcome = "Outcome";

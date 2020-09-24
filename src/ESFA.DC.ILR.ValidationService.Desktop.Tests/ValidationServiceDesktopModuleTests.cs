@@ -111,6 +111,7 @@ using System.Collections.Generic;
 using ESFA.DC.ILR.ValidationService.Rules.CrossYear;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlacement;
 using Xunit;
+using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OTJActHours;
 
 namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
 {
@@ -530,6 +531,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(OrigLearnStartDate_08Rule),
                 typeof(OrigLearnStartDate_09Rule),
                 typeof(OtherFundAdj_01Rule),
+                typeof(OTJActHours_01Rule),
                 typeof(Outcome_01Rule),
                 typeof(Outcome_04Rule),
                 typeof(Outcome_05Rule),
