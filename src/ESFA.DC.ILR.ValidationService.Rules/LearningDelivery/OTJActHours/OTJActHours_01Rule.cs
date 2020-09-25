@@ -17,6 +17,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OTJActHours
 
         public void Validate(ILearner learner)
         {
+            if (learner?.LearningDeliveries == null)
+            {
+                return;
+            }
+
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
                 if (ConditionMet(learningDelivery))
