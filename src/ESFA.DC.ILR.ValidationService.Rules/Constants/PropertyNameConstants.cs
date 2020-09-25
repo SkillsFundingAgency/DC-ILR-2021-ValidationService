@@ -67,7 +67,7 @@
         public const string NETFEE = "NETFEE";
         public const string NINumber = "NINumber";
         public const string OrigLearnStartDate = "OrigLearnStartDate";
-        public const string OtjActHours = "OTJActHours";
+        public const string OtjActHours = "OtjActHours";
         public const string OtherFundAdj = "OtherFundAdj";
         public const string OutCode = "OutCode";
         public const string OutCollDate = "OutCollDate";

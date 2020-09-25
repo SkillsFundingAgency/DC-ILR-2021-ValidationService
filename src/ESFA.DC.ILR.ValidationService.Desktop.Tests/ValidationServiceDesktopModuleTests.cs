@@ -364,6 +364,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(FundModel_11Rule),
                 typeof(FundModel_12Rule),
                 typeof(FundModel_13Rule),
+                typeof(FundModel_14Rule),
                 typeof(FworkCode_01Rule),
                 typeof(FworkCode_02Rule),
                 typeof(FworkCode_05Rule),
