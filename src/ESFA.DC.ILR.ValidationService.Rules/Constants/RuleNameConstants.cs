@@ -407,6 +407,8 @@
 
         public const string OtherFundAdj_01 = "OtherFundAdj_01";
 
+        public const string OTJActHours_01 = "OTJActHours_01";
+
         public const string OutCollDate_01 = "OutCollDate_01";
         public const string OutCollDate_02 = "OutCollDate_02";
 
