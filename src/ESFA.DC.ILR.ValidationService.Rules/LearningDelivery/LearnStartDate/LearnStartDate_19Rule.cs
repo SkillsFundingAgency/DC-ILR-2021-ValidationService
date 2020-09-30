@@ -11,6 +11,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 {
     public class LearnStartDate_19Rule : AbstractRule, IRule<ILearner>
     {
+        private readonly DateTime _firstAugust2020 = new DateTime(2020, 8, 1);
+
         private readonly ILARSDataService _larsDataService;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
@@ -42,12 +44,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnStartDate
 
         public bool ConditionMet(ILearningDelivery learningDelivery)
         {
-            return ProgTypeConditionMet(learningDelivery.ProgTypeNullable)
+            return LearnStartDateConditionMet(learningDelivery.LearnStartDate)
+                && ProgTypeConditionMet(learningDelivery.ProgTypeNullable)
                 && AimTypeConditionMet(learningDelivery.AimType)
                 && StdCodeExists(learningDelivery.StdCodeNullable)
                 && !_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDelivery.LearningDeliveryFAMs, LearningDeliveryFAMTypeConstants.RES)
                 && LARSConditionMet(learningDelivery.StdCodeNullable.Value, learningDelivery.LearnStartDate);
         }
+
+        public bool LearnStartDateConditionMet(DateTime learnStartDate) => learnStartDate >= _firstAugust2020;
 
         public bool StdCodeExists(int? stdCode) =>
             stdCode.HasValue;
