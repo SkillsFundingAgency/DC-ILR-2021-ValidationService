@@ -12,6 +12,7 @@ using FluentAssertions;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using Xunit;
 
@@ -88,7 +89,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                         StdCodeNullable = 0,
                         AimType = 1,
                         ProgTypeNullable = 25,
-                        LearnStartDate = new DateTime(2018, 08, 01),
+                        LearnStartDate = new DateTime(2020, 08, 01),
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
                         {
                             new TestLearningDeliveryFAM()
@@ -133,7 +134,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
                         StdCodeNullable = stdCode,
                         ProgTypeNullable = 25,
                         AimType = 1,
-                        LearnStartDate = new DateTime(2018, 08, 02),
+                        LearnStartDate = new DateTime(2020, 08, 02),
                         LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
                         {
                             new TestLearningDeliveryFAM()
@@ -157,6 +158,65 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnStartD
             {
                 NewRule(larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
+        }
+
+        [Fact]
+        public void Validate_NoError_InvalidStart()
+        {
+            int stdCode = 1;
+            var larsStandard = new LARSStandard()
+            {
+                StandardCode = stdCode,
+                LastDateStarts = new DateTime(2018, 08, 01)
+            };
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        StdCodeNullable = stdCode,
+                        ProgTypeNullable = 25,
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2020, 07, 02),
+                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT
+                            }
+                        }
+                    }
+                }
+            };
+
+            var larsDataServiceMock = new Mock<ILARSDataService>();
+            larsDataServiceMock.Setup(l => l.GetStandardFor(stdCode)).Returns(larsStandard);
+
+            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFAMQueryServiceMock
+                .Setup(qs => qs.HasLearningDeliveryFAMType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "RES"))
+                .Returns(false);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(larsDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Theory]
+        [InlineData(8)]
+        [InlineData(9)]
+        public void LearnStartDateConditionMet_True(int month)
+        {
+            NewRule().LearnStartDateConditionMet(new DateTime(2020, month, 1)).Should().BeTrue();
+        }
+
+        [Fact]
+        public void LearnStartDateConditionMet_False()
+        {
+            NewRule().LearnStartDateConditionMet(new DateTime(2020, 7, 1)).Should().BeFalse();
         }
 
         [Fact]
