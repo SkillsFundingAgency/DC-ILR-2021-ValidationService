@@ -132,6 +132,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         {
             var larsDelivery = _larsData.GetDeliveryFor(delivery.LearnAimRef);
 
+            if (larsDelivery == null)
+            {
+                return false;
+            }
+
             return _nvqLevels.Contains(larsDelivery.NotionalNVQLevelv2);
         }
 
