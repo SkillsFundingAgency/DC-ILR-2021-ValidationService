@@ -25,6 +25,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             NewRule().RuleName.Should().Be("LearnDelFAMType_60");
         }
 
+        
+
         [Fact]
         public void LastInviableStartDateMeetsExpectation()
         {
@@ -416,6 +418,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             // assert
             Assert.Equal(expectation, result);
+            larsDataService.VerifyAll();
+        }
+
+        [Fact]
+        public void IsEarlyStageNVQMeetsExpectation_NullLarsDelivery()
+        {
+            var larsDataService = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var mockItem = new Mock<ILARSLearningDelivery>();
+
+            mockItem.SetupGet(y => y.NotionalNVQLevelv2).Returns(LARSConstants.NotionalNVQLevelV2Strings.Level2);
+            larsDataService
+                .Setup(x => x.GetDeliveryFor(Moq.It.IsAny<string>()))
+                .Returns((ILARSLearningDelivery)null);
+
+            var sut = NewRule(larsDataService: larsDataService.Object);
+
+            // act
+            var result = sut.IsEarlyStageNVQ(new TestLearningDelivery());
+
+            // assert
+            Assert.Equal(false, result);
             larsDataService.VerifyAll();
         }
 
