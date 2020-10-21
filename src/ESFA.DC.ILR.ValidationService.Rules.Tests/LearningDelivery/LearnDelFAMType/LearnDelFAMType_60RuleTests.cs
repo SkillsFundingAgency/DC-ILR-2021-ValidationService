@@ -25,8 +25,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             NewRule().RuleName.Should().Be("LearnDelFAMType_60");
         }
 
-        
-
         [Fact]
         public void LastInviableStartDateMeetsExpectation()
         {

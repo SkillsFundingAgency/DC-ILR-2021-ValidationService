@@ -64,7 +64,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         {
             var learnDelFAMDateTo = GetLatestFAMDateTo(learningDeliveryFAMs);
 
-            return learnDelFAMDateTo.HasValue && actEndDate.HasValue && actEndDate != learnDelFAMDateTo;
+            return actEndDate != learnDelFAMDateTo;
         }
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery theDelivery, DateTime? latestFamDateTo)
