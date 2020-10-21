@@ -75,7 +75,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 
             var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            learningDeliveryFamQueryServiceMock.Setup(s => s.HasLearningDeliveryFAMType(fams,  "ACT")).Returns(expectation);
+            learningDeliveryFamQueryServiceMock.Setup(s => s.HasLearningDeliveryFAMType(fams, "ACT")).Returns(expectation);
 
             var sut = NewRule(learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object);
 
@@ -92,6 +92,57 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         public void AchievementDateConditionMet_False()
         {
             NewRule().AchievementDateConditionMet(new DateTime(2019, 1, 2)).Should().BeFalse();
+        }
+
+        [Fact]
+        public void FAMDateConditionMet_False()
+        {
+            var fams = new List<ILearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM
+                {
+                   LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                   LearnDelFAMCode = LearningDeliveryFAMCodeConstants.ACT_ContractEmployer,
+                   LearnDelFAMDateFromNullable = new DateTime(2020, 01, 01),
+                   LearnDelFAMDateToNullable = new DateTime(2020, 01, 02)
+                }
+            };
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock.Setup(s => s.GetLearningDeliveryFAMsForType(fams, LearningDeliveryFAMTypeConstants.ACT)).Returns(fams);
+
+            var sut = NewRule(learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object);
+            sut.FAMDateConditionMet(fams, new DateTime(2020, 01, 02)).Should().Be(false);
+        }
+
+        [Fact]
+        public void FAMDateConditionMet_NoFams_True()
+        {
+            var fams = new List<ILearningDeliveryFAM>();
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock.Setup(s => s.GetLearningDeliveryFAMsForType(fams, LearningDeliveryFAMTypeConstants.ACT)).Returns(fams);
+
+            var sut = NewRule(learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object);
+            sut.FAMDateConditionMet(fams, new DateTime(2020, 01, 01)).Should().Be(true);
+        }
+
+        [Fact]
+        public void FAMDateConditionMet_NullDate_True()
+        {
+            var fams = new List<ILearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM
+                {
+                   LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                   LearnDelFAMCode = LearningDeliveryFAMCodeConstants.ACT_ContractEmployer,
+                   LearnDelFAMDateFromNullable = new DateTime(2020, 01, 01),
+                   LearnDelFAMDateToNullable = new DateTime(2020, 01, 02)
+                }
+            };
+            var learningDeliveryFamQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQueryServiceMock.Setup(s => s.GetLearningDeliveryFAMsForType(fams, LearningDeliveryFAMTypeConstants.ACT)).Returns(fams);
+
+            var sut = NewRule(learningDeliveryFamQueryService: learningDeliveryFamQueryServiceMock.Object);
+            sut.FAMDateConditionMet(fams, null).Should().Be(true);
         }
 
         [Fact]
