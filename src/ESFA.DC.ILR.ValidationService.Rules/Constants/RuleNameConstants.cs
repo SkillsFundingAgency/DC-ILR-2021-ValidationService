@@ -51,6 +51,7 @@
         public const string AimType_05 = "AimType_05";
         public const string AimType_07 = "AimType_07";
         public const string AimType_08 = "AimType_08";
+        public const string AimType_09 = "AimType_09";
 
         public const string CampId_01 = "CampId_01";
         public const string CampId_02 = "CampId_02";
