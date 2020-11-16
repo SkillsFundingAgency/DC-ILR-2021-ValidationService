@@ -14,5 +14,6 @@
 
         public const string ZESF0001 = "ZESF0001";
         public const string ZPROG001 = "ZPROG001";
+        public const string ZTPR = "ZTPR";
     }
 }
