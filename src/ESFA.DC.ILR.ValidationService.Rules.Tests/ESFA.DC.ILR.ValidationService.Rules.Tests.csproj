@@ -116,6 +116,7 @@
     <Compile Include="CrossEntity\R121RuleTests.cs" />
     <Compile Include="CrossEntity\R122RuleTests.cs" />
     <Compile Include="CrossEntity\R124RuleTests.cs" />
+    <Compile Include="CrossEntity\R125RuleTests.cs" />
     <Compile Include="CrossEntity\R49RuleTests.cs" />
     <Compile Include="CrossEntity\R101RuleTests.cs" />
     <Compile Include="CrossEntity\R51RuleTests.cs" />
