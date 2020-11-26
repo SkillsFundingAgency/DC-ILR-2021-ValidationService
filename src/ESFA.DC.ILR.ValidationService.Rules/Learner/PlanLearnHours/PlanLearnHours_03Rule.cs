@@ -8,11 +8,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 {
     public class PlanLearnHours_03Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly HashSet<long> _fundModels = new HashSet<long>
-        {
-            TypeOfFunding.Age16To19ExcludingApprenticeships
-        };
-
         public PlanLearnHours_03Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.PlanLearnHours_03)
         {
@@ -32,7 +27,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (ConditionMet(learningDelivery.FundModel))
+                if (!Excluded(learningDelivery.FundModel, learningDelivery.ProgTypeNullable) && ConditionMet(learningDelivery.FundModel))
                 {
                     HandleValidationError(
                         objectToValidate.LearnRefNumber,
@@ -50,7 +45,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
         public bool LearnerConditionMet(int? planLearnHours, int? planEEPHours)
             => (planLearnHours ?? 0) + (planEEPHours ?? 0) == 0;
 
-        public bool FundModelConditionMet(int fundModel) => _fundModels.Contains(fundModel);
+        public bool FundModelConditionMet(int fundModel) => fundModel == FundModels.Age16To19ExcludingApprenticeships;
+
+        public bool Excluded(int fundModel, int? progType)
+        {
+            return fundModel == FundModels.Age16To19ExcludingApprenticeships
+                   && progType == ProgTypes.TLevel;
+        }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(
             int? planLearnHours,

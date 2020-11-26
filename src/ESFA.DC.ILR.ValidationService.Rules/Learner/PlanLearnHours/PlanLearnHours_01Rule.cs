@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -10,6 +11,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 {
     public class PlanLearnHours_01Rule : AbstractRule, IRule<ILearner>
     {
+        private readonly HashSet<int> _excludedFundModels = new HashSet<int> { FundModels.EuropeanSocialFund, FundModels.Other16To19 };
+
         private readonly IDerivedData_07Rule _dd07;
 
         public PlanLearnHours_01Rule(IDerivedData_07Rule dd07, IValidationErrorHandler validationErrorHandler)
@@ -20,11 +23,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
 
         public void Validate(ILearner objectToValidate)
         {
-            if (LearnerConditionMet(objectToValidate.PlanLearnHoursNullable, objectToValidate.LearningDeliveries))
+            if (objectToValidate.LearningDeliveries == null)
+            {
+                return;
+            }
+
+            if (PlanLearnHoursConditionMet(objectToValidate.PlanLearnHoursNullable) && HasOpenLearningDeliveries(objectToValidate.LearningDeliveries))
             {
                 foreach (var learningDelivery in objectToValidate.LearningDeliveries)
                 {
-                    if (LearningDeliveryConditionMet(learningDelivery.FundModel, learningDelivery.ProgTypeNullable))
+                    if (!Excluded(learningDelivery.FundModel, learningDelivery.ProgTypeNullable))
                     {
                         HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, errorMessageParameters: BuildErrorMessageParameters(objectToValidate.PlanLearnHoursNullable, learningDelivery.FundModel));
                         return;
@@ -33,36 +41,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanLearnHours
             }
         }
 
-        public bool LearnerConditionMet(int? planLearnHours, IEnumerable<ILearningDelivery> learningDeliveries)
-        {
-            return !planLearnHours.HasValue
-                && !learningDeliveries.All(ld => ld.LearnActEndDateNullable.HasValue);
-        }
-
-        public bool PlanLearnHoursConditionMet(int? planLearnHours)
-        {
-            return !planLearnHours.HasValue;
-        }
-
-        public bool LearnActEndDateConditionMet(IEnumerable<ILearningDelivery> learningDeliveries)
+        public bool HasOpenLearningDeliveries(IReadOnlyCollection<ILearningDelivery> learningDeliveries)
         {
             return !learningDeliveries.All(ld => ld.LearnActEndDateNullable.HasValue);
         }
 
-        public bool LearningDeliveryConditionMet(int fundModel, int? progType)
-        {
-            return FundModelConditionMet(fundModel)
-                && DD07ConditionMet(progType);
-        }
+        public bool PlanLearnHoursConditionMet(int? planLearnHours) => !planLearnHours.HasValue;
 
-        public bool FundModelConditionMet(int fundModel)
-        {
-            return fundModel != 70;
-        }
+        public bool FundModelExclusionConditionMet(int fundModel) => _excludedFundModels.Contains(fundModel);
 
-        public bool DD07ConditionMet(int? progType)
+        public bool DD07ConditionMet(int? progType) => _dd07.IsApprenticeship(progType);
+
+        public bool TLevelProgrammeExclusion(int fundModel, int? progType) => fundModel == FundModels.Age16To19ExcludingApprenticeships && progType == ProgTypes.TLevel;
+
+        public bool Excluded(int fundModel, int? progType)
         {
-            return !_dd07.IsApprenticeship(progType);
+            return DD07ConditionMet(progType)
+                || FundModelExclusionConditionMet(fundModel)
+                || TLevelProgrammeExclusion(fundModel, progType);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? planLearnHours, int fundModel)

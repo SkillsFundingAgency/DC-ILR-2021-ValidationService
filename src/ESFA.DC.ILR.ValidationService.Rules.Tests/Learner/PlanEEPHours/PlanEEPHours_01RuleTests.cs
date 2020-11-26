@@ -79,6 +79,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanEEPHours
             NewRule().FundModelExcludeConditionMet(fundModel).Should().BeFalse();
         }
 
+        [Theory]
+        [InlineData(25, 31)]
+        public void TLevelExcludeConditionMet_True(int fundModel, int? progType)
+        {
+            var dd07Mock = new Mock<IDerivedData_07Rule>();
+
+            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
+
+            NewRule(dd07Mock.Object).TLevelExcludeConditionMet(fundModel, progType).Should().BeTrue();
+        }
+
         [Fact]
         public void AllLearningAimsClosedExcludeConditionMet_True()
         {

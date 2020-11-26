@@ -39,12 +39,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             return Math.Abs(DaysBetween(start, end)) + 1;
         }
 
-        [Obsolete("Please use YearsBetween instead")]
-        public int AgeAtGivenDate(DateTime dateOfBirth, DateTime givenDate)
-        {
-            return YearsBetween(dateOfBirth, givenDate);
-        }
-
         public DateTime AddYearsToDate(DateTime date, int yearsToAdd)
         {
             DateTime dateResult;
@@ -58,6 +52,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             }
 
             return dateResult;
+        }
+
+        public bool IsDateBetween(DateTime candidate, DateTime min, DateTime max, bool includeBoundaries = true)
+        {
+            return includeBoundaries
+               ? candidate >= min && candidate <= max
+               : candidate > min && candidate < max;
         }
     }
 }

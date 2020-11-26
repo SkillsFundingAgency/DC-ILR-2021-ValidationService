@@ -1,4 +1,5 @@
 ﻿using System;
+using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Query
@@ -23,5 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
         {
             return dateTime < currentYear && dateTime >= currentYear.AddYears(-1);
         }
+
+        public DateTime GetAcademicYearOfLearningDate(DateTime candidate, AcademicYearDates yearDate) => yearDate.GetAcademicYearDateFor(candidate);
     }
 }

@@ -9,7 +9,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.MathGrade
 {
     public class MathGrade_01Rule : AbstractRule, IRule<ILearner>
     {
-        private int[] _fundModels = new[] { TypeOfFunding.Age16To19ExcludingApprenticeships };
+        private int[] _fundModels = new[] { FundModels.Age16To19ExcludingApprenticeships };
 
         public MathGrade_01Rule(
                 IValidationErrorHandler validationErrorHandler)

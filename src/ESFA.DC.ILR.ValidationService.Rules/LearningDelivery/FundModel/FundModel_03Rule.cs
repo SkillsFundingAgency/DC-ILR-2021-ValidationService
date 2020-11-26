@@ -30,7 +30,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
 
         public bool ConditionMet(int fundModel, IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
-            return fundModel != TypeOfFunding.NotFundedByESFA && _learningDeliveryFamQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.ADL);
+            return fundModel != FundModels.NotFundedByESFA && _learningDeliveryFamQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.ADL);
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel)

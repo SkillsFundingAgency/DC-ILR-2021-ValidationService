@@ -140,10 +140,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         }
 
         [Theory]
-        [InlineData("2016-07-31", "2017-07-30", false)] // doesn't trigger due to 365 days
-        [InlineData("2016-07-31", "2017-07-31", false)] // doesn't trigger due to 366 days
-        [InlineData("2014-08-01", "2015-07-31", false)] // TestData: doesn't trigger due to 365 days
-        public void ApprenticeshipDurationConditionMet_False(string learnStartDate, string learnplanEndDate, bool expectedResult)
+        [InlineData("2016-07-31", "2017-07-30")] // doesn't trigger due to 365 days
+        [InlineData("2016-07-31", "2017-07-31")] // doesn't trigger due to 366 days
+        [InlineData("2014-08-01", "2015-07-31")] // TestData: doesn't trigger due to 365 days
+        public void ApprenticeshipDurationConditionMet_False(string learnStartDate, string learnplanEndDate)
         {
             var startDate = DateTime.Parse(learnStartDate);
             var planEndDate = DateTime.Parse(learnplanEndDate);

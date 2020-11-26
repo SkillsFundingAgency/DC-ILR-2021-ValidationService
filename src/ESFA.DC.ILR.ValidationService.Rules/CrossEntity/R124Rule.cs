@@ -7,7 +7,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 
-
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
     public class R124Rule : AbstractRule, IRule<ILearner>
@@ -34,7 +33,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 var learnRefNumber = theLearner.LearnRefNumber;
 
                 var errorLearningDeliveries = CompareAgainstOtherDeliveries(learningDeliveries, ConditionMet);
-                
+
                 foreach (var learningDelivery in errorLearningDeliveries)
                 {
                     RaiseValidationMessage(learnRefNumber, learningDelivery);
@@ -52,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         }
 
         public IEnumerable<ILearningDelivery> GetProgrammeAims(IEnumerable<ILearningDelivery> learningDeliveries) =>
-            learningDeliveries.Where(ld => ld.AimType == TypeOfAim.ProgrammeAim);
+            learningDeliveries.Where(ld => ld.AimType == AimTypes.ProgrammeAim);
 
         public bool HasMoreThanOneProgrammeAim(IEnumerable<ILearningDelivery> candidates) =>
             candidates.Count() > 1;

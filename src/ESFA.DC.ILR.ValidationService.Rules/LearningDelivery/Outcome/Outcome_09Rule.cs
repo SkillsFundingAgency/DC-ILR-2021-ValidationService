@@ -1,8 +1,8 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
 {
@@ -51,8 +51,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.Outcome
 
         public bool ExceptionConditionMet(int fundModel, int? progType)
         {
-            return (!progType.HasValue || progType != TypeOfLearningProgramme.ApprenticeshipStandard)
-                && fundModel != TypeOfFunding.ApprenticeshipsFrom1May2017;
+            return (!progType.HasValue || progType != ProgTypes.ApprenticeshipStandard)
+                && fundModel != FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int? outcome, int compStatus)

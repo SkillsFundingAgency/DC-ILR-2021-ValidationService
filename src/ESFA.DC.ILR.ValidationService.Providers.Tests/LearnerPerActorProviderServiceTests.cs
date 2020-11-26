@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Model;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
@@ -13,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
     public class LearnerPerActorProviderServiceTests
     {
         [Fact]
-        public async Task ProvideAsync()
+        public void Provide()
         {
             var testLearners = new MessageLearner[]
             {
@@ -46,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
         }
 
         [Fact]
-        public async Task ProvideAsync_LearnerDPMismatch()
+        public void Provide_LearnerDPMismatch()
         {
             var testLearners = new MessageLearner[]
             {
@@ -78,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
         }
 
         [Fact]
-        public async Task ProvideAsync_LearnerDPNoMatch()
+        public void Provide_LearnerDPNoMatch()
         {
             var testLearners = new MessageLearner[]
             {
@@ -110,7 +109,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
         }
 
         [Fact]
-        public async Task ProvideAsync_ZeroDPRecords()
+        public void Provide_ZeroDPRecords()
         {
             var testLearners = new MessageLearner[]
             {
@@ -136,7 +135,7 @@ namespace ESFA.DC.ILR.ValidationService.Providers.Tests
 
 
         [Fact]
-        public async Task ProvideAsync_MultipleShards()
+        public void Provide_MultipleShards()
         {
             var testLearners = new List<MessageLearner>();
 

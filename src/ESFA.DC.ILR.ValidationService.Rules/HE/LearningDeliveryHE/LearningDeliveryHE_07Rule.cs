@@ -16,11 +16,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.LearningDeliveryHE
         private readonly HashSet<int?> _englishPrescribedIDs = new HashSet<int?>() { 1, 2 };
         private readonly HashSet<int?> _allowedProgTypes = new HashSet<int?>()
         {
-            TypeOfLearningProgramme.HigherApprenticeshipLevel4,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel5,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel6,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus,
-            TypeOfLearningProgramme.ApprenticeshipStandard
+            ProgTypes.HigherApprenticeshipLevel4,
+            ProgTypes.HigherApprenticeshipLevel5,
+            ProgTypes.HigherApprenticeshipLevel6,
+            ProgTypes.HigherApprenticeshipLevel7Plus,
+            ProgTypes.ApprenticeshipStandard
         };
 
         private readonly IFileDataService _fileDataService;

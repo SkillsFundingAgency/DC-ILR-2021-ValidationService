@@ -1,10 +1,10 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDate
 {
@@ -12,14 +12,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlaceStartDat
     {
         private readonly IEnumerable<string> _learnAimRefs = new HashSet<string>
         {
-            TypeOfAim.References.WorkPlacement0To49Hours,
-            TypeOfAim.References.WorkPlacement50To99Hours,
-            TypeOfAim.References.WorkPlacement100To199Hours,
-            TypeOfAim.References.WorkPlacement200To499Hours,
-            TypeOfAim.References.WorkPlacement500PlusHours,
-            TypeOfAim.References.SupportedInternship16To19,
-            TypeOfAim.References.WorkExperience,
-            TypeOfAim.References.IndustryPlacement,
+            AimTypes.References.WorkPlacement0To49Hours,
+            AimTypes.References.WorkPlacement50To99Hours,
+            AimTypes.References.WorkPlacement100To199Hours,
+            AimTypes.References.WorkPlacement200To499Hours,
+            AimTypes.References.WorkPlacement500PlusHours,
+            AimTypes.References.SupportedInternship16To19,
+            AimTypes.References.WorkExperience,
+            AimTypes.References.IndustryPlacement,
+            AimTypes.References.TLevelWorkExperience,
         }.ToCaseInsensitiveHashSet();
 
         public WorkPlaceStartDate_03Rule(IValidationErrorHandler validationErrorHandler)

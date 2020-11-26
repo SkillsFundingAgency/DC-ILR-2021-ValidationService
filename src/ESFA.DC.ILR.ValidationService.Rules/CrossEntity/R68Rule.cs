@@ -5,6 +5,7 @@ using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Structs;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
@@ -12,13 +13,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
     {
         private readonly IEnumerable<int?> _apprenticeshipProgTypes = new HashSet<int?>()
         {
-            TypeOfLearningProgramme.AdvancedLevelApprenticeship,
-            TypeOfLearningProgramme.IntermediateLevelApprenticeship,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel4,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel5,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel6,
-            TypeOfLearningProgramme.HigherApprenticeshipLevel7Plus,
-            TypeOfLearningProgramme.ApprenticeshipStandard
+            ProgTypes.AdvancedLevelApprenticeship,
+            ProgTypes.IntermediateLevelApprenticeship,
+            ProgTypes.HigherApprenticeshipLevel4,
+            ProgTypes.HigherApprenticeshipLevel5,
+            ProgTypes.HigherApprenticeshipLevel6,
+            ProgTypes.HigherApprenticeshipLevel7Plus,
+            ProgTypes.ApprenticeshipStandard
         };
 
         public R68Rule(IValidationErrorHandler validationErrorHandler)
@@ -70,11 +71,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 && appFinRecord.AFinDate == comparisonAppFinRecord.AFinDate;
         }
 
-
         public bool IsApprenticeshipProgrammeAim(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.AimType == TypeOfAim.ProgrammeAim
-                   && learningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+            return learningDelivery.AimType == AimTypes.ProgrammeAim
+                   && learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017
                    && _apprenticeshipProgTypes.Contains(learningDelivery.ProgTypeNullable);
         }
 
@@ -84,7 +84,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(
             int? fworkCode,
             int? stdCode,
-            string aFinType, int aFinCode, DateTime aFinDate)
+            string aFinType,
+            int aFinCode,
+            DateTime aFinDate)
         {
             return new[]
             {
@@ -126,30 +128,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             return apprenticeshipLearningDeliveries
               .GroupBy(groupBy)
               .Where(x => x.Any(f => groupBy(f).HasValue))
-              .ToDictionary(x => 
-                    x.Key,
-                    v => v.Where(af => af.AppFinRecords != null).SelectMany(ld => ld.AppFinRecords?
-                    .Select(af => new R68AppFinRecord(ld.AimSeqNumber, ld.FworkCodeNullable, ld.StdCodeNullable, af.AFinType, af.AFinCode, af.AFinDate))));
+              .ToDictionary(
+                x => x.Key,
+                v => v.Where(af => af.AppFinRecords != null)
+                .SelectMany(ld => ld.AppFinRecords?
+                    .Select(
+                        af => new R68AppFinRecord(ld.AimSeqNumber, ld.FworkCodeNullable, ld.StdCodeNullable, af.AFinType, af.AFinCode, af.AFinDate))));
         }
-    }
-
-    public struct R68AppFinRecord
-    {
-        public R68AppFinRecord(int aimSeqNumber, int? fworkCode, int? stdCode, string aFinType, int aFinCode, DateTime aFinDate)
-        {
-            AimSeqNumber = aimSeqNumber;
-            FworkCode = fworkCode;
-            StdCode = stdCode;
-            AFinType = aFinType;
-            AFinCode = aFinCode;
-            AFinDate = aFinDate;
-        }
-
-        public int AimSeqNumber { get; set; }
-        public int? FworkCode { get; set; }
-        public int? StdCode { get; set; }
-        public string AFinType { get; set; }
-        public int AFinCode { get; set; }
-        public DateTime AFinDate { get; set; }
     }
 }

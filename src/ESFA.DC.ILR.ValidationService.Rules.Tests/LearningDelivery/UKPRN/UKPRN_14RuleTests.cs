@@ -18,8 +18,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
 {
     public class UKPRN_14RuleTests : AbstractRuleTests<UKPRN_14Rule>
     {
-        private readonly int _fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
-        private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>() { FundingStreamPeriodCodeConstants.APPS1920 };
+        private readonly int _fundModel = FundModels.ApprenticeshipsFrom1May2017;
+        private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>() { FundingStreamPeriodCodeConstants.APPS2021 };
 
         [Fact]
         public void RuleName()
@@ -69,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
                     LearnDelFAMCode = "1"
                 },
-                 new TestLearningDeliveryFAM
+                new TestLearningDeliveryFAM
                 {
                     LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
                     LearnDelFAMCode = "358"

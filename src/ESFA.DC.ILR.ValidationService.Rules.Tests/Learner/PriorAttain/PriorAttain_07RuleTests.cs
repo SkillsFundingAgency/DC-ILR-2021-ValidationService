@@ -19,17 +19,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PriorAttain
             NewRule().RuleName.Should().Be("PriorAttain_07");
         }
 
-        [Fact]
-        public void LearnStartDateConditionMet_True()
+        [Theory]
+        [InlineData("2016/08/01")]
+        [InlineData("2020/07/30")]
+        [InlineData("2020/07/31")]
+        public void LearnStartDateConditionMet_True(DateTime learnStartDate)
         {
-            var learnStartDate = new DateTime(2016, 08, 01);
-
             NewRule().LearnStartDateConditionMet(learnStartDate).Should().BeTrue();
         }
 
         [Theory]
         [InlineData("2016/07/31")]
-        [InlineData("2016/07/01")]
+        [InlineData("2020/08/01")]
         public void LearnStartDateConditionMet_False(DateTime learnStartDate)
         {
             NewRule().LearnStartDateConditionMet(learnStartDate).Should().BeFalse();

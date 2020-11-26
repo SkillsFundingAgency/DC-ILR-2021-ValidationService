@@ -1,6 +1,6 @@
 ﻿using ESFA.DC.ILR.ValidationService.Data.External.EDRS;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using Moq;
 using System.Collections.Generic;
 using Xunit;
@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Tests.External
 
             cache
                 .SetupGet(x => x.ERNs)
-                .Returns(collection.AsSafeReadOnlyList());
+                .Returns(collection);
 
             return cache.Object;
         }

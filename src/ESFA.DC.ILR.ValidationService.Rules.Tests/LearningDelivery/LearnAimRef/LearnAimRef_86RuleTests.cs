@@ -1,256 +1,225 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
+using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
+using FluentAssertions;
 using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 {
-    public class LearnAimRef_86RuleTests
+    public class LearnAimRef_86RuleTests : AbstractRuleTests<LearnAimRef_86Rule>
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_86Rule(null, commonChecks.Object));
+            NewRule().RuleName.Should().Be("LearnAimRef_86");
         }
 
-        /// <summary>
-        /// New rule with null common checks throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullCommonchecksThrows()
+        public void FundModelCondition_True()
         {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_86Rule(handler.Object, null));
+            NewRule().FundModelCondition(35).Should().BeTrue();
         }
 
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
         [Fact]
-        public void RuleName1()
+        public void FundModelCondition_False()
         {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal("LearnAimRef_86", result);
+            NewRule().FundModelCondition(25).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
         [Fact]
-        public void RuleName2()
+        public void ProgTypeCondition_False()
         {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(LearnAimRef_86Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
+            NewRule().ProgTypeCondition(24).Should().BeFalse();
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.ESFLearnerStartandAssessment, false)]
-        [InlineData(TypeOfAim.References.IndustryPlacement, false)]
-        [InlineData(TypeOfAim.References.SupportedInternship16To19, false)]
-        [InlineData(TypeOfAim.References.WorkExperience, true)]
-        [InlineData(TypeOfAim.References.WorkPlacement0To49Hours, false)]
-        [InlineData(TypeOfAim.References.WorkPlacement100To199Hours, false)]
-        [InlineData(TypeOfAim.References.WorkPlacement200To499Hours, false)]
-        [InlineData(TypeOfAim.References.WorkPlacement500PlusHours, false)]
-        [InlineData(TypeOfAim.References.WorkPlacement50To99Hours, false)]
+        [InlineData(25)]
+        [InlineData(null)]
+        public void ProgTypeCondition_True(int? progType)
+        {
+            NewRule().ProgTypeCondition(progType).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(AimTypes.References.ESFLearnerStartandAssessment, false)]
+        [InlineData(AimTypes.References.SupportedInternship16To19, false)]
+        [InlineData(AimTypes.References.WorkExperience, true)]
+        [InlineData(AimTypes.References.IndustryPlacement, true)]
+        [InlineData(AimTypes.References.TLevelWorkExperience, true)]
+        [InlineData(AimTypes.References.WorkPlacement0To49Hours, false)]
+        [InlineData(AimTypes.References.WorkPlacement100To199Hours, false)]
+        [InlineData(AimTypes.References.WorkPlacement200To499Hours, false)]
+        [InlineData(AimTypes.References.WorkPlacement500PlusHours, false)]
+        [InlineData(AimTypes.References.WorkPlacement50To99Hours, false)]
         public void IsWorkExperienceMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.LearnAimRef)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsWorkExperience(mockDelivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        [Theory]
-        [InlineData(TypeOfLearningProgramme.AdvancedLevelApprenticeship)]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel4)]
-        [InlineData(TypeOfLearningProgramme.HigherApprenticeshipLevel5)]
-        public void InvalidItemRaisesValidationMessage(int candidate)
-        {
-            // arrange
-            const string learnRefNumber = "123456789X";
-
-            var mockDelivery = new Mock<ILearningDelivery>();
-            mockDelivery
-                .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
-            mockDelivery
-                .SetupGet(y => y.ProgTypeNullable)
-                .Returns(candidate);
-            mockDelivery
-                .SetupGet(y => y.LearnAimRef)
-                .Returns(TypeOfAim.References.WorkExperience);
-
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
-
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(learnRefNumber);
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            handler
-                .Setup(x => x.Handle("LearnAimRef_86", learnRefNumber, 0, Moq.It.IsAny<IEnumerable<IErrorMessageParameter>>()));
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("ProgType", candidate))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("LearnAimRef", TypeOfAim.References.WorkExperience))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-            handler
-                .Setup(x => x.BuildErrorMessageParameter("FundModel", TypeOfFunding.AdultSkills))
-                .Returns(new Mock<IErrorMessageParameter>().Object);
-
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
-                .Returns(false);
-            commonChecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
-                .Returns(true);
-
-            var sut = new LearnAimRef_86Rule(handler.Object, commonChecks.Object);
-
-            // act
-            sut.Validate(mockLearner.Object);
-
-            // assert
-            handler.VerifyAll();
-            commonChecks.VerifyAll();
-        }
-
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
         [Fact]
-        public void ValidItemDoesNotRaiseValidationMessage()
+        public void LearningDeliveryFAMExclusion_True()
         {
-            // arrange
-            const string learnRefNumber = "123456789X";
+            var learningDeliveryFamQSMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQSMock.Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                It.IsAny<IEnumerable<ILearningDeliveryFAM>>(),
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)).Returns(true);
 
-            var mockDelivery = new Mock<ILearningDelivery>();
-
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
-
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(learnRefNumber);
-            mockLearner
-                .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.IsSteelWorkerRedundancyTraining(mockDelivery.Object))
-                .Returns(false);
-            commonChecks
-                .Setup(x => x.IsTraineeship(mockDelivery.Object))
-                .Returns(true);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
-                .Returns(true);
-
-            var sut = new LearnAimRef_86Rule(handler.Object, commonChecks.Object);
-
-            // act
-            sut.Validate(mockLearner.Object);
-
-            // assert
-            handler.VerifyAll();
-            commonChecks.VerifyAll();
+            NewRule(learningDeliveryFamQSMock.Object).LearningDeliveryFAMExclusion(It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeTrue();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
-        public LearnAimRef_86Rule NewRule()
+        [Fact]
+        public void LearningDeliveryFAMExclusion_False()
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFamQSMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQSMock.Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                It.IsAny<IEnumerable<ILearningDeliveryFAM>>(),
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)).Returns(false);
 
-            return new LearnAimRef_86Rule(handler.Object, commonChecks.Object);
+            NewRule(learningDeliveryFamQSMock.Object).LearningDeliveryFAMExclusion(It.IsAny<IEnumerable<ILearningDeliveryFAM>>()).Should().BeFalse();
+        }
+
+        [Fact]
+        public void Validate_Error()
+        {
+            var learningDeliveryFAMs = new List<ILearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                    LearnDelFAMCode = "034"
+                }
+            };
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX001",
+                        FundModel = 35,
+                        ProgTypeNullable = 25,
+                        LearningDeliveryFAMs = learningDeliveryFAMs
+                    }
+                }
+            };
+
+            var learningDeliveryFamQSMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQSMock.Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                learningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)).Returns(false);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(learningDeliveryFamQSMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_Exclusion()
+        {
+            var learningDeliveryFAMs = new List<ILearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                    LearnDelFAMCode = "347"
+                }
+            };
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX001",
+                        FundModel = 35,
+                        ProgTypeNullable = 25,
+                        LearningDeliveryFAMs = learningDeliveryFAMs
+                    }
+                }
+            };
+
+            var learningDeliveryFamQSMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQSMock.Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                learningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)).Returns(true);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(learningDeliveryFamQSMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_ProgType()
+        {
+            var learningDeliveryFAMs = new List<ILearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.LDM,
+                    LearnDelFAMCode = "047"
+                }
+            };
+
+            var learner = new TestLearner()
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX001",
+                        FundModel = 35,
+                        ProgTypeNullable = 24,
+                        LearningDeliveryFAMs = learningDeliveryFAMs
+                    }
+                }
+            };
+
+            var learningDeliveryFamQSMock = new Mock<ILearningDeliveryFAMQueryService>();
+            learningDeliveryFamQSMock.Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                learningDeliveryFAMs,
+                LearningDeliveryFAMTypeConstants.LDM,
+                LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy)).Returns(false);
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(learningDeliveryFamQSMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_NoError_NoDeliveries()
+        {
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
+            {
+                NewRule(handler: validationErrorHandlerMock.Object).Validate(new TestLearner());
+            }
+        }
+
+        public LearnAimRef_86Rule NewRule(ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null, IValidationErrorHandler handler = null)
+        {
+            return new LearnAimRef_86Rule(handler, learningDeliveryFAMQueryService);
         }
     }
 }

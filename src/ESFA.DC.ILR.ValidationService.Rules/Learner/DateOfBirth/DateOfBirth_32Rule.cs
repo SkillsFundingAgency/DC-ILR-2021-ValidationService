@@ -19,20 +19,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         private readonly HashSet<string> _nvqLevel2s = new HashSet<string>()
         {
-            LARSNotionalNVQLevelV2.Level3,
-            LARSNotionalNVQLevelV2.Level4,
-            LARSNotionalNVQLevelV2.Level5,
-            LARSNotionalNVQLevelV2.Level6,
-            LARSNotionalNVQLevelV2.Level7,
-            LARSNotionalNVQLevelV2.Level8,
-            LARSNotionalNVQLevelV2.HigherLevel
+            LARSConstants.NotionalNVQLevelV2Strings.Level3,
+            LARSConstants.NotionalNVQLevelV2Strings.Level4,
+            LARSConstants.NotionalNVQLevelV2Strings.Level5,
+            LARSConstants.NotionalNVQLevelV2Strings.Level6,
+            LARSConstants.NotionalNVQLevelV2Strings.Level7,
+            LARSConstants.NotionalNVQLevelV2Strings.Level8,
+            LARSConstants.NotionalNVQLevelV2Strings.HigherLevel
         };
 
         private readonly HashSet<string> _ldmCodes = new HashSet<string>()
         {
             LearningDeliveryFAMCodeConstants.LDM_OLASS,
             LearningDeliveryFAMCodeConstants.LDM_SteelRedundancy,
-            LearningDeliveryFAMCodeConstants.LDM_SolentCity            
+            LearningDeliveryFAMCodeConstants.LDM_SolentCity
         };
 
         private readonly IDerivedData_07Rule _dd07;
@@ -76,8 +76,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                     ukprn))
                 {
                     HandleValidationError(
-                        objectToValidate.LearnRefNumber, 
-                        learningDelivery.AimSeqNumber, 
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
                         BuildErrorMessageParameters(objectToValidate.DateOfBirthNullable, learningDelivery.FundModel));
                 }
             }
@@ -123,8 +123,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return  !(_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES")
-                || _learningDeliveryFAMQueryService.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", _ldmCodes));      
+            return !(_learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, "RES") || _learningDeliveryFAMQueryService.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFAMs, "LDM", _ldmCodes));
         }
 
         public bool LARSCategoryConditionMet(string learnAimRef)

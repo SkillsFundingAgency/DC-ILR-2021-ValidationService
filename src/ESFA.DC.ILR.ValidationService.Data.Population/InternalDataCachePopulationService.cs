@@ -1,5 +1,6 @@
 ﻿using System;
 using ESFA.DC.ILR.ReferenceDataService.Model;
+using ESFA.DC.ILR.ValidationService.Data.Constants;
 using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Model;
@@ -35,12 +36,12 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population
         {
             return new AcademicYear()
             {
-                AugustThirtyFirst = new DateTime(2019, 8, 31),
-                End = new DateTime(2020, 7, 31),
-                JanuaryFirst = new DateTime(2020, 1, 1),
-                JulyThirtyFirst = new DateTime(2020, 7, 31),
-                Start = new DateTime(2019, 8, 1),
-                PreviousYearEnd = new DateTime(2019, 7, 31)
+                AugustThirtyFirst = new DateTime(DataConstants.AcademicYearStart, 8, 31),
+                End = new DateTime(DataConstants.AcademicYearEnd, 7, 31),
+                JanuaryFirst = new DateTime(DataConstants.AcademicYearEnd, 1, 1),
+                JulyThirtyFirst = new DateTime(DataConstants.AcademicYearEnd, 7, 31),
+                Start = new DateTime(DataConstants.AcademicYearStart, 8, 1),
+                PreviousYearEnd = new DateTime(DataConstants.AcademicYearStart, 7, 31)
             };
         }
     }

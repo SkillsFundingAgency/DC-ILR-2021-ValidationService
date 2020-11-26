@@ -1,9 +1,9 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
 {
@@ -75,7 +75,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.EuropeanSocialFund;
+            return fundModel == FundModels.EuropeanSocialFund;
         }
 
         public bool PriorAttainConditionMet(int? priorAttain, string conRefNumber)

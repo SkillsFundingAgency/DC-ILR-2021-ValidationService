@@ -26,7 +26,6 @@
 
         public const string ALLBC1819 = "ALLBC1819";
 
-
         public const string AEBC1920 = "AEBC1920";
 
         public const string AEB_LS1920 = "AEB-LS1920";
@@ -54,5 +53,29 @@
         public const string AEB_AS1920 = "AEB-AS1920";
 
         public const string C16_18TRN1920 = "16-18TRN1920";
+
+        public const string C16_18TRN2021 = "16-18TRN2021";
+
+        public const string AEBC_19TRN2021 = "AEBC-19TRN2021";
+
+        public const string AEBC_ASCL2021 = "AEBC-ASCL2021";
+
+        public const string AEB_19TRLS2021 = "AEB-19TRLS2021";
+
+        public const string AEB_ASLS2021 = "AEB-ASLS2021";
+
+        public const string AEB_19TRN2021 = "AEB-19TRN2021";
+
+        public const string AEB_AS2021 = "AEB-AS2021";
+
+        public const string ALLB2021 = "ALLB2021";
+
+        public const string ALLBC2021 = "ALLBC2021";
+
+        public const string APPS2021 = "APPS2021";
+
+        public const string STFIC2021 = "STFIC2021";
+
+        public const string STFI2021 = "STFI2021";
     }
 }

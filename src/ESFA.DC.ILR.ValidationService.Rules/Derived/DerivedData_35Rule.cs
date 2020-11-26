@@ -1,8 +1,8 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 {
@@ -18,7 +18,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
             LearningDeliveryFAMCodeConstants.SOF_MCAGLA_WECA,
             LearningDeliveryFAMCodeConstants.SOF_MCAGLA_TVCA,
             LearningDeliveryFAMCodeConstants.SOF_MCAGLA_CPCA,
-            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_London
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_London,
+            LearningDeliveryFAMCodeConstants.SOF_MCAGLA_NTCA
         };
 
         public DerivedData_35Rule(ILearningDeliveryFAMQueryService learnDelFAMQueryService)
@@ -33,11 +34,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
         public bool LearningDeliveryFAMConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return learningDeliveryFAMs != null && 
+            return learningDeliveryFAMs != null &&
                    _learnDelFAMQueryService.
                        HasAnyLearningDeliveryFAMCodesForType(
-                           learningDeliveryFAMs, 
-                           LearningDeliveryFAMTypeConstants.SOF, 
+                           learningDeliveryFAMs,
+                           LearningDeliveryFAMTypeConstants.SOF,
                            _famCodesSOF);
         }
     }

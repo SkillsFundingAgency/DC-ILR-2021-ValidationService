@@ -12,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 {
     public class LSDPostcode_01Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly HashSet<int> _fundModels = new HashSet<int>() { TypeOfFunding.CommunityLearning, TypeOfFunding.AdultSkills };
+        private readonly HashSet<int> _fundModels = new HashSet<int>() { FundModels.CommunityLearning, FundModels.AdultSkills };
         private readonly DateTime _firstAugust2019 = new DateTime(2019, 08, 01);
 
         private readonly IPostcodesDataService _postcodesDataService;
@@ -55,13 +55,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LSDPostcode
 
         public bool ConditionMet(DateTime learnStartDate, int fundModel, int? ProgType, string lsdPostcode, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
         {
-            return 
+            return
                 LearnStartDateConditionMet(learnStartDate)
                 && FundModelConditionMet(fundModel)
                 && PostcodeConditionMet(lsdPostcode)
                 && !IsExcluded(ProgType, lsdPostcode, learningDeliveryFAMs);
         }
-          
+
         public bool LearnStartDateConditionMet(DateTime learnStartDate) => learnStartDate >= _firstAugust2019;
 
         public bool FundModelConditionMet(int fundModel) => _fundModels.Contains(fundModel);

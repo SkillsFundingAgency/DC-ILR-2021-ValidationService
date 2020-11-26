@@ -1,8 +1,8 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.ESMType;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -12,82 +12,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
 {
     public class ESMType_01RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange / act / assert
-            Assert.Throws<ArgumentNullException>(() => new ESMType_01Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("ESMType_01", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(ESMType_01Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Is invalid domain item meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor0To10HourPW, false)]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor11To20HoursPW, false)]
@@ -129,8 +63,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData("SEM2", true)]
         public void IsInvalidDomainItemMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
-            var sut = NewRule();
             var mockItem = new Mock<IEmploymentStatusMonitoring>();
             mockItem
                 .SetupGet(y => y.ESMType)
@@ -139,17 +71,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(candidate.Substring(3)));
 
-            // act
-            var result = sut.IsInvalidDomainItem(mockItem.Object);
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+            lookupDetailsMock.Setup(x => x.Contains(TypeOfStringCodedLookup.ESMType, candidate)).Returns(!expectation);
 
-            // assert
+            var result = NewRule(lookupDetailsMock.Object).IsInvalidDomainItem(mockItem.Object);
+
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData("BSI0")]
         [InlineData("BSI5")]
@@ -167,7 +96,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData("SEM2")]
         public void InvalidItemRaisesValidationMessage(string candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var monitor = new Mock<IEmploymentStatusMonitoring>();
@@ -180,15 +108,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.ESMCode)
                 .Returns(esmCode);
 
-            var monitorings = Collection.Empty<IEmploymentStatusMonitoring>();
+            var monitorings = new List<IEmploymentStatusMonitoring>();
             monitorings.Add(monitor.Object);
 
             var status = new Mock<ILearnerEmploymentStatus>();
             status
                 .SetupGet(x => x.EmploymentStatusMonitorings)
-                .Returns(monitorings.AsSafeReadOnlyList());
+                .Returns(monitorings);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(status.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -197,7 +125,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(y => y.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
+                .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -217,19 +145,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                     esmCode))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
-            var sut = new ESMType_01Rule(handler.Object);
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+            lookupDetailsMock.Setup(x => x.Contains(TypeOfStringCodedLookup.ESMType, candidate)).Returns(false);
 
-            // act
+            var sut = new ESMType_01Rule(handler.Object, lookupDetailsMock.Object);
+
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor0To10HourPW)]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor11To20HoursPW)]
@@ -244,6 +169,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData(Monitoring.EmploymentStatus.EmployedForMoreThan12M)]
         [InlineData(Monitoring.EmploymentStatus.EmployedForUpTo3M)]
         [InlineData(Monitoring.EmploymentStatus.InFulltimeEducationOrTrainingPriorToEnrolment)]
+        [InlineData(Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupport)]
+        [InlineData(Monitoring.EmploymentStatus.InReceiptOfOtherStateBenefits)]
         [InlineData(Monitoring.EmploymentStatus.InReceiptOfAnotherStateBenefit)]
         [InlineData(Monitoring.EmploymentStatus.InReceiptOfEmploymentAndSupportAllowance)]
         [InlineData(Monitoring.EmploymentStatus.InReceiptOfJobSeekersAllowance)]
@@ -257,7 +184,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
         [InlineData(Monitoring.EmploymentStatus.UnemployedForLessThan6M)]
         public void ValidItemDoesNotRaiseValidationMessage(string candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var monitor = new Mock<IEmploymentStatusMonitoring>();
@@ -268,46 +194,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(candidate.Substring(3)));
 
-            var monitorings = Collection.Empty<IEmploymentStatusMonitoring>();
+            var monitorings = new List<IEmploymentStatusMonitoring>();
             monitorings.Add(monitor.Object);
 
             var status = new Mock<ILearnerEmploymentStatus>();
             status
                 .SetupGet(x => x.EmploymentStatusMonitorings)
-                .Returns(monitorings.AsSafeReadOnlyList());
+                .Returns(monitorings);
 
-            var statii = Collection.Empty<ILearnerEmploymentStatus>();
+            var statii = new List<ILearnerEmploymentStatus>();
             statii.Add(status.Object);
-
-            var mockLearner = new Mock<ILearner>();
-            mockLearner
-                .SetupGet(x => x.LearnRefNumber)
-                .Returns(LearnRefNumber);
-            mockLearner
-                .SetupGet(y => y.LearnerEmploymentStatuses)
-                .Returns(statii.AsSafeReadOnlyList());
-
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-
-            var sut = new ESMType_01Rule(handler.Object);
-
-            // act
-            sut.Validate(mockLearner.Object);
-
-            // assert
-            handler.VerifyAll();
-        }
-
-        /// <summary>
-        /// Valid item with empty employments does not raise validation message.
-        /// </summary>
-        [Fact]
-        public void ValidItemWithEmptyEmploymentsDoesNotRaiseValidationMessage()
-        {
-            // arrange
-            const string LearnRefNumber = "123456789X";
-
-            var statii = Collection.EmptyAndReadOnly<ILearnerEmploymentStatus>();
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -318,23 +214,44 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(statii);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+            lookupDetailsMock.Setup(x => x.Contains(TypeOfStringCodedLookup.ESMType, candidate)).Returns(true);
 
-            var sut = new ESMType_01Rule(handler.Object);
+            var sut = new ESMType_01Rule(handler.Object, lookupDetailsMock.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item with null employments does not raise validation message.
-        /// </summary>
+        [Fact]
+        public void ValidItemWithEmptyEmploymentsDoesNotRaiseValidationMessage()
+        {
+            const string LearnRefNumber = "123456789X";
+
+            var statii = new List<ILearnerEmploymentStatus>();
+
+            var mockLearner = new Mock<ILearner>();
+            mockLearner
+                .SetupGet(x => x.LearnRefNumber)
+                .Returns(LearnRefNumber);
+            mockLearner
+                .SetupGet(y => y.LearnerEmploymentStatuses)
+                .Returns(statii);
+
+            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
+
+            var sut = new ESMType_01Rule(handler.Object, lookupDetailsMock.Object);
+
+            sut.Validate(mockLearner.Object);
+
+            handler.VerifyAll();
+        }
+
         [Fact]
         public void ValidItemWithNullEmploymentsDoesNotRaiseValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var mockLearner = new Mock<ILearner>();
@@ -343,25 +260,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.EmploymentStatus.ESMType
                 .Returns(LearnRefNumber);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
+            var lookupDetailsMock = new Mock<IProvideLookupDetails>();
 
-            var sut = new ESMType_01Rule(handler.Object);
+            var sut = new ESMType_01Rule(handler.Object, lookupDetailsMock.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
-        public ESMType_01Rule NewRule()
+        public ESMType_01Rule NewRule(IProvideLookupDetails lookupDetails = null)
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
-            return new ESMType_01Rule(handler.Object);
+            return new ESMType_01Rule(handler.Object, lookupDetails);
         }
     }
 }

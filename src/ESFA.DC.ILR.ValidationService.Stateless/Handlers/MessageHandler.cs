@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Autofac;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Providers.Utils;
-using ESFA.DC.ILR.ValidationService.Stateless.Configuration;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobContextManager.Model.Interface;
@@ -39,9 +38,6 @@ namespace ESFA.DC.ILR.ValidationService.Stateless.Handlers
 
                 try
                 {
-                    var azureStorageModel = childLifeTimeScope.Resolve<AzureStorageModel>();
-                    azureStorageModel.AzureContainerReference = validationContext.Container;
-
                     logger.LogDebug("inside process message validate");
 
                     var preValidationOrchestrationService = childLifeTimeScope.Resolve<IPreValidationOrchestrationService>();

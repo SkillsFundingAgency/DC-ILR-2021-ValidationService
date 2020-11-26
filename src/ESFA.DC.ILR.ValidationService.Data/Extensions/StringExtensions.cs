@@ -13,5 +13,15 @@ namespace ESFA.DC.ILR.ValidationService.Data.Extensions
 
             return source?.Equals(data, StringComparison.OrdinalIgnoreCase) ?? false;
         }
+
+        public static bool CaseInsensitiveStartsWith(this string source, string thisCandidate)
+        {
+            if (string.IsNullOrWhiteSpace(source))
+            {
+                return false;
+            }
+
+            return source.StartsWith(thisCandidate, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

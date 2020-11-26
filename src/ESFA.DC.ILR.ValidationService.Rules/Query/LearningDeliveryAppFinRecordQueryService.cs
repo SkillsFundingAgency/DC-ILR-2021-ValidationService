@@ -36,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                    && appFinRecords.Any(afr => aFinCodes.Contains(afr.AFinCode));
         }
 
-        public IAppFinRecord GetLatestAppFinRecord(IReadOnlyCollection<IAppFinRecord> appFinRecords, string appFinType, int appFinCode)
+        public IAppFinRecord GetLatestAppFinRecord(IEnumerable<IAppFinRecord> appFinRecords, string appFinType, int appFinCode)
         {
             if (string.IsNullOrEmpty(appFinType) || appFinCode == 0)
             {
@@ -55,6 +55,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
             return appFinRecords?.Where(afr => afr.AFinType.CaseInsensitiveEquals(aFinType)) ?? Enumerable.Empty<IAppFinRecord>();
         }
 
+        public IEnumerable<IAppFinRecord> GetAppFinRecordsForTypeAndCode(IEnumerable<IAppFinRecord> appFinRecords, string aFinType, int aFinCode)
+        {
+            return appFinRecords?.Where(afr => afr.AFinType.CaseInsensitiveEquals(aFinType) && afr.AFinCode == aFinCode) ?? Enumerable.Empty<IAppFinRecord>();
+        }
+
         public int GetTotalTNPPriceForLatestAppFinRecordsForLearning(IEnumerable<ILearningDelivery> learningDeliveries)
         {
             var total = 0;
@@ -68,12 +73,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Query
                         var aFinCode1Value = GetLatestAppFinRecord(
                             learningDelivery.AppFinRecords,
                             ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice,
-                            TypeOfTNPAFin.TotalTrainingPrice)?.AFinAmount;
+                            ApprenticeshipFinancialRecord.PaymentRecordCodes.TrainingPayment)?.AFinAmount;
 
                         var aFinCode2Value = GetLatestAppFinRecord(
                             learningDelivery.AppFinRecords,
                             ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice,
-                            TypeOfTNPAFin.TotalAssessmentPrice)?.AFinAmount;
+                            ApprenticeshipFinancialRecord.PaymentRecordCodes.AssessmentPayment)?.AFinAmount;
 
                         total += aFinCode1Value.GetValueOrDefault() + aFinCode2Value.GetValueOrDefault();
                     }

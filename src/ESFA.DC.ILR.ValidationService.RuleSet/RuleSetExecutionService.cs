@@ -3,10 +3,11 @@ using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.RuleSet
 {
-    public class RuleSetExecutionService<T> : IRuleSetExecutionService<T>
+    public class RuleSetExecutionService<TRule, T> : IRuleSetExecutionService<TRule, T>
+        where TRule : IValidationRule<T>
         where T : class
     {
-        public void Execute(IEnumerable<IRule<T>> ruleSet, T objectToValidate)
+        public void Execute(IEnumerable<TRule> ruleSet, T objectToValidate)
         {
             foreach (var rule in ruleSet)
             {

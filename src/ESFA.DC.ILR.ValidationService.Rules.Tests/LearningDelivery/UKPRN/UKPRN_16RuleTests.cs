@@ -41,7 +41,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = "ConRef1",
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }
@@ -76,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = "ConRef1",
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
                         LearnStartDate = new DateTime(2019, 01, 01)
                     }
                 }
@@ -150,12 +150,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             // Assert
             filtered.Should().NotBeNull();
             filtered.Should().NotBeEmpty();
-            filtered.Should().HaveCount(4);
+            filtered.Should().HaveCount(2);
             filtered.Should().OnlyContain(ca =>
                 ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.C1618_NLAP2018 ||
-                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.ANLAP2018 ||
-                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.LEVY1799 ||
-                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.NONLEVY2019);
+                ca.FundingStreamPeriodCode == FundingStreamPeriodCodeConstants.ANLAP2018);
         }
 
         public static IEnumerable<object[]> ConditionMet_TestData()
@@ -184,6 +182,229 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
             result.Should().Equals(expectedResult);
         }
 
+        [Fact]
+        public void MatchingLearningDeliveries()
+        {
+            var deliveryFams = new List<TestLearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                    LearnDelFAMCode = "2"
+                }
+            };
+
+            var learningDeliveries = new TestLearningDelivery[]
+            {
+                // Arrange
+                new TestLearningDelivery()
+                {
+                    ConRefNumber = "ConRef1",
+                    FundModel = 36,
+                    AimType = 1,
+                    LearningDeliveryFAMs = deliveryFams
+                }
+            };
+
+            // Act
+            var filteredResult = NewRule().MatchingLearningDeliveries(learningDeliveries);
+
+            filteredResult.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void MatchingLearningDeliveries_NoneHasRestart()
+        {
+            var deliveryFams = new List<TestLearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.RES
+                },
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                    LearnDelFAMCode = "2"
+                }
+            };
+
+            var learningDeliveries = new TestLearningDelivery[]
+            {
+                // Arrange
+                new TestLearningDelivery()
+                {
+                    ConRefNumber = "ConRef1",
+                    FundModel = 36,
+                    AimType = 1,
+                    LearningDeliveryFAMs = deliveryFams
+                }
+            };
+
+            // Act
+            var filteredResult = NewRule().MatchingLearningDeliveries(learningDeliveries);
+
+            filteredResult.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void MatchingLearningDeliveries_NoneAimType()
+        {
+            var deliveryFams = new List<TestLearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                    LearnDelFAMCode = "2"
+                }
+            };
+
+            var learningDeliveries = new TestLearningDelivery[]
+            {
+                // Arrange
+                new TestLearningDelivery()
+                {
+                    ConRefNumber = "ConRef1",
+                    FundModel = 36,
+                    AimType = 2,
+                    LearningDeliveryFAMs = deliveryFams
+                }
+            };
+
+            // Act
+            var filteredResult = NewRule().MatchingLearningDeliveries(learningDeliveries);
+
+            filteredResult.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void MatchingLearningDeliveries_NoneNoValidDeliveryFam()
+        {
+            var deliveryFams = new List<TestLearningDeliveryFAM>()
+            {
+                new TestLearningDeliveryFAM()
+                {
+                    LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                    LearnDelFAMCode = "3"
+                }
+            };
+
+            var learningDeliveries = new TestLearningDelivery[]
+            {
+                // Arrange
+                new TestLearningDelivery()
+                {
+                    ConRefNumber = "ConRef1",
+                    FundModel = 36,
+                    AimType = 1,
+                    LearningDeliveryFAMs = deliveryFams
+                }
+            };
+
+            // Act
+            var filteredResult = NewRule().MatchingLearningDeliveries(learningDeliveries);
+
+            filteredResult.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void ConditionMet_True()
+        {
+            var learnStartDate = new DateTime(2019, 08, 01);
+
+            var contractAllocations = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 01),
+                    StartDate = new DateTime(2019, 01, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 03),
+                    StartDate = new DateTime(2019, 03, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 02),
+                    StartDate = new DateTime(2019, 02, 01)
+                }
+            };
+
+            NewRule().ConditionMet(learnStartDate, contractAllocations).Should().BeTrue();
+        }
+
+        [Fact]
+        public void ConditionMet_False_NullStopStarts()
+        {
+            var learnStartDate = new DateTime(2019, 08, 01);
+
+            var contractAllocations = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = null,
+                    StartDate = new DateTime(2019, 01, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = null,
+                    StartDate = new DateTime(2019, 03, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = null,
+                    StartDate = new DateTime(2019, 02, 01)
+                }
+            };
+
+            NewRule().ConditionMet(learnStartDate, contractAllocations).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_LearnStartDateLessThan()
+        {
+            var learnStartDate = new DateTime(2018, 08, 01);
+
+            var contractAllocations = new List<IFcsContractAllocation>
+            {
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 01),
+                    StartDate = new DateTime(2019, 01, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 03),
+                    StartDate = new DateTime(2019, 03, 01)
+                },
+                new FcsContractAllocation
+                {
+                    DeliveryUKPRN = 42,
+                    FundingStreamPeriodCode = FundingStreamPeriodCodeConstants.C1618_NLAP2018,
+                    StopNewStartsFromDate = new DateTime(2018, 12, 02),
+                    StartDate = new DateTime(2019, 02, 01)
+                }
+            };
+
+            NewRule().ConditionMet(learnStartDate, contractAllocations).Should().BeFalse();
+        }
+
         public static IEnumerable<object[]> Validate_TestData()
         {
             yield return new object[] { FundingStreamPeriodCodeConstants.C1618_NLAP2018, null, false };
@@ -208,7 +429,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                 {
                     DeliveryUKPRN = 42,
                     FundingStreamPeriodCode = fundingStreamPeriodCode,
-                    StopNewStartsFromDate = stopNewStartsFromDate
+                    StopNewStartsFromDate = stopNewStartsFromDate,
+                    StartDate = new DateTime(2019, 08, 01)
                 }
             };
 
@@ -222,8 +444,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.UKPRN
                     new TestLearningDelivery()
                     {
                         ConRefNumber = "ConRef1",
-                        FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
-                        LearnStartDate = new DateTime(2019, 01, 01)
+                        FundModel = FundModels.ApprenticeshipsFrom1May2017,
+                        AimType = 1,
+                        LearnStartDate = new DateTime(2019, 01, 01),
+                        LearningDeliveryFAMs = new List<TestLearningDeliveryFAM>()
+                        {
+                            new TestLearningDeliveryFAM()
+                            {
+                                LearnDelFAMType = LearningDeliveryFAMTypeConstants.ACT,
+                                LearnDelFAMCode = "2"
+                            }
+                        }
                     }
                 }
             };

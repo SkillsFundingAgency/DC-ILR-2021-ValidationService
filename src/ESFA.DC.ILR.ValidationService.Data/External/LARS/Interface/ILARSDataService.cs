@@ -4,93 +4,22 @@ using ESFA.DC.ILR.ValidationService.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
 {
-    /// <summary>
-    /// the lars data service
-    /// </summary>
     public interface ILARSDataService : IDataService
     {
-        /// <summary>
-        /// Gets the deliveries for.
-        /// </summary>
-        /// <param name="forThisAimRef">this aim reference.</param>
-        /// <returns>a collection of lars learning deliveries for this learning aim reference</returns>
-        [Obsolete("this method is deprecated; use 'GetDeliveryFor' instead", false)]
-        IReadOnlyCollection<ILARSLearningDelivery> GetDeliveriesFor(string forThisAimRef);
-
-        /// <summary>
-        /// Gets the (lars) delivery for (this aim reference).
-        /// </summary>
-        /// <param name="thisAimRef">this aim reference.</param>
-        /// <returns>
-        /// a lars learning delivery for this learning aim reference
-        /// </returns>
         ILARSLearningDelivery GetDeliveryFor(string thisAimRef);
 
-        /// <summary>
-        /// Gets a collection of (lars) learning categories for (this aim reference).
-        ///  i should never return null
-        /// </summary>
-        /// <param name="thisAimRef">this aim reference.</param>
-        /// <returns>a collection of lars learning categories for this learning aim reference</returns>
         IReadOnlyCollection<ILARSLearningCategory> GetCategoriesFor(string thisAimRef);
 
-        /// <summary>
-        /// Gets a collection of (lars) learning delivery periods of validity for (this aim reference).
-        ///  i should never return null
-        /// </summary>
-        /// <param name="thisAimRef">this aim reference.</param>
-        /// <returns>a collection of lars learing delivery periods of validity for this learning aim reference</returns>
         IReadOnlyCollection<ILARSLearningDeliveryValidity> GetValiditiesFor(string thisAimRef);
 
-        /// <summary>
-        /// Gets the (lars) annual values for (this aim reference).
-        ///  i should never return null
-        /// </summary>
-        /// <param name="thisAimRef">The this aim reference.</param>
-        /// <returns>a collection of lars 'annula values' for this learning aim reference</returns>
         IReadOnlyCollection<ILARSAnnualValue> GetAnnualValuesFor(string thisAimRef);
 
-        /// <summary>
-        /// Gets the (lars) framework aims for (this aim reference).
-        ///  i should never return null
-        /// </summary>
-        /// <param name="thisAimRef">The this aim reference.</param>
-        /// <returns>
-        /// a collection of lars 'framework aims' for this learning aim reference
-        /// </returns>
         IReadOnlyCollection<ILARSFrameworkAim> GetFrameworkAimsFor(string thisAimRef);
 
-        /// <summary>
-        /// Gets the collection of (lars) standard periods of validity for (this standard code).
-        ///  i should never return null
-        /// </summary>
-        /// <param name="thisStandardCode">this standard code.</param>
-        /// <returns>a collection of lars standard periods of validity for this standard code</returns>
         IReadOnlyCollection<ILARSStandardValidity> GetStandardValiditiesFor(int thisStandardCode);
 
-
-        /// <summary>
-        /// Gets the standard for.
-        /// </summary>
-        /// <param name="standardCode">The standard code.</param>
-        /// <returns>the lars standard or null</returns>
         ILARSStandard GetStandardFor(int standardCode);
 
-        /// <summary>
-        /// Gets the standard funding for.
-        /// </summary>
-        /// <param name="standardCode">The standard code.</param>
-        /// <param name="startDate">The start date.</param>
-        /// <returns>a lars standard funding or null</returns>
-        ILARSStandardFunding GetStandardFundingFor(int standardCode, DateTime startDate);
-
-        /// <summary>
-        /// Contains the (lars) standard for (this standard code).
-        /// </summary>
-        /// <param name="thisStandardCode">The this standard code.</param>
-        /// <returns>
-        ///   <c>true</c> if [contains standard for] [the specified this standard code]; otherwise, <c>false</c>.
-        /// </returns>
         bool ContainsStandardFor(int thisStandardCode);
 
         bool HasKnownLearnDirectClassSystemCode3For(string thisLearnAimRef);
@@ -146,6 +75,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface
         bool LearnStartDateGreaterThanStandardsEffectiveTo(int stdCode, DateTime learnStartDate);
 
         bool HasAnyLearningDeliveryForLearnAimRefAndTypes(string learnAimRef, IEnumerable<string> types);
+
+        bool IsCurrentAndNotWithdrawn(ISupportFundingWithdrawal source, DateTime candidate, DateTime? optionalEnding = null);
 
         bool OrigLearnStartDateBetweenStartAndEndDateForAnyValidityCategory(
             DateTime origLearnStartDate,

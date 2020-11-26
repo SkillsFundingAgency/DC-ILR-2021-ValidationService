@@ -2,9 +2,7 @@
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -12,62 +10,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 {
     public class LearnDelFAMType_22RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange / act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnDelFAMType_22Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("LearnDelFAMType_22", result);
-        }
-
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(LearnDelFAMType_22Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
         }
 
         [Theory]
@@ -89,7 +39,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         [InlineData(Monitoring.Delivery.Types.WorkProgrammeParticipation, false)]
         public void HasFullOrCoFundingIndicatorMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
 
             var mockFAM = new Mock<ILearningDeliveryFAM>();
@@ -97,110 +46,70 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(y => y.LearnDelFAMType)
                 .Returns(candidate);
 
-            // act
             var result = sut.HasFullOrCoFundingIndicator(mockFAM.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Has full or co funding indicator with null fams returns false
-        /// </summary>
         [Fact]
         public void HasFullOrCoFundingIndicatorWithNullFAMsReturnsFalse()
         {
-            // arrange
             var sut = NewRule();
 
             var mockDelivery = new Mock<ILearningDelivery>();
 
-            // act
             var result = sut.HasFullOrCoFundingIndicator(mockDelivery.Object);
 
-            // assert
             Assert.False(result);
         }
 
-        /// <summary>
-        /// Has full or co funding indicator with empty fams returns false
-        /// </summary>
         [Fact]
         public void HasFullOrCoFundingIndicatorWithEmptyFAMsReturnsFalse()
         {
-            // arrange
             var sut = NewRule();
 
-            var fams = Collection.EmptyAndReadOnly<ILearningDeliveryFAM>();
+            var fams = new List<ILearningDeliveryFAM>();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.LearningDeliveryFAMs)
                 .Returns(fams);
 
-            // act
             var result = sut.HasFullOrCoFundingIndicator(mockDelivery.Object);
 
-            // assert
             Assert.False(result);
         }
 
-        /// <summary>
-        /// Is qualifying fund model meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, true)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, false)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, false)]
-        [InlineData(TypeOfFunding.CommunityLearning, false)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, false)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, false)]
-        [InlineData(TypeOfFunding.Other16To19, false)]
-        [InlineData(TypeOfFunding.OtherAdult, true)]
+        [InlineData(FundModels.AdultSkills, true)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, false)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, false)]
+        [InlineData(FundModels.CommunityLearning, false)]
+        [InlineData(FundModels.EuropeanSocialFund, false)]
+        [InlineData(FundModels.NotFundedByESFA, false)]
+        [InlineData(FundModels.Other16To19, false)]
+        [InlineData(FundModels.OtherAdult, true)]
         public void IsQualifyingFundModelMeetsExpectation(int candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.FundModel)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsQualifyingFundModel(mockDelivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017)]
-        [InlineData(TypeOfFunding.CommunityLearning)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund)]
-        [InlineData(TypeOfFunding.NotFundedByESFA)]
-        [InlineData(TypeOfFunding.Other16To19)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017)]
+        [InlineData(FundModels.CommunityLearning)]
+        [InlineData(FundModels.EuropeanSocialFund)]
+        [InlineData(FundModels.NotFundedByESFA)]
+        [InlineData(FundModels.Other16To19)]
         public void InvalidItemRaisesValidationMessage(int candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var mockFAM = new Mock<ILearningDeliveryFAM>();
@@ -208,7 +117,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(y => y.LearnDelFAMType)
                 .Returns(Monitoring.Delivery.Types.FullOrCoFunding);
 
-            var fams = Collection.Empty<ILearningDeliveryFAM>();
+            var fams = new List<ILearningDeliveryFAM>();
             fams.Add(mockFAM.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -217,9 +126,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(candidate);
             mockDelivery
                 .SetupGet(x => x.LearningDeliveryFAMs)
-                .Returns(fams.AsSafeReadOnlyList());
+                .Returns(fams);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -228,7 +137,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -244,29 +153,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
                 .Setup(x => x.BuildErrorMessageParameter(
-                    Moq.It.Is<string>(y => y == LearnDelFAMType_22Rule.MessagePropertyName),
+                    Moq.It.Is<string>(y => y == PropertyNameConstants.LearnDelFAMType),
                     Monitoring.Delivery.Types.FullOrCoFunding))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var sut = new LearnDelFAMType_22Rule(handler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills)]
-        [InlineData(TypeOfFunding.OtherAdult)]
+        [InlineData(FundModels.AdultSkills)]
+        [InlineData(FundModels.OtherAdult)]
         public void ValidItemDoesNotRaiseValidationMessage(int candidate)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var mockFAM = new Mock<ILearningDeliveryFAM>();
@@ -274,7 +176,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(y => y.LearnDelFAMType)
                 .Returns(Monitoring.Delivery.Types.FullOrCoFunding);
 
-            var fams = Collection.Empty<ILearningDeliveryFAM>();
+            var fams = new List<ILearningDeliveryFAM>();
             fams.Add(mockFAM.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -283,9 +185,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(candidate);
             mockDelivery
                 .SetupGet(x => x.LearningDeliveryFAMs)
-                .Returns(fams.AsSafeReadOnlyList());
+                .Returns(fams);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -294,23 +196,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
             var sut = new LearnDelFAMType_22Rule(handler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public LearnDelFAMType_22Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

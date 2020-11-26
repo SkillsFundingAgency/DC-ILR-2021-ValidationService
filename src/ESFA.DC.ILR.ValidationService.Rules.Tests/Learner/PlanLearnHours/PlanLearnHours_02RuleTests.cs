@@ -38,7 +38,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
         [Theory]
         [InlineData(10)]
         [InlineData(25)]
-        [InlineData(82)]
         [InlineData(35)]
         [InlineData(36)]
         [InlineData(81)]
@@ -55,48 +54,53 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
         }
 
         [Theory]
-        [InlineData(0, 10)]
-        [InlineData(0, 25)]
-        [InlineData(0, 82)]
-        [InlineData(0, 35)]
-        [InlineData(0, 36)]
-        [InlineData(0, 81)]
-        [InlineData(0, 99)]
-        public void ConditionMet_True(int? planLearnHours, int fundModel)
+        [InlineData(0, 10, 0)]
+        [InlineData(0, 25, 0)]
+        [InlineData(0, 35, 0)]
+        [InlineData(0, 36, 0)]
+        [InlineData(0, 81, 0)]
+        [InlineData(0, 99, 0)]
+        public void ConditionMet_True(int? planLearnHours, int fundModel, int? progType)
         {
-            NewRule().ConditionMet(planLearnHours, fundModel).Should().BeTrue();
+            NewRule().ConditionMet(planLearnHours, fundModel, progType).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(null, 10)]
-        [InlineData(null, 25)]
-        [InlineData(null, 82)]
-        [InlineData(null, 35)]
-        [InlineData(null, 36)]
-        [InlineData(null, 81)]
-        [InlineData(null, 99)]
-        public void ConditionMet_False_NullPlanLearnHours(int? planLearnHours, int fundModel)
+        [InlineData(null, 10, 0)]
+        [InlineData(null, 25, 0)]
+        [InlineData(null, 82, 0)]
+        [InlineData(null, 35, 0)]
+        [InlineData(null, 36, 0)]
+        [InlineData(null, 81, 0)]
+        [InlineData(null, 99, 0)]
+        public void ConditionMet_False_NullPlanLearnHours(int? planLearnHours, int fundModel, int? progType)
         {
-            NewRule().ConditionMet(planLearnHours, fundModel).Should().BeFalse();
+            NewRule().ConditionMet(planLearnHours, fundModel, progType).Should().BeFalse();
         }
 
         [Theory]
-        [InlineData(1, 10)]
-        [InlineData(1, 25)]
-        [InlineData(1, 82)]
-        [InlineData(1, 35)]
-        [InlineData(1, 36)]
-        [InlineData(1, 81)]
-        [InlineData(1, 99)]
-        public void ConditionMet_False_PlanLearnHours(int? planLearnHours, int fundModel)
+        [InlineData(1, 10, 0)]
+        [InlineData(1, 25, 0)]
+        [InlineData(1, 82, 0)]
+        [InlineData(1, 35, 0)]
+        [InlineData(1, 36, 0)]
+        [InlineData(1, 81, 0)]
+        [InlineData(1, 99, 0)]
+        public void ConditionMet_False_PlanLearnHours(int? planLearnHours, int fundModel, int? progType)
         {
-            NewRule().ConditionMet(planLearnHours, fundModel).Should().BeFalse();
+            NewRule().ConditionMet(planLearnHours, fundModel, progType).Should().BeFalse();
         }
 
         [Fact]
         public void ConditionMet_FundModel_False()
         {
-            NewRule().ConditionMet(0, 100).Should().BeFalse();
+            NewRule().ConditionMet(0, 100, 0).Should().BeFalse();
+        }
+
+        [Fact]
+        public void ConditionMet_False_Excluded()
+        {
+            NewRule().ConditionMet(0, 25, 31).Should().BeFalse();
         }
 
         [Fact]

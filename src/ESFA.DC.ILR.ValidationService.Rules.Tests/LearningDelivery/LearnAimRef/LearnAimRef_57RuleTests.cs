@@ -250,17 +250,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                     }
                 };
 
-            var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
-            var learnerEmploymentStatusMonitoringQueryServiceMock = new Mock<ILearnerEmploymentStatusMonitoringQueryService>();
+                var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
+                var learnerEmploymentStatusMonitoringQueryServiceMock = new Mock<ILearnerEmploymentStatusMonitoringQueryService>();
 
-            learningDeliveryFAMQueryServiceMock
+                learningDeliveryFAMQueryServiceMock
                 .Setup(ds => ds.HasLearningDeliveryFAMCodeForType(learningDelivery.LearningDeliveryFAMs, famType, famCode))
                 .Returns(true);
-            learnerEmploymentStatusMonitoringQueryServiceMock
+                learnerEmploymentStatusMonitoringQueryServiceMock
                 .Setup(ds => ds.HasAnyEmploymentStatusMonitoringTypeAndCodeForLearnerEmploymentStatus(learnerEmploymentStatuses, esmType, esmCode))
                 .Returns(true);
 
-            NewRule(
+                NewRule(
                 learnerEmploymentStatusMonitoringQueryService: learnerEmploymentStatusMonitoringQueryServiceMock.Object,
                 learningDeliveryFamQueryService: learningDeliveryFAMQueryServiceMock.Object)
                 .EsmConditionMet(learningDelivery.LearnStartDate, learnerEmploymentStatuses, learningDelivery.LearningDeliveryFAMs)

@@ -2,63 +2,15 @@
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Derived;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 {
-    /// <summary>
-    /// derived data rule 17 tests
-    /// </summary>
     public class DerivedData_17RuleTests
     {
-        /// <summary>
-        /// New rule throws with null lars service.
-        /// </summary>
-        [Fact]
-        public void NewRuleThrowsWithNullLARSService()
-        {
-            // arrange
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var appFinData = new Mock<ILearningDeliveryAppFinRecordQueryService>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new DerivedData_17Rule(null, commonOps.Object, appFinData.Object));
-        }
-
-        /// <summary>
-        /// New rule throws with null common operations provider.
-        /// </summary>
-        [Fact]
-        public void NewRuleThrowsWithNullCommonOperations()
-        {
-            // arrange
-            var lars = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var appFinData = new Mock<ILearningDeliveryAppFinRecordQueryService>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new DerivedData_17Rule(lars.Object, null, appFinData.Object));
-        }
-
-        /// <summary>
-        /// New rule throws with null app fin data service.
-        /// </summary>
-        [Fact]
-        public void NewRuleThrowsWithNullAppFinDataService()
-        {
-            // arrange
-            var lars = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            Assert.Throws<ArgumentNullException>(() => new DerivedData_17Rule(lars.Object, commonOps.Object, null));
-        }
-
-        /// <summary>
-        /// Has qualifying standard code meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="stdCode">The standard code.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(23, 24, false)]
         [InlineData(24, 24, true)]
@@ -69,7 +21,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         [InlineData(null, 240, false)]
         public void HasQualifyingStdCodeMeetsExpectation(int? candidate, int stdCode, bool expectation)
         {
-            // arrange
             var delivery = new Mock<ILearningDelivery>(MockBehavior.Strict);
             delivery
                 .SetupGet(x => x.StdCodeNullable)
@@ -77,151 +28,76 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
             var sut = NewRule();
 
-            // act
             var result = sut.HasQualifyingStdCode(delivery.Object, stdCode);
 
-            // assert
             Assert.Equal(expectation, result);
             delivery.VerifyAll();
         }
 
-        /// <summary>
-        /// Is programe aim meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsProgrameAimMeetsExpectation(bool expectation)
+        [InlineData(2, false)]
+        [InlineData(1, true)]
+        public void IsProgrameAimMeetsExpectation(int aimType, bool expectation)
         {
-            // arrange
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+               .SetupGet(x => x.AimType)
+               .Returns(aimType);
 
-            var lars = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.InAProgramme(delivery.Object))
-                .Returns(expectation);
+            var result = NewRule().IsProgrameAim(delivery.Object);
 
-            var appFinData = new Mock<ILearningDeliveryAppFinRecordQueryService>(MockBehavior.Strict);
-
-            var sut = new DerivedData_17Rule(lars.Object, commonOps.Object, appFinData.Object);
-
-            // act
-            var result = sut.IsProgrameAim(delivery.Object);
-
-            // assert
             Assert.Equal(expectation, result);
-
-            lars.VerifyAll();
-            commonOps.VerifyAll();
-            appFinData.VerifyAll();
         }
 
-        /// <summary>
-        /// Is standard apprenticeship meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void IsStandardApprenticeshipMeetsExpectation(bool expectation)
+        [InlineData(24, false)]
+        [InlineData(25, true)]
+        public void IsStandardApprenticeshipMeetsExpectation(int? progType, bool expectation)
         {
-            // arrange
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+               .SetupGet(x => x.ProgTypeNullable)
+               .Returns(progType);
 
-            var lars = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.IsStandardApprenticeship(delivery.Object))
-                .Returns(expectation);
+            var result = NewRule().IsStandardApprenticeship(delivery.Object);
 
-            var appFinData = new Mock<ILearningDeliveryAppFinRecordQueryService>(MockBehavior.Strict);
-
-            var sut = new DerivedData_17Rule(lars.Object, commonOps.Object, appFinData.Object);
-
-            // act
-            var result = sut.IsStandardApprenticeship(delivery.Object);
-
-            // assert
             Assert.Equal(expectation, result);
-
-            lars.VerifyAll();
-            commonOps.VerifyAll();
-            appFinData.VerifyAll();
         }
 
-        /// <summary>
-        /// Has qualifying model meets expectation
-        /// </summary>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void HasQualifyingModelMeetsExpectation(bool expectation)
+        [InlineData(81, true)]
+        [InlineData(25, false)]
+        public void HasQualifyingFundingMeetsExpectation(int fundModel, bool expectation)
         {
-            // arrange
             var delivery = new Mock<ILearningDelivery>();
+            delivery
+                .SetupGet(y => y.FundModel)
+                .Returns(fundModel);
 
-            var lars = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonOps
-                .Setup(x => x.HasQualifyingFunding(delivery.Object, 81))
-                .Returns(expectation);
+            var result = NewRule().HasQualifyingModel(delivery.Object);
 
-            var appFinData = new Mock<ILearningDeliveryAppFinRecordQueryService>(MockBehavior.Strict);
-
-            var sut = new DerivedData_17Rule(lars.Object, commonOps.Object, appFinData.Object);
-
-            // act
-            var result = sut.HasQualifyingModel(delivery.Object);
-
-            // assert
             Assert.Equal(expectation, result);
-
-            lars.VerifyAll();
-            commonOps.VerifyAll();
-            appFinData.VerifyAll();
         }
 
-        /// <summary>
-        /// Gets the earliest date for cap checking with empty collection returns minimum value.
-        /// </summary>
         [Fact]
         public void GetEarliestDateForCapCheckingWithEmptyCollectionReturnsMinValue()
         {
-            // arrange
-            var sut = NewRule();
+            var result = NewRule().GetEarliestDateForCapChecking(new ILearningDelivery[] { });
 
-            // act
-            var result = sut.GetEarliestDateForCapChecking(new ILearningDelivery[] { });
-
-            // assert
             Assert.Equal(DateTime.MinValue, result);
         }
 
-        /// <summary>
-        /// Gets the nullable date.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <returns>a nullable date</returns>
         public DateTime? GetNullableDate(string candidate) =>
             string.IsNullOrWhiteSpace(candidate) ? (DateTime?)null : DateTime.Parse(candidate);
 
-        /// <summary>
-        /// Get earliest date for cap checking, meets expectation.
-        /// </summary>
-        /// <param name="expectation">The expectation.</param>
-        /// <param name="datePairs">The date pairs.</param>
         [Theory]
         [InlineData("2018-04-01", null, "2018-04-06", "2018-04-01", "2018-04-02", "2018-04-03", "2018-04-04")]
         [InlineData("2018-05-15", "2018-08-06", "2018-08-06", "2018-08-01", "2018-05-15", "2018-08-03", "2018-08-04", "2018-07-13", "2018-07-14")]
         [InlineData("2018-07-13", "2018-08-06", "2018-08-06", "2018-08-01", "2018-07-13", null, "2018-08-04", null, "2018-07-14")]
         public void GetEarliestDateForCapCheckingMeetsExpectation(string expectation, params string[] datePairs)
         {
-            // arrange
             var expectedDate = DateTime.Parse(expectation);
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
 
             for (var i = 0; i < datePairs.Length; i += 2)
             {
@@ -238,17 +114,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
             var sut = NewRule();
 
-            // act
-            var result = sut.GetEarliestDateForCapChecking(deliveries.AsSafeReadOnlyList());
+            var result = sut.GetEarliestDateForCapChecking(deliveries);
 
-            // assert
             Assert.Equal(expectedDate, result);
         }
 
-        /// <summary>
-        /// Get total TNP price for model meets expectation.
-        /// </summary>
-        /// <param name="expectation">The expectation.</param>
         [Theory]
         [InlineData(23)]
         [InlineData(25)]
@@ -256,97 +126,75 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         [InlineData(6000000)]
         public void GetTotalTNPPriceForModelMeetsExpectation(int expectation)
         {
-            // arrange
             var deliveries = new ILearningDelivery[] { };
 
-            var lars = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
             var appFinData = new Mock<ILearningDeliveryAppFinRecordQueryService>(MockBehavior.Strict);
             appFinData
                 .Setup(x => x.GetTotalTNPPriceForLatestAppFinRecordsForLearning(deliveries))
                 .Returns(expectation);
 
-            var sut = new DerivedData_17Rule(lars.Object, commonOps.Object, appFinData.Object);
+            var sut = NewRule(appFinRecordQueryService: appFinData.Object);
 
-            // act
             var result = sut.GetTotalTNPPriceFor(deliveries);
 
-            // assert
             Assert.Equal(expectation, result);
-
-            lars.VerifyAll();
-            commonOps.VerifyAll();
             appFinData.VerifyAll();
         }
 
-        /// <summary>
-        /// Get standard funding for, meets expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="earliestDate">The earliest date.</param>
         [Theory]
         [InlineData(12, "2018-06-03")]
         [InlineData(18, "2019-02-07")]
         [InlineData(15, "2016-10-19")]
         public void GetStandardFundingForMeetsExpectation(int candidate, string earliestDate)
         {
-            // arrange
             var testDate = DateTime.Parse(earliestDate);
+            var standard = new Mock<ILARSStandard>();
             var standardFunding = new Mock<ILARSStandardFunding>();
+            var standardFundings = new List<ILARSStandardFunding>
+            {
+                standardFunding.Object
+            };
+
+            standard.Setup(x => x.StandardsFunding).Returns(standardFundings);
             var lars = new Mock<ILARSDataService>(MockBehavior.Strict);
             lars
-                .Setup(x => x.GetStandardFundingFor(candidate, testDate))
-                .Returns(standardFunding.Object);
+                .Setup(x => x.GetStandardFor(candidate))
+                .Returns(standard.Object);
 
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var appFinData = new Mock<ILearningDeliveryAppFinRecordQueryService>(MockBehavior.Strict);
+            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQueryService
+                .Setup(x => x.IsDateBetween(testDate, Moq.It.IsAny<DateTime>(), Moq.It.IsAny<DateTime>(), true))
+                .Returns(true);
 
-            var sut = new DerivedData_17Rule(lars.Object, commonOps.Object, appFinData.Object);
+            var sut = NewRule(dateTimeQueryService.Object, lars.Object);
 
-            // act
             var result = sut.GetStandardFundingFor(candidate, testDate);
 
-            // assert
             Assert.Equal(standardFunding.Object, result);
 
             lars.VerifyAll();
-            commonOps.VerifyAll();
-            appFinData.VerifyAll();
+            dateTimeQueryService.VerifyAll();
         }
 
-        /// <summary>
-        /// Has exceeded capped threshold meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="cap">The cap.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(12000, 6000, true)]
         [InlineData(52, 33.3, true)]
         [InlineData(52, null, false)]
         public void HasExceededCappedThresholdMeetsExpectation(int candidate, double? cap, bool expectation)
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.HasExceededCappedThreshold(candidate, (decimal?)cap);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a new system under test</returns>
-        public DerivedData_17Rule NewRule()
+        public DerivedData_17Rule NewRule(
+            IDateTimeQueryService dateTimeQueryService = null,
+            ILARSDataService larsDataService = null,
+            ILearningDeliveryAppFinRecordQueryService appFinRecordQueryService = null)
         {
-            var lars = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            var appFindata = new Mock<ILearningDeliveryAppFinRecordQueryService>(MockBehavior.Strict);
-
-            return new DerivedData_17Rule(lars.Object, commonOps.Object, appFindata.Object);
+            return new DerivedData_17Rule(dateTimeQueryService, larsDataService, appFinRecordQueryService);
         }
     }
 }

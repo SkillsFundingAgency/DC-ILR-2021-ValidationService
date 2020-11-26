@@ -1,18 +1,18 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
     public class LearnAimRef_71Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _fundModel = TypeOfFunding.EuropeanSocialFund;
+        private readonly int _fundModel = FundModels.EuropeanSocialFund;
 
         private readonly IFCSDataService _fCSDataService;
         private readonly ILARSDataService _lARSDataService;
@@ -60,9 +60,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
                 .Where(s => s.SectorSubjectAreaCode.HasValue)
                 .Select(s => s.SectorSubjectAreaCode).ToList();
 
-            var learningDeliveries = _lARSDataService.GetDeliveriesFor(learnAimRef);
-            bool isMatchNotFoundForSectorSubjectAreaTier1 = !learningDeliveries.Join(sectorSubjectAreaCodes, ld => ld.SectorSubjectAreaTier1, fcs => fcs.Value, (ld, fcs) => fcs.Value).Any();
-            bool isMatchNotFoundForSectorSubjectAreaTier2 = !learningDeliveries.Join(sectorSubjectAreaCodes, ld => ld.SectorSubjectAreaTier2, fcs => fcs.Value, (ld, fcs) => fcs.Value).Any();
+            var learningDelivery = _lARSDataService.GetDeliveryFor(learnAimRef);
+            bool isMatchNotFoundForSectorSubjectAreaTier1 = !sectorSubjectAreaCodes.Contains(learningDelivery.SectorSubjectAreaTier1);
+            bool isMatchNotFoundForSectorSubjectAreaTier2 = !sectorSubjectAreaCodes.Contains(learningDelivery.SectorSubjectAreaTier2);
 
             return isMatchNotFoundForSectorSubjectAreaTier1 && isMatchNotFoundForSectorSubjectAreaTier2;
         }

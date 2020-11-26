@@ -19,16 +19,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
                 if (ConditionMet(
-                             learningDelivery.LearnActEndDateNullable, 
+                             learningDelivery.LearnActEndDateNullable,
                              learningDelivery.CompStatus,
-                             learningDelivery.FundModel, 
+                             learningDelivery.FundModel,
                              learningDelivery.ProgTypeNullable))
                 {
                     HandleValidationError(
-                                        objectToValidate.LearnRefNumber, 
-                                        learningDelivery.AimSeqNumber, 
+                                        objectToValidate.LearnRefNumber,
+                                        learningDelivery.AimSeqNumber,
                                         BuildErrorMessageParameters(
-                                                 learningDelivery.CompStatus, 
+                                                 learningDelivery.CompStatus,
                                                  learningDelivery.LearnActEndDateNullable));
                 }
             }
@@ -44,12 +44,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel != TypeOfFunding.ApprenticeshipsFrom1May2017;
+            return fundModel != FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public bool ProgTypeConditionMet(int? progType)
         {
-            return progType != TypeOfLearningProgramme.ApprenticeshipStandard;
+            return progType != ProgTypes.ApprenticeshipStandard;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int compStatus, DateTime? learnActEndDate)

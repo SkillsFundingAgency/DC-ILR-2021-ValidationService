@@ -7,7 +7,6 @@ using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
@@ -26,60 +25,91 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
             _larsData = larsDataService;
         }
 
-        public bool SubjectAreaTierFilter(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, ILARSLearningDelivery larsDelivery) =>
-            (subjectAreaLevel.SectorSubjectAreaCode == larsDelivery.SectorSubjectAreaTier1
-            || subjectAreaLevel.SectorSubjectAreaCode == larsDelivery.SectorSubjectAreaTier2);
+        public void Validate(ILearner thisLearner)
+        {
+            if (thisLearner?.LearningDeliveries == null)
+            {
+                return;
+            }
 
-        public bool HasDisqualifyingSubjectSector(ILARSLearningDelivery larsDelivery, IReadOnlyCollection<IEsfEligibilityRuleSectorSubjectAreaLevel> subjectAreaLevels) =>
-            It.IsNull(larsDelivery)
-            || (subjectAreaLevels.Where(x => SubjectAreaTierFilter(x, larsDelivery)).Count() > 0
-            ? subjectAreaLevels.Where(x => SubjectAreaTierFilter(x, larsDelivery)).Any(x => HasDisqualifyingSubjectSector(x, larsDelivery))
-            : true);
+            var learnRefNumber = thisLearner.LearnRefNumber;
 
-        public bool HasDisqualifyingSubjectSector(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, ILARSLearningDelivery larsDelivery) =>
-            IsUsableSubjectArea(subjectAreaLevel)
-            && IsDisqualifyingSubjectAreaLevel(subjectAreaLevel, GetNotionalNVQLevelV2(larsDelivery));
-
-        public bool IsUsableSubjectArea(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel) =>
-            It.Has(subjectAreaLevel?.SectorSubjectAreaCode)
-            && (It.Has(subjectAreaLevel.MinLevelCode)
-                || It.Has(subjectAreaLevel.MaxLevelCode));
-
-        public double GetNotionalNVQLevelV2(ILARSLearningDelivery larsDelivery) =>
-            larsDelivery.NotionalNVQLevelv2.AsNotionalNVQLevelV2();
-
-        public bool IsDisqualifyingSubjectAreaLevel(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, double notionalNVQLevel2) =>
-            notionalNVQLevel2 != TypeOfNotionalNVQLevelV2.OutOfScope
-            && (notionalNVQLevel2 < subjectAreaLevel.MinLevelCode.AsNotionalNVQLevelV2()
-                || notionalNVQLevel2 > subjectAreaLevel.MaxLevelCode.AsNotionalNVQLevelV2());
+            foreach (var learningDelivery in thisLearner.LearningDeliveries)
+            {
+                if (IsNotValid(learningDelivery))
+                {
+                    RaiseValidationMessage(learnRefNumber, learningDelivery);
+                }
+            }
+        }
 
         public bool IsNotValid(ILearningDelivery thisDelivery)
         {
-            var esfEligibilities = _fcsData.GetEligibilityRuleSectorSubjectAreaLevelsFor(thisDelivery.ConRefNumber).AsSafeReadOnlyList();
+            var esfEligibilities = _fcsData.GetEligibilityRuleSectorSubjectAreaLevelsFor(thisDelivery.ConRefNumber).ToReadOnlyCollection();
             var larsLearningDelivery = _larsData.GetDeliveryFor(thisDelivery.LearnAimRef);
 
-            if (esfEligibilities.Count > 0 && larsLearningDelivery != null)
+            if (esfEligibilities.Any() && larsLearningDelivery != null)
             {
                 return
-                    !thisDelivery.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment)
-                && FundModelConditionMet(thisDelivery.FundModel)
-                && HasDisqualifyingSubjectSector(larsLearningDelivery, esfEligibilities);
+                    !thisDelivery.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.ESFLearnerStartandAssessment)
+                    && FundModelConditionMet(thisDelivery.FundModel)
+                    && HasDisqualifyingSubjectSector(larsLearningDelivery, esfEligibilities);
             }
 
             return false;
-        }           
+        }
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.EuropeanSocialFund;
+            return fundModel == FundModels.EuropeanSocialFund;
         }
 
-        public void Validate(ILearner thisLearner)
+        public bool HasDisqualifyingSubjectSector(ILARSLearningDelivery larsDelivery, IReadOnlyCollection<IEsfEligibilityRuleSectorSubjectAreaLevel> subjectAreaLevels)
         {
-            var learnRefNumber = thisLearner.LearnRefNumber;
+            if (!subjectAreaLevels.Any(IsUsableSubjectArea))
+            {
+                return false;
+            }
 
-            thisLearner.LearningDeliveries
-                .ForAny(IsNotValid, x => RaiseValidationMessage(learnRefNumber, x));
+            if (larsDelivery == null)
+            {
+                return true;
+            }
+
+            var filteredAreaLevels = subjectAreaLevels.Where(x => SubjectAreaTierFilter(x, larsDelivery)).ToList();
+
+            return !filteredAreaLevels.Any() || filteredAreaLevels.Any(x => HasDisqualifyingSubjectSector(x, larsDelivery));
+        }
+
+        public bool SubjectAreaTierFilter(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, ILARSLearningDelivery larsDelivery)
+        {
+            return subjectAreaLevel.SectorSubjectAreaCode == larsDelivery.SectorSubjectAreaTier1
+                   || subjectAreaLevel.SectorSubjectAreaCode == larsDelivery.SectorSubjectAreaTier2;
+        }
+
+        public bool HasDisqualifyingSubjectSector(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, ILARSLearningDelivery larsDelivery)
+        {
+            return IsUsableSubjectArea(subjectAreaLevel)
+                   && IsDisqualifyingSubjectAreaLevel(subjectAreaLevel, GetNotionalNVQLevelV2(larsDelivery));
+        }
+
+        public bool IsUsableSubjectArea(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel)
+        {
+            return subjectAreaLevel?.SectorSubjectAreaCode != null
+                   && (!string.IsNullOrWhiteSpace(subjectAreaLevel.MinLevelCode)
+                       || !string.IsNullOrWhiteSpace(subjectAreaLevel.MaxLevelCode));
+        }
+
+        public bool IsDisqualifyingSubjectAreaLevel(IEsfEligibilityRuleSectorSubjectAreaLevel subjectAreaLevel, double notionalNVQLevel2)
+        {
+            return notionalNVQLevel2 != LARSConstants.NotionalNVQLevelV2Doubles.OutOfScope
+                   && (notionalNVQLevel2 < subjectAreaLevel.MinLevelCode.AsNotionalNVQLevelV2()
+                       || notionalNVQLevel2 > subjectAreaLevel.MaxLevelCode.AsNotionalNVQLevelV2());
+        }
+
+        public double GetNotionalNVQLevelV2(ILARSLearningDelivery larsDelivery)
+        {
+            return larsDelivery.NotionalNVQLevelv2.AsNotionalNVQLevelV2();
         }
 
         public void RaiseValidationMessage(string learnRefNumber, ILearningDelivery thisDelivery)

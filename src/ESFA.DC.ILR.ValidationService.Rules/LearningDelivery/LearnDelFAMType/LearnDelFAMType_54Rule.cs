@@ -9,7 +9,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_54Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _fundModel = TypeOfFunding.ApprenticeshipsFrom1May2017;
+        private readonly int _fundModel = FundModels.ApprenticeshipsFrom1May2017;
 
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
@@ -67,7 +67,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                         LearningDeliveryFAMCodeConstants.ACT_ContractESFA);
         }
 
-        public bool ProgTypeConditionMet(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        public bool ProgTypeConditionMet(int? progType) => progType == ProgTypes.ApprenticeshipStandard;
 
         public bool FundModelConditionMet(int fundModel) => fundModel == _fundModel;
 

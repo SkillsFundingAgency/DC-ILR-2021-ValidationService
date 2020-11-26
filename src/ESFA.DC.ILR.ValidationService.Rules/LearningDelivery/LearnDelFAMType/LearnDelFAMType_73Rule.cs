@@ -11,7 +11,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
     public class LearnDelFAMType_73Rule : AbstractRule, IRule<ILearner>
     {
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFamQueryService;
-        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { TypeOfFunding.OtherAdult, TypeOfFunding.NotFundedByESFA };
+        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { FundModels.OtherAdult, FundModels.NotFundedByESFA };
 
         public LearnDelFAMType_73Rule(
             IValidationErrorHandler validationErrorHandler,

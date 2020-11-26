@@ -113,8 +113,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                          LearnAimRef = "1A1234",
-                        LearnStartDate = new DateTime(2019, 02, 01),
-                        AppFinRecords = new TestAppFinRecord[]
+                         LearnStartDate = new DateTime(2019, 02, 01),
+                         AppFinRecords = new TestAppFinRecord[]
                         {
                             new TestAppFinRecord()
                             {

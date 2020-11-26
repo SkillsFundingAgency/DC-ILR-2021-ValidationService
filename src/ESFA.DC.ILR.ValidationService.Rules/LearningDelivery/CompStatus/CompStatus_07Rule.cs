@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
 {
@@ -20,13 +20,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
         {
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
-                if (ConditionMet(learningDelivery.AimType, learningDelivery.FundModel,
-                                    learningDelivery.ProgTypeNullable, learningDelivery.CompStatus,
-                                    learningDelivery.LearnActEndDateNullable, learningDelivery.AchDateNullable))
+                if (ConditionMet(
+                    learningDelivery.AimType,
+                    learningDelivery.FundModel,
+                    learningDelivery.ProgTypeNullable,
+                    learningDelivery.CompStatus,
+                    learningDelivery.LearnActEndDateNullable,
+                    learningDelivery.AchDateNullable))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber,
-                                            BuildErrorMessageParameters(learningDelivery.FundModel, learningDelivery.ProgTypeNullable,
-                                                                        learningDelivery.CompStatus, learningDelivery.LearnStartDate, learningDelivery.AchDateNullable));
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(
+                            learningDelivery.FundModel,
+                            learningDelivery.ProgTypeNullable,
+                            learningDelivery.CompStatus,
+                            learningDelivery.LearnStartDate,
+                            learningDelivery.AchDateNullable));
                 }
             }
         }
@@ -43,18 +53,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.CompStatus
 
         public bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ProgrammeAim;
+            return aimType == AimTypes.ProgrammeAim;
         }
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            return fundModel == FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public bool ProgTypeConditionMet(int? progType)
         {
             return progType.HasValue
-                    && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+                    && progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public bool LearnActEndDateConditionMet(DateTime? learnActEndDate)

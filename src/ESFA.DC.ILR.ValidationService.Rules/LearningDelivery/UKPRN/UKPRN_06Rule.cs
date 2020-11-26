@@ -19,12 +19,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         private readonly IEnumerable<string> _fundingStreamPeriodCodes = new HashSet<string>
         {
-            FundingStreamPeriodCodeConstants.AEBC_19TRN1920,
-            FundingStreamPeriodCodeConstants.AEBC_ASCL1920,
-            FundingStreamPeriodCodeConstants.AEB_19TRLS1920,
-            FundingStreamPeriodCodeConstants.AEB_ASLS1920,
-            FundingStreamPeriodCodeConstants.AEB_19TRN1920,
-            FundingStreamPeriodCodeConstants.AEB_AS1920
+            FundingStreamPeriodCodeConstants.AEBC_19TRN2021,
+            FundingStreamPeriodCodeConstants.AEBC_ASCL2021,
+            FundingStreamPeriodCodeConstants.AEB_19TRLS2021,
+            FundingStreamPeriodCodeConstants.AEB_ASLS2021,
+            FundingStreamPeriodCodeConstants.AEB_19TRN2021,
+            FundingStreamPeriodCodeConstants.AEB_AS2021,
+            FundingStreamPeriodCodeConstants.STFI2021,
+            FundingStreamPeriodCodeConstants.STFIC2021,
         }.ToCaseInsensitiveHashSet();
 
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
@@ -81,13 +83,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 && (learningDelivery.LearningDeliveryFAMs != null && LearningDeliveryFAMsConditionMet(learningDelivery.LearningDeliveryFAMs))
                 && (!progType.HasValue || DD07ConditionMet(progType.Value))
                 && (learningDelivery.LearningDeliveryFAMs != null && DD35ConditionMet(learningDelivery))
-                && (!learnActEndDate.HasValue || LearnActEndDateConditionMet(learnActEndDate.Value, academicYearStart))                      
+                && (!learnActEndDate.HasValue || LearnActEndDateConditionMet(learnActEndDate.Value, academicYearStart))
                 && FCTFundingConditionMet();
         }
 
         public virtual bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.AdultSkills;
+            return fundModel == FundModels.AdultSkills;
         }
 
         public virtual bool LearningDeliveryFAMsConditionMet(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
@@ -96,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
                 !(_learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, _ldm034)
                 || _learningDeliveryFAMQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.LDM, _ldm357));
         }
-        
+
         public virtual bool DD07ConditionMet(int progType)
         {
             return !_dd07.IsApprenticeship(progType);

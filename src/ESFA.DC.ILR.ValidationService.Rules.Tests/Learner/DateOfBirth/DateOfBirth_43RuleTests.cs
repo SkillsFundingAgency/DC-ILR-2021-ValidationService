@@ -35,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.AdultSkills
+                        FundModel = FundModels.AdultSkills
                     }
                 }
             };
@@ -60,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.EuropeanSocialFund
+                        FundModel = FundModels.EuropeanSocialFund
                     }
                 }
             };
@@ -96,11 +96,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.EuropeanSocialFund
+                        FundModel = FundModels.EuropeanSocialFund
                     },
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.AdultSkills
+                        FundModel = FundModels.AdultSkills
                     }
                 }
             };

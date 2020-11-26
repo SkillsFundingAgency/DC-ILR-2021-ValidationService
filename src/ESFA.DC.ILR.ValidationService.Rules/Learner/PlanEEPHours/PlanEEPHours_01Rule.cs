@@ -1,10 +1,10 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanEEPHours
 {
@@ -49,7 +49,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanEEPHours
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.Age16To19ExcludingApprenticeships;
+            return fundModel == FundModels.Age16To19ExcludingApprenticeships;
         }
 
         public bool PlanEEPHoursConditionMet(int? planEEPHours)
@@ -60,7 +60,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanEEPHours
         public bool Excluded(int? progType, int fundModel)
         {
             return DD07ExcludeConditionMet(progType)
-                   || FundModelExcludeConditionMet(fundModel);
+                   || FundModelExcludeConditionMet(fundModel)
+                   || TLevelExcludeConditionMet(fundModel, progType);
         }
 
         public bool DD07ExcludeConditionMet(int? progType)
@@ -71,6 +72,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PlanEEPHours
         public bool FundModelExcludeConditionMet(int fundModel)
         {
             return fundModel == 70;
+        }
+
+        public bool TLevelExcludeConditionMet(int fundModel, int? progType)
+        {
+            return progType.HasValue
+                   && fundModel == FundModels.Age16To19ExcludingApprenticeships
+                   && progType == ProgTypes.TLevel;
         }
 
         public bool AllLearningAimsClosedExcludeConditionMet(IEnumerable<ILearningDelivery> learningDeliveries)

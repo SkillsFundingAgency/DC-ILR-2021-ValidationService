@@ -1,10 +1,10 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 {
@@ -50,8 +50,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         {
             return !Excluded(learningDelivery.LearningDeliveryFAMs)
                    && learningDelivery.LearnStartDate > _julyThirtyFirst2016
-                   && (learningDelivery.ProgTypeNullable.HasValue && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship)
-                   && learningDelivery.AimType == TypeOfAim.ProgrammeAim
+                   && (learningDelivery.ProgTypeNullable.HasValue && learningDelivery.ProgTypeNullable == ProgTypes.Traineeship)
+                   && learningDelivery.AimType == AimTypes.ProgrammeAim
                    && _dateTimeQueryService.YearsBetween(dateOfBirth, learningDelivery.LearnStartDate) >= 25;
         }
 

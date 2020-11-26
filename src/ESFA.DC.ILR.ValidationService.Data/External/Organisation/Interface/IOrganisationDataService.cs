@@ -4,6 +4,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface
 {
     public interface IOrganisationDataService : IDataService
     {
+        IOrganisation GetOrganisationFor(long ukprn);
+
         bool UkprnExists(long ukprn);
 
         bool LegalOrgTypeMatchForUkprn(long ukprn, string legalOrgType);

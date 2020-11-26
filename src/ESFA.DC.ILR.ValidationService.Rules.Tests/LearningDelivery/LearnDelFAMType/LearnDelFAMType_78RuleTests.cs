@@ -21,8 +21,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, LearningDeliveryFAMTypeConstants.DAM)]
-        [InlineData(TypeOfFunding.CommunityLearning, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(FundModels.AdultSkills, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(FundModels.CommunityLearning, LearningDeliveryFAMTypeConstants.DAM)]
         public void ConditionMet_False(int fundingModel, string famType)
         {
             var testLearningDelivery = new TestLearningDelivery()
@@ -46,12 +46,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, LearningDeliveryFAMTypeConstants.DAM)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, LearningDeliveryFAMTypeConstants.DAM)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund, LearningDeliveryFAMTypeConstants.DAM)]
-        [InlineData(TypeOfFunding.Other16To19, LearningDeliveryFAMTypeConstants.DAM)]
-        [InlineData(TypeOfFunding.OtherAdult, LearningDeliveryFAMTypeConstants.DAM)]
-        [InlineData(TypeOfFunding.NotFundedByESFA, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(FundModels.EuropeanSocialFund, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(FundModels.Other16To19, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(FundModels.OtherAdult, LearningDeliveryFAMTypeConstants.DAM)]
+        [InlineData(FundModels.NotFundedByESFA, LearningDeliveryFAMTypeConstants.DAM)]
         public void ConditionMet_True(int fundingModel, string famType)
         {
             var testLearningDelivery = new TestLearningDelivery()
@@ -75,8 +75,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills)]
-        [InlineData(TypeOfFunding.CommunityLearning)]
+        [InlineData(FundModels.AdultSkills)]
+        [InlineData(FundModels.CommunityLearning)]
         public void ValidationPasses(int fundingModel)
         {
             var learner = new TestLearner()
@@ -154,12 +154,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017)]
-        [InlineData(TypeOfFunding.EuropeanSocialFund)]
-        [InlineData(TypeOfFunding.Other16To19)]
-        [InlineData(TypeOfFunding.OtherAdult)]
-        [InlineData(TypeOfFunding.NotFundedByESFA)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017)]
+        [InlineData(FundModels.EuropeanSocialFund)]
+        [InlineData(FundModels.Other16To19)]
+        [InlineData(FundModels.OtherAdult)]
+        [InlineData(FundModels.NotFundedByESFA)]
         public void ValidationFails(int fundingModel)
         {
             var learner = new TestLearner()

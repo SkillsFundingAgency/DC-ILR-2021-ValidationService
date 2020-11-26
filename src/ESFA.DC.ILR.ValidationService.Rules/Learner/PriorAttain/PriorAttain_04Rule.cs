@@ -1,8 +1,8 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
 {
@@ -10,12 +10,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
     {
         private readonly int[] _validPriorAttains =
         {
-            TypeOfPriorAttainment.Level4Expired20130731,
-            TypeOfPriorAttainment.Level5AndAboveExpired20130731,
-            TypeOfPriorAttainment.Level4,
-            TypeOfPriorAttainment.Level5,
-            TypeOfPriorAttainment.Level6,
-            TypeOfPriorAttainment.Level7AndAbove
+            PriorAttainments.Level4Expired20130731,
+            PriorAttainments.Level5AndAboveExpired20130731,
+            PriorAttainments.Level4,
+            PriorAttainments.Level5,
+            PriorAttainments.Level6,
+            PriorAttainments.Level7AndAbove
         };
 
         public PriorAttain_04Rule(IValidationErrorHandler validationErrorHandler)

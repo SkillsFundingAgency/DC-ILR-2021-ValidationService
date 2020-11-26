@@ -101,6 +101,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 {
                    LearnDelFAMType = "DAM"
                 },
+                new TestLearningDeliveryFAM()
+                {
+                   LearnDelFAMType = "DAM"
+                },
+                new TestLearningDeliveryFAM()
+                {
+                   LearnDelFAMType = "DAM"
+                },
             };
 
             var testLearner = new TestLearner
@@ -118,7 +126,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
 
             learningDeliveryFAMsQueryServiceMock
                 .Setup(s => s.GetLearningDeliveryFAMsCountByFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.DAM))
-                .Returns(5);
+                .Returns(7);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {

@@ -25,7 +25,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public void Validate(ILearner learner)
         {
             var learningDelivery =
-                learner?.LearningDeliveries?.FirstOrDefault(ld => ld.FundModel == TypeOfFunding.EuropeanSocialFund);
+                learner?.LearningDeliveries?.FirstOrDefault(ld => ld.FundModel == FundModels.EuropeanSocialFund);
 
             if (learningDelivery == null)
             {
@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         {
             var parameters = new List<IErrorMessageParameter>
             {
-                BuildErrorMessageParameter(PropertyNameConstants.FundModel, TypeOfFunding.EuropeanSocialFund),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.EuropeanSocialFund),
                 BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, learner.DateOfBirthNullable)
             };
 

@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 {
     public class DelLocPostCode_14Rule : AbstractRule, IRule<ILearner>
     {
-        private const int FundModel = TypeOfFunding.EuropeanSocialFund;
+        private const int FundModel = FundModels.EuropeanSocialFund;
 
         private readonly IFCSDataService _fcsDataService;
         private readonly IPostcodesDataService _postcodeService;
@@ -43,7 +43,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-
                 var latestLearningStart = _derivedData22.GetLatestLearningStartForESFContract(learningDelivery, learner.LearningDeliveries);
 
                 var localAuthorities = _fcsDataService.GetEligibilityRuleLocalAuthoritiesFor(learningDelivery.ConRefNumber);
@@ -61,8 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
                     && ConditionMetLearnAimRef(learningDelivery.LearnAimRef)
                     && ConditionMetTemporaryPostcode(learningDelivery.DelLocPostCode)
                     && (ConditionMetONSPostcode(latestLearningStart, onsPostCode)
-                        || ConditionMetLocalAuthority(localAuthorities, onsPostCode)
-                    ))
+                        || ConditionMetLocalAuthority(localAuthorities, onsPostCode)))
                 {
                     HandleValidationError(
                         learner.LearnRefNumber,
@@ -82,13 +80,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
             fundModel == FundModel;
 
         public bool ConditionMetLearnAimRef(string learnAimRef) =>
-            !learnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment);
+            !learnAimRef.CaseInsensitiveEquals(AimTypes.References.ESFLearnerStartandAssessment);
 
         public bool ConditionMetTemporaryPostcode(string postcode) =>
             !postcode.CaseInsensitiveEquals(ValidationConstants.TemporaryPostCode);
 
         public bool ConditionMetONSPostcode(DateTime? latestLearningStart, IEnumerable<IONSPostcode> onsPostcodes) =>
-            onsPostcodes != null 
+            onsPostcodes != null
                    && !onsPostcodes.Any(vp => latestLearningStart >= vp.EffectiveFrom
                                              && latestLearningStart <= (vp.EffectiveTo ?? DateTime.MaxValue)
                                              && latestLearningStart < (vp.Termination ?? DateTime.MaxValue));

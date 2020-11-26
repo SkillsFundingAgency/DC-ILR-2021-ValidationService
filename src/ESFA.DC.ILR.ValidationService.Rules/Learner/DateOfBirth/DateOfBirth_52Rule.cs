@@ -1,11 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 {
@@ -56,16 +56,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool ConditionMet(int fundModel, int? progType, int aimType, DateTime learnStartDate, DateTime learnPlanEndDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
             return !Excluded(progType, learningDeliveryFams)
-                   && fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017
+                   && fundModel == FundModels.ApprenticeshipsFrom1May2017
                    && learnStartDate >= _mayFirst2017
                    && _dd07.IsApprenticeship(progType)
-                   && aimType == TypeOfAim.ProgrammeAim
+                   && aimType == AimTypes.ProgrammeAim
                    && _dateTimeQueryService.WholeDaysBetween(learnStartDate, learnPlanEndDate) < 365;
         }
 
         public bool Excluded(int? progType, IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
-            return (progType.HasValue && progType == TypeOfLearningProgramme.ApprenticeshipStandard) ||
+            return (progType.HasValue && progType == ProgTypes.ApprenticeshipStandard) ||
                    _learningDeliveryFamQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.RES);
         }
     }

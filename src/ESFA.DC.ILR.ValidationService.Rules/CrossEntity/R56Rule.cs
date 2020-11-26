@@ -23,15 +23,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             var nonFundedOpenMainAims =
                 objectToValidate.LearningDeliveries
-                    .Where(ld => ld.FundModel == TypeOfFunding.NotFundedByESFA &&
-                                 ld.AimType == TypeOfAim.ProgrammeAim &&
+                    .Where(ld => ld.FundModel == FundModels.NotFundedByESFA &&
+                                 ld.AimType == AimTypes.ProgrammeAim &&
                                  !ld.LearnActEndDateNullable.HasValue).ToList();
 
             foreach (var nonFundedMainAim in nonFundedOpenMainAims)
             {
                 var openFundedComponentAims = objectToValidate.LearningDeliveries.Where(x =>
-                                  x.AimType == TypeOfAim.ComponentAimInAProgramme &&
-                                  x.FundModel != TypeOfFunding.NotFundedByESFA &&
+                                  x.AimType == AimTypes.ComponentAimInAProgramme &&
+                                  x.FundModel != FundModels.NotFundedByESFA &&
                                   x.ProgTypeNullable == nonFundedMainAim.ProgTypeNullable &&
                                   x.FworkCodeNullable == nonFundedMainAim.FworkCodeNullable &&
                                   x.PwayCodeNullable == nonFundedMainAim.PwayCodeNullable &&

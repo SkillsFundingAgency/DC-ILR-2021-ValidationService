@@ -1,28 +1,23 @@
-﻿using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
-using ESFA.DC.ILR.ValidationService.Data.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
+using ESFA.DC.ILR.ValidationService.Data.External.Postcodes.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Interface;
+
 
 namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
 {
-    public class PostcodesDataService :
-        IPostcodesDataService
+    public class PostcodesDataService : IPostcodesDataService
     {
         private readonly IExternalDataCache _externalDataCache;
-
         private readonly IReadOnlyCollection<IONSPostcode> _onsPostcodes;
-
         private readonly IReadOnlyDictionary<string, IReadOnlyCollection<IDevolvedPostcode>> _devolvedPostcodes;
 
         public PostcodesDataService(IExternalDataCache externalDataCache)
         {
-            It.IsNull(externalDataCache)
-                .AsGuard<ArgumentNullException>(nameof(externalDataCache));
-
             _externalDataCache = externalDataCache;
-            _onsPostcodes = _externalDataCache.ONSPostcodes.AsSafeReadOnlyList();
+            _onsPostcodes = _externalDataCache.ONSPostcodes.ToReadOnlyCollection();
             _devolvedPostcodes = _externalDataCache.DevolvedPostcodes;
         }
 
@@ -32,10 +27,17 @@ namespace ESFA.DC.ILR.ValidationService.Data.External.Postcodes
                    && _externalDataCache.Postcodes.Contains(postcode);
         }
 
+        public bool ONSPostcodeExists(string postcode)
+        {
+            return !string.IsNullOrWhiteSpace(postcode)
+                   && _onsPostcodes.Any(x => x.Postcode.CaseInsensitiveEquals(postcode));
+        }
+
         public IReadOnlyCollection<IONSPostcode> GetONSPostcodes(string fromPostcode) =>
-            _onsPostcodes.Where(x => x.Postcode.ComparesWith(fromPostcode)).ToList();
+            _onsPostcodes?.Where(x => x.Postcode.CaseInsensitiveEquals(fromPostcode)).ToArray()
+            ?? Array.Empty<IONSPostcode>();
 
         public IReadOnlyCollection<IDevolvedPostcode> GetDevolvedPostcodes(string fromPostcode) =>
-            _devolvedPostcodes.GetValueOrDefault(fromPostcode, Collection.EmptyAndReadOnly<IDevolvedPostcode>());
+            _devolvedPostcodes.GetValueOrDefault(fromPostcode);
     }
 }

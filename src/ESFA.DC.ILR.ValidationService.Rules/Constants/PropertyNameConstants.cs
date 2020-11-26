@@ -47,6 +47,7 @@
         public const string HEPostcode = "HEPostCode";
         public const string LearnActEndDate = "LearnActEndDate";
         public const string LearnAimRef = "LearnAimRef";
+        public const string LarsLearnAimRefType = "LarsLearnAimRefType";
         public const string LearnDelFAMCode = "LearnDelFAMCode";
         public const string LearnDelFAMDateFrom = "LearnDelFAMDateFrom";
         public const string LearnDelFAMDateTo = "LearnDelFAMDateTo";
@@ -66,6 +67,7 @@
         public const string NETFEE = "NETFEE";
         public const string NINumber = "NINumber";
         public const string OrigLearnStartDate = "OrigLearnStartDate";
+        public const string OtjActHours = "OtjActHours";
         public const string OtherFundAdj = "OtherFundAdj";
         public const string OutCode = "OutCode";
         public const string OutCollDate = "OutCollDate";
@@ -81,7 +83,7 @@
         public const string PCTLDCS = "PCFLDCS";
         public const string PHours = "PHours";
         public const string PlanEEPHours = "PlanEEPHours";
-        public const string PlanLearnHours = "PlanLearnHours";        
+        public const string PlanLearnHours = "PlanLearnHours";
         public const string ProvSpecDelMonOccur = "ProvSpecDelMonOccur";
         public const string PMUKPRN = "PMUKPRN";
         public const string Postcode = "Postcode";
@@ -112,5 +114,7 @@
         public const string WorkPlaceMode = "WorkPlaceMode";
 
         public const string DerivedData_06 = "DD06";
+
+        public const string LarsCategoryRef = "LarsCategoryRef";
     }
 }

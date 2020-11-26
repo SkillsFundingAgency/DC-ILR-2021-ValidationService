@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
     public class R100Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IEnumerable<string> _assessmentPriceFinancialRecordKeys =
-            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-            {
-                ApprenticeshipFinancialRecord.ResidualAssessmentPrice,
-                ApprenticeshipFinancialRecord.TotalAssessmentPrice,
-            };
+        private readonly HashSet<int> _tnpCodes = new HashSet<int> { 2, 4 };
+        private readonly ILearningDeliveryAppFinRecordQueryService _appFinRecordQueryService;
 
-        public R100Rule(IValidationErrorHandler validationErrorHandler)
+        public R100Rule(IValidationErrorHandler validationErrorHandler, ILearningDeliveryAppFinRecordQueryService appFinRecordQueryService)
             : base(validationErrorHandler, RuleNameConstants.R100)
         {
+            _appFinRecordQueryService = appFinRecordQueryService;
         }
 
         public R100Rule()
@@ -38,7 +35,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             {
                 HandleValidationError(
                     learner.LearnRefNumber,
-                    learningDelivery.AimSeqNumber);
+                    learningDelivery.AimSeqNumber,
+                    BuildErrorMessageParameters(
+                        learningDelivery.AimType,
+                        learningDelivery.FundModel,
+                        learningDelivery.ProgTypeNullable,
+                        learningDelivery.CompStatus));
             }
         }
 
@@ -51,30 +53,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public virtual bool IsNonFundedApprenticeshipStandard(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == TypeOfFunding.NotFundedByESFA
-                   && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard;
+            return learningDelivery.FundModel == FundModels.NotFundedByESFA
+                   && learningDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard;
         }
 
         public virtual bool IsCompletedApprenticeshipStandardAim(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.ApprenticeshipStandard
-                   && learningDelivery.AimType == TypeOfAim.ProgrammeAim
+            return learningDelivery.ProgTypeNullable == ProgTypes.ApprenticeshipStandard
+                   && learningDelivery.AimType == AimTypes.ProgrammeAim
                    && learningDelivery.CompStatus == CompletionState.HasCompleted;
-        }
-
-        public bool IsAssessmentPrice(IAppFinRecord appFinRecord)
-        {
-            var compoundAppFinRecordKey = appFinRecord.AFinType + appFinRecord.AFinCode;
-
-            return _assessmentPriceFinancialRecordKeys.Contains(compoundAppFinRecordKey);
         }
 
         public virtual bool HasAssessmentPrice(ILearningDelivery learningDelivery)
         {
-            return learningDelivery
-                       .AppFinRecords?
-                       .Any(IsAssessmentPrice)
-                ?? false;
+            return _appFinRecordQueryService.HasAnyLearningDeliveryAFinCodesForType(
+                learningDelivery?.AppFinRecords,
+                ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice,
+                _tnpCodes);
+        }
+
+        public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int aimType, int fundModel, int? progType, int compStatus)
+        {
+            return new[]
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.AimType, aimType),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel),
+                BuildErrorMessageParameter(PropertyNameConstants.ProgType, progType),
+                BuildErrorMessageParameter(PropertyNameConstants.CompStatus, compStatus)
+            };
         }
     }
 }

@@ -2,7 +2,6 @@
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.AFinType;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -10,138 +9,51 @@ using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
 {
-    /// <summary>
-    /// from version 0.7.1 validation spread sheet
-    /// </summary>
     public class AFinType_13RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            Assert.Throws<ArgumentNullException>(() => new AFinType_13Rule(null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("AFinType_13", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(AFinType_13Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// Condition met with null learning delivery returns true.
-        /// </summary>
         [Fact]
         public void ConditionMetWithNullLearningDeliveryReturnsTrue()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.ConditionMet(null, null);
 
-            // assert
             Assert.True(result);
         }
 
-        /// <summary>
-        /// Condition met with learning delivery and null financial record returns true.
-        /// </summary>
         [Fact]
         public void ConditionMetWithLearningDeliveryAndNullFinancialRecordReturnsTrue()
         {
-            // arrange
             var sut = NewRule();
             var mock = new Mock<ILearningDelivery>();
 
-            // act
             var result = sut.ConditionMet(mock.Object, null);
 
-            // assert
             Assert.True(result);
         }
 
-        /// <summary>
-        /// Condition met with learning delivery and financial record with null date returns false.
-        /// </summary>
         [Fact]
         public void ConditionMetWithLearningDeliveryAndFinancialRecordWithNullDateReturnsFalse()
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             var mockFinRec = new Mock<IAppFinRecord>();
 
-            // act
             var result = sut.ConditionMet(mockDelivery.Object, mockFinRec.Object);
 
-            // assert
             Assert.False(result);
         }
 
-        /// <summary>
-        /// Condition met with learning delivery and matching financial record returns true.
-        /// </summary>
-        /// <param name="learnDate">The learn date.</param>
-        /// <param name="finDate">The fin date.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData("2016-04-01", "2016-04-01", true)]
         [InlineData("2016-04-01", "2016-04-02", false)]
@@ -151,7 +63,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         [InlineData("2016-05-02", "2016-05-01", false)]
         public void ConditionMetWithLearningDeliveryAndFinancialRecordReturnsExpectation(string learnDate, string finDate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
@@ -163,21 +74,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .SetupGet(x => x.AFinDate)
                 .Returns(DateTime.Parse(finDate));
 
-            // act
             var result = sut.ConditionMet(mockDelivery.Object, mockFinRec.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Validates with null apprenctce financial records does not raise validation message.
-        /// </summary>
-        /// <param name="aFinType">The apprenticeship financial type.</param>
         [Fact]
         public void ValidateWithNullAppFinRecordsDoesNotRaiseValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
             const string aFinType = "TNP";
             var aFinDate = string.Empty;
@@ -189,12 +93,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(learnStartDate);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -203,7 +107,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             mockHandler.Setup(x => x.Handle(
@@ -229,20 +133,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
 
             var sut = new AFinType_13Rule(mockHandler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             mockHandler.VerifyAll();
         }
 
-        /// <summary>
-        /// Validate with empty apprenctce financial records does not raise validation message.
-        /// </summary>
         [Fact]
         public void ValidateWithEmptyAppFinRecordsDoesNotRaiseValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
             const string aFinType = "TNP";
             var aFinDate = string.Empty;
@@ -254,16 +152,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                .Returns(learnStartDate);
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
 
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
-                .Returns(Collection.EmptyAndReadOnly<IAppFinRecord>());
+                .Returns(new List<IAppFinRecord>());
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -272,7 +170,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             mockHandler.Setup(x => x.Handle(
@@ -298,19 +196,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
 
             var sut = new AFinType_13Rule(mockHandler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             mockHandler.VerifyAll();
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="learnDate">The learn date.</param>
-        /// <param name="finDate">The fin date.</param>
-        /// <param name="aFinType">The apprenticeship financial type.</param>
         [Theory]
         [InlineData("2016-04-01", "2016-04-02", ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice)]
         [InlineData("2016-04-01", "2016-03-31", "TNP")]
@@ -318,7 +208,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
         [InlineData("2016-05-02", "2016-05-01", "tnp")]
         public void InvalidItemRaisesValidationMessage(string learnDate, string finDate, string aFinType)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
             var aFinDate = string.Empty;
             var learnStartDate = DateTime.Parse(learnDate);
@@ -331,7 +220,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .SetupGet(x => x.AFinDate)
                 .Returns(DateTime.Parse(finDate));
 
-            var records = Collection.Empty<IAppFinRecord>();
+            var records = new List<IAppFinRecord>();
             records.Add(mockFinRec.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -346,9 +235,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(learnStartDate);
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
-                .Returns(records.AsSafeReadOnlyList());
+                .Returns(records);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -357,7 +246,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             mockHandler.Setup(x => x.Handle(
@@ -383,25 +272,16 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
 
             var sut = new AFinType_13Rule(mockHandler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             mockHandler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise a validation message.
-        /// </summary>
-        /// <param name="learnDate">The learn date.</param>
-        /// <param name="finDate">The fin date.</param>
-        /// <param name="aFinType">The apprenticeship financial type.</param>
         [Theory]
         [InlineData("2016-04-01", "2016-04-01", ApprenticeshipFinancialRecord.Types.TotalNegotiatedPrice)]
         [InlineData("2016-05-01", "2016-05-01", "tnp")]
         public void ValidItemDoesNotRaiseAValidationMessage(string learnDate, string finDate, string aFinType)
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var mockFinRec = new Mock<IAppFinRecord>();
@@ -412,24 +292,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .SetupGet(x => x.AFinDate)
                 .Returns(DateTime.Parse(finDate));
 
-            var records = Collection.Empty<IAppFinRecord>();
+            var records = new List<IAppFinRecord>();
             records.Add(mockFinRec.Object);
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.AimType)
-                .Returns(TypeOfAim.ProgrammeAim);
+                .Returns(AimTypes.ProgrammeAim);
             mockDelivery
                 .SetupGet(x => x.FundModel)
-                .Returns(TypeOfFunding.ApprenticeshipsFrom1May2017);
+                .Returns(FundModels.ApprenticeshipsFrom1May2017);
             mockDelivery
                 .SetupGet(x => x.LearnStartDate)
                 .Returns(DateTime.Parse(learnDate));
             mockDelivery
                 .SetupGet(x => x.AppFinRecords)
-                .Returns(records.AsSafeReadOnlyList());
+                .Returns(records);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -438,23 +318,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.AFinType
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
             var sut = new AFinType_13Rule(mockHandler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             mockHandler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public AFinType_13Rule NewRule()
         {
             var mock = new Mock<IValidationErrorHandler>();

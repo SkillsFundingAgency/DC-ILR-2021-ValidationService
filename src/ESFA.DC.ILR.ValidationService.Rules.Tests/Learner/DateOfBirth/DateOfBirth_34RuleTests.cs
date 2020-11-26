@@ -46,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships
                     }
                 }
             };
@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -82,7 +82,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships
                     }
                 }
             };
@@ -101,7 +101,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -118,7 +118,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.AdultSkills
+                        FundModel = FundModels.AdultSkills
                     }
                 }
             };
@@ -137,7 +137,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -158,7 +158,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships
                     }
                 }
             };
@@ -200,7 +200,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships
                     }
                 }
             };
@@ -219,7 +219,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
             dateTimeServiceMock
-                .Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
                 .Returns(20);
 
             var testLearner = new TestLearner
@@ -236,7 +236,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships
                     }
                 }
             };

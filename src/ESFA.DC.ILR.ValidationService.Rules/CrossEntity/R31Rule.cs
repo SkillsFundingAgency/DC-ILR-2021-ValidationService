@@ -26,11 +26,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
             foreach (var group in groups)
             {
-                if (group.Any(d => d.AimType == TypeOfAim.ProgrammeAim && d.LearnActEndDateNullable == null) &&
-                    group.All(d => d.AimType != TypeOfAim.ComponentAimInAProgramme) &&
-                    group.All(d => d.AimType != TypeOfAim.CoreAim16To19ExcludingApprenticeships))
+                if (group.Any(d => d.AimType == AimTypes.ProgrammeAim && d.LearnActEndDateNullable == null) &&
+                    group.All(d => d.AimType != AimTypes.ComponentAimInAProgramme) &&
+                    group.All(d => d.AimType != AimTypes.CoreAim16To19ExcludingApprenticeships))
                 {
-                    var delivery = group.First(d => d.AimType == TypeOfAim.ProgrammeAim && d.LearnActEndDateNullable == null);
+                    var delivery = group.First(d => d.AimType == AimTypes.ProgrammeAim && d.LearnActEndDateNullable == null);
                     HandleValidationError(
                         objectToValidate.LearnRefNumber,
                         delivery.AimSeqNumber,
@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.ProgrammeAim),
+                BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.ProgrammeAim),
                 BuildErrorMessageParameter(PropertyNameConstants.ProgType, delivery.ProgTypeNullable.ToString()),
                 BuildErrorMessageParameter(PropertyNameConstants.FworkCode, delivery.FworkCodeNullable.ToString()),
                 BuildErrorMessageParameter(PropertyNameConstants.PwayCode, delivery.PwayCodeNullable.ToString()),

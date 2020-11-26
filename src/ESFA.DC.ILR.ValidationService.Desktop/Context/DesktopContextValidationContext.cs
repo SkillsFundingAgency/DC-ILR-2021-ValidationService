@@ -24,6 +24,8 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Context
 
         public string IlrReferenceDataKey => _desktopContext.KeyValuePairs[ILRContextKeys.IlrReferenceData].ToString();
 
+        public string LearnerReferenceDataKey => _desktopContext.KeyValuePairs[ILRContextKeys.LearnerReferenceData].ToString();
+
         public string InvalidLearnRefNumbersKey => _desktopContext.KeyValuePairs[ILRContextKeys.InvalidLearnRefNumbers].ToString();
 
         public string ValidLearnRefNumbersKey => _desktopContext.KeyValuePairs[ILRContextKeys.ValidLearnRefNumbers].ToString();

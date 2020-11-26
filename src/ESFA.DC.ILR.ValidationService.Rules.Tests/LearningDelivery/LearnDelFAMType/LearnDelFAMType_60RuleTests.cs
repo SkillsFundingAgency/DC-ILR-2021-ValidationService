@@ -1,23 +1,22 @@
-﻿using ESFA.DC.ILR.Tests.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.Tests.Model;
+using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
 using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
-using System.Globalization;
+using ESFA.DC.ILR.ValidationService.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
+using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
+using FluentAssertions;
+using Moq;
+using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAMType
 {
-    using ESFA.DC.ILR.Model.Interface;
-    using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
-    using ESFA.DC.ILR.ValidationService.Interface;
-    using ESFA.DC.ILR.ValidationService.Rules.Constants;
-    using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-    using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType;
-    using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-    using ESFA.DC.ILR.ValidationService.Utility;
-    using FluentAssertions;
-    using Moq;
-    using System;
-    using Xunit;
-
     public class LearnDelFAMType_60RuleTests
     {
         [Fact]
@@ -48,45 +47,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             // arrange
             var mockItem = new Mock<ILearningDelivery>();
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var organisationDataService = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             mockDDRule07
                 .Setup(x => x.IsApprenticeship(null))
                 .Returns(expectation);
 
-            var sut = new LearnDelFAMType_60Rule(
-                handler.Object,
-                service.Object,
-                mockDDRule07.Object,
-                mockDDRule21.Object,
-                mockDDRule28.Object,
-                mockDDRule29.Object,
-                organisationDataService.Object,
-                fileDataService.Object,
-                dateTimeQueryService.Object);
+            var sut = NewRule(dd07: mockDDRule07.Object);
 
             // act
             var result = sut.IsApprenticeship(mockItem.Object);
 
             // assert
             Assert.Equal(expectation, result);
-            handler.VerifyAll();
-            service.VerifyAll();
             mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
-            mockDDRule29.VerifyAll();
-            organisationDataService.VerifyAll();
-            fileDataService.VerifyAll();
-            dateTimeQueryService.VerifyAll();
         }
 
         [Theory]
@@ -97,43 +71,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             // arrange
             var mockItem = new Mock<ILearningDelivery>();
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
-            var organisationDataService = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
-
             mockDDRule29
                 .Setup(x => x.IsInflexibleElementOfTrainingAimLearningDelivery(mockItem.Object))
                 .Returns(expectation);
 
-            var sut = new LearnDelFAMType_60Rule(
-                handler.Object,
-                service.Object,
-                mockDDRule07.Object,
-                mockDDRule21.Object,
-                mockDDRule28.Object,
-                mockDDRule29.Object,
-                organisationDataService.Object,
-                fileDataService.Object,
-                dateTimeQueryService.Object);
+            var sut = NewRule(dd29: mockDDRule29.Object);
 
             // act
             var result = sut.IsInflexibleElementOfTrainingAim(mockItem.Object);
 
             // assert
             Assert.Equal(expectation, result);
-            handler.VerifyAll();
-            service.VerifyAll();
-            mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
-            dateTimeQueryService.VerifyAll();
         }
 
         [Theory]
@@ -191,43 +141,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var mockItem = new Mock<ILearner>();
             var delivery = new Mock<ILearningDelivery>();
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
-            var organisationDataService = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
-
             mockDDRule21
                 .Setup(x => x.IsAdultFundedUnemployedWithOtherStateBenefits(delivery.Object, mockItem.Object))
                 .Returns(expectation);
 
-            var sut = new LearnDelFAMType_60Rule(
-                handler.Object,
-                service.Object,
-                mockDDRule07.Object,
-                mockDDRule21.Object,
-                mockDDRule28.Object,
-                mockDDRule29.Object,
-                organisationDataService.Object,
-                fileDataService.Object,
-                dateTimeQueryService.Object);
+            var sut = NewRule(dd21: mockDDRule21.Object);
 
             // act
             var result = sut.IsAdultFundedUnemployedWithOtherStateBenefits(delivery.Object, mockItem.Object);
 
             // assert
             Assert.Equal(expectation, result);
-            handler.VerifyAll();
-            service.VerifyAll();
-            mockDDRule07.VerifyAll();
             mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
-            mockDDRule29.VerifyAll();
-            dateTimeQueryService.VerifyAll();
         }
 
         [Theory]
@@ -239,43 +165,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             var delivery = new Mock<ILearningDelivery>();
             var learner = new Mock<ILearner>();
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
             var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
-            var organisationDataService = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
-
             mockDDRule28
                 .Setup(x => x.IsAdultFundedUnemployedWithBenefits(delivery.Object, learner.Object))
                 .Returns(expectation);
 
-            var sut = new LearnDelFAMType_60Rule(
-                handler.Object,
-                service.Object,
-                mockDDRule07.Object,
-                mockDDRule21.Object,
-                mockDDRule28.Object,
-                mockDDRule29.Object,
-                organisationDataService.Object,
-                fileDataService.Object,
-                dateTimeQueryService.Object);
+            var sut = NewRule(dd28: mockDDRule28.Object);
 
             // act
             var result = sut.IsAdultFundedUnemployedWithBenefits(delivery.Object, learner.Object);
 
             // assert
             Assert.Equal(expectation, result);
-            handler.VerifyAll();
-            service.VerifyAll();
-            mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
             mockDDRule28.VerifyAll();
-            mockDDRule29.VerifyAll();
-            dateTimeQueryService.VerifyAll();
         }
 
         [Theory]
@@ -300,39 +202,39 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData(TypeOfLARSBasicSkill.CertificateESOLS4L, false)]
-        [InlineData(TypeOfLARSBasicSkill.CertificateESOLS4LSpeakListen, false)]
-        [InlineData(TypeOfLARSBasicSkill.Certificate_AdultLiteracy, true)]
-        [InlineData(TypeOfLARSBasicSkill.Certificate_AdultNumeracy, true)]
-        [InlineData(TypeOfLARSBasicSkill.FreeStandingMathematicsQualification, true)]
-        [InlineData(TypeOfLARSBasicSkill.FunctionalSkillsEnglish, true)]
-        [InlineData(TypeOfLARSBasicSkill.FunctionalSkillsMathematics, true)]
-        [InlineData(TypeOfLARSBasicSkill.GCSE_EnglishLanguage, true)]
-        [InlineData(TypeOfLARSBasicSkill.GCSE_Mathematics, true)]
-        [InlineData(TypeOfLARSBasicSkill.InternationalGCSEEnglishLanguage, true)]
-        [InlineData(TypeOfLARSBasicSkill.InternationalGCSEMathematics, true)]
-        [InlineData(TypeOfLARSBasicSkill.KeySkill_ApplicationOfNumbers, true)]
-        [InlineData(TypeOfLARSBasicSkill.KeySkill_Communication, true)]
-        [InlineData(TypeOfLARSBasicSkill.NonNQF_QCFS4LESOL, false)]
-        [InlineData(TypeOfLARSBasicSkill.NonNQF_QCFS4LLiteracy, true)]
-        [InlineData(TypeOfLARSBasicSkill.NonNQF_QCFS4LNumeracy, true)]
-        [InlineData(TypeOfLARSBasicSkill.NotApplicable, false)]
-        [InlineData(TypeOfLARSBasicSkill.OtherS4LNotLiteracyNumeracyOrESOL, false)]
-        [InlineData(TypeOfLARSBasicSkill.QCFBasicSkillsEnglishLanguage, true)]
-        [InlineData(TypeOfLARSBasicSkill.QCFBasicSkillsMathematics, true)]
-        [InlineData(TypeOfLARSBasicSkill.QCFCertificateESOL, false)]
-        [InlineData(TypeOfLARSBasicSkill.QCFESOLReading, false)]
-        [InlineData(TypeOfLARSBasicSkill.QCFESOLSpeakListen, false)]
-        [InlineData(TypeOfLARSBasicSkill.QCFESOLWriting, false)]
-        [InlineData(TypeOfLARSBasicSkill.UnitESOLReading, false)]
-        [InlineData(TypeOfLARSBasicSkill.UnitESOLSpeakListen, false)]
-        [InlineData(TypeOfLARSBasicSkill.UnitESOLWriting, false)]
-        [InlineData(TypeOfLARSBasicSkill.UnitQCFBasicSkillsEnglishLanguage, true)]
-        [InlineData(TypeOfLARSBasicSkill.UnitQCFBasicSkillsMathematics, true)]
-        [InlineData(TypeOfLARSBasicSkill.UnitsOfTheCertificate_AdultLiteracy, true)]
-        [InlineData(TypeOfLARSBasicSkill.UnitsOfTheCertificate_AdultNumeracy, true)]
-        [InlineData(TypeOfLARSBasicSkill.UnitsOfTheCertificate_ESOLS4L, false)]
-        [InlineData(TypeOfLARSBasicSkill.Unknown, false)]
+        [InlineData(LARSConstants.BasicSkills.CertificateESOLS4L, false)]
+        [InlineData(LARSConstants.BasicSkills.CertificateESOLS4LSpeakListen, false)]
+        [InlineData(LARSConstants.BasicSkills.Certificate_AdultLiteracy, true)]
+        [InlineData(LARSConstants.BasicSkills.Certificate_AdultNumeracy, true)]
+        [InlineData(LARSConstants.BasicSkills.FreeStandingMathematicsQualification, true)]
+        [InlineData(LARSConstants.BasicSkills.FunctionalSkillsEnglish, true)]
+        [InlineData(LARSConstants.BasicSkills.FunctionalSkillsMathematics, true)]
+        [InlineData(LARSConstants.BasicSkills.GCSE_EnglishLanguage, true)]
+        [InlineData(LARSConstants.BasicSkills.GCSE_Mathematics, true)]
+        [InlineData(LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage, true)]
+        [InlineData(LARSConstants.BasicSkills.InternationalGCSEMathematics, true)]
+        [InlineData(LARSConstants.BasicSkills.KeySkill_ApplicationOfNumbers, true)]
+        [InlineData(LARSConstants.BasicSkills.KeySkill_Communication, true)]
+        [InlineData(LARSConstants.BasicSkills.NonNQF_QCFS4LESOL, false)]
+        [InlineData(LARSConstants.BasicSkills.NonNQF_QCFS4LLiteracy, true)]
+        [InlineData(LARSConstants.BasicSkills.NonNQF_QCFS4LNumeracy, true)]
+        [InlineData(LARSConstants.BasicSkills.NotApplicable, false)]
+        [InlineData(LARSConstants.BasicSkills.OtherS4LNotLiteracyNumeracyOrESOL, false)]
+        [InlineData(LARSConstants.BasicSkills.QCFBasicSkillsEnglishLanguage, true)]
+        [InlineData(LARSConstants.BasicSkills.QCFBasicSkillsMathematics, true)]
+        [InlineData(LARSConstants.BasicSkills.QCFCertificateESOL, false)]
+        [InlineData(LARSConstants.BasicSkills.QCFESOLReading, false)]
+        [InlineData(LARSConstants.BasicSkills.QCFESOLSpeakListen, false)]
+        [InlineData(LARSConstants.BasicSkills.QCFESOLWriting, false)]
+        [InlineData(LARSConstants.BasicSkills.UnitESOLReading, false)]
+        [InlineData(LARSConstants.BasicSkills.UnitESOLSpeakListen, false)]
+        [InlineData(LARSConstants.BasicSkills.UnitESOLWriting, false)]
+        [InlineData(LARSConstants.BasicSkills.UnitQCFBasicSkillsEnglishLanguage, true)]
+        [InlineData(LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics, true)]
+        [InlineData(LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultLiteracy, true)]
+        [InlineData(LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultNumeracy, true)]
+        [InlineData(LARSConstants.BasicSkills.UnitsOfTheCertificate_ESOLS4L, false)]
+        [InlineData(LARSConstants.BasicSkills.Unknown, false)]
         [InlineData(null, false)]
         public void IsBasicSkillsLearnerMeetsExpectation(int? candidate, bool expectation)
         {
@@ -377,50 +279,31 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         }
 
         [Theory]
-        [InlineData("USDC", true)]
-        [InlineData("abcd", false)]
-        public void IsLegalOrgTypeMatchForUkprnMeetsExpectation(string candidate, bool expectation)
+        [InlineData(123456, true)]
+        [InlineData(67890, false)]
+        public void IsLegalOrgTypeMatchForUkprnMeetsExpectation(int candidate, bool expectation)
         {
             // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
             var organisationDataService = new Mock<IOrganisationDataService>();
             var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            fileDataService.Setup(x => x.UKPRN()).Returns(123456);
+            fileDataService.Setup(x => x.UKPRN()).Returns(candidate);
 
             organisationDataService
-                .Setup(x => x.LegalOrgTypeMatchForUkprn(Moq.It.IsAny<long>(), candidate))
+                .Setup(x => x.LegalOrgTypeMatchForUkprn(fileDataService.Object.UKPRN(), "USDC"))
                 .Returns(expectation);
 
-            var sut = new LearnDelFAMType_60Rule(
-                handler.Object,
-                service.Object,
-                mockDDRule07.Object,
-                mockDDRule21.Object,
-                mockDDRule28.Object,
-                mockDDRule29.Object,
-                organisationDataService.Object,
-                fileDataService.Object,
-                dateTimeQueryService.Object);
+            var sut = NewRule(
+                organisationDataService: organisationDataService.Object,
+                fileDataService: fileDataService.Object);
 
             // act
             var result = sut.IsLegalOrgTypeMatchForUkprn();
 
             // assert
             Assert.Equal(expectation, result);
-            handler.VerifyAll();
-            service.VerifyAll();
-            mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
-            mockDDRule29.VerifyAll();
-            dateTimeQueryService.VerifyAll();
+            organisationDataService.VerifyAll();
+            fileDataService.VerifyAll();
         }
 
         [Theory]
@@ -431,24 +314,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         public void IsViableStartMeetsExpectation(string candidate, bool expectation)
         {
             // arrange
-            var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.LearnStartDate)
                 .Returns(DateTime.Parse(candidate));
+            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQueryService
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, Moq.It.IsAny<DateTime>(), Moq.It.IsAny<DateTime>(), true))
+                .Returns(expectation);
 
             // act
-            var result = sut.IsViableStart(mockDelivery.Object);
+            var result = NewRule(dateTimeQueryService: dateTimeQueryService.Object).IsViableStart(mockDelivery.Object);
 
             // assert
             Assert.Equal(expectation, result);
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.AdultSkills, true)]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships, false)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017, false)]
-        [InlineData(TypeOfFunding.CommunityLearning, false)]
+        [InlineData(FundModels.AdultSkills, true)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships, false)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017, false)]
+        [InlineData(FundModels.CommunityLearning, false)]
         public void IsAdultFundingMeetsExpectation(int candidate, bool expectation)
         {
             // arrange
@@ -491,64 +377,31 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnStartDate);
 
             // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var organisationDataService = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
-            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
             var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             dateTimeQueryService
                 .Setup(x => x.YearsBetween(birthDate, learnStartDate))
                 .Returns(yearsOfAge);
 
-            var sut = new LearnDelFAMType_60Rule(
-                handler.Object,
-                service.Object,
-                mockDDRule07.Object,
-                mockDDRule21.Object,
-                mockDDRule28.Object,
-                mockDDRule29.Object,
-                organisationDataService.Object,
-                fileDataService.Object,
-                dateTimeQueryService.Object);
+            var sut = NewRule(dateTimeQueryService: dateTimeQueryService.Object);
 
             // act
             var result = sut.IsTargetAgeGroup(mockLearner.Object, mockDelivery.Object);
 
             // assert
             Assert.Equal(expectation, result);
-            handler.VerifyAll();
-            service.VerifyAll();
-            mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
-            mockDDRule29.VerifyAll();
-            organisationDataService.VerifyAll();
-            fileDataService.VerifyAll();
             dateTimeQueryService.VerifyAll();
         }
 
         [Theory]
-        [InlineData(LARSNotionalNVQLevelV2.Level2, true)]
-        [InlineData(LARSNotionalNVQLevelV2.EntryLevel, true)]
-        [InlineData(LARSNotionalNVQLevelV2.Level1, true)]
-        [InlineData(LARSNotionalNVQLevelV2.HigherLevel, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level2, true)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.EntryLevel, true)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level1, true)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.HigherLevel, false)]
         public void IsEarlyStageNVQMeetsExpectation(string candidate, bool expectation)
         {
             // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var larsDataService = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
-            var organisationDataService = new Mock<IOrganisationDataService>();
-            var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
             var mockItem = new Mock<ILARSLearningDelivery>();
 
             mockItem.SetupGet(y => y.NotionalNVQLevelv2).Returns(candidate);
@@ -556,29 +409,35 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.GetDeliveryFor(Moq.It.IsAny<string>()))
                 .Returns(mockItem.Object);
 
-            var sut = new LearnDelFAMType_60Rule(
-                handler.Object,
-                larsDataService.Object,
-                mockDDRule07.Object,
-                mockDDRule21.Object,
-                mockDDRule28.Object,
-                mockDDRule29.Object,
-                organisationDataService.Object,
-                fileDataService.Object,
-                dateTimeQueryService.Object);
+            var sut = NewRule(larsDataService: larsDataService.Object);
 
             // act
             var result = sut.IsEarlyStageNVQ(new TestLearningDelivery());
 
             // assert
             Assert.Equal(expectation, result);
-            handler.VerifyAll();
             larsDataService.VerifyAll();
-            mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
-            mockDDRule29.VerifyAll();
-            dateTimeQueryService.VerifyAll();
+        }
+
+        [Fact]
+        public void IsEarlyStageNVQMeetsExpectation_NullLarsDelivery()
+        {
+            var larsDataService = new Mock<ILARSDataService>(MockBehavior.Strict);
+            var mockItem = new Mock<ILARSLearningDelivery>();
+
+            mockItem.SetupGet(y => y.NotionalNVQLevelv2).Returns(LARSConstants.NotionalNVQLevelV2Strings.Level2);
+            larsDataService
+                .Setup(x => x.GetDeliveryFor(Moq.It.IsAny<string>()))
+                .Returns((ILARSLearningDelivery)null);
+
+            var sut = NewRule(larsDataService: larsDataService.Object);
+
+            // act
+            var result = sut.IsEarlyStageNVQ(new TestLearningDelivery());
+
+            // assert
+            Assert.Equal(false, result);
+            larsDataService.VerifyAll();
         }
 
         [Theory]
@@ -611,43 +470,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             // arrange
             var mockItem = new Mock<ILearningDelivery>();
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var mockDDRule07 = new Mock<IDerivedData_07Rule>();
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>();
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>();
             var mockDDRule29 = new Mock<IDerivedData_29Rule>();
-            var organisationDataService = new Mock<IOrganisationDataService>();
-            var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
-
             mockDDRule29
                 .Setup(x => x.IsInflexibleElementOfTrainingAimLearningDelivery(mockItem.Object))
                 .Returns(true);
 
-            var sut = new LearnDelFAMType_60Rule(
-                handler.Object,
-                service.Object,
-                mockDDRule07.Object,
-                mockDDRule21.Object,
-                mockDDRule28.Object,
-                mockDDRule29.Object,
-                organisationDataService.Object,
-                fileDataService.Object,
-                dateTimeQueryService.Object);
+            var sut = NewRule(
+                dd07: mockDDRule07.Object,
+                dd29: mockDDRule29.Object);
 
             // act
             var result = sut.IsExcluded(mockItem.Object);
 
             // assert
             Assert.True(result);
-            handler.VerifyAll();
-            service.VerifyAll();
-            mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
             mockDDRule29.VerifyAll();
-            dateTimeQueryService.VerifyAll();
         }
 
         [Fact]
@@ -660,46 +498,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.ProgTypeNullable)
                 .Returns(progType);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            deliveries.Add(mockDel.Object);
+            var deliveries = new List<ILearningDelivery>
+            {
+                mockDel.Object
+            };
 
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             var mockDDRule07 = new Mock<IDerivedData_07Rule>();
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>();
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>();
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>();
-            var organisationDataService = new Mock<IOrganisationDataService>();
-            var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
             mockDDRule07
                 .Setup(x => x.IsApprenticeship(progType))
                 .Returns(true);
 
-            var sut = new LearnDelFAMType_60Rule(
-                handler.Object,
-                service.Object,
-                mockDDRule07.Object,
-                mockDDRule21.Object,
-                mockDDRule28.Object,
-                mockDDRule29.Object,
-                organisationDataService.Object,
-                fileDataService.Object,
-                dateTimeQueryService.Object);
+            var sut = NewRule(dd07: mockDDRule07.Object);
 
             // act
             var result = sut.IsExcluded(mockDel.Object);
 
             // assert
             Assert.True(result);
-            handler.VerifyAll();
-            service.VerifyAll();
             mockDDRule07.VerifyAll();
-            mockDDRule21.VerifyAll();
-            mockDDRule28.VerifyAll();
-            mockDDRule29.VerifyAll();
-            dateTimeQueryService.VerifyAll();
         }
 
         [Fact]
@@ -722,8 +539,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.LearnDelFAMCode)
                 .Returns("1");
 
-            var fams = Collection.Empty<ILearningDeliveryFAM>();
-            fams.Add(mockFAM.Object);
+            var fams = new List<ILearningDeliveryFAM>
+            {
+                mockFAM.Object
+            };
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
@@ -737,13 +556,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnStartDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryFAMs)
-                .Returns(fams.AsSafeReadOnlyList());
+                .Returns(fams);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
+            var deliveries = new List<ILearningDelivery>
+            {
+                mockDelivery.Object
+            };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -754,7 +575,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(dateOfBirth);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
             validationErrorHandlerMock
@@ -764,7 +585,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, "1"))
                 .Verifiable();
             validationErrorHandlerMock
-                .Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, TypeOfFunding.AdultSkills))
+                .Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.AdultSkills))
                 .Verifiable();
             validationErrorHandlerMock
                 .Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learnStartDate.ToString("d", requiredCulture)))
@@ -779,10 +600,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                .Returns(learnAimRef);
             mockCat
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.LicenseToPractice);
+                .Returns(LARSConstants.Categories.LicenseToPractice);
 
-            var larsCats = Collection.Empty<ILARSLearningCategory>();
-            larsCats.Add(mockCat.Object);
+            var larsCats = new List<ILARSLearningCategory>
+            {
+                mockCat.Object
+            };
 
             var mockLARSDel = new Mock<ILARSLearningDelivery>();
             mockLARSDel
@@ -790,10 +613,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockLARSDel
                 .SetupGet(x => x.NotionalNVQLevelv2)
-                .Returns(LARSNotionalNVQLevelV2.Level2);
+                .Returns(LARSConstants.NotionalNVQLevelV2Strings.Level2);
             mockLARSDel
                 .SetupGet(x => x.Categories)
-                .Returns(larsCats.AsSafeReadOnlyList());
+                .Returns(larsCats);
 
             var mockLARSValidity = new Mock<ILARSLearningDeliveryValidity>();
             mockLARSValidity
@@ -801,13 +624,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockLARSValidity
                 .SetupGet(x => x.ValidityCategory)
-                .Returns(TypeOfLARSValidity.CommunityLearning);
+                .Returns(LARSConstants.Validities.CommunityLearning);
             mockLARSValidity
                 .SetupGet(x => x.LastNewStartDate)
                 .Returns(new DateTime(2018, 08, 01));
 
-            var larsValidities = Collection.Empty<ILARSLearningDeliveryValidity>();
-            larsValidities.Add(mockLARSValidity.Object);
+            var larsValidities = new List<ILARSLearningDeliveryValidity>
+            {
+                mockLARSValidity.Object
+            };
 
             var mockLARSAnnualValues = new Mock<ILARSAnnualValue>();
             mockLARSAnnualValues
@@ -820,8 +645,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.BasicSkills)
                 .Returns(1);
 
-            var larsAnnualValues = Collection.Empty<ILARSAnnualValue>();
-            larsAnnualValues.Add(mockLARSAnnualValues.Object);
+            var larsAnnualValues = new List<ILARSAnnualValue>
+            {
+                mockLARSAnnualValues.Object
+            };
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
@@ -829,10 +656,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(mockLARSDel.Object);
             service
                 .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities.AsSafeReadOnlyList());
+                .Returns(larsValidities);
             service
                 .Setup(x => x.GetAnnualValuesFor(learnAimRef))
-                .Returns(larsAnnualValues.AsSafeReadOnlyList());
+                .Returns(larsAnnualValues);
+            service
+                .Setup(x => x.IsCurrentAndNotWithdrawn(mockLARSValidity.Object, mockDelivery.Object.LearnStartDate, null))
+                .Returns(true);
 
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             mockDDRule07
@@ -853,6 +683,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             dateTimeQueryService
                 .Setup(x => x.YearsBetween(dateOfBirth.Value, learnStartDate))
                 .Returns(26);
+            dateTimeQueryService
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, Moq.It.IsAny<DateTime>(), Moq.It.IsAny<DateTime>(), true))
+                .Returns(true);
 
             var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
             mockDDRule29
@@ -869,7 +702,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Setup(x => x.UKPRN())
                 .Returns(ukprn);
 
-            var sut = new LearnDelFAMType_60Rule(
+            var sut = NewRule(
                 validationErrorHandlerMock.Object,
                 service.Object,
                 mockDDRule07.Object,
@@ -914,8 +747,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.LearnDelFAMCode)
                 .Returns("2");
 
-            var fams = Collection.Empty<ILearningDeliveryFAM>();
-            fams.Add(mockFAM.Object);
+            var fams = new List<ILearningDeliveryFAM>
+            {
+                mockFAM.Object
+            };
 
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
@@ -929,13 +764,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(DateTime.Parse("2016-08-01"));
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);  // Not Adultskills
+                .Returns(FundModels.AdultSkills);  // Not Adultskills
             mockDelivery
                 .SetupGet(y => y.LearningDeliveryFAMs)
-                .Returns(fams.AsSafeReadOnlyList());
+                .Returns(fams);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
+            var deliveries = new List<ILearningDelivery>
+            {
+                mockDelivery.Object
+            };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -946,7 +783,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(DateTime.Parse("1990-07-01"));
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
@@ -956,10 +793,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                .Returns(learnAimRef);
             mockCat
                 .SetupGet(x => x.CategoryRef)
-                .Returns(TypeOfLARSCategory.LicenseToPractice);
+                .Returns(LARSConstants.Categories.LicenseToPractice);
 
-            var larsCats = Collection.Empty<ILARSLearningCategory>();
-            larsCats.Add(mockCat.Object);
+            var larsCats = new List<ILARSLearningCategory>
+            {
+                mockCat.Object
+            };
 
             var mockLARSDel = new Mock<ILARSLearningDelivery>();
             mockLARSDel
@@ -967,10 +806,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockLARSDel
                 .SetupGet(x => x.NotionalNVQLevelv2)
-                .Returns(LARSNotionalNVQLevelV2.Level2);
+                .Returns(LARSConstants.NotionalNVQLevelV2Strings.Level2);
             mockLARSDel
                 .SetupGet(x => x.Categories)
-                .Returns(larsCats.AsSafeReadOnlyList());
+                .Returns(larsCats);
 
             var mockLARSValidity = new Mock<ILARSLearningDeliveryValidity>();
             mockLARSValidity
@@ -978,13 +817,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(learnAimRef);
             mockLARSValidity
                 .SetupGet(x => x.ValidityCategory)
-                .Returns(TypeOfLARSValidity.CommunityLearning);
+                .Returns(LARSConstants.Validities.CommunityLearning);
             mockLARSValidity
                 .SetupGet(x => x.LastNewStartDate)
                 .Returns(new DateTime(2018, 08, 01));
 
-            var larsValidities = Collection.Empty<ILARSLearningDeliveryValidity>();
-            larsValidities.Add(mockLARSValidity.Object);
+            var larsValidities = new List<ILARSLearningDeliveryValidity>
+            {
+                mockLARSValidity.Object
+            };
 
             var mockLARSAnnualValues = new Mock<ILARSAnnualValue>();
             mockLARSAnnualValues
@@ -997,8 +838,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .SetupGet(x => x.BasicSkills)
                 .Returns(1);
 
-            var larsAnnualValues = Collection.Empty<ILARSAnnualValue>();
-            larsAnnualValues.Add(mockLARSAnnualValues.Object);
+            var larsAnnualValues = new List<ILARSAnnualValue>
+            {
+                mockLARSAnnualValues.Object
+            };
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
@@ -1006,10 +849,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
                 .Returns(mockLARSDel.Object);
             service
                 .Setup(x => x.GetValiditiesFor(learnAimRef))
-                .Returns(larsValidities.AsSafeReadOnlyList());
+                .Returns(larsValidities);
             service
                 .Setup(x => x.GetAnnualValuesFor(learnAimRef))
-                .Returns(larsAnnualValues.AsSafeReadOnlyList());
+                .Returns(larsAnnualValues);
+            service
+                .Setup(x => x.IsCurrentAndNotWithdrawn(mockLARSValidity.Object, mockDelivery.Object.LearnStartDate, null))
+                .Returns(true);
 
             var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
             mockDDRule07
@@ -1045,8 +891,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             dateTimeQueryService
                 .Setup(x => x.YearsBetween(dateOfBirth.Value, learnStartDate))
                 .Returns(26);
+            dateTimeQueryService
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, Moq.It.IsAny<DateTime>(), Moq.It.IsAny<DateTime>(), true))
+                .Returns(true);
 
-            var sut = new LearnDelFAMType_60Rule(
+            var sut = NewRule(
                 validationErrorHandlerMock.Object,
                 service.Object,
                 mockDDRule07.Object,
@@ -1071,28 +920,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
             fileDataService.VerifyAll();
         }
 
-        public LearnDelFAMType_60Rule NewRule()
+        public LearnDelFAMType_60Rule NewRule(
+            IValidationErrorHandler handler = null,
+            ILARSDataService larsDataService = null,
+            IDerivedData_07Rule dd07 = null,
+            IDerivedData_21Rule dd21 = null,
+            IDerivedData_28Rule dd28 = null,
+            IDerivedData_29Rule dd29 = null,
+            IOrganisationDataService organisationDataService = null,
+            IFileDataService fileDataService = null,
+            IDateTimeQueryService dateTimeQueryService = null)
         {
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var organisationDataService = new Mock<IOrganisationDataService>(MockBehavior.Strict);
-            var fileDataService = new Mock<IFileDataService>(MockBehavior.Strict);
-            var mockDDRule07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
-            var mockDDRule21 = new Mock<IDerivedData_21Rule>(MockBehavior.Strict);
-            var mockDDRule28 = new Mock<IDerivedData_28Rule>(MockBehavior.Strict);
-            var mockDDRule29 = new Mock<IDerivedData_29Rule>(MockBehavior.Strict);
-            var dateTimeQueryService = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
-
             return new LearnDelFAMType_60Rule(
-                handler.Object,
-                service.Object,
-                mockDDRule07.Object,
-                mockDDRule21.Object,
-                mockDDRule28.Object,
-                mockDDRule29.Object,
-                organisationDataService.Object,
-                fileDataService.Object,
-                dateTimeQueryService.Object);
+                handler,
+                larsDataService,
+                dd07,
+                dd21,
+                dd28,
+                dd29,
+                organisationDataService,
+                fileDataService,
+                dateTimeQueryService);
         }
     }
 }

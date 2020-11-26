@@ -54,7 +54,7 @@
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.NotFundedByESFA;
+            return fundModel == FundModels.NotFundedByESFA;
         }
 
         public bool DD07ConditionMet(int? progType)

@@ -40,7 +40,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                 return;
             }
 
-            var age = _dateTimeQueryService.AgeAtGivenDate(
+            var age = _dateTimeQueryService.YearsBetween(
                 learner.DateOfBirthNullable ?? DateTime.MinValue,
                 _academicYearDataService.AugustThirtyFirst());
 
@@ -57,7 +57,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if (learningDelivery.FundModel == TypeOfFunding.Age16To19ExcludingApprenticeships)
+                if (learningDelivery.FundModel == FundModels.Age16To19ExcludingApprenticeships)
                 {
                     RaiseValidationMessage(learner, learningDelivery);
                 }
@@ -70,7 +70,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             {
                 BuildErrorMessageParameter(PropertyNameConstants.LearnFAMCode, LearnerFAMTypeConstants.HNS),
                 BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, learner.DateOfBirthNullable),
-                BuildErrorMessageParameter(PropertyNameConstants.FundModel, TypeOfFunding.Age16To19ExcludingApprenticeships)
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.Age16To19ExcludingApprenticeships)
             };
 
             HandleValidationError(learner.LearnRefNumber, learningDelivery.AimSeqNumber, parameters);

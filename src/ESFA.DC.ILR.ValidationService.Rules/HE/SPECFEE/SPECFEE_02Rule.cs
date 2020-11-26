@@ -1,9 +1,9 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.HE.SPECFEE
 {
@@ -49,8 +49,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.HE.SPECFEE
         public bool ConditionMet(DateTime learnStartDate, int modestud, int specfee)
         {
             return learnStartDate >= _firstAugust2009
-                   && modestud == TypeOfMODESTUD.SandwichYearOut
-                   && specfee != TypeOfSPECFEE.SandwichPlacement;
+                   && modestud == MODESTUDs.SandwichYearOut
+                   && specfee != SPECFEEs.SandwichPlacement;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, int modestud, int specfee)

@@ -13,7 +13,7 @@
         public const string SOF_MCAGLA_TVCA = "114";
         public const string SOF_MCAGLA_CPCA = "115";
         public const string SOF_MCAGLA_London = "116";
-        public const string SOF_Unassigned_117 = "117";
+        public const string SOF_MCAGLA_NTCA = "117";
         public const string SOF_Unassigned_118 = "118";
         public const string SOF_Unassigned_119 = "119";
         public const string SOF_Unassigned_120 = "120";
@@ -33,6 +33,7 @@
         public const string ADL_Code = "1";
 
         public const string DAM_Code_001 = "001";
+        public const string DAM_DevolvedLevelTwoOrThreeExclusion = "023";
 
         public const string ALB_Rate_1 = "1";
         public const string ALB_Rate_2 = "2";
@@ -72,6 +73,12 @@
         public const string LDM_Pilot = "358";
         public const string LDM_CareerLearningPilot = "359";
         public const string LDM_LowWages = "363";
+        public const string LDM_370 = "370";
+        public const string LDM_371 = "371";
+        public const string LDM_372 = "372";
+        public const string LDM_373 = "373";
+        public const string LDM_375 = "375";
+        public const string LDM_376 = "376";
 
         public const string NSA_FashionRetail = "1";
         public const string NSA_Manufacturing = "2";

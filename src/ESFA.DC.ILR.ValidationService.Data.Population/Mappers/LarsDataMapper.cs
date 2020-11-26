@@ -20,6 +20,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Mappers
                 EffectiveTo = ls.EffectiveTo,
                 NotionalEndLevel = ls.NotionalEndLevel,
                 StandardSectorCode = ls.StandardSectorCode,
+                LastDateStarts = ls.LastDateStarts,
                 StandardsFunding = ls.LARSStandardFundings?
                 .Select(lsf => new Data.External.LARS.Model.LARSStandardFunding
                 {

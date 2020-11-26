@@ -19,13 +19,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.WorkPlacement0To49Hours)]
-        [InlineData(TypeOfAim.References.WorkPlacement50To99Hours)]
-        [InlineData(TypeOfAim.References.WorkPlacement100To199Hours)]
-        [InlineData(TypeOfAim.References.WorkPlacement200To499Hours)]
-        [InlineData(TypeOfAim.References.WorkPlacement500PlusHours)]
-        [InlineData(TypeOfAim.References.SupportedInternship16To19)]
-        [InlineData(TypeOfAim.References.WorkExperience)]
+        [InlineData(AimTypes.References.WorkPlacement0To49Hours)]
+        [InlineData(AimTypes.References.WorkPlacement50To99Hours)]
+        [InlineData(AimTypes.References.WorkPlacement100To199Hours)]
+        [InlineData(AimTypes.References.WorkPlacement200To499Hours)]
+        [InlineData(AimTypes.References.WorkPlacement500PlusHours)]
+        [InlineData(AimTypes.References.SupportedInternship16To19)]
+        [InlineData(AimTypes.References.WorkExperience)]
+        [InlineData(AimTypes.References.IndustryPlacement)]
+        [InlineData(AimTypes.References.TLevelWorkExperience)]
         [InlineData("zwrkx002")]
         public void LearnAimRefConditionMet_False(string learnAimRef)
         {
@@ -33,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.ESFLearnerStartandAssessment)]
+        [InlineData(AimTypes.References.ESFLearnerStartandAssessment)]
         [InlineData("zesf0001")]
         public void LearnAimRefConditionMet_True(string learnAimRef)
         {
@@ -66,9 +68,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         }
 
         [Theory]
-        [InlineData(TypeOfAim.References.WorkPlacement0To49Hours, true)]
-        [InlineData(TypeOfAim.References.WorkPlacement0To49Hours, false)]
-        [InlineData(TypeOfAim.References.ESFLearnerStartandAssessment, false)]
+        [InlineData(AimTypes.References.WorkPlacement0To49Hours, true)]
+        [InlineData(AimTypes.References.WorkPlacement0To49Hours, false)]
+        [InlineData(AimTypes.References.ESFLearnerStartandAssessment, false)]
         public void ConditionMet_False(string learnRefNumber, bool includeWorkPlacement)
         {
             var learningDeliveryWorkPlacements = new TestLearningDeliveryWorkPlacement[]
@@ -98,7 +100,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
                     }
                 };
 
-            NewRule().ConditionMet(TypeOfAim.References.ESFLearnerStartandAssessment, learningDeliveryWorkPlacements).Should().BeTrue();
+            NewRule().ConditionMet(AimTypes.References.ESFLearnerStartandAssessment, learningDeliveryWorkPlacements).Should().BeTrue();
         }
 
         [Fact]
@@ -110,7 +112,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
                 {
                     new TestLearningDelivery()
                     {
-                        LearnAimRef = TypeOfAim.References.ESFLearnerStartandAssessment,
+                        LearnAimRef = AimTypes.References.ESFLearnerStartandAssessment,
                         LearningDeliveryWorkPlacements = new TestLearningDeliveryWorkPlacement[]
                         {
                             new TestLearningDeliveryWorkPlacement()
@@ -138,7 +140,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
                 {
                     new TestLearningDelivery()
                     {
-                        LearnAimRef = TypeOfAim.References.WorkPlacement0To49Hours,
+                        LearnAimRef = AimTypes.References.WorkPlacement0To49Hours,
                         LearningDeliveryWorkPlacements = new TestLearningDeliveryWorkPlacement[]
                         {
                         }

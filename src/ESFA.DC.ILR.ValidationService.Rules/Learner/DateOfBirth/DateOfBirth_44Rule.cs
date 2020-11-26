@@ -36,7 +36,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-                if (learningDelivery.FundModel != TypeOfFunding.EuropeanSocialFund)
+                if (learningDelivery.FundModel != FundModels.EuropeanSocialFund)
                 {
                     continue;
                 }

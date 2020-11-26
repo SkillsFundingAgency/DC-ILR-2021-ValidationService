@@ -56,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool LearnDelFamTypeSOFConditionMet(ILearningDeliveryFAM learningDeliveryFam)
         {
-            return 
+            return
                 learningDeliveryFam.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.SOF) &&
                    !learningDeliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(LearningDeliveryFAMCodeConstants.SOF_ESFA_Adult);
         }

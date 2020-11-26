@@ -45,7 +45,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                                     Code = 1,
                                     TenderSpecReference = "TenderSpecReference",
                                     LotReference = "LotReference",
-                                }
+                                },
                             },
                             LocalAuthorities = new List<EsfEligibilityRuleLocalAuthority>
                             {
@@ -54,7 +54,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                                     Code = "1",
                                     TenderSpecReference = "TenderSpecReference",
                                     LotReference = "LotReference",
-                                }
+                                },
                             },
                             LocalEnterprisePartnerships = new List<EsfEligibilityRuleLocalEnterprisePartnership>
                             {
@@ -69,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                                     Code = "2",
                                     TenderSpecReference = "TenderSpecReference",
                                     LotReference = "LotReference",
-                                }
+                                },
                             },
                             SectorSubjectAreaLevels = new List<EsfEligibilityRuleSectorSubjectAreaLevel>
                             {
@@ -80,9 +80,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                                     SectorSubjectAreaCode = 1.0m,
                                     TenderSpecReference = "TenderSpecReference",
                                     LotReference = "LotReference",
-                                }
-                            }
-                        }
+                                },
+                            },
+                        },
                     }
                 },
                 {
@@ -114,7 +114,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                                     Code = 1,
                                     TenderSpecReference = "TenderSpecReference",
                                     LotReference = "LotReference",
-                                }
+                                },
                             },
                             LocalAuthorities = new List<EsfEligibilityRuleLocalAuthority>
                             {
@@ -123,7 +123,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                                     Code = "1",
                                     TenderSpecReference = "TenderSpecReference",
                                     LotReference = "LotReference",
-                                }
+                                },
                             },
                             LocalEnterprisePartnerships = new List<EsfEligibilityRuleLocalEnterprisePartnership>
                             {
@@ -132,7 +132,7 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                                     Code = "1",
                                     TenderSpecReference = "TenderSpecReference",
                                     LotReference = "LotReference",
-                                }
+                                },
                             },
                             SectorSubjectAreaLevels = new List<EsfEligibilityRuleSectorSubjectAreaLevel>
                             {
@@ -143,9 +143,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                                     SectorSubjectAreaCode = 1.0m,
                                     TenderSpecReference = "TenderSpecReference",
                                     LotReference = "LotReference",
-                                }
-                            }
-                        }
+                                },
+                            },
+                        },
                     }
                 },
                 {
@@ -158,9 +158,9 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         StopNewStartsFromDate = null,
                         FundingStreamPeriodCode = "FundingStreamPeriodCode",
                         TenderSpecReference = "TenderSpecReference",
-                        LotReference = "LotReference"
+                        LotReference = "LotReference",
                     }
-                }
+                },
             };
 
             NewMapper().MapFcsContractAllocations(fcsContractAllocations).Should().BeEquivalentTo(expectedFcsContractAllocations);
@@ -194,26 +194,26 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         {
                             new ReferenceDataService.Model.FCS.EsfEligibilityRuleEmploymentStatus
                             {
-                                Code = 1
-                            }
+                                Code = 1,
+                            },
                         },
                         LocalAuthorities = new List<ReferenceDataService.Model.FCS.EsfEligibilityRuleLocalAuthority>
                         {
                             new ReferenceDataService.Model.FCS.EsfEligibilityRuleLocalAuthority
                             {
-                                Code = "1"
-                            }
+                                Code = "1",
+                            },
                         },
                         LocalEnterprisePartnerships = new List<ReferenceDataService.Model.FCS.EsfEligibilityRuleLocalEnterprisePartnership>
                         {
                             new ReferenceDataService.Model.FCS.EsfEligibilityRuleLocalEnterprisePartnership
                             {
-                                Code = "1"
+                                Code = "1",
                             },
                             new ReferenceDataService.Model.FCS.EsfEligibilityRuleLocalEnterprisePartnership
                             {
-                                Code = "2"
-                            }
+                                Code = "2",
+                            },
                         },
                         SectorSubjectAreaLevels = new List<ReferenceDataService.Model.FCS.EsfEligibilityRuleSectorSubjectAreaLevel>
                         {
@@ -221,10 +221,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                             {
                                 MaxLevelCode = "1",
                                 MinLevelCode = "1",
-                                SectorSubjectAreaCode = 1.0m
-                            }
-                        }
-                    }
+                                SectorSubjectAreaCode = 1.0m,
+                            },
+                        },
+                    },
                 },
                 new ReferenceDataService.Model.FCS.FcsContractAllocation
                 {
@@ -250,22 +250,22 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         {
                             new ReferenceDataService.Model.FCS.EsfEligibilityRuleEmploymentStatus
                             {
-                                Code = 1
-                            }
+                                Code = 1,
+                            },
                         },
                         LocalAuthorities = new List<ReferenceDataService.Model.FCS.EsfEligibilityRuleLocalAuthority>
                         {
                             new ReferenceDataService.Model.FCS.EsfEligibilityRuleLocalAuthority
                             {
-                                Code = "1"
-                            }
+                                Code = "1",
+                            },
                         },
                         LocalEnterprisePartnerships = new List<ReferenceDataService.Model.FCS.EsfEligibilityRuleLocalEnterprisePartnership>
                         {
                             new ReferenceDataService.Model.FCS.EsfEligibilityRuleLocalEnterprisePartnership
                             {
-                                Code = "1"
-                            }
+                                Code = "1",
+                            },
                         },
                         SectorSubjectAreaLevels = new List<ReferenceDataService.Model.FCS.EsfEligibilityRuleSectorSubjectAreaLevel>
                         {
@@ -273,10 +273,10 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                             {
                                 MaxLevelCode = "1",
                                 MinLevelCode = "1",
-                                SectorSubjectAreaCode = 1.0m
-                            }
-                        }
-                    }
+                                SectorSubjectAreaCode = 1.0m,
+                            },
+                        },
+                    },
                 },
                 new ReferenceDataService.Model.FCS.FcsContractAllocation
                 {
@@ -286,8 +286,8 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                     StopNewStartsFromDate = null,
                     FundingStreamPeriodCode = "FundingStreamPeriodCode",
                     TenderSpecReference = "TenderSpecReference",
-                    LotReference = "LotReference"
-                }
+                    LotReference = "LotReference",
+                },
             };
         }
 

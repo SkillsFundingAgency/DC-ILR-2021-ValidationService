@@ -12,7 +12,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef
 {
     public class LearnAimRef_56Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { TypeOfFunding.AdultSkills, TypeOfFunding.EuropeanSocialFund, TypeOfFunding.OtherAdult };
+        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { FundModels.AdultSkills, FundModels.EuropeanSocialFund, FundModels.OtherAdult };
         private readonly IEnumerable<string> _famCodes = new HashSet<string>() { "034", "328" };
         private readonly DateTime _firstAugust2015 = new DateTime(2015, 08, 01);
         private readonly int _larsCategoryRef = 22;

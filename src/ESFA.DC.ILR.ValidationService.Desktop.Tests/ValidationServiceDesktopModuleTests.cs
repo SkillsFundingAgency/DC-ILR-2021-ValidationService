@@ -8,7 +8,6 @@ using ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutEndDate;
 using ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutStartDate;
 using ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutType;
 using ESFA.DC.ILR.ValidationService.Rules.DestinationAndProgression.OutULN;
-using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.AgreeId;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.DateEmpStatApp;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpId;
 using ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat;
@@ -109,7 +108,10 @@ using ESFA.DC.ILR.ValidationService.Rules.Message.FileLevel.Header;
 using ESFA.DC.ILR.ValidationService.Rules.Message.UKPRN;
 using FluentAssertions;
 using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Rules.CrossYear;
+using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WorkPlacement;
 using Xunit;
+using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OTJActHours;
 
 namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
 {
@@ -222,11 +224,12 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(AFinType_12Rule),
                 typeof(AFinType_13Rule),
                 typeof(AFinType_14Rule),
-                typeof(AgreeId_02Rule),
                 typeof(AimSeqNumber_02Rule),
                 typeof(AimType_01Rule),
                 typeof(AimType_05Rule),
                 typeof(AimType_07Rule),
+                typeof(AimType_08Rule),
+                typeof(AimType_09Rule),
                 typeof(ALSCost_02Rule),
                 typeof(CampId_01Rule),
                 typeof(CampId_02Rule),
@@ -303,6 +306,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(EmpId_02Rule),
                 typeof(EmpId_10Rule),
                 typeof(EmpId_13Rule),
+                typeof(EmpId_14Rule),
                 typeof(EmpOutcome_01Rule),
                 typeof(EmpOutcome_02Rule),
                 typeof(EmpOutcome_03Rule),
@@ -337,6 +341,8 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(ESMType_13Rule),
                 typeof(ESMType_14Rule),
                 typeof(ESMType_15Rule),
+                typeof(ESMType_16Rule),
+                typeof(ESMType_17Rule),
                 typeof(EPAOrgID_03Rule),
                 typeof(FamilyName_01Rule),
                 typeof(FamilyName_02Rule),
@@ -356,6 +362,10 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(FundModel_08Rule),
                 typeof(FundModel_09Rule),
                 typeof(FundModel_10Rule),
+                typeof(FundModel_11Rule),
+                typeof(FundModel_12Rule),
+                typeof(FundModel_13Rule),
+                typeof(FundModel_14Rule),
                 typeof(FworkCode_01Rule),
                 typeof(FworkCode_02Rule),
                 typeof(FworkCode_05Rule),
@@ -388,6 +398,9 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnAimRef_87Rule),
                 typeof(LearnAimRef_88Rule),
                 typeof(LearnAimRef_89Rule),
+                typeof(LearnAimRef_90Rule),
+                typeof(LearnAimRef_91Rule),
+                typeof(LearnAimRef_92Rule),
                 typeof(LearnDelFAMDateFrom_01Rule),
                 typeof(LearnDelFAMDateFrom_02Rule),
                 typeof(LearnDelFAMDateFrom_03Rule),
@@ -409,11 +422,8 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnDelFAMType_15Rule),
                 typeof(LearnDelFAMType_16Rule),
                 typeof(LearnDelFAMType_18Rule),
-                typeof(LearnDelFAMType_20Rule),
                 typeof(LearnDelFAMType_22Rule),
-                typeof(LearnDelFAMType_24Rule),
                 typeof(LearnDelFAMType_27Rule),
-                typeof(LearnDelFAMType_30Rule),
                 typeof(LearnDelFAMType_31Rule),
                 typeof(LearnDelFAMType_35Rule),
                 typeof(LearnDelFAMType_36Rule),
@@ -443,11 +453,23 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnDelFAMType_71Rule),
                 typeof(LearnDelFAMType_72Rule),
                 typeof(LearnDelFAMType_73Rule),
-                typeof(LearnDelFAMType_74Rule),
                 typeof(LearnDelFAMType_75Rule),
                 typeof(LearnDelFAMType_76Rule),
                 typeof(LearnDelFAMType_77Rule),
                 typeof(LearnDelFAMType_78Rule),
+                typeof(LearnDelFAMType_79Rule),
+                typeof(LearnDelFAMType_80Rule),
+                typeof(LearnDelFAMType_81Rule),
+                typeof(LearnDelFAMType_82Rule),
+                typeof(LearnDelFamType_83Rule),
+                typeof(LearnDelFAMType_84Rule),
+                typeof(LearnDelFamType_85Rule),
+                typeof(LearnDelFamType_86Rule),
+                typeof(LearnDelFAMType_87Rule),
+                typeof(LearnDelFAMType_89Rule),
+                typeof(LearnDelFAMType_90Rule),
+                typeof(LearnDelFAMType_91Rule),
+                typeof(LearnDelFAMType_92Rule),
                 typeof(LearningDeliveryHE_02Rule),
                 typeof(LearningDeliveryHE_03Rule),
                 typeof(LearningDeliveryHE_06Rule),
@@ -473,6 +495,8 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(LearnStartDate_15Rule),
                 typeof(LearnStartDate_16Rule),
                 typeof(LearnStartDate_17Rule),
+                typeof(LearnStartDate_18Rule),
+                typeof(LearnStartDate_19Rule),
                 typeof(LearnPlanEndDate_02Rule),
                 typeof(LearnPlanEndDate_03Rule),
                 typeof(LSDPostcode_01Rule),
@@ -510,14 +534,15 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(OrigLearnStartDate_08Rule),
                 typeof(OrigLearnStartDate_09Rule),
                 typeof(OtherFundAdj_01Rule),
+                typeof(OTJActHours_01Rule),
                 typeof(Outcome_01Rule),
                 typeof(Outcome_04Rule),
                 typeof(Outcome_05Rule),
                 typeof(Outcome_07Rule),
                 typeof(Outcome_08Rule),
                 typeof(Outcome_09Rule),
+                typeof(Outcome_10Rule),
                 typeof(OutGrade_01Rule),
-                typeof(OutGrade_03Rule),
                 typeof(OutGrade_04Rule),
                 typeof(OutGrade_05Rule),
                 typeof(OutGrade_06Rule),
@@ -534,7 +559,8 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(PCTLDCS_02Rule),
                 typeof(PCOLAB_01Rule),
                 typeof(PHours_01Rule),
-                typeof(PHours_02Rule),
+                typeof(PHours_03Rule),
+                typeof(PHours_04Rule),
                 typeof(PlanEEPHours_01Rule),
                 typeof(PlanLearnHours_01Rule),
                 typeof(PlanLearnHours_02Rule),
@@ -556,6 +582,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(PriorAttain_04Rule),
                 typeof(PriorAttain_06Rule),
                 typeof(PriorAttain_07Rule),
+                typeof(PriorAttain_08Rule),
                 typeof(PriorLearnFundAdj_01Rule),
                 typeof(ProgType_01Rule),
                 typeof(ProgType_02Rule),
@@ -566,6 +593,11 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(ProgType_12Rule),
                 typeof(ProgType_13Rule),
                 typeof(ProgType_14Rule),
+                typeof(ProgType_15Rule),
+                typeof(ProgType_16Rule),
+                typeof(ProgType_17Rule),
+                typeof(ProgType_18Rule),
+                typeof(ProgType_19Rule),
                 typeof(ProvSpecDelMonOccur_01Rule),
                 typeof(PwayCode_02Rule),
                 typeof(PwayCode_03Rule),
@@ -618,6 +650,8 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(R122Rule),
                 typeof(R123Rule),
                 typeof(R124Rule),
+                typeof(R125Rule),
+                typeof(R126Rule),
                 typeof(Sex_01Rule),
                 typeof(SEC_01Rule),
                 typeof(SEC_02Rule),
@@ -653,6 +687,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(UKPRN_18Rule),
                 typeof(UKPRN_19Rule),
                 typeof(UKPRN_20Rule),
+                typeof(UKPRN_21Rule),
                 typeof(ULN_02Rule),
                 typeof(ULN_03Rule),
                 typeof(ULN_04Rule),
@@ -674,6 +709,7 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
                 typeof(WorkPlaceStartDate_02Rule),
                 typeof(WorkPlaceStartDate_03Rule),
                 typeof(WorkPlaceStartDate_04Rule),
+                typeof(WorkPlacement_01Rule),
                 typeof(WorkPlaceMode_01Rule),
                 typeof(WorkPlaceEmpId_01Rule),
                 typeof(WorkPlaceEmpId_02Rule),
@@ -728,5 +764,34 @@ namespace ESFA.DC.ILR.ValidationService.Desktop.Tests
 
             messageRules.Should().HaveCount(rules.Length);
         }
+
+        [Fact]
+        public void CrossYearLearnerRules_Resolve()
+        {
+            var containerBuilder = new ContainerBuilder();
+
+            containerBuilder.RegisterModule<ValidationServiceDesktopModule>();
+
+            containerBuilder.RegisterCommonServiceStubs();
+
+            var container = containerBuilder.Build();
+
+            var messageRules = container.Resolve<IEnumerable<ICrossYearRule<ILearner>>>();
+
+            messageRules.Should().NotBeNull();
+
+            var rules = new[]
+            {
+                typeof(FRM_04Rule),
+            };
+
+            foreach (var rule in rules)
+            {
+                messageRules.Should().Contain(x => x.GetType() == rule);
+            }
+
+            messageRules.Should().HaveCount(rules.Length);
+        }
+
     }
 }

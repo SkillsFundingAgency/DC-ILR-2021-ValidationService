@@ -7,7 +7,6 @@ using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 {
@@ -36,7 +35,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool ConditionMet(ILearningDelivery learningDelivery, IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses)
         {
-            if (IsApprenticeshipProgramme(learningDelivery) && It.Has(learningDelivery.LearningDeliveryFAMs))
+            if (IsApprenticeshipProgramme(learningDelivery) && learningDelivery.LearningDeliveryFAMs != null)
             {
                 return GetLearningDeliveryFAMsWhereApprenticeshipProgrammeFundedThroughContract(learningDelivery.LearningDeliveryFAMs)
                     .Any(fam => LearnerNotEmployedOnDate(learnerEmploymentStatuses, fam.LearnDelFAMDateFromNullable));
@@ -47,7 +46,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
 
         public bool IsApprenticeshipProgramme(ILearningDelivery learningDelivery)
         {
-            return learningDelivery.FundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+            return learningDelivery.FundModel == FundModels.ApprenticeshipsFrom1May2017;
         }
 
         public IEnumerable<ILearningDeliveryFAM> GetLearningDeliveryFAMsWhereApprenticeshipProgrammeFundedThroughContract(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
@@ -61,7 +60,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
         public bool LearnerNotEmployedOnDate(IEnumerable<ILearnerEmploymentStatus> learnerEmploymentStatuses, DateTime? learningDeliveryFamDateFrom)
         {
             return learningDeliveryFamDateFrom.HasValue
-                && _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(learnerEmploymentStatuses, learningDeliveryFamDateFrom.Value)?.EmpStat != TypeOfEmploymentStatus.InPaidEmployment;
+                && _learnerEmploymentStatusQueryService.LearnerEmploymentStatusForDate(learnerEmploymentStatuses, learningDeliveryFamDateFrom.Value)?.EmpStat != EmploymentStatusEmpStats.InPaidEmployment;
         }
     }
 }

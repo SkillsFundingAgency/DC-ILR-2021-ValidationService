@@ -14,8 +14,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
 {
     public class R104RuleTests : AbstractRuleTests<R104Rule>
     {
-        private readonly string _famTypeACT = Monitoring.Delivery.Types.ApprenticeshipContract;
-
         [Fact]
         public void RuleName()
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Data.File;
 using ESFA.DC.ILR.ValidationService.Data.Population;
@@ -14,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.FileData.Tests
     public class FileDataCachePopulationServiceTests
     {
         [Fact]
-        public async Task Populate()
+        public void Populate()
         {
             var filePreparationDate = new DateTime(2018, 1, 5);
             var ukprn = 1;
@@ -31,10 +30,10 @@ namespace ESFA.DC.ILR.ValidationService.FileData.Tests
                             OutCode = 1,
                             OutType = "Type",
                             OutCollDate = new DateTime(2018, 8, 1),
-                            OutStartDate = new DateTime(2018, 8, 1)
-                        }
-                    }
-                }
+                            OutStartDate = new DateTime(2018, 8, 1),
+                        },
+                    },
+                },
             };
 
             var message = new TestMessage()
@@ -43,14 +42,14 @@ namespace ESFA.DC.ILR.ValidationService.FileData.Tests
                 {
                     CollectionDetailsEntity = new TestCollectionDetails()
                     {
-                        FilePreparationDate = filePreparationDate
-                    }
+                        FilePreparationDate = filePreparationDate,
+                    },
                 },
                 LearningProviderEntity = new TestLearningProvider()
                 {
                     UKPRN = ukprn,
                 },
-                LearnerDestinationAndProgressions = learnerDestinationAndProgressions
+                LearnerDestinationAndProgressions = learnerDestinationAndProgressions,
             };
 
             var fileDataCache = new FileDataCache();

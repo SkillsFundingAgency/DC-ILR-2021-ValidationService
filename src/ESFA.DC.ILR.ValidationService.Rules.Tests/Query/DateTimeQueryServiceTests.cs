@@ -77,7 +77,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
         [InlineData("1988-3-10", "1987-4-10", -1)]
         public void AgeAtGivenDate(string start, string end, int years)
         {
-            new DateTimeQueryService().AgeAtGivenDate(DateTime.Parse(start), DateTime.Parse(end)).Should().Be(years);
+            new DateTimeQueryService().YearsBetween(DateTime.Parse(start), DateTime.Parse(end)).Should().Be(years);
         }
 
         [Theory]

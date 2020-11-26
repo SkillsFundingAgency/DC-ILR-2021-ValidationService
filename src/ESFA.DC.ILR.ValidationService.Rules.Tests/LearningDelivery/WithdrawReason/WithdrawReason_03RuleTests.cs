@@ -2,78 +2,22 @@
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.WithdrawReason;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawReason
 {
-    /// <summary>
-    /// from version 1.1 validation spread sheet
-    /// </summary>
     public class WithdrawReason_03RuleTests
     {
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
         [Fact]
-        public void RuleName1()
+        public void RuleName()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("WithdrawReason_03", result);
-        }
-
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(RuleNameConstants.WithdrawReason_03, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
         }
 
         [Theory]
@@ -83,17 +27,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
         [InlineData(CompletionState.HasWithdrawn, true)]
         public void HasWithdrawnMeetsExpectation(int candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.CompStatus)
                 .Returns(candidate);
 
-            // act
             var result = sut.HasWithdrawn(mockDelivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
@@ -116,27 +57,20 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
         [InlineData(ReasonForWithdrawal.WrittenOffHEOnly, true)]
         public void HasWithdrawReasonMeetsExpectation(int? candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.WithdrawReasonNullable)
                 .Returns(candidate);
 
-            // act
             var result = sut.HasWithdrawReason(mockDelivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
         [Fact]
         public void InvalidItemRaisesValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -147,8 +81,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
                 .SetupGet(x => x.AimSeqNumber)
                 .Returns(0);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
+            var deliveries = new List<ILearningDelivery>
+            {
+                mockDelivery.Object
+            };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -156,7 +92,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             mockHandler
@@ -167,20 +103,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
 
             var sut = new WithdrawReason_03Rule(mockHandler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             mockHandler.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise a validation message.
-        /// </summary>
         [Fact]
         public void ValidItemDoesNotRaiseAValidationMessage()
         {
-            // arrange
             const string LearnRefNumber = "123456789X";
 
             var mockDelivery = new Mock<ILearningDelivery>();
@@ -191,8 +121,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
                 .SetupGet(x => x.WithdrawReasonNullable)
                 .Returns(ReasonForWithdrawal.TransferredDueToMerger);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
-            deliveries.Add(mockDelivery.Object);
+            var deliveries = new List<ILearningDelivery>
+            {
+                mockDelivery.Object
+            };
 
             var mockLearner = new Mock<ILearner>();
             mockLearner
@@ -200,23 +132,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WithdrawRea
                 .Returns(LearnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var mockHandler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
             var sut = new WithdrawReason_03Rule(mockHandler.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             mockHandler.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public WithdrawReason_03Rule NewRule()
         {
             var mock = new Mock<IValidationErrorHandler>(MockBehavior.Strict);

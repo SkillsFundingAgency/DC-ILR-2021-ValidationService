@@ -207,7 +207,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        ProgTypeNullable = TypeOfLearningProgramme.HigherApprenticeshipLevel4,
+                        ProgTypeNullable = ProgTypes.HigherApprenticeshipLevel4,
                         LearningDeliveryFAMs = testLearningDeliveryFAMs,
                         LearningDeliveryHEEntity = null
                     }
@@ -265,7 +265,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.LearningDeliveryHE
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        ProgTypeNullable = TypeOfLearningProgramme.HigherApprenticeshipLevel4,
+                        ProgTypeNullable = ProgTypes.HigherApprenticeshipLevel4,
                         LearningDeliveryFAMs = testLearningDeliveryFAMs,
                         LearningDeliveryHEEntity = testLearningDeliveryHE
                     }

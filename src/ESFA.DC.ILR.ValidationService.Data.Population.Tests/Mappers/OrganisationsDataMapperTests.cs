@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ESFA.DC.ILR.ReferenceDataService.Model.Organisations;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Model;
 using ESFA.DC.ILR.ValidationService.Data.Population.Mappers;
@@ -23,7 +24,16 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         UKPRN = 1,
                         PartnerUKPRN = true,
                         LegalOrgType = "LegalOrgType",
-                        LongTermResid = true
+                        LongTermResid = true,
+                        ShortTermFundingInitiatives = new List<ShortTermFundingInitiative>()
+                        {
+                            new ShortTermFundingInitiative
+                            {
+                                UKPRN = 1,
+                                LdmCode = "ldm1",
+                                EffectiveFrom = new DateTime(2019,8,1)
+                            }
+                        }
                     }
                 },
                 {
@@ -32,9 +42,18 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         UKPRN = 2,
                         PartnerUKPRN = false,
                         LegalOrgType = "LegalOrgType",
-                        LongTermResid = false
+                        LongTermResid = false,
+                        ShortTermFundingInitiatives = new List<ShortTermFundingInitiative>()
+                        {
+                            new ShortTermFundingInitiative
+                            {
+                                UKPRN = 2,
+                                LdmCode = "ldm2",
+                                EffectiveFrom = new DateTime(2019,8,1)
+                            }
+                        }
                     }
-                }
+                },
             };
 
             NewMapper().MapOrganisations(organisations).Should().BeEquivalentTo(expectedOrganisations);
@@ -79,6 +98,15 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                             CampusIdentifier = "Id2",
                             EffectiveFrom = new System.DateTime(2019, 8, 1)
                         }
+                    },
+                    OrganisationShortTermFundingInitiatives = new List<OrganisationShortTermFundingInitiative>()
+                    {
+                        new OrganisationShortTermFundingInitiative()
+                        {
+                            UKPRN = 1,
+                            LdmCode = "ldm1",
+                            EffectiveFrom = new DateTime(2019,8,1)
+                        }
                     }
                 },
                 new ReferenceDataService.Model.Organisations.Organisation
@@ -99,6 +127,15 @@ namespace ESFA.DC.ILR.ValidationService.Data.Population.Tests.Mappers
                         {
                             CampusIdentifier = "Id2",
                             EffectiveFrom = new System.DateTime(2019, 8, 1)
+                        }
+                    },
+                    OrganisationShortTermFundingInitiatives = new List<OrganisationShortTermFundingInitiative>()
+                    {
+                        new OrganisationShortTermFundingInitiative()
+                        {
+                            UKPRN = 2,
+                            LdmCode = "ldm2",
+                            EffectiveFrom = new DateTime(2019,8,1)
                         }
                     }
                 }

@@ -3,6 +3,7 @@ using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Tests.Abstract;
 using FluentAssertions;
 using Moq;
@@ -30,8 +31,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var learningDelivery = new TestLearningDelivery
             {
-                ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                AimType = TypeOfAim.ProgrammeAim,
+                ProgTypeNullable = ProgTypes.Traineeship,
+                AimType = AimTypes.ProgrammeAim,
                 LearnStartDate = learnStartDate
             };
 
@@ -45,8 +46,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var learningDelivery = new TestLearningDelivery
             {
-                ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
-                AimType = TypeOfAim.ProgrammeAim,
+                ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
+                AimType = AimTypes.ProgrammeAim,
                 LearnStartDate = new DateTime(2018, 01, 01)
             };
 
@@ -60,8 +61,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var learningDelivery = new TestLearningDelivery
             {
-                ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                AimType = TypeOfAim.ComponentAimInAProgramme,
+                ProgTypeNullable = ProgTypes.Traineeship,
+                AimType = AimTypes.ComponentAimInAProgramme,
                 LearnStartDate = new DateTime(2018, 07, 01)
             };
 
@@ -75,8 +76,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var learningDelivery = new TestLearningDelivery
             {
-                ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                AimType = TypeOfAim.ProgrammeAim,
+                ProgTypeNullable = ProgTypes.Traineeship,
+                AimType = AimTypes.ProgrammeAim,
                 LearnStartDate = new DateTime(2018, 08, 02)
             };
 
@@ -95,21 +96,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery()
                     {
-                        ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        ProgTypeNullable = ProgTypes.Traineeship,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnStartDate = new DateTime(2018, 07, 31)
                     }
                 }
             };
 
-            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock
+            var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(It.IsAny<DateTime>(), AcademicYearDates.TraineeshipsAugust1))
                 .Returns(new DateTime(2018, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(academicYearDataServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(academicYearQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -123,8 +124,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery()
                     {
-                        ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        ProgTypeNullable = ProgTypes.Traineeship,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnStartDate = new DateTime(2018, 01, 01)
                     }
                 }
@@ -148,21 +149,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
                 {
                     new TestLearningDelivery()
                     {
-                        ProgTypeNullable = TypeOfLearningProgramme.Traineeship,
-                        AimType = TypeOfAim.ProgrammeAim,
+                        ProgTypeNullable = ProgTypes.Traineeship,
+                        AimType = AimTypes.ProgrammeAim,
                         LearnStartDate = new DateTime(2018, 08, 01)
                     }
                 }
             };
 
-            var academicYearDataServiceMock = new Mock<IAcademicYearDataService>();
-            academicYearDataServiceMock
+            var academicYearQueryServiceMock = new Mock<IAcademicYearQueryService>();
+            academicYearQueryServiceMock
                 .Setup(ds => ds.GetAcademicYearOfLearningDate(It.IsAny<DateTime>(), AcademicYearDates.TraineeshipsAugust1))
                 .Returns(new DateTime(2018, 08, 01));
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(academicYearDataServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(academicYearQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -179,9 +180,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             validationErrorHandlerMock.Verify();
         }
 
-        private DateOfBirth_50Rule NewRule(IAcademicYearDataService academicYearDataService = null, IValidationErrorHandler validationErrorHandler = null)
+        private DateOfBirth_50Rule NewRule(IAcademicYearQueryService academicYearQueryService = null, IValidationErrorHandler validationErrorHandler = null)
         {
-            return new DateOfBirth_50Rule(academicYearDataService, validationErrorHandler);
+            return new DateOfBirth_50Rule(academicYearQueryService, validationErrorHandler);
         }
     }
 }

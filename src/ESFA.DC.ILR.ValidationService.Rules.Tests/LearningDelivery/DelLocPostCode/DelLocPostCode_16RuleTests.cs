@@ -79,7 +79,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
 
             var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
 
-            postcodeDataServiceMock.Setup(ds => ds.PostcodeExists(postcode)).Returns(false);
+            postcodeDataServiceMock.Setup(ds => ds.ONSPostcodeExists(postcode)).Returns(false);
 
             NewRule(postcodeDataServiceMock.Object).PostcodeConditionMet(postcode).Should().BeTrue();
         }
@@ -97,7 +97,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
 
             var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
 
-            postcodeDataServiceMock.Setup(ds => ds.PostcodeExists(postcode)).Returns(true);
+            postcodeDataServiceMock.Setup(ds => ds.ONSPostcodeExists(postcode)).Returns(true);
 
             NewRule(postcodeDataServiceMock.Object).PostcodeConditionMet(postcode).Should().BeFalse();
         }
@@ -121,7 +121,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.DelLocPostC
 
             var postcodeDataServiceMock = new Mock<IPostcodesDataService>();
 
-            postcodeDataServiceMock.Setup(ds => ds.PostcodeExists(postcode)).Returns(false);
+            postcodeDataServiceMock.Setup(ds => ds.ONSPostcodeExists(postcode)).Returns(false);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {

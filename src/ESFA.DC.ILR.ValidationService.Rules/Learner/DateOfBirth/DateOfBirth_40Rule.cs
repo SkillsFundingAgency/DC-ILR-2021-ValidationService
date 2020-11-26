@@ -15,15 +15,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         private const int MinAge = 19;
         private const int MinimumContractMonths = 12;
 
-        private const int ProgrammeType = TypeOfLearningProgramme.ApprenticeshipStandard;
-        private const int AimType = TypeOfAim.ProgrammeAim;
+        private const int ProgrammeType = ProgTypes.ApprenticeshipStandard;
+        private const int AimType = AimTypes.ProgrammeAim;
 
         private readonly DateTime _ruleEndDate = new DateTime(2016, 7, 31);
 
         private readonly int[] _fundModels =
          {
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.OtherAdult
+            FundModels.AdultSkills,
+            FundModels.OtherAdult
         };
 
         private readonly IDateTimeQueryService _dateTimeQueryService;
@@ -42,7 +42,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public DateOfBirth_40Rule()
          : base(null, null)
         {
-
         }
 
         /// <summary>
@@ -60,18 +59,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
                 if (ConditionMet(
-                                 learningDelivery.FundModel, 
-                                 learningDelivery.AimType, 
-                                 learningDelivery.ProgTypeNullable, 
-                                 learningDelivery.OutcomeNullable, 
-                                 learningDelivery.LearnStartDate, 
-                                 learner.DateOfBirthNullable, 
-                                 learningDelivery.LearnActEndDateNullable, 
+                                 learningDelivery.FundModel,
+                                 learningDelivery.AimType,
+                                 learningDelivery.ProgTypeNullable,
+                                 learningDelivery.OutcomeNullable,
+                                 learningDelivery.LearnStartDate,
+                                 learner.DateOfBirthNullable,
+                                 learningDelivery.LearnActEndDateNullable,
                                  learningDelivery.LearningDeliveryFAMs))
                 {
                     RaiseValidationMessage(learner, learningDelivery);
                 }
-            }            
+            }
         }
 
         public virtual bool ConditionMet(int fundModel, int aimType, int? progType, int? outcome, DateTime startDate, DateTime? dateOfBirth, DateTime? actEndDate, IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
@@ -98,12 +97,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public virtual bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ProgrammeAim;
+            return aimType == AimTypes.ProgrammeAim;
         }
 
         public virtual bool ProgTypeConditionMet(int? progType)
         {
-            return progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+            return progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public virtual bool OutcomeConditionMet(int? outcome)
@@ -112,7 +111,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         }
 
         public virtual bool AgeConditionMet(DateTime? dateOfBirth, DateTime startDate)
-        {           
+        {
             return dateOfBirth.HasValue && (_dateTimeQueryService.YearsBetween(dateOfBirth.Value, startDate)) >= MinAge;
         }
 

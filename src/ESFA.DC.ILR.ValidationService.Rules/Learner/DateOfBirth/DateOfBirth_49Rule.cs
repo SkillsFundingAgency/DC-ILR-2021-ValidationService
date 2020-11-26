@@ -25,13 +25,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         private readonly HashSet<string> _notionalNvqLevels = new HashSet<string>
         {
-            LARSNotionalNVQLevelV2.Level3,
-            LARSNotionalNVQLevelV2.Level4,
-            LARSNotionalNVQLevelV2.Level5,
-            LARSNotionalNVQLevelV2.Level6,
-            LARSNotionalNVQLevelV2.Level7,
-            LARSNotionalNVQLevelV2.Level8,
-            LARSNotionalNVQLevelV2.HigherLevel
+            LARSConstants.NotionalNVQLevelV2Strings.Level3,
+            LARSConstants.NotionalNVQLevelV2Strings.Level4,
+            LARSConstants.NotionalNVQLevelV2Strings.Level5,
+            LARSConstants.NotionalNVQLevelV2Strings.Level6,
+            LARSConstants.NotionalNVQLevelV2Strings.Level7,
+            LARSConstants.NotionalNVQLevelV2Strings.Level8,
+            LARSConstants.NotionalNVQLevelV2Strings.HigherLevel
         };
 
         private readonly HashSet<string> _learningDeliveryFamCodes = new HashSet<string>
@@ -103,12 +103,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool DateOfBirthConditionMet(DateTime? dateOfBirth, DateTime learnStartDate)
         {
             return dateOfBirth.HasValue
-                   && _dateTimeQueryService.AgeAtGivenDate(dateOfBirth.Value, learnStartDate) >= 24;
+                   && _dateTimeQueryService.YearsBetween(dateOfBirth.Value, learnStartDate) >= 24;
         }
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.AdultSkills;
+            return fundModel == FundModels.AdultSkills;
         }
 
         public bool LARSNotionalNVQL2ConditionMet(string learnAimRef)

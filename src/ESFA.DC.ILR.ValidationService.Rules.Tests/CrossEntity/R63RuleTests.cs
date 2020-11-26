@@ -20,25 +20,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Fact]
         public void FundModelConditionMet_False()
         {
-            NewRule().FundModelConditionMet(TypeOfFunding.AdultSkills).Should().BeFalse();
+            NewRule().FundModelConditionMet(FundModels.AdultSkills).Should().BeFalse();
         }
 
         [Fact]
         public void FundModelConditionMet_True()
         {
-            NewRule().FundModelConditionMet(TypeOfFunding.Age16To19ExcludingApprenticeships).Should().BeTrue();
+            NewRule().FundModelConditionMet(FundModels.Age16To19ExcludingApprenticeships).Should().BeTrue();
         }
 
         [Fact]
         public void AimTypeConditionMet_False()
         {
-            NewRule().AimTypeConditionMet(TypeOfAim.ComponentAimInAProgramme).Should().BeFalse();
+            NewRule().AimTypeConditionMet(AimTypes.ComponentAimInAProgramme).Should().BeFalse();
         }
 
         [Fact]
         public void AimTypeConditionMet_True()
         {
-            NewRule().AimTypeConditionMet(TypeOfAim.CoreAim16To19ExcludingApprenticeships).Should().BeTrue();
+            NewRule().AimTypeConditionMet(AimTypes.CoreAim16To19ExcludingApprenticeships).Should().BeTrue();
         }
 
         [Fact]
@@ -50,8 +50,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships,
-                        AimType = TypeOfAim.AimNotPartOfAProgramme
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships,
+                        AimType = AimTypes.AimNotPartOfAProgramme
                     }
                 }
             };
@@ -71,8 +71,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.Age16To19ExcludingApprenticeships,
-                        AimType = TypeOfAim.CoreAim16To19ExcludingApprenticeships
+                        FundModel = FundModels.Age16To19ExcludingApprenticeships,
+                        AimType = AimTypes.CoreAim16To19ExcludingApprenticeships
                     }
                 }
             };
@@ -92,13 +92,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                 {
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.CommunityLearning,
-                        AimType = TypeOfAim.CoreAim16To19ExcludingApprenticeships
+                        FundModel = FundModels.CommunityLearning,
+                        AimType = AimTypes.CoreAim16To19ExcludingApprenticeships
                     },
                     new TestLearningDelivery()
                     {
-                        FundModel = TypeOfFunding.EuropeanSocialFund,
-                        AimType = TypeOfAim.AimNotPartOfAProgramme
+                        FundModel = FundModels.EuropeanSocialFund,
+                        AimType = AimTypes.AimNotPartOfAProgramme
                     }
                 }
             };
@@ -125,10 +125,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, TypeOfFunding.Age16To19ExcludingApprenticeships)).Verifiable();
-            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.CoreAim16To19ExcludingApprenticeships)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModels.Age16To19ExcludingApprenticeships)).Verifiable();
+            validationErrorHandlerMock.Setup(v => v.BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.CoreAim16To19ExcludingApprenticeships)).Verifiable();
 
-            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(TypeOfFunding.Age16To19ExcludingApprenticeships, TypeOfAim.CoreAim16To19ExcludingApprenticeships);
+            NewRule(validationErrorHandler: validationErrorHandlerMock.Object).BuildErrorMessageParameters(FundModels.Age16To19ExcludingApprenticeships, AimTypes.CoreAim16To19ExcludingApprenticeships);
             validationErrorHandlerMock.Verify();
         }
 

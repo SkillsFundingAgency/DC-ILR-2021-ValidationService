@@ -1,24 +1,25 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Internal.AcademicYear.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using System;
-using System.Collections.Generic;
+using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 {
     public class DateOfBirth_50Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly IAcademicYearDataService _academicYearDataService;
+        private readonly IAcademicYearQueryService _academicYearQueryService;
         private readonly DateTime _julyThirtyFirst2016 = new DateTime(2016, 7, 31);
 
         public DateOfBirth_50Rule(
-            IAcademicYearDataService academicYearDataService,
+            IAcademicYearQueryService academicYearQueryService,
             IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.DateOfBirth_50)
         {
-            _academicYearDataService = academicYearDataService;
+            _academicYearQueryService = academicYearQueryService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -31,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             if (objectToValidate.DateOfBirthNullable.HasValue)
             {
                 var learnersSixteenthBirthdate = objectToValidate.DateOfBirthNullable.Value.AddYears(16);
-                var firstAugustForAcademicYearOfLearnersSixteenthBirthDate = _academicYearDataService.GetAcademicYearOfLearningDate(learnersSixteenthBirthdate, AcademicYearDates.TraineeshipsAugust1);
+                var firstAugustForAcademicYearOfLearnersSixteenthBirthDate = _academicYearQueryService.GetAcademicYearOfLearningDate(learnersSixteenthBirthdate, AcademicYearDates.TraineeshipsAugust1);
 
                 foreach (var learningDelivery in objectToValidate.LearningDeliveries)
                 {
@@ -50,8 +51,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool ConditionMet(ILearningDelivery learningDelivery, DateTime firstAugustForAcademicYearOfLearnersSixteenthBirthDate)
         {
-            return (learningDelivery.ProgTypeNullable.HasValue && learningDelivery.ProgTypeNullable == TypeOfLearningProgramme.Traineeship)
-                   && learningDelivery.AimType == TypeOfAim.ProgrammeAim
+            return (learningDelivery.ProgTypeNullable.HasValue && learningDelivery.ProgTypeNullable == ProgTypes.Traineeship)
+                   && learningDelivery.AimType == AimTypes.ProgrammeAim
                    && learningDelivery.LearnStartDate > _julyThirtyFirst2016
                    && learningDelivery.LearnStartDate < firstAugustForAcademicYearOfLearnersSixteenthBirthDate;
         }

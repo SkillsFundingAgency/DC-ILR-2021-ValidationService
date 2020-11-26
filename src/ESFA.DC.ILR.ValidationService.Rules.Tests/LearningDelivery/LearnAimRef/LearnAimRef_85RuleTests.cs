@@ -2,9 +2,9 @@
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
+using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnAimRef;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -14,168 +14,57 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
 {
     public class LearnAimRef_85RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_85Rule(null, service.Object, commonChecks.Object));
-        }
-
-        /// <summary>
-        /// New rule with null lars service throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullLARSServiceThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_85Rule(handler.Object, null, commonChecks.Object));
-        }
-
-        /// <summary>
-        /// New rule with null common checks throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullCommonchecksThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new LearnAimRef_85Rule(handler.Object, service.Object, null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("LearnAimRef_85", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(LearnAimRef_85Rule.Name, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// First viable date meets expectation.
-        /// </summary>
         [Fact]
         public void FirstViableDateMeetsExpectation()
         {
-            // arrange / act
             var result = LearnAimRef_85Rule.FirstViableDate;
 
-            // assert
             Assert.Equal(DateTime.Parse("2017-08-01"), result);
         }
 
-        /// <summary>
-        /// Is disqualifying notional NVQ meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(LARSNotionalNVQLevelV2.EntryLevel, false)]
-        [InlineData(LARSNotionalNVQLevelV2.HigherLevel, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level1, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level1_2, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level2, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level3, true)]
-        [InlineData(LARSNotionalNVQLevelV2.Level4, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level5, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level6, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level7, false)]
-        [InlineData(LARSNotionalNVQLevelV2.Level8, false)]
-        [InlineData(LARSNotionalNVQLevelV2.MixedLevel, false)]
-        [InlineData(LARSNotionalNVQLevelV2.NotKnown, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.EntryLevel, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.HigherLevel, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level1, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level1_2, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level2, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level3, true)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level4, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level5, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level6, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level7, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.Level8, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.MixedLevel, false)]
+        [InlineData(LARSConstants.NotionalNVQLevelV2Strings.NotKnown, false)]
         public void IsDisqualifyingNotionalNVQMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILARSLearningDelivery>();
             mockDelivery
                 .SetupGet(y => y.NotionalNVQLevelv2)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsDisqualifyingNotionalNVQ(mockDelivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Has qualifying notional NVQ meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(null)]
         [InlineData("testAim1")]
         [InlineData("testAim2")]
         public void HasQualifyingNotionalNVQMeetsExpectation(string candidate)
         {
-            // arrange
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.LearnAimRef)
@@ -187,38 +76,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.GetDeliveryFor(candidate))
                 .Returns((ILARSLearningDelivery)null);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, commonChecks.Object);
+            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, learningDeliveryFAMQS.Object, dd07.Object, dateTimeQS.Object);
 
-            // act
             var result = sut.HasDisqualifyingNotionalNVQ(mockDelivery.Object);
 
-            // assert
+            Assert.False(result);
+
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
-
-            Assert.False(result);
+            learningDeliveryFAMQS.VerifyAll();
+            dd07.VerifyAll();
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData(TypeOfPriorAttainment.FullLevel3)]
-        [InlineData(TypeOfPriorAttainment.Level4)]
-        [InlineData(TypeOfPriorAttainment.Level4Expired20130731)]
-        [InlineData(TypeOfPriorAttainment.Level5)]
-        [InlineData(TypeOfPriorAttainment.Level5AndAboveExpired20130731)]
-        [InlineData(TypeOfPriorAttainment.Level6)]
-        [InlineData(TypeOfPriorAttainment.Level7AndAbove)]
-        [InlineData(TypeOfPriorAttainment.OtherLevelNotKnown)]
-        [InlineData(TypeOfPriorAttainment.NotKnown)]
+        [InlineData(PriorAttainments.FullLevel3)]
+        [InlineData(PriorAttainments.Level4)]
+        [InlineData(PriorAttainments.Level4Expired20130731)]
+        [InlineData(PriorAttainments.Level5)]
+        [InlineData(PriorAttainments.Level5AndAboveExpired20130731)]
+        [InlineData(PriorAttainments.Level6)]
+        [InlineData(PriorAttainments.Level7AndAbove)]
+        [InlineData(PriorAttainments.OtherLevelNotKnown)]
+        [InlineData(PriorAttainments.NotKnown)]
         public void InvalidItemRaisesValidationMessage(int candidate)
         {
-            // arrange
             const string learnRefNumber = "123456789X";
             const string learnAimRef = "salddfkjeifdnase";
 
@@ -233,9 +118,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
+            mockDelivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(ProgTypes.AdvancedLevelApprenticeship);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -247,7 +135,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(candidate);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -262,61 +150,69 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", testDate))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
-                .Setup(x => x.BuildErrorMessageParameter("FundModel", TypeOfFunding.AdultSkills))
+                .Setup(x => x.BuildErrorMessageParameter("FundModel", FundModels.AdultSkills))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var mockLars = new Mock<ILARSLearningDelivery>();
             mockLars
                 .SetupGet(x => x.NotionalNVQLevelv2)
-                .Returns(LARSNotionalNVQLevelV2.Level3);
+                .Returns(LARSConstants.NotionalNVQLevelV2Strings.Level3);
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
                 .Setup(x => x.GetDeliveryFor(learnAimRef))
                 .Returns(mockLars.Object);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.IsRestart(mockDelivery.Object))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "RES"))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.InApprenticeship(mockDelivery.Object))
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   mockDelivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "376"))
+               .Returns(false);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "DAM",
+                    "023"))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
-                .Returns(true);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_85Rule.FirstViableDate, null))
+
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(false);
+
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_85Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, commonChecks.Object);
+            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, learningDeliveryFAMQS.Object, dd07.Object, dateTimeQS.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
+            dd07.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
-        [InlineData(TypeOfPriorAttainment.FullLevel3)]
-        [InlineData(TypeOfPriorAttainment.Level4)]
-        [InlineData(TypeOfPriorAttainment.Level4Expired20130731)]
-        [InlineData(TypeOfPriorAttainment.Level5)]
-        [InlineData(TypeOfPriorAttainment.Level5AndAboveExpired20130731)]
-        [InlineData(TypeOfPriorAttainment.Level6)]
-        [InlineData(TypeOfPriorAttainment.Level7AndAbove)]
-        [InlineData(TypeOfPriorAttainment.OtherLevelNotKnown)]
-        [InlineData(TypeOfPriorAttainment.NotKnown)]
+        [InlineData(PriorAttainments.FullLevel3)]
+        [InlineData(PriorAttainments.Level4)]
+        [InlineData(PriorAttainments.Level4Expired20130731)]
+        [InlineData(PriorAttainments.Level5)]
+        [InlineData(PriorAttainments.Level5AndAboveExpired20130731)]
+        [InlineData(PriorAttainments.Level6)]
+        [InlineData(PriorAttainments.Level7AndAbove)]
+        [InlineData(PriorAttainments.OtherLevelNotKnown)]
+        [InlineData(PriorAttainments.NotKnown)]
         public void ValidItemDoesNotRaiseValidationMessage(int candidate)
         {
-            // arrange
             const string learnRefNumber = "123456789X";
             const string learnAimRef = "salddfkjeifdnase";
 
@@ -331,9 +227,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
+            mockDelivery
+                .SetupGet(y => y.ProgTypeNullable)
+                .Returns(ProgTypes.AdvancedLevelApprenticeship);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -345,56 +244,67 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnAimRef
                 .Returns(candidate);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
             var mockLars = new Mock<ILARSLearningDelivery>();
             mockLars
                 .SetupGet(x => x.NotionalNVQLevelv2)
-                .Returns(LARSNotionalNVQLevelV2.Level2);
+                .Returns(LARSConstants.NotionalNVQLevelV2Strings.Level2);
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
             service
                 .Setup(x => x.GetDeliveryFor(learnAimRef))
                 .Returns(mockLars.Object);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.IsRestart(mockDelivery.Object))
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "RES"))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.InApprenticeship(mockDelivery.Object))
+            learningDeliveryFAMQS
+                .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                    mockDelivery.Object.LearningDeliveryFAMs,
+                    "DAM",
+                    "023"))
                 .Returns(false);
-            commonChecks
-                .Setup(x => x.HasQualifyingFunding(mockDelivery.Object, TypeOfFunding.AdultSkills))
-                .Returns(true);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, LearnAimRef_85Rule.FirstViableDate, null))
+            learningDeliveryFAMQS
+               .Setup(x => x.HasLearningDeliveryFAMCodeForType(
+                   mockDelivery.Object.LearningDeliveryFAMs,
+                   "LDM",
+                   "376"))
+               .Returns(false);
+
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            dd07
+                .Setup(dd => dd.IsApprenticeship(mockDelivery.Object.ProgTypeNullable)).Returns(false);
+
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, LearnAimRef_85Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, commonChecks.Object);
+            var sut = new LearnAimRef_85Rule(handler.Object, service.Object, learningDeliveryFAMQS.Object, dd07.Object, dateTimeQS.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            learningDeliveryFAMQS.VerifyAll();
+            dd07.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public LearnAimRef_85Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var learningDeliveryFAMQS = new Mock<ILearningDeliveryFAMQueryService>(MockBehavior.Strict);
+            var dd07 = new Mock<IDerivedData_07Rule>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new LearnAimRef_85Rule(handler.Object, service.Object, commonChecks.Object);
+            return new LearnAimRef_85Rule(handler.Object, service.Object, learningDeliveryFAMQS.Object, dd07.Object, dateTimeQS.Object);
         }
     }
 }

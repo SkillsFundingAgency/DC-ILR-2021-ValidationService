@@ -14,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
     {
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFAMQueryService;
 
-        public R123Rule(ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService, IValidationErrorHandler validationErrorHandler) 
+        public R123Rule(ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService, IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.R123)
         {
             _learningDeliveryFAMQueryService = learningDeliveryFAMQueryService;
@@ -52,9 +52,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                    && FAMDateConditionMet(learningDelivery.LearningDeliveryFAMs);
         }
 
-        public bool FundModelConditionMet(int fundModel) => fundModel == TypeOfFunding.ApprenticeshipsFrom1May2017;
+        public bool FundModelConditionMet(int fundModel) => fundModel == FundModels.ApprenticeshipsFrom1May2017;
 
-        public bool ProgTypeConditionMet(int? progType) => progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+        public bool ProgTypeConditionMet(int? progType) => progType == ProgTypes.ApprenticeshipStandard;
 
         public bool CompStatusConditionMet(int compStatus) => compStatus == CompletionState.IsOngoing;
 
@@ -69,15 +69,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
             return _learningDeliveryFAMQueryService.HasLearningDeliveryFAMType(learningDeliveryFAMs, LearningDeliveryFAMTypeConstants.ACT);
         }
 
-        private DateTime? GetMaxLearnDelFAMDateTo(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
-        {
-            return learningDeliveryFAMs?
-                .Where(f => f.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.ACT))
-                .OrderByDescending(o => o.LearnDelFAMDateFromNullable)
-                .FirstOrDefault()
-                .LearnDelFAMDateToNullable;
-        }
-
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? famDateTo, int compStatus)
         {
             return new[]
@@ -85,6 +76,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.CrossEntity
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMDateTo, famDateTo),
                 BuildErrorMessageParameter(PropertyNameConstants.CompStatus, compStatus)
             };
+        }
+
+        private DateTime? GetMaxLearnDelFAMDateTo(IEnumerable<ILearningDeliveryFAM> learningDeliveryFAMs)
+        {
+            return learningDeliveryFAMs?
+                .Where(f => f.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.ACT))
+                .OrderByDescending(o => o.LearnDelFAMDateFromNullable)
+                .FirstOrDefault()
+                .LearnDelFAMDateToNullable;
         }
     }
 }

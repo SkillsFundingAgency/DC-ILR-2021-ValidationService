@@ -1,7 +1,7 @@
 ﻿using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
 using ESFA.DC.ILR.ValidationService.Rules.Derived;
-using ESFA.DC.ILR.ValidationService.Utility;
+
 using FluentAssertions;
 using System;
 using Xunit;
@@ -47,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             var rule = NewRule();
 
             // act / assert
-            Assert.Throws<InvalidOperationException>(() => rule.Derive(Collection.Empty<ILearningDelivery>()));
+            Assert.Throws<InvalidOperationException>(() => rule.Derive(Array.Empty<ILearningDelivery>()));
         }
 
         private DerivedData_06Rule NewRule()

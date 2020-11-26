@@ -24,13 +24,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Fact]
         public void ComponentAimTypeConditionMet_False()
         {
-            NewRule().ComponentAimTypeConditionMet(TypeOfAim.AimNotPartOfAProgramme).Should().BeFalse();
+            NewRule().ComponentAimTypeConditionMet(AimTypes.AimNotPartOfAProgramme).Should().BeFalse();
         }
 
         [Fact]
         public void ComponentAimTypeConditionMet_True()
         {
-            NewRule().ComponentAimTypeConditionMet(TypeOfAim.ComponentAimInAProgramme).Should().BeTrue();
+            NewRule().ComponentAimTypeConditionMet(AimTypes.ComponentAimInAProgramme).Should().BeTrue();
         }
 
         [Fact]
@@ -48,13 +48,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var dd07Mock = new Mock<IDerivedData_07Rule>();
 
-            dd07Mock.Setup(d => d.IsApprenticeship(TypeOfLearningProgramme.HigherApprenticeshipLevel6)).Returns(true);
+            dd07Mock.Setup(d => d.IsApprenticeship(ProgTypes.HigherApprenticeshipLevel6)).Returns(true);
 
-            NewRule(dd07: dd07Mock.Object).DD07ConditionMet(TypeOfLearningProgramme.HigherApprenticeshipLevel6).Should().BeTrue();
+            NewRule(dd07: dd07Mock.Object).DD07ConditionMet(ProgTypes.HigherApprenticeshipLevel6).Should().BeTrue();
         }
 
         [Theory]
-        [InlineData(TypeOfLearningProgramme.ApprenticeshipStandard)]
+        [InlineData(ProgTypes.ApprenticeshipStandard)]
         [InlineData(null)]
         public void ApprenticeshipStandardsConditionMet_False(int? progType)
         {
@@ -64,7 +64,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         [Fact]
         public void ApprenticeshipStandardsConditionMet_True()
         {
-            NewRule().ApprenticeshipStandardsConditionMet(TypeOfLearningProgramme.HigherApprenticeshipLevel4).Should().BeTrue();
+            NewRule().ApprenticeshipStandardsConditionMet(ProgTypes.HigherApprenticeshipLevel4).Should().BeTrue();
         }
 
         [Fact]
@@ -162,7 +162,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         public void Validate_Error()
         {
             HashSet<int?> frameWorkComponentTypes = new HashSet<int?>() { 1, 3 };
-            var progType = TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            var progType = ProgTypes.AdvancedLevelApprenticeship;
             var fworkCode = 445;
             var pwayCode = 1;
             var learnStartDate = new DateTime(2019, 01, 01);
@@ -174,8 +174,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        AimType = TypeOfAim.AimNotPartOfAProgramme,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        AimType = AimTypes.AimNotPartOfAProgramme,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 01),
                         LearnActEndDateNullable = new DateTime(2017, 02, 28),
                         FworkCodeNullable = fworkCode,
@@ -184,8 +184,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        AimType = AimTypes.ComponentAimInAProgramme,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 24),
                         LearnActEndDateNullable = new DateTime(2017, 03, 01),
                         FworkCodeNullable = fworkCode,
@@ -194,8 +194,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        AimType = TypeOfAim.AimNotPartOfAProgramme,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        AimType = AimTypes.AimNotPartOfAProgramme,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 25),
                         LearnActEndDateNullable = new DateTime(2017, 10, 25),
                         FworkCodeNullable = fworkCode,
@@ -204,8 +204,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
-                        ProgTypeNullable = TypeOfLearningProgramme.AdvancedLevelApprenticeship,
+                        AimType = AimTypes.ComponentAimInAProgramme,
+                        ProgTypeNullable = ProgTypes.AdvancedLevelApprenticeship,
                         LearnStartDate = new DateTime(2017, 02, 26),
                         LearnActEndDateNullable = new DateTime(2017, 11, 25),
                         FworkCodeNullable = fworkCode,
@@ -241,8 +241,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
                     new TestLearningDelivery()
                     {
                         LearnAimRef = learnAimRef,
-                        AimType = TypeOfAim.ComponentAimInAProgramme,
-                        ProgTypeNullable = TypeOfLearningProgramme.ApprenticeshipStandard,
+                        AimType = AimTypes.ComponentAimInAProgramme,
+                        ProgTypeNullable = ProgTypes.ApprenticeshipStandard,
                         LearnStartDate = new DateTime(2015, 07, 02),
                         LearnActEndDateNullable = null
                     }
@@ -269,13 +269,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.CrossEntity
         {
             var validationErrorHandlerMock = new Mock<IValidationErrorHandler>();
 
-            validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.AimType, TypeOfAim.ComponentAimInAProgramme)).Verifiable();
+            validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.AimType, AimTypes.ComponentAimInAProgramme)).Verifiable();
             validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, "02/07/2018")).Verifiable();
             validationErrorHandlerMock.Setup(e => e.BuildErrorMessageParameter(PropertyNameConstants.LearnActEndDate, "25/10/2018")).Verifiable();
 
             NewRule(validationErrorHandler: validationErrorHandlerMock.Object)
                 .BuildErrorMessageParameters(
-                TypeOfAim.ComponentAimInAProgramme,
+                AimTypes.ComponentAimInAProgramme,
                 new DateTime(2018, 07, 02),
                 new DateTime(2018, 10, 25));
 

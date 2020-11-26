@@ -19,11 +19,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
             NewRule().RuleName.Should().Be("WorkPlaceStartDate_04");
         }
 
-       [Theory]
-       [InlineData("ZWRKX002", 35, true)]
-       [InlineData("ZWRKX123", 35, false)]
-       [InlineData("ZWRKX002", 25, false)]
-       [InlineData("ZWRKX123", 25, false)]
+        [Theory]
+        [InlineData("ZWRKX002", 35, true)]
+        [InlineData("ZWRKX003", 35, true)]
+        [InlineData("ZWRKX123", 35, false)]
+        [InlineData("ZWRKX002", 25, false)]
+        [InlineData("ZWRKX003", 25, false)]
+        [InlineData("ZWRKX123", 25, false)]
         public void LearnAimRefAndFundModelMeetsExpectation(string learnAimRef, int fundModel, bool expectation)
         {
             // arrange
@@ -54,7 +56,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
         }
 
         [Fact]
-        public void Validate_Error()
+        public void Validate_Error_ZWRKX002()
         {
             var learner = new TestLearner
             {
@@ -63,6 +65,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
                     new TestLearningDelivery()
                     {
                         LearnAimRef = "ZWRKX002",
+                        FundModel = 35
+                    }
+                }
+            };
+
+            using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
+            {
+                NewRule(validationErrorHandlerMock.Object).Validate(learner);
+            }
+        }
+
+        [Fact]
+        public void Validate_Error_ZWRKX003()
+        {
+            var learner = new TestLearner
+            {
+                LearningDeliveries = new List<TestLearningDelivery>()
+                {
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX003",
                         FundModel = 35
                     }
                 }
@@ -110,6 +133,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.WorkPlaceSt
                     new TestLearningDelivery()
                     {
                         LearnAimRef = "ZWRKX002",
+                        FundModel = 35
+                    },
+                    new TestLearningDelivery()
+                    {
+                        LearnAimRef = "ZWRKX003",
                         FundModel = 35
                     },
                     new TestLearningDelivery()

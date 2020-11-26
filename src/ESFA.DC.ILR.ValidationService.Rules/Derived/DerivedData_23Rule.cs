@@ -28,7 +28,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
 
             var delivery = learner.LearningDeliveries
                     ?.OrderByDescending(x => x.LearnStartDate)
-                    .FirstOrDefault(ld => ld.LearnAimRef.CaseInsensitiveEquals(TypeOfAim.References.ESFLearnerStartandAssessment)
+                    .FirstOrDefault(ld => ld.LearnAimRef.CaseInsensitiveEquals(AimTypes.References.ESFLearnerStartandAssessment)
                              && ld.CompStatus == CompletionState.HasCompleted
                              && ld.ConRefNumber.CaseInsensitiveEquals(conRefNumber));
 
@@ -37,7 +37,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Derived
                 return null;
             }
 
-            return _dateTimeQueryService.AgeAtGivenDate(
+            return _dateTimeQueryService.YearsBetween(
                 learner.DateOfBirthNullable.Value,
                 delivery.LearnStartDate);
         }

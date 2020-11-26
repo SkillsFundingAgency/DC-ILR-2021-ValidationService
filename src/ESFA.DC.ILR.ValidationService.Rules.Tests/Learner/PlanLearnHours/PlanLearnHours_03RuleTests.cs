@@ -38,7 +38,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
 
         [Theory]
         [InlineData(0)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017)]
         public void FundModelConditionMet_False(int fundModel)
         {
             NewRule().FundModelConditionMet(fundModel).Should().BeFalse();
@@ -51,7 +51,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
         }
 
         [Theory]
-        [InlineData(TypeOfFunding.Age16To19ExcludingApprenticeships)]
+        [InlineData(FundModels.Age16To19ExcludingApprenticeships)]
         public void FundModelConditionMet_True(int fundModel)
         {
             NewRule().FundModelConditionMet(fundModel).Should().BeTrue();
@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
 
         [Theory]
         [InlineData(0)]
-        [InlineData(TypeOfFunding.ApprenticeshipsFrom1May2017)]
+        [InlineData(FundModels.ApprenticeshipsFrom1May2017)]
         public void ConditionMet_False(int fundModel)
         {
             NewRule().ConditionMet(fundModel).Should().BeFalse();
@@ -78,9 +78,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
         }
 
         [Fact]
+        public void ConditionMet_False_Excluded()
+        {
+            NewRule().Excluded(25, 31).Should().BeTrue();
+        }
+
+        [Fact]
         public void ConditionMet_True()
         {
-            NewRule().ConditionMet(TypeOfFunding.Age16To19ExcludingApprenticeships).Should().BeTrue();
+            NewRule().ConditionMet(FundModels.Age16To19ExcludingApprenticeships).Should().BeTrue();
         }
 
         [Fact]

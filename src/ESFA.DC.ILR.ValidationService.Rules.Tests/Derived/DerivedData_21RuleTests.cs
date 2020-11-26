@@ -12,32 +12,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 {
     public class DerivedData_21RuleTests
     {
-        /// <summary>
-        /// Is adult skills funded unemployed learner with null delivery throws
-        /// </summary>
-        [Fact]
-        public void IsAdultSkillsFundedUnemployedLearnerWithNullDeliveryThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.IsAdultFundedUnemployedWithOtherStateBenefits(null, new Mock<ILearner>().Object));
-        }
-
-        /// <summary>
-        /// Determines whether [is adult skills funded unemployed learner with null learner throws].
-        /// </summary>
-        [Fact]
-        public void IsAdultSkillsFundedUnemployedLearnerWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => sut.IsAdultFundedUnemployedWithOtherStateBenefits(new Mock<ILearningDelivery>().Object, null));
-        }
-
         [Theory]
         [InlineData("LDM", "318", 11, "BSI", 3)]
         [InlineData("LDM", "318", 12, "BSI", 3)]
@@ -98,12 +72,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 }
             };
 
-            var providerRuleMock = new Mock<IProvideRuleCommonOperations>();
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>();
+            lEmpQS.Setup(x => x.LearnerEmploymentStatusForDate(testLearner.LearnerEmploymentStatuses, learnStartDate)).Returns(testLearnerEmploymentStatus);
 
-            providerRuleMock.Setup(x => x.GetEmploymentStatusOn(learnStartDate, testLearner.LearnerEmploymentStatuses)).Returns(testLearnerEmploymentStatus);
-            providerRuleMock.Setup(x => x.HasQualifyingFunding(learninDelivery, 35)).Returns(true);
-
-            NewRule(providerRuleMock.Object).IsAdultFundedUnemployedWithOtherStateBenefits(learninDelivery, testLearner).Should().BeTrue();
+            NewRule(lEmpQS.Object).IsAdultFundedUnemployedWithOtherStateBenefits(learninDelivery, testLearner).Should().BeTrue();
         }
 
         [Theory]
@@ -126,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         {
             DateTime learnStartDate = new DateTime(2016, 08, 01);
 
-            var learninDelivery = new TestLearningDelivery()
+            var learningDelivery = new TestLearningDelivery()
             {
                 AimSeqNumber = 1001,
                 CompStatus = 1,
@@ -146,13 +118,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
             {
                 EmpStat = empStatus,
                 EmploymentStatusMonitorings = new TestEmploymentStatusMonitoring[]
-                        {
-                            new TestEmploymentStatusMonitoring()
-                            {
-                                ESMType = eSMType,
-                                ESMCode = eSMCode
-                            }
-                        }
+                {
+                    new TestEmploymentStatusMonitoring()
+                    {
+                        ESMType = eSMType,
+                        ESMCode = eSMCode
+                    }
+                }
             };
 
             var testLearner = new TestLearner()
@@ -164,49 +136,34 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 },
                 LearningDeliveries = new TestLearningDelivery[]
                 {
-                    learninDelivery
+                    learningDelivery
                 }
             };
 
-            var providerRuleMock = new Mock<IProvideRuleCommonOperations>();
+            var lEmpQS = new Mock<ILearnerEmploymentStatusQueryService>();
+            lEmpQS.Setup(x => x.LearnerEmploymentStatusForDate(testLearner.LearnerEmploymentStatuses, learnStartDate)).Returns(testLearnerEmploymentStatus);
 
-            providerRuleMock.Setup(x => x.GetEmploymentStatusOn(learnStartDate, testLearner.LearnerEmploymentStatuses)).Returns(testLearnerEmploymentStatus);
-            providerRuleMock.Setup(x => x.HasQualifyingFunding(learninDelivery, fundModel)).Returns(fundModelExpecedResult);
-
-            NewRule(providerRuleMock.Object).IsAdultFundedUnemployedWithOtherStateBenefits(learninDelivery, testLearner).Should().BeFalse();
+            NewRule(lEmpQS.Object).IsAdultFundedUnemployedWithOtherStateBenefits(learningDelivery, testLearner).Should().BeFalse();
         }
 
-        /// <summary>
-        /// Determines whether [is not employed meets expectation] [the specified candidate].
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedNotSeekingOrNotAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.InPaidEmployment, false)]
-        [InlineData(TypeOfEmploymentStatus.NotEmployedSeekingAndAvailable, true)]
-        [InlineData(TypeOfEmploymentStatus.NotKnownProvided, false)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedNotSeekingOrNotAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.InPaidEmployment, false)]
+        [InlineData(EmploymentStatusEmpStats.NotEmployedSeekingAndAvailable, true)]
+        [InlineData(EmploymentStatusEmpStats.NotKnownProvided, false)]
         public void IsNotEmployedMeetsExpectation(int candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockDelivery = new Mock<ILearnerEmploymentStatus>();
             mockDelivery
                 .SetupGet(y => y.EmpStat)
                 .Returns(candidate);
 
-            // act
             var result = sut.IsNotEmployed(mockDelivery.Object);
 
-            // assert
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// In receipt of another benefit meets expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(Monitoring.EmploymentStatus.EmployedForLessThan16HoursPW, false)]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor16HoursOrMorePW, false)]
@@ -234,7 +191,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         [InlineData(Monitoring.EmploymentStatus.UnemployedFor36MPlus, false)]
         public void InReceiptOfAnotherBenefitMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<IEmploymentStatusMonitoring>(MockBehavior.Strict);
             mockItem
@@ -244,19 +200,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(candidate.Substring(3)));
 
-            // act
             var result = sut.InReceiptOfAnotherBenefit(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
             mockItem.VerifyAll();
         }
 
-        /// <summary>
-        /// In receipt of universal credit meets expectation.
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(Monitoring.EmploymentStatus.EmployedForLessThan16HoursPW, false)]
         [InlineData(Monitoring.EmploymentStatus.EmployedFor16HoursOrMorePW, false)]
@@ -284,7 +233,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         [InlineData(Monitoring.EmploymentStatus.UnemployedFor36MPlus, false)]
         public void InReceiptOfUniversalCreditMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<IEmploymentStatusMonitoring>(MockBehavior.Strict);
             mockItem
@@ -294,10 +242,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 .SetupGet(y => y.ESMCode)
                 .Returns(int.Parse(candidate.Substring(3)));
 
-            // act
             var result = sut.InReceiptOfUniversalCredit(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
             mockItem.VerifyAll();
         }
@@ -321,17 +267,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         [InlineData(Monitoring.Delivery.Types.WorkProgrammeParticipation, true)]
         public void IsMonitoredMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<ILearningDeliveryFAM>(MockBehavior.Strict);
             mockItem
                 .SetupGet(y => y.LearnDelFAMType)
                 .Returns(candidate);
 
-            // act
             var result = sut.NotIsMonitored(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
             mockItem.VerifyAll();
         }
@@ -342,7 +285,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         [InlineData(Monitoring.Delivery.SteelIndustriesRedundancyTraining, false)]
         public void MandatedToSkillsTrainingMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var sut = NewRule();
             var mockItem = new Mock<ILearningDeliveryFAM>(MockBehavior.Strict);
             mockItem
@@ -352,23 +294,15 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                 .SetupGet(y => y.LearnDelFAMCode)
                 .Returns(candidate.Substring(3));
 
-            // act
             var result = sut.MandatedToSkillsTraining(mockItem.Object);
 
-            // assert
             Assert.Equal(expectation, result);
             mockItem.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up derived data rule</returns>
-        public DerivedData_21Rule NewRule(IProvideRuleCommonOperations commonOperations = null)
+        public DerivedData_21Rule NewRule(ILearnerEmploymentStatusQueryService lEmpQS = null)
         {
-            var commonOps = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            return new DerivedData_21Rule(commonOperations == null ? commonOps.Object : commonOperations);
+            return new DerivedData_21Rule(lEmpQS ?? Mock.Of<ILearnerEmploymentStatusQueryService>());
         }
     }
 }

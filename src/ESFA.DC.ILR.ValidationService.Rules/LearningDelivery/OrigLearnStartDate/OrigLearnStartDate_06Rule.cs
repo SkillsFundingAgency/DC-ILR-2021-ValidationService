@@ -1,11 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDate
 {
@@ -13,9 +13,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
     {
         private readonly HashSet<string> larsValidityCategories = new HashSet<string>()
         {
-            TypeOfLARSValidity.AdultSkills,
-            TypeOfLARSValidity.Unemployed,
-            TypeOfLARSValidity.OLASSAdult
+            LARSConstants.Validities.AdultSkills,
+            LARSConstants.Validities.Unemployed,
+            LARSConstants.Validities.OLASSAdult
         };
 
         private readonly IDerivedData_07Rule _dd07;
@@ -69,7 +69,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.OrigLearnStartDat
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.AdultSkills;
+            return fundModel == FundModels.AdultSkills;
         }
 
         public bool LARSConditionMet(DateTime origLearnStartDate, string learnAimRef)

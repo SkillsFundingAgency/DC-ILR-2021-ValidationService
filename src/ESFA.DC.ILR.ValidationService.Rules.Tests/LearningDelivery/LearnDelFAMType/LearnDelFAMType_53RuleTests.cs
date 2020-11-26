@@ -65,7 +65,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var fundingStreamPeriodCodes = new List<string>()
             {
-                 FundingStreamPeriodCodeConstants.ALLBC1920
+                 FundingStreamPeriodCodeConstants.ALLBC2021
             };
 
             var mockFCSDataService = new Mock<IFCSDataService>();
@@ -81,7 +81,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.LearningDelivery.LearnDelFAM
         {
             var fundingStreamPeriodCodes = new List<string>()
             {
-                 FundingStreamPeriodCodeConstants.ALLBC1920
+                 FundingStreamPeriodCodeConstants.ALLBC2021
             };
 
             var mockFCSDataService = new Mock<IFCSDataService>();

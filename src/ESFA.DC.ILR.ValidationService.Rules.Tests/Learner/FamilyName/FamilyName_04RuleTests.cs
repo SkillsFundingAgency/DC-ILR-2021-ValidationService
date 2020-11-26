@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.Tests.Model;
-using ESFA.DC.ILR.ValidationService.Data.External.ULN.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Learner.FamilyName;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
@@ -24,7 +23,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
         [InlineData(10, 10, "208", false, true)]
         [InlineData(10, 20, "208", false, false)]
         [InlineData(10, 99, "208", false, false)]
-        [InlineData(10, 99, "108", true, false)]
+        [InlineData(99, 10, "108", true, true)]
         [InlineData(99, 99, "108", true, true)]
         [InlineData(35, 25, "108", true, false)]
         [InlineData(35, 99, "108", true, false)]
@@ -98,23 +97,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
         {
             long uln = 1111111111;
 
-            var ulnDataServiceMock = new Mock<IULNDataService>();
-
-            ulnDataServiceMock.Setup(ds => ds.Exists(uln)).Returns(true);
-
-            NewRule(ulnDataServiceMock.Object).ULNConditionMet(uln).Should().BeTrue();
-        }
-
-        [Fact]
-        public void ULNConditionMet_False()
-        {
-            long uln = 1111111111;
-
-            var ulnDataServiceMock = new Mock<IULNDataService>();
-
-            ulnDataServiceMock.Setup(ds => ds.Exists(uln)).Returns(false);
-
-            NewRule(ulnDataServiceMock.Object).ULNConditionMet(uln).Should().BeFalse();
+            NewRule().ULNConditionMet(uln).Should().BeTrue();
         }
 
         [Fact]
@@ -122,11 +105,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
         {
             long uln = 9999999999;
 
-            var ulnDataServiceMock = new Mock<IULNDataService>();
-
-            ulnDataServiceMock.Setup(ds => ds.Exists(uln)).Returns(false);
-
-            NewRule(ulnDataServiceMock.Object).ULNConditionMet(uln).Should().BeFalse();
+            NewRule().ULNConditionMet(uln).Should().BeFalse();
         }
 
         [Fact]
@@ -152,13 +131,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
                 }
             };
 
-            var ulnDataServiceMock = new Mock<IULNDataService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            ulnDataServiceMock.Setup(ds => ds.Exists(uln)).Returns(true);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "SOF", learnDelFamCode)).Returns(false);
 
-            NewRule(ulnDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object).ConditionMet(null, 5, uln, learningDeliveries).Should().BeTrue();
+            NewRule(learningDeliveryFAMQueryServiceMock.Object).ConditionMet(null, 5, uln, learningDeliveries).Should().BeTrue();
         }
 
         [Fact]
@@ -184,13 +161,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
                 }
             };
 
-            var ulnDataServiceMock = new Mock<IULNDataService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
-            ulnDataServiceMock.Setup(ds => ds.Exists(uln)).Returns(true);
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "SOF", learnDelFamCode)).Returns(false);
 
-            NewRule(ulnDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object).ConditionMet(null, 20, uln, learningDeliveries).Should().BeFalse();
+            NewRule(learningDeliveryFAMQueryServiceMock.Object).ConditionMet(null, 20, uln, learningDeliveries).Should().BeFalse();
         }
 
         [Fact]
@@ -216,13 +191,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
                 }
             };
 
-            var ulnDataServiceMock = new Mock<IULNDataService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "SOF", learnDelFamCode)).Returns(false);
-            ulnDataServiceMock.Setup(ds => ds.Exists(uln)).Returns(true);
 
-            NewRule(ulnDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object).ConditionMet(null, 20, uln, learningDeliveries).Should().BeFalse();
+            NewRule(learningDeliveryFAMQueryServiceMock.Object).ConditionMet(null, 20, uln, learningDeliveries).Should().BeFalse();
         }
 
         [Fact]
@@ -248,13 +221,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
                 }
             };
 
-            var ulnDataServiceMock = new Mock<IULNDataService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "SOF", learnDelFamCode)).Returns(false);
-            ulnDataServiceMock.Setup(ds => ds.Exists(uln)).Returns(false);
 
-            NewRule(ulnDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object).ConditionMet(null, 20, uln, learningDeliveries).Should().BeFalse();
+            NewRule(learningDeliveryFAMQueryServiceMock.Object).ConditionMet(null, 20, uln, learningDeliveries).Should().BeFalse();
         }
 
         [Fact]
@@ -282,15 +253,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
                 }
             };
 
-            var ulnDataServiceMock = new Mock<IULNDataService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "SOF", "100")).Returns(true);
-            ulnDataServiceMock.Setup(ds => ds.Exists(It.IsAny<long>())).Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForError())
             {
-                NewRule(ulnDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -318,15 +287,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
                 }
             };
 
-            var ulnDataServiceMock = new Mock<IULNDataService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "SOF", "100")).Returns(true);
-            ulnDataServiceMock.Setup(ds => ds.Exists(It.IsAny<long>())).Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(ulnDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -354,15 +321,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
                 }
             };
 
-            var ulnDataServiceMock = new Mock<IULNDataService>();
             var learningDeliveryFAMQueryServiceMock = new Mock<ILearningDeliveryFAMQueryService>();
 
             learningDeliveryFAMQueryServiceMock.Setup(qs => qs.HasLearningDeliveryFAMCodeForType(It.IsAny<IEnumerable<ILearningDeliveryFAM>>(), "SOF", "100")).Returns(true);
-            ulnDataServiceMock.Setup(ds => ds.Exists(It.IsAny<long>())).Returns(true);
 
             using (var validationErrorHandlerMock = BuildValidationErrorHandlerMockForNoError())
             {
-                NewRule(ulnDataServiceMock.Object, learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
+                NewRule(learningDeliveryFAMQueryServiceMock.Object, validationErrorHandlerMock.Object).Validate(learner);
             }
         }
 
@@ -379,9 +344,9 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.FamilyName
             validationErrorHandlerMock.Verify();
         }
 
-        private FamilyName_04Rule NewRule(IULNDataService ulnDataService = null, ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null, IValidationErrorHandler validationErrorHandler = null)
+        private FamilyName_04Rule NewRule(ILearningDeliveryFAMQueryService learningDeliveryFAMQueryService = null, IValidationErrorHandler validationErrorHandler = null)
         {
-            return new FamilyName_04Rule(ulnDataService, learningDeliveryFAMQueryService, validationErrorHandler);
+            return new FamilyName_04Rule(learningDeliveryFAMQueryService, validationErrorHandler);
         }
     }
 }

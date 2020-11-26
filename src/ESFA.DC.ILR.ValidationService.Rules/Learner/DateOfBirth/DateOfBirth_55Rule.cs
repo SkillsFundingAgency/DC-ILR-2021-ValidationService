@@ -1,12 +1,13 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
+using ESFA.DC.ILR.ValidationService.Data.File.FileData.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 {
@@ -16,27 +17,28 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         private readonly ILARSDataService _larsDataService;
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFamQueryService;
         private readonly IDerivedData_07Rule _derivedData07;
+        private readonly IFileDataService _fileDataService;
 
         private readonly DateTime _firstAugust2017 = new DateTime(2017, 08, 01);
 
         private readonly string[] _learnAimRefTypes =
         {
-            TypeOfLARSLearnAimRef.GCEALevel,
-            TypeOfLARSLearnAimRef.GCEA2Level,
-            TypeOfLARSLearnAimRef.GCEAppliedALevel,
-            TypeOfLARSLearnAimRef.GCEAppliedALevelDoubleAward,
-            TypeOfLARSLearnAimRef.GCEALevelWithGCEAdvancedSubsidiary
+            LARSConstants.LearnAimRefTypes.GCEALevel,
+            LARSConstants.LearnAimRefTypes.GCEA2Level,
+            LARSConstants.LearnAimRefTypes.GCEAppliedALevel,
+            LARSConstants.LearnAimRefTypes.GCEAppliedALevelDoubleAward,
+            LARSConstants.LearnAimRefTypes.GCEALevelWithGCEAdvancedSubsidiary
         };
 
         private readonly string[] _notionalNvqLevels =
         {
-            LARSNotionalNVQLevelV2.Level3,
-            LARSNotionalNVQLevelV2.Level4,
-            LARSNotionalNVQLevelV2.Level5,
-            LARSNotionalNVQLevelV2.Level6,
-            LARSNotionalNVQLevelV2.Level7,
-            LARSNotionalNVQLevelV2.Level8,
-            LARSNotionalNVQLevelV2.HigherLevel
+            LARSConstants.NotionalNVQLevelV2Strings.Level3,
+            LARSConstants.NotionalNVQLevelV2Strings.Level4,
+            LARSConstants.NotionalNVQLevelV2Strings.Level5,
+            LARSConstants.NotionalNVQLevelV2Strings.Level6,
+            LARSConstants.NotionalNVQLevelV2Strings.Level7,
+            LARSConstants.NotionalNVQLevelV2Strings.Level8,
+            LARSConstants.NotionalNVQLevelV2Strings.HigherLevel
         };
 
         private readonly string[] _learningDeliveryFamCodes =
@@ -51,6 +53,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             ILARSDataService larsDataService,
             ILearningDeliveryFAMQueryService learningDeliveryFamQueryService,
             IDerivedData_07Rule derivedData07,
+            IFileDataService fileDataService,
             IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.DateOfBirth_55)
         {
@@ -58,6 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             _larsDataService = larsDataService;
             _learningDeliveryFamQueryService = learningDeliveryFamQueryService;
             _derivedData07 = derivedData07;
+            _fileDataService = fileDataService;
         }
 
         public void Validate(ILearner objectToValidate)
@@ -66,6 +70,8 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             {
                 return;
             }
+
+            var ukprn = _fileDataService.UKPRN();
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries)
             {
@@ -77,7 +83,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
                     learningDelivery.LearnAimRef,
                     learningDelivery.LearningDeliveryFAMs))
                 {
-                    HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber);
+                    HandleValidationError(
+                        objectToValidate.LearnRefNumber,
+                        learningDelivery.AimSeqNumber,
+                        BuildErrorMessageParameters(
+                            ukprn,
+                            objectToValidate.DateOfBirthNullable,
+                            learningDelivery.LearnStartDate,
+                            learningDelivery.FundModel));
                 }
             }
         }
@@ -85,7 +98,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
         public bool ConditionMet(int fundModel, int? progType, DateTime learnStartDate, DateTime dateOfBirth, string learnAimRef, IEnumerable<ILearningDeliveryFAM> learningDeliveryFams)
         {
             return !Excluded(progType, learningDeliveryFams, learnAimRef)
-                   && fundModel == TypeOfFunding.AdultSkills
+                   && fundModel == FundModels.AdultSkills
                    && learnStartDate >= _firstAugust2017
                    && _dateTimeQueryService.YearsBetween(dateOfBirth, learnStartDate) >= 24
                    && _larsDataService.NotionalNVQLevelV2MatchForLearnAimRefAndLevels(learnAimRef, _notionalNvqLevels);
@@ -96,7 +109,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
             return _derivedData07.IsApprenticeship(progType)
                 || _learningDeliveryFamQueryService.HasLearningDeliveryFAMType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.RES)
                 || _learningDeliveryFamQueryService.HasAnyLearningDeliveryFAMCodesForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.LDM, _learningDeliveryFamCodes)
-                || _larsDataService.HasAnyLearningDeliveryForLearnAimRefAndTypes(learnAimRef, _learnAimRefTypes);
+                || _larsDataService.HasAnyLearningDeliveryForLearnAimRefAndTypes(learnAimRef, _learnAimRefTypes)
+                || _learningDeliveryFamQueryService.HasLearningDeliveryFAMCodeForType(learningDeliveryFams, LearningDeliveryFAMTypeConstants.DAM, LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion);
+        }
+
+        private IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int ukprn, DateTime? dateOfBirth, DateTime learnStartDate, int fundModel)
+        {
+            return new[]
+            {
+                BuildErrorMessageParameter(PropertyNameConstants.UKPRN, ukprn),
+                BuildErrorMessageParameter(PropertyNameConstants.DateOfBirth, dateOfBirth),
+                BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, learnStartDate),
+                BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel)
+            };
         }
     }
 }

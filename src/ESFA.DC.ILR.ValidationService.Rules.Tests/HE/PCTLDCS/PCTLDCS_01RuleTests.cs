@@ -5,7 +5,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.HE.PCTLDCS;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using ESFA.DC.ILR.ValidationService.Utility;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -15,127 +14,24 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
 {
     public class PCTLDCS_01RuleTests
     {
-        /// <summary>
-        /// New rule with null message handler throws.
-        /// </summary>
         [Fact]
-        public void NewRuleWithNullMessageHandlerThrows()
+        public void RuleName()
         {
-            // arrange
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new PCTLDCS_01Rule(null, service.Object, commonChecks.Object));
-        }
-
-        /// <summary>
-        /// New rule with null lars service throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullLARSServiceThrows()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new PCTLDCS_01Rule(handler.Object, null, commonChecks.Object));
-        }
-
-        /// <summary>
-        /// New rule with null common checks throws.
-        /// </summary>
-        [Fact]
-        public void NewRuleWithNullDerivedData07Throws()
-        {
-            // arrange
-            var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
-            var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-
-            // act / assert
-            Assert.Throws<ArgumentNullException>(() => new PCTLDCS_01Rule(handler.Object, service.Object, null));
-        }
-
-        /// <summary>
-        /// Rule name 1, matches a literal.
-        /// </summary>
-        [Fact]
-        public void RuleName1()
-        {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.RuleName;
 
-            // assert
             Assert.Equal("PCTLDCS_01", result);
         }
 
-        /// <summary>
-        /// Rule name 2, matches the constant.
-        /// </summary>
-        [Fact]
-        public void RuleName2()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.Equal(RuleNameConstants.PCTLDCS_01, result);
-        }
-
-        /// <summary>
-        /// Rule name 3 test, account for potential false positives.
-        /// </summary>
-        [Fact]
-        public void RuleName3()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act
-            var result = sut.RuleName;
-
-            // assert
-            Assert.NotEqual("SomeOtherRuleName_07", result);
-        }
-
-        /// <summary>
-        /// Validate with null learner throws.
-        /// </summary>
-        [Fact]
-        public void ValidateWithNullLearnerThrows()
-        {
-            // arrange
-            var sut = NewRule();
-
-            // act/assert
-            Assert.Throws<ArgumentNullException>(() => sut.Validate(null));
-        }
-
-        /// <summary>
-        /// First viable date meets expectation.
-        /// </summary>
         [Fact]
         public void FirstViableDateMeetsExpectation()
         {
-            // arrange / act
             var result = PCTLDCS_01Rule.FirstViableDate;
 
-            // assert
             Assert.Equal(DateTime.Parse("2009-08-01"), result);
         }
 
-        /// <summary>
-        /// Has known LDCS code meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
-        /// <param name="expectation">if set to <c>true</c> [expectation].</param>
         [Theory]
         [InlineData(null, false)]
         [InlineData(null, true)]
@@ -145,7 +41,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
         [InlineData("testAim2", true)]
         public void HasKnownLDCSCodeMeetsExpectation(string candidate, bool expectation)
         {
-            // arrange
             var mockDelivery = new Mock<ILearningDelivery>();
             mockDelivery
                 .SetupGet(x => x.LearnAimRef)
@@ -157,28 +52,22 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Setup(x => x.HasKnownLearnDirectClassSystemCode3For(candidate))
                 .Returns(expectation);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, commonChecks.Object);
+            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, dateTimeQS.Object);
 
-            // act
             var result = sut.HasKnownLDCSCode(mockDelivery.Object);
 
-            // assert
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
 
             Assert.Equal(expectation, result);
         }
 
-        /// <summary>
-        /// Has qualifying PCTLDCS with null meets expectation
-        /// </summary>
         [Fact]
         public void HasQualifyingPCTLDCSWithNullMeetsExpectation()
         {
-            // arrange
             var sut = NewRule();
             decimal? pCTLDCSValue = null;
 
@@ -187,33 +76,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .SetupGet(x => x.PCTLDCSNullable)
                 .Returns(pCTLDCSValue);
 
-            // act
             var result = sut.HasQualifyingPCTLDCSNull(mockHE.Object);
 
-            // assert
             Assert.True(result);
         }
 
-        /// <summary>
-        /// Has qualifying PCTLDCS with null learner HE meets expectation
-        /// </summary>
         [Fact]
         public void HasQualifyingPCTLDCSWithNullLearnerHEMeetsExpectation()
         {
-            // arrange
             var sut = NewRule();
 
-            // act
             var result = sut.HasQualifyingPCTLDCSNull(null);
 
-            // assert
             Assert.False(result);
         }
 
-        /// <summary>
-        /// Has qualifying PCTLDCS with value meets expectation
-        /// </summary>
-        /// <param name="candidate">The candidate.</param>
         [Theory]
         [InlineData(9.2)]
         [InlineData(33.06)]
@@ -221,7 +98,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
         [InlineData(123769.23456)]
         public void HasQualifyingPCTLDCSWithValueMeetsExpectation(double candidate)
         {
-            // arrange
             var sut = NewRule();
 
             var mockHE = new Mock<ILearningDeliveryHE>();
@@ -229,20 +105,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .SetupGet(x => x.PCTLDCSNullable)
                 .Returns((decimal)candidate);
 
-            // act
             var result = sut.HasQualifyingPCTLDCSNull(mockHE.Object);
 
-            // assert
             Assert.False(result);
         }
 
-        /// <summary>
-        /// Invalid item raises validation message.
-        /// </summary>
         [Fact]
         public void InvalidItemRaisesValidationMessage()
         {
-            // arrange
             const string learnRefNumber = "123456789X";
             const string learnAimRef = "salddfkjeifdnase";
 
@@ -259,12 +129,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
             mockDelivery
                 .SetupGet(x => x.LearningDeliveryHEEntity)
                 .Returns(mockHE.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -273,7 +143,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             handler
@@ -285,7 +155,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Setup(x => x.BuildErrorMessageParameter("LearnStartDate", testDate.ToString("d", AbstractRule.RequiredCulture)))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
             handler
-                .Setup(x => x.BuildErrorMessageParameter("FundModel", 35)) // TypeOfFunding.AdultSkills
+                .Setup(x => x.BuildErrorMessageParameter("FundModel", 35))
                 .Returns(new Mock<IErrorMessageParameter>().Object);
 
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
@@ -293,29 +163,23 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Setup(x => x.HasKnownLearnDirectClassSystemCode3For(learnAimRef))
                 .Returns(true);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, PCTLDCS_01Rule.FirstViableDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, PCTLDCS_01Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, commonChecks.Object);
+            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, dateTimeQS.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
-        /// <summary>
-        /// Valid item does not raise validation message.
-        /// </summary>
         [Fact]
         public void ValidItemDoesNotRaiseValidationMessage()
         {
-            // arrange
             const string learnRefNumber = "123456789X";
             const string learnAimRef = "salddfkjeifdnase";
 
@@ -335,12 +199,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Returns(testDate);
             mockDelivery
                 .SetupGet(y => y.FundModel)
-                .Returns(TypeOfFunding.AdultSkills);
+                .Returns(FundModels.AdultSkills);
             mockDelivery
                 .SetupGet(x => x.LearningDeliveryHEEntity)
                 .Returns(mockHE.Object);
 
-            var deliveries = Collection.Empty<ILearningDelivery>();
+            var deliveries = new List<ILearningDelivery>();
             deliveries.Add(mockDelivery.Object);
 
             var mockLearner = new Mock<ILearner>();
@@ -349,7 +213,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Returns(learnRefNumber);
             mockLearner
                 .SetupGet(x => x.LearningDeliveries)
-                .Returns(deliveries.AsSafeReadOnlyList());
+                .Returns(deliveries);
 
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
 
@@ -358,33 +222,27 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.HE.PCTLDCS
                 .Setup(x => x.HasKnownLearnDirectClassSystemCode3For(learnAimRef))
                 .Returns(true);
 
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
-            commonChecks
-                .Setup(x => x.HasQualifyingStart(mockDelivery.Object, PCTLDCS_01Rule.FirstViableDate, null))
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
+            dateTimeQS
+                .Setup(x => x.IsDateBetween(mockDelivery.Object.LearnStartDate, PCTLDCS_01Rule.FirstViableDate, DateTime.MaxValue, true))
                 .Returns(true);
 
-            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, commonChecks.Object);
+            var sut = new PCTLDCS_01Rule(handler.Object, service.Object, dateTimeQS.Object);
 
-            // act
             sut.Validate(mockLearner.Object);
 
-            // assert
             handler.VerifyAll();
             service.VerifyAll();
-            commonChecks.VerifyAll();
+            dateTimeQS.VerifyAll();
         }
 
-        /// <summary>
-        /// New rule.
-        /// </summary>
-        /// <returns>a constructed and mocked up validation rule</returns>
         public PCTLDCS_01Rule NewRule()
         {
             var handler = new Mock<IValidationErrorHandler>(MockBehavior.Strict);
             var service = new Mock<ILARSDataService>(MockBehavior.Strict);
-            var commonChecks = new Mock<IProvideRuleCommonOperations>(MockBehavior.Strict);
+            var dateTimeQS = new Mock<IDateTimeQueryService>(MockBehavior.Strict);
 
-            return new PCTLDCS_01Rule(handler.Object, service.Object, commonChecks.Object);
+            return new PCTLDCS_01Rule(handler.Object, service.Object, dateTimeQS.Object);
         }
     }
 }

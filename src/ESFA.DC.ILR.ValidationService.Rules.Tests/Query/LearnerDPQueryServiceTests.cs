@@ -26,7 +26,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Query
                 OutTypeConstants.VoluntaryWork
             };
 
-        var dpOutcomes = new List<TestDPOutcome>
+            var dpOutcomes = new List<TestDPOutcome>
             {
                 new TestDPOutcome
                 {

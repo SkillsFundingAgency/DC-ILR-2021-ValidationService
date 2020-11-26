@@ -13,7 +13,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
     {
         private const int _age = 16;
         private const int _days = 365;
-        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { TypeOfFunding.ApprenticeshipsFrom1May2017, TypeOfFunding.OtherAdult };
+        private readonly IEnumerable<int> _fundModels = new HashSet<int>() { FundModels.ApprenticeshipsFrom1May2017, FundModels.OtherAdult };
         private readonly DateTime _firstAug2016 = new DateTime(2016, 08, 01);
 
         private readonly IDateTimeQueryService _dateTimeQueryService;
@@ -83,17 +83,17 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.DateOfBirth
 
         public bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ProgrammeAim;
+            return aimType == AimTypes.ProgrammeAim;
         }
 
         public bool ProgTypeConditionMet(int? progType)
         {
             return progType.HasValue
-                && progType == TypeOfLearningProgramme.ApprenticeshipStandard;
+                && progType == ProgTypes.ApprenticeshipStandard;
         }
 
         public bool DateOfBirthConditionMet(DateTime? dateOfBirth, DateTime learnStartDate)
-        {  
+        {
             return dateOfBirth.HasValue
                 && _dateTimeQueryService.YearsBetween((DateTime)dateOfBirth, learnStartDate) >= _age;
         }

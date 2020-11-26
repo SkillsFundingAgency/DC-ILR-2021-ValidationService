@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac.Features.ResolveAnything;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.FCS.Interface;
@@ -13,7 +14,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 {
     public class UKPRN_20Rule : AbstractRule, IRule<ILearner>
     {
-        private readonly int _learnDelFundModel = TypeOfFunding.EuropeanSocialFund;
+        private readonly int _learnDelFundModel = FundModels.EuropeanSocialFund;
         private readonly string _fundingStreamPeriodCode = FundingStreamPeriodCodeConstants.ESF1420;
 
         private readonly IFileDataService _fileDataService;
@@ -36,38 +37,52 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.UKPRN
 
         public void Validate(ILearner objectToValidate)
         {
+            if (objectToValidate?.LearningDeliveries == null)
+            { // If there are no Learning deliveries then do not progress. No Error
+                return;
+            }
+
             var ukprn = _fileDataService.UKPRN();
 
-            // prepare contract allocations list before iterating the learning deliveries 
+            // prepare contract allocations list before iterating the learning deliveries
             var filteredContractAllocations = ContractAllocationsForUkprnAndFundingStreamPeriodCodes(ukprn);
 
-            if (filteredContractAllocations == null || objectToValidate.LearningDeliveries == null)
-            { // If there are no Contract Allocations or Learning deliveries then do not progress. No Error
+            if (filteredContractAllocations == null)
+            { // If there are no Contract Allocations then do not progress. No Error
                 return;
             }
 
             foreach (var learningDelivery in objectToValidate.LearningDeliveries.Where(d => d.FundModel == _learnDelFundModel))
             {
-                if (ConditionMet(learningDelivery.ConRefNumber, learningDelivery.LearnStartDate, filteredContractAllocations))
+                if (ConditionMet(learningDelivery, filteredContractAllocations))
                 {
                     HandleValidationError(objectToValidate.LearnRefNumber, learningDelivery.AimSeqNumber, BuildErrorMessageParameters(learningDelivery.FundModel, learningDelivery.ConRefNumber, ukprn, learningDelivery.LearnStartDate));
                 }
             }
         }
 
-        public IEnumerable<IFcsContractAllocation> ContractAllocationsForUkprnAndFundingStreamPeriodCodes(int ukprn)
+        public bool ConditionMet(ILearningDelivery learningDelivery, IEnumerable<IFcsContractAllocation> filteredContractAllocations)
+        {
+            if (learningDelivery.LearningDeliveryFAMs?.Any(ldf => LearningDeliveryFAMTypeConstants.RES.Equals(ldf.LearnDelFAMType, StringComparison.OrdinalIgnoreCase)) == true)
+            { // This rule is not triggered by restarts
+                return false;
+            }
+
+            var latestStopNewStartsDate = filteredContractAllocations
+                .Where(a => learningDelivery.ConRefNumber.CaseInsensitiveEquals(a.ContractAllocationNumber))
+                .OrderBy(a => a.StartDate)
+                .LastOrDefault()
+                ?.StopNewStartsFromDate;
+
+            return latestStopNewStartsDate != null && latestStopNewStartsDate <= learningDelivery.LearnStartDate;
+        }
+
+        public IList<IFcsContractAllocation> ContractAllocationsForUkprnAndFundingStreamPeriodCodes(int ukprn)
         {
             var contractAllocations = _fcsDataService.GetContractAllocationsFor(ukprn);
 
-            return contractAllocations?.Where(ca => ca != null &&_fundingStreamPeriodCode.Equals(ca.FundingStreamPeriodCode, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-
-
-        public bool ConditionMet(string learnConRef, DateTime learnStartDate, IEnumerable<IFcsContractAllocation> contractAllocations)
-        {
-            return contractAllocations.Any(ca =>
-                learnConRef.CaseInsensitiveEquals(ca.ContractAllocationNumber) &&
-                (ca.StopNewStartsFromDate ?? DateTime.MaxValue) <= learnStartDate);
+            return contractAllocations?.Where(ca => ca != null
+            && _fundingStreamPeriodCode.Equals(ca.FundingStreamPeriodCode, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int learningDeliveryFundModel, string learningDeliveryConRefNumber, int learningProviderUKPRN, DateTime learningDeliveryStartDate)

@@ -24,7 +24,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Fact]
         public void FundModelConditionMet_True()
         {
-            NewRule().FundModelConditionMet(TypeOfFunding.ApprenticeshipsFrom1May2017).Should().BeTrue();
+            NewRule().FundModelConditionMet(FundModels.ApprenticeshipsFrom1May2017).Should().BeTrue();
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
         [Theory]
         [InlineData("2017-05-01", null, double.MaxValue)]
         [InlineData("2017-05-01", "2019-05-01", 731)]
-        [InlineData("2017-09-04", "2018-09-03", 365)]
+        [InlineData("2017-09-04", "2018-09-03", 372)]
         public void LearnActEndDateConditionMet_False(string learnStartDate, string learnActEndDate, double totalDays)
         {
             DateTime learnStartDateParam = DateTime.Parse(learnStartDate);
@@ -127,14 +127,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
             var learnActEndDate = new DateTime(2019, 08, 01);
 
             var dateTimeQueryServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnActEndDate)).Returns(366);
+            dateTimeQueryServiceMock.Setup(qs => qs.WholeDaysBetween(learnStartDate, learnActEndDate)).Returns(372);
 
             var rule53 = NewRule(dateTimeQueryService: dateTimeQueryServiceMock.Object).LearnActEndDateConditionMet(learnStartDate, learnActEndDate);
             rule53.Should().BeFalse();
         }
 
         [Theory]
-        [InlineData("2017-05-01", "2018-04-30", 364)]
+        [InlineData("2017-05-01", "2018-04-23", 364)]
         [InlineData("2017-09-01", "2017-09-01", 1)]
         public void LearnActEndDateConditionMet_True(string learnStartDate, string learnActEndDate, double totalDays)
         {
@@ -203,7 +203,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.DateOfBirth
 
             var learningDelivery = new TestLearningDelivery
             {
-                FundModel = TypeOfFunding.ApprenticeshipsFrom1May2017,
+                FundModel = FundModels.ApprenticeshipsFrom1May2017,
                 ProgTypeNullable = 2,
                 AimType = 1,
                 CompStatus = 2,

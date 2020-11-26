@@ -1,4 +1,6 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
@@ -8,8 +10,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
@@ -105,7 +105,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.AdultSkills;
+            return fundModel == FundModels.AdultSkills;
         }
 
         public bool AgeConditionMet(DateTime learnStartDate, DateTime? dateOfBirth)
@@ -115,7 +115,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 return false;
             }
 
-            var ageAtCourseStart = _dateTimeQueryService.AgeAtGivenDate(dateOfBirth.Value, learnStartDate);
+            var ageAtCourseStart = _dateTimeQueryService.YearsBetween(dateOfBirth.Value, learnStartDate);
             if (ageAtCourseStart >= MinAge && ageAtCourseStart <= MaxAge)
             {
                 return true;
@@ -161,7 +161,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsLearningDeliveryExcluded(ILearner learner, ILearningDelivery learningDelivery)
         {
             if (learningDelivery.ProgTypeNullable.HasValue &&
-                learningDelivery.ProgTypeNullable.Value == TypeOfLearningProgramme.Traineeship)
+                learningDelivery.ProgTypeNullable.Value == ProgTypes.Traineeship)
             {
                 return true;
             }
@@ -195,7 +195,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             }
 
             if (_larsDataService.BasicSkillsMatchForLearnAimRefAndStartDate(
-                TypeOfLARSBasicSkill.AsEnglishAndMathsBasicSkills,
+                LARSConstants.BasicSkills.EnglishAndMathsList,
                 learningDelivery.LearnAimRef,
                 learningDelivery.LearnStartDate))
             {

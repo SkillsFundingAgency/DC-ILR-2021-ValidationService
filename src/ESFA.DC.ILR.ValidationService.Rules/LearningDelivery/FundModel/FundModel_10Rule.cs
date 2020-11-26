@@ -43,7 +43,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
 
         public bool DD35ConditionMet(ILearningDelivery learningDelivery) => _derivedData35.IsCombinedAuthorities(learningDelivery);
 
-        public bool FundModelConditionMet(int fundModel) => fundModel != TypeOfFunding.AdultSkills && fundModel != TypeOfFunding.CommunityLearning;
+        public bool FundModelConditionMet(int fundModel) => fundModel != FundModels.AdultSkills && fundModel != FundModels.CommunityLearning;
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(int fundModel, string learnDelFAMCode)
         {
@@ -52,7 +52,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.FundModel
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMType, LearningDeliveryFAMTypeConstants.SOF),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnDelFAMCode, learnDelFAMCode),
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, fundModel)
-
             };
         }
     }

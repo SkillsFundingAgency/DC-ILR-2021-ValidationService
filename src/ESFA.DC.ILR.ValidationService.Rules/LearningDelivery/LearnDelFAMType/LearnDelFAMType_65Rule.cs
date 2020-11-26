@@ -1,4 +1,7 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
@@ -6,20 +9,15 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
     public class LearnDelFAMType_65Rule : AbstractRule, IRule<ILearner>
     {
-        private const int FundingModel = TypeOfFunding.AdultSkills;
+        private const int FundingModel = FundModels.AdultSkills;
 
         private const int MinAge = 19;
         private const int MaxAge = 23;
-
-        private const string InvalidFamCode = "1";
 
         private readonly ILARSDataService _larsDataService;
         private readonly IDerivedData_07Rule _dd07;
@@ -27,12 +25,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         private readonly IDerivedData_29Rule _derivedDataRule29;
         private readonly IDateTimeQueryService _dateTimeQueryService;
 
-        private readonly int[] _priorAttain = { 2, 3, 4, 5, 10, 11, 12, 13, 97, 98 };
+        private readonly HashSet<int> _priorAttain = new HashSet<int> { 2, 3, 4, 5, 10, 11, 12, 13, 97, 98 };
         private readonly DateTime _startDate = new DateTime(2017, 7, 31);
-        private readonly string[] _ldmTypeExcludedCodes = { "034", "328", "347", "363" };
-        private readonly string[] _nvqLevels = { "E", "1", "2" };
+        private readonly DateTime _endDate = new DateTime(2020, 08, 01);
+        private readonly HashSet<string> _ldmTypeExcludedCodes = new HashSet<string> { "034", "328", "347", "363" };
+        private readonly HashSet<string> _nvqLevels = new HashSet<string> { "E", "1", "2" };
 
-        private readonly int[] _basicSkillTypes =
+        private readonly HashSet<int> _basicSkillTypes = new HashSet<int>
             { 01, 11, 13, 20, 23, 24, 29, 31, 02, 12, 14, 19, 21, 25, 30, 32, 33, 34, 35 };
 
         public LearnDelFAMType_65Rule(
@@ -51,10 +50,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             _dateTimeQueryService = dateTimeQueryService;
         }
 
-        /// <summary>
-        /// Validates the specified object.
-        /// </summary>
-        /// <param name="learner">The object to validate.</param>
         public void Validate(ILearner learner)
         {
             if (learner?.LearningDeliveries == null)
@@ -70,13 +65,13 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
                 if (learningDelivery.FundModel != FundingModel
-                    || learningDelivery.LearnStartDate <= _startDate
+                    || LearnStartDateIsOutsideValidDateRange(learningDelivery.LearnStartDate)
                     || learningDelivery.LearningDeliveryFAMs == null)
                 {
                     continue;
                 }
 
-                var ageAtCourseStart = _dateTimeQueryService.AgeAtGivenDate(learner.DateOfBirthNullable ?? DateTime.MinValue, learningDelivery.LearnStartDate);
+                var ageAtCourseStart = _dateTimeQueryService.YearsBetween(learner.DateOfBirthNullable ?? DateTime.MinValue, learningDelivery.LearnStartDate);
                 if (ageAtCourseStart < MinAge || ageAtCourseStart > MaxAge)
                 {
                     continue;
@@ -96,7 +91,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 foreach (var deliveryFam in learningDelivery.LearningDeliveryFAMs)
                 {
                     if (deliveryFam.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.FFI)
-                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(InvalidFamCode))
+                        && deliveryFam.LearnDelFAMCode.CaseInsensitiveEquals(LearningDeliveryFAMCodeConstants.FFI_Fully))
                     {
                         RaiseValidationMessage(learner, learningDelivery, deliveryFam);
                     }
@@ -104,7 +99,25 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
             }
         }
 
-        private bool ExclusionsApply(ILearner learner, ILearningDelivery learningDelivery)
+        public bool LearnStartDateIsOutsideValidDateRange(DateTime learnStartDate)
+        {
+            return learnStartDate <= _startDate || learnStartDate >= _endDate;
+        }
+
+        public bool IsBasicSkillsLearner(ILearningDelivery delivery)
+        {
+            var larsLearningDelivery = _larsDataService.GetDeliveryFor(delivery.LearnAimRef);
+
+            if (larsLearningDelivery == null)
+            {
+                return true;
+            }
+
+            return _dateTimeQueryService.IsDateBetween(delivery.LearnStartDate, larsLearningDelivery.EffectiveFrom, larsLearningDelivery.EffectiveTo ?? DateTime.MaxValue)
+                && _larsDataService.BasicSkillsTypeMatchForLearnAimRef(_basicSkillTypes, delivery.LearnAimRef);
+        }
+
+        public bool ExclusionsApply(ILearner learner, ILearningDelivery learningDelivery)
         {
             if (_dd07.IsApprenticeship(learningDelivery.ProgTypeNullable))
             {
@@ -132,10 +145,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 return true;
             }
 
-            return _larsDataService.BasicSkillsMatchForLearnAimRefAndStartDate(
-                   _basicSkillTypes,
-                   learningDelivery.LearnAimRef,
-                   learningDelivery.LearnStartDate);
+            if (learningDelivery.LearningDeliveryFAMs.Any(ldf => ldf.LearnDelFAMType.CaseInsensitiveEquals(LearningDeliveryFAMTypeConstants.DAM) && ldf.LearnDelFAMCode == LearningDeliveryFAMCodeConstants.DAM_DevolvedLevelTwoOrThreeExclusion))
+            {
+                return true;
+            }
+
+            return IsBasicSkillsLearner(learningDelivery);
         }
 
         private void RaiseValidationMessage(ILearner learner, ILearningDelivery learningDelivery, ILearningDeliveryFAM learningDeliveryFam)

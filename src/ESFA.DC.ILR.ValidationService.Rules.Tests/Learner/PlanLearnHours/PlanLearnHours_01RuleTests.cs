@@ -32,7 +32,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
         }
 
         [Fact]
-        public void LearnActEndDateConditionMet_True()
+        public void HasOpenLearningDeliveries_True()
         {
             var learningDeliveries = new List<TestLearningDelivery>
             {
@@ -45,46 +45,11 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
                 }
             };
 
-            NewRule().LearnActEndDateConditionMet(learningDeliveries).Should().BeTrue();
+            NewRule().HasOpenLearningDeliveries(learningDeliveries).Should().BeTrue();
         }
 
         [Fact]
-        public void LearnActEndDateConditionMet_False()
-        {
-            var learningDeliveries = new List<TestLearningDelivery>
-            {
-                new TestLearningDelivery
-                {
-                    LearnActEndDateNullable = new DateTime(2017, 07, 20)
-                },
-                new TestLearningDelivery
-                {
-                    LearnActEndDateNullable = new DateTime(2017, 07, 20)
-                }
-            };
-
-            NewRule().LearnActEndDateConditionMet(learningDeliveries).Should().BeFalse();
-        }
-
-        [Fact]
-        public void LearnerConditionMet_True()
-        {
-            var learningDeliveries = new List<TestLearningDelivery>
-            {
-                new TestLearningDelivery
-                {
-                    LearnActEndDateNullable = new DateTime(2017, 07, 20)
-                },
-                new TestLearningDelivery
-                {
-                }
-            };
-
-            NewRule().LearnerConditionMet(null, learningDeliveries).Should().BeTrue();
-        }
-
-        [Fact]
-        public void LearnerConditionMet_False_LearnActEndDate()
+        public void HasOpenLearningDeliveries_False()
         {
             var learningDeliveries = new List<TestLearningDelivery>
             {
@@ -98,104 +63,96 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Learner.PlanLearnHours
                 }
             };
 
-            NewRule().LearnerConditionMet(null, learningDeliveries).Should().BeFalse();
+            NewRule().HasOpenLearningDeliveries(learningDeliveries).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(70)]
+        [InlineData(82)]
+        public void FundModelExclusionConditionMet_True(int fundModel)
+        {
+            NewRule().FundModelExclusionConditionMet(fundModel).Should().BeTrue();
         }
 
         [Fact]
-        public void LearnerConditionMet_False_LearnPlanHours()
+        public void FundModelExclusionConditionMet_False()
         {
-            var learningDeliveries = new List<TestLearningDelivery>
-            {
-                new TestLearningDelivery
-                {
-                    LearnActEndDateNullable = new DateTime(2017, 07, 20)
-                },
-                new TestLearningDelivery
-                {
-                }
-            };
-
-            NewRule().LearnerConditionMet(1, learningDeliveries).Should().BeFalse();
-        }
-
-        [Fact]
-        public void FundModelConditionMet_True()
-        {
-            NewRule().FundModelConditionMet(1).Should().BeTrue();
-        }
-
-        [Fact]
-        public void FundModelConditionMet_False()
-        {
-            NewRule().FundModelConditionMet(70).Should().BeFalse();
-        }
-
-        [Fact]
-        public void DD07ConditionMet_True()
-        {
-            var progType = 101;
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-
-            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
-
-            NewRule(dd07Mock.Object).DD07ConditionMet(progType).Should().BeTrue();
-        }
-
-        [Fact]
-        public void DD07ConditionMet_True_Null()
-        {
-            var dd07Mock = new Mock<IDerivedData_07Rule>();
-
-            dd07Mock.Setup(dd => dd.IsApprenticeship(null)).Returns(false);
-
-            NewRule(dd07Mock.Object).DD07ConditionMet(null).Should().BeTrue();
+            NewRule().FundModelExclusionConditionMet(99).Should().BeFalse();
         }
 
         [Fact]
         public void DD07ConditionMet_False()
         {
-            var progType = 24;
+            var progType = 101;
             var dd07Mock = new Mock<IDerivedData_07Rule>();
 
-            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(true);
+            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
 
             NewRule(dd07Mock.Object).DD07ConditionMet(progType).Should().BeFalse();
         }
 
         [Fact]
-        public void LearningDeliveryConditionMet_True()
+        public void DD07ConditionMet_False_Null()
         {
-            var progType = 101;
-            var fundModel = 1;
             var dd07Mock = new Mock<IDerivedData_07Rule>();
 
-            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
+            dd07Mock.Setup(dd => dd.IsApprenticeship(null)).Returns(false);
 
-            NewRule(dd07Mock.Object).LearningDeliveryConditionMet(fundModel, progType).Should().BeTrue();
+            NewRule(dd07Mock.Object).DD07ConditionMet(null).Should().BeFalse();
         }
 
         [Fact]
-        public void LearningDeliveryConditionMet_False_ProgType()
+        public void DD07ConditionMet_True()
         {
             var progType = 24;
-            var fundModel = 1;
             var dd07Mock = new Mock<IDerivedData_07Rule>();
 
             dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(true);
 
-            NewRule(dd07Mock.Object).LearningDeliveryConditionMet(fundModel, progType).Should().BeFalse();
+            NewRule(dd07Mock.Object).DD07ConditionMet(progType).Should().BeTrue();
         }
 
         [Fact]
-        public void LearningDeliveryConditionMet_False_FundModel()
+        public void TLevelProgrammeExclusion_True()
         {
-            var progType = 101;
-            var fundModel = 70;
+            NewRule().TLevelProgrammeExclusion(25, 31).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(25, null)]
+        [InlineData(25, 30)]
+        [InlineData(35, 31)]
+        public void TLevelProgrammeExclusion_False(int fundModel, int? progType)
+        {
+            NewRule().TLevelProgrammeExclusion(fundModel, progType).Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData(70, 30, false)]
+        [InlineData(82, 31, false)]
+        [InlineData(35, 31, true)]
+        [InlineData(25, 31, false)]
+        public void Excluded_True(int fundModel, int? progType, bool dd37Mock)
+        {
             var dd07Mock = new Mock<IDerivedData_07Rule>();
 
-            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(false);
+            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(dd37Mock);
 
-            NewRule(dd07Mock.Object).LearningDeliveryConditionMet(fundModel, progType).Should().BeFalse();
+            NewRule(dd07Mock.Object).Excluded(fundModel, progType).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(35, 99, false)]
+        [InlineData(35, null, false)]
+        [InlineData(25, 30, false)]
+        [InlineData(25, null, false)]
+        public void Excluded_False(int fundModel, int? progType, bool dd37Mock)
+        {
+            var dd07Mock = new Mock<IDerivedData_07Rule>();
+
+            dd07Mock.Setup(dd => dd.IsApprenticeship(progType)).Returns(dd37Mock);
+
+            NewRule(dd07Mock.Object).Excluded(fundModel, progType).Should().BeFalse();
         }
 
         [Fact]

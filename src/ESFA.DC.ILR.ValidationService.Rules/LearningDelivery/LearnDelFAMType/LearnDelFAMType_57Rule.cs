@@ -1,4 +1,6 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.Organisation.Interface;
@@ -8,8 +10,6 @@ using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 {
@@ -29,33 +29,32 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         private readonly HashSet<string> n = new HashSet<string>(new List<string>()
         {
-            LARSNotionalNVQLevelV2.EntryLevel,
-            LARSNotionalNVQLevelV2.Level1,
-            LARSNotionalNVQLevelV2.Level2
-
+            LARSConstants.NotionalNVQLevelV2Strings.EntryLevel,
+            LARSConstants.NotionalNVQLevelV2Strings.Level1,
+            LARSConstants.NotionalNVQLevelV2Strings.Level2
         }).ToCaseInsensitiveHashSet();
 
         private readonly HashSet<int> basicSkillTypes = new HashSet<int>()
         {
-            TypeOfLARSBasicSkill.Certificate_AdultLiteracy,
-            TypeOfLARSBasicSkill.Certificate_AdultNumeracy,
-            TypeOfLARSBasicSkill.GCSE_EnglishLanguage,
-            TypeOfLARSBasicSkill.GCSE_Mathematics,
-            TypeOfLARSBasicSkill.KeySkill_Communication,
-            TypeOfLARSBasicSkill.KeySkill_ApplicationOfNumbers,
-            TypeOfLARSBasicSkill.FunctionalSkillsMathematics,
-            TypeOfLARSBasicSkill.FunctionalSkillsEnglish,
-            TypeOfLARSBasicSkill.UnitsOfTheCertificate_AdultNumeracy,
-            TypeOfLARSBasicSkill.UnitsOfTheCertificate_AdultLiteracy,
-            TypeOfLARSBasicSkill.NonNQF_QCFS4LLiteracy,
-            TypeOfLARSBasicSkill.NonNQF_QCFS4LNumeracy,
-            TypeOfLARSBasicSkill.QCFBasicSkillsEnglishLanguage,
-            TypeOfLARSBasicSkill.QCFBasicSkillsMathematics,
-            TypeOfLARSBasicSkill.UnitQCFBasicSkillsEnglishLanguage,
-            TypeOfLARSBasicSkill.UnitQCFBasicSkillsMathematics,
-            TypeOfLARSBasicSkill.InternationalGCSEEnglishLanguage,
-            TypeOfLARSBasicSkill.InternationalGCSEMathematics,
-            TypeOfLARSBasicSkill.FreeStandingMathematicsQualification,
+            LARSConstants.BasicSkills.Certificate_AdultLiteracy,
+            LARSConstants.BasicSkills.Certificate_AdultNumeracy,
+            LARSConstants.BasicSkills.GCSE_EnglishLanguage,
+            LARSConstants.BasicSkills.GCSE_Mathematics,
+            LARSConstants.BasicSkills.KeySkill_Communication,
+            LARSConstants.BasicSkills.KeySkill_ApplicationOfNumbers,
+            LARSConstants.BasicSkills.FunctionalSkillsMathematics,
+            LARSConstants.BasicSkills.FunctionalSkillsEnglish,
+            LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultNumeracy,
+            LARSConstants.BasicSkills.UnitsOfTheCertificate_AdultLiteracy,
+            LARSConstants.BasicSkills.NonNQF_QCFS4LLiteracy,
+            LARSConstants.BasicSkills.NonNQF_QCFS4LNumeracy,
+            LARSConstants.BasicSkills.QCFBasicSkillsEnglishLanguage,
+            LARSConstants.BasicSkills.QCFBasicSkillsMathematics,
+            LARSConstants.BasicSkills.UnitQCFBasicSkillsEnglishLanguage,
+            LARSConstants.BasicSkills.UnitQCFBasicSkillsMathematics,
+            LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage,
+            LARSConstants.BasicSkills.InternationalGCSEMathematics,
+            LARSConstants.BasicSkills.FreeStandingMathematicsQualification,
         };
 
         private readonly ILARSDataService _larsDataService;
@@ -130,7 +129,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
 
         public bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.AdultSkills;
+            return fundModel == FundModels.AdultSkills;
         }
 
         public bool AgeConditionMet(DateTime learnStartDate, DateTime? dateOfBirth)
@@ -140,7 +139,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
                 return false;
             }
 
-            var ageAtCourseStart = _dateTimeQueryService.AgeAtGivenDate(dateOfBirth.Value, learnStartDate);
+            var ageAtCourseStart = _dateTimeQueryService.YearsBetween(dateOfBirth.Value, learnStartDate);
             if (ageAtCourseStart >= MinAge)
             {
                 return true;
@@ -174,7 +173,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.LearnDelFAMType
         public bool IsLearningDeliveryExcluded(ILearner learner, ILearningDelivery learningDelivery)
         {
             if (learningDelivery.ProgTypeNullable.HasValue &&
-                learningDelivery.ProgTypeNullable.Value == TypeOfLearningProgramme.Traineeship)
+                learningDelivery.ProgTypeNullable.Value == ProgTypes.Traineeship)
             {
                 return true;
             }

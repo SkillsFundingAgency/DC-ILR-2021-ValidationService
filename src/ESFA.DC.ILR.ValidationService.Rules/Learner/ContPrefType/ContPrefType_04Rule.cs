@@ -1,11 +1,11 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
+using ESFA.DC.ILR.ValidationService.Data.Extensions;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
-using ESFA.DC.ILR.ValidationService.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
 {
@@ -13,92 +13,48 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.ContPrefType
         AbstractRule,
         IRule<ILearner>
     {
-        /// <summary>
-        /// The compatibility message
-        /// </summary>
         private const string CompatibilityMessage = "(incompatible combination)";
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ContPrefType_04Rule" /> class.
-        /// </summary>
-        /// <param name="validationErrorHandler">The validation error handler.</param>
-        /// <param name="lookups">The lookups.</param>
         public ContPrefType_04Rule(IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.ContPrefType_04)
         {
-            It.IsNull(validationErrorHandler)
-                .AsGuard<ArgumentNullException>(nameof(validationErrorHandler));
         }
 
-        /// <summary>
-        /// Determines whether [has pre GDPR merchandising codes] [the specified preference].
-        /// </summary>
-        /// <param name="preference">The preference.</param>
-        /// <returns>
-        ///   <c>true</c> if [has pre GDPR merchandising codes] [the specified preference]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasPreGDPRMerchandisingCodes(IContactPreference preference) =>
-            It.IsInRange(
-                $"{preference.ContPrefType}{preference.ContPrefCode}",
-                ContactPreference.NoContactCoursesOrOpportunitiesPreGDPR,
-                ContactPreference.NoContactSurveysAndResearchPreGDPR);
+        public bool HasPreGDPRMerchandisingCodes(IContactPreference preference)
+        {
+            var code = $"{preference.ContPrefType}{preference.ContPrefCode}";
 
-        /// <summary>
-        /// Determines whether [has post GDPR merchandising codes] [the specified preference].
-        /// </summary>
-        /// <param name="preference">The preference.</param>
-        /// <returns>
-        ///   <c>true</c> if [has post GDPR merchandising codes] [the specified preference]; otherwise, <c>false</c>.
-        /// </returns>
-        public bool HasPostGDPRMerchandisingCodes(IContactPreference preference) =>
-            It.IsInRange(
-                $"{preference.ContPrefType}{preference.ContPrefCode}",
-                ContactPreference.AgreesContactCoursesOrOpportunitiesPostGDPR,
-                ContactPreference.AgreesContactSurveysAndResearchPostGDPR);
+            return code.CaseInsensitiveEquals(ContactPreference.NoContactCoursesOrOpportunitiesPreGDPR)
+                            || code.CaseInsensitiveEquals(ContactPreference.NoContactSurveysAndResearchPreGDPR);
+        }
 
-        /// <summary>
-        /// Determines whether [is not valid] [the specified preference].
-        /// </summary>
-        /// <param name="preferences">The preferences.</param>
-        /// <returns>
-        ///   <c>true</c> if [is not valid] [the specified preference]; otherwise, <c>false</c>.
-        /// </returns>
+        public bool HasPostGDPRMerchandisingCodes(IContactPreference preference)
+        {
+            var code = $"{preference.ContPrefType}{preference.ContPrefCode}";
+
+            return code.CaseInsensitiveEquals(ContactPreference.AgreesContactCoursesOrOpportunitiesPostGDPR)
+                || code.CaseInsensitiveEquals(ContactPreference.AgreesContactSurveysAndResearchPostGDPR);
+        }
+
         public bool IsNotValid(IReadOnlyCollection<IContactPreference> preferences) =>
             preferences.Any(HasPreGDPRMerchandisingCodes)
                 && preferences.Any(HasPostGDPRMerchandisingCodes);
 
-        /// <summary>
-        /// Validates this learner.
-        /// </summary>
-        /// <param name="thisLearner">this learner.</param>
         public void Validate(ILearner thisLearner)
         {
-            It.IsNull(thisLearner)
-                .AsGuard<ArgumentNullException>(nameof(thisLearner));
-
             var learnRefNumber = thisLearner.LearnRefNumber;
 
-            if (IsNotValid(thisLearner.ContactPreferences.AsSafeReadOnlyList()))
+            if (IsNotValid(thisLearner.ContactPreferences.ToReadOnlyCollection()))
             {
                 RaiseValidationMessage(learnRefNumber);
             }
         }
 
-        /// <summary>
-        /// Raises the validation message.
-        /// </summary>
-        /// <param name="learnRefNumber">The learn reference number.</param>
         public void RaiseValidationMessage(string learnRefNumber)
         {
             HandleValidationError(learnRefNumber, null, BuildMessageParametersFor());
         }
 
-        /// <summary>
-        /// Builds the error message parameters.
-        /// </summary>
-        /// <returns>
-        /// returns a list of message parameters
-        /// </returns>
         public IEnumerable<IErrorMessageParameter> BuildMessageParametersFor()
         {
             return new[]

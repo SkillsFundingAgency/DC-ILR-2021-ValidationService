@@ -11,7 +11,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 {
     public class EmpStat_04Rule : AbstractRule, IRule<ILearner>
     {
-        private const int FundModel = TypeOfFunding.EuropeanSocialFund;
+        private const int FundModel = FundModels.EuropeanSocialFund;
 
         private readonly IDerivedData_22Rule _derivedData22;
 
@@ -25,7 +25,6 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
         public void Validate(ILearner learner)
         {
-
             if (learner?.LearnerEmploymentStatuses == null)
             {
                 return;
@@ -38,21 +37,19 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
 
             foreach (var learningDelivery in learner.LearningDeliveries)
             {
-
                 if (learningDelivery.FundModel != FundModel)
                 {
                     continue;
                 }
 
-                DateTime? latestLearningStart = 
+                DateTime? latestLearningStart =
                     _derivedData22.GetLatestLearningStartForESFContract(learningDelivery, learner.LearningDeliveries);
                 if (!latestLearningStart.HasValue)
                 {
                     continue;
                 }
 
-                if (GetQualifyingEmploymentStatus(learner, latestLearningStart) == TypeOfEmploymentStatus.NotKnownProvided
-                    )
+                if (GetQualifyingEmploymentStatus(learner, latestLearningStart) == EmploymentStatusEmpStats.NotKnownProvided)
                 {
                     HandleValidationError(
                         learner.LearnRefNumber,
@@ -68,22 +65,14 @@ namespace ESFA.DC.ILR.ValidationService.Rules.EmploymentStatus.EmpStat
             .OrderByDescending(x => x.DateEmpStatApp)
             .FirstOrDefault()?.EmpStat;
 
-
         private IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime? latestLearningStart)
         {
             return new[]
             {
-                BuildErrorMessageParameter(PropertyNameConstants.EmpStat, TypeOfEmploymentStatus.NotKnownProvided),
+                BuildErrorMessageParameter(PropertyNameConstants.EmpStat, EmploymentStatusEmpStats.NotKnownProvided),
                 BuildErrorMessageParameter(PropertyNameConstants.FundModel, FundModel),
                 BuildErrorMessageParameter(PropertyNameConstants.LearnStartDate, latestLearningStart)
-
             };
         }
     }
 }
-
-
-
-
-
-

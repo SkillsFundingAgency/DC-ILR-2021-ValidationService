@@ -1,13 +1,13 @@
-﻿using ESFA.DC.ILR.Model.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR.ValidationService.Data.External.LARS.Interface;
 using ESFA.DC.ILR.ValidationService.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Abstract;
 using ESFA.DC.ILR.ValidationService.Rules.Constants;
 using ESFA.DC.ILR.ValidationService.Rules.Derived.Interface;
 using ESFA.DC.ILR.ValidationService.Rules.Query.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 {
@@ -20,21 +20,21 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
         private readonly ILearningDeliveryFAMQueryService _learningDeliveryFamQueryService;
         private readonly IEnumerable<int> _fundModels = new HashSet<int>
         {
-            TypeOfFunding.AdultSkills,
-            TypeOfFunding.ApprenticeshipsFrom1May2017
+            FundModels.AdultSkills,
+            FundModels.ApprenticeshipsFrom1May2017
         };
 
         private readonly HashSet<int?> _componentTypes = new HashSet<int?> { 1, 2, 3 };
         private readonly IEnumerable<int> _basicSkillTypes = new HashSet<int>
         {
-            TypeOfLARSBasicSkill.NotApplicable,
-            TypeOfLARSBasicSkill.Unknown,
-            TypeOfLARSBasicSkill.GCSE_EnglishLanguage,
-            TypeOfLARSBasicSkill.GCSE_Mathematics,
-            TypeOfLARSBasicSkill.FunctionalSkillsMathematics,
-            TypeOfLARSBasicSkill.FunctionalSkillsEnglish,
-            TypeOfLARSBasicSkill.InternationalGCSEEnglishLanguage,
-            TypeOfLARSBasicSkill.InternationalGCSEMathematics
+            LARSConstants.BasicSkills.NotApplicable,
+            LARSConstants.BasicSkills.Unknown,
+            LARSConstants.BasicSkills.GCSE_EnglishLanguage,
+            LARSConstants.BasicSkills.GCSE_Mathematics,
+            LARSConstants.BasicSkills.FunctionalSkillsMathematics,
+            LARSConstants.BasicSkills.FunctionalSkillsEnglish,
+            LARSConstants.BasicSkills.InternationalGCSEEnglishLanguage,
+            LARSConstants.BasicSkills.InternationalGCSEMathematics
         };
 
         public ProgType_12Rule(
@@ -126,12 +126,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.ProgType
 
         public bool AimTypeConditionMet(int aimType)
         {
-            return aimType == TypeOfAim.ComponentAimInAProgramme;
+            return aimType == AimTypes.ComponentAimInAProgramme;
         }
 
         public bool ProgTypeConditionMet(int? progType)
         {
-            return progType == TypeOfLearningProgramme.AdvancedLevelApprenticeship;
+            return progType == ProgTypes.AdvancedLevelApprenticeship;
         }
 
         public bool FworkCodeConditionMet(int? fworkCode)

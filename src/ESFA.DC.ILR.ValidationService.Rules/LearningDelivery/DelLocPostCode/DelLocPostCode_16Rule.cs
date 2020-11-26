@@ -42,12 +42,12 @@ namespace ESFA.DC.ILR.ValidationService.Rules.LearningDelivery.DelLocPostCode
         public virtual bool PostcodeConditionMet(string delLocPostCode)
         {
             return delLocPostCode != ValidationConstants.TemporaryPostCode &&
-                   !_postcodesDataService.PostcodeExists(delLocPostCode);
+                   !_postcodesDataService.ONSPostcodeExists(delLocPostCode);
         }
 
         public virtual bool FundModelConditionMet(int fundModel)
         {
-            return fundModel == TypeOfFunding.EuropeanSocialFund;
+            return fundModel == FundModels.EuropeanSocialFund;
         }
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(string delLocPostCode)

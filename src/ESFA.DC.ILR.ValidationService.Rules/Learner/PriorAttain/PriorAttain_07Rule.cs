@@ -10,6 +10,10 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
 {
     public class PriorAttain_07Rule : AbstractRule, IRule<ILearner>
     {
+        private readonly DateTime _startDate = new DateTime(2016, 08, 01);
+        private readonly DateTime _endDate = new DateTime(2020, 07, 31);
+        private readonly HashSet<int> _priorAttains = new HashSet<int> { 3, 4, 5, 10, 11, 12, 13, 97, 98 };
+
         public PriorAttain_07Rule(
             IValidationErrorHandler validationErrorHandler)
             : base(validationErrorHandler, RuleNameConstants.PriorAttain_07)
@@ -43,30 +47,18 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Learner.PriorAttain
                    && ProgTypeConditionMet(progType);
         }
 
-        public bool LearnStartDateConditionMet(DateTime learnStartDate)
-        {
-            var conditionStartDate = new DateTime(2016, 07, 31);
+        public bool LearnStartDateConditionMet(DateTime learnStartDate) =>
+            learnStartDate >= _startDate && learnStartDate <= _endDate;
 
-            return learnStartDate > conditionStartDate;
-        }
+        public bool FundModelConditionMet(int fundModel) =>
+            fundModel == FundModels.AdultSkills;
 
-        public bool FundModelConditionMet(int fundModel)
-        {
-            return fundModel == 35;
-        }
+        public bool PriorAttainConditionMet(int? priorAttain) =>
+            priorAttain.HasValue
+            && _priorAttains.Contains(priorAttain.Value);
 
-        public bool PriorAttainConditionMet(int? priorAttain)
-        {
-            var priorAttains = new[] { 3, 4, 5, 10, 11, 12, 13, 97, 98 };
-
-            return priorAttain.HasValue
-                && priorAttains.Contains(priorAttain.Value);
-        }
-
-        public bool ProgTypeConditionMet(int? progType)
-        {
-            return progType == 24;
-        }
+        public bool ProgTypeConditionMet(int? progType) =>
+            progType == ProgTypes.Traineeship;
 
         public IEnumerable<IErrorMessageParameter> BuildErrorMessageParameters(DateTime learnStartDate, int fundModel, int? priorAttain, int? progType)
         {

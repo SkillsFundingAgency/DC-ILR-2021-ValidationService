@@ -15,7 +15,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         public void GetLearnersAgeAtStartOfESFContract_ReturnsDefaultIntForNullLearner()
         {
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
+            dateTimeServiceMock.Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
 
             var rule = NewRule(dateTimeServiceMock.Object);
             TestLearner learner = null;
@@ -29,7 +29,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         public void GetLearnersAgeAtStartOfESFContract_ReturnsDefaultIntForNullLearningDeliveries()
         {
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
+            dateTimeServiceMock.Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
 
             var rule = NewRule(dateTimeServiceMock.Object);
             var learner = new TestLearner
@@ -47,7 +47,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         public void GetLearnersAgeAtStartOfESFContract_ReturnsDefaultIntForIrrelevantConRefNumber()
         {
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
+            dateTimeServiceMock.Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
 
             var rule = NewRule(dateTimeServiceMock.Object);
 
@@ -61,7 +61,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     {
                         ConRefNumber = testConRefNumber,
                         LearnStartDate = new DateTime(2017, 9, 1),
-                        LearnAimRef = TypeOfAim.References.ESFLearnerStartandAssessment,
+                        LearnAimRef = AimTypes.References.ESFLearnerStartandAssessment,
                         CompStatus = CompletionState.HasCompleted
                     }
                 }
@@ -76,7 +76,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         public void GetLearnersAgeAtStartOfESFContract_ReturnsDefaultIntForNullDateOfBirth()
         {
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
+            dateTimeServiceMock.Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
 
             var rule = NewRule(dateTimeServiceMock.Object);
             var testConRefNumber = "123456";
@@ -89,7 +89,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     {
                         ConRefNumber = testConRefNumber,
                         LearnStartDate = new DateTime(2017, 9, 1),
-                        LearnAimRef = TypeOfAim.References.ESFLearnerStartandAssessment,
+                        LearnAimRef = AimTypes.References.ESFLearnerStartandAssessment,
                         CompStatus = CompletionState.HasCompleted
                     }
                 }
@@ -104,7 +104,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         public void GetLearnersAgeAtStartOfESFContract_ReturnsDefaultIntForNoZESF0001Deliverable()
         {
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
+            dateTimeServiceMock.Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
 
             var rule = NewRule(dateTimeServiceMock.Object);
 
@@ -118,7 +118,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     {
                         ConRefNumber = testConRefNumber,
                         LearnStartDate = new DateTime(2017, 9, 1),
-                        LearnAimRef = TypeOfAim.References.WorkExperience,
+                        LearnAimRef = AimTypes.References.WorkExperience,
                         CompStatus = CompletionState.HasCompleted
                     }
                 }
@@ -133,7 +133,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
         public void GetLearnersAgeAtStartOfESFContract_ReturnsDefaultIntForNoZESF0001DeliverableCompleted()
         {
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
+            dateTimeServiceMock.Setup(m => m.YearsBetween(It.IsAny<DateTime>(), It.IsAny<DateTime>())).Returns(20);
 
             var rule = NewRule(dateTimeServiceMock.Object);
 
@@ -147,7 +147,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     {
                         ConRefNumber = testConRefNumber,
                         LearnStartDate = new DateTime(2017, 9, 1),
-                        LearnAimRef = TypeOfAim.References.ESFLearnerStartandAssessment,
+                        LearnAimRef = AimTypes.References.ESFLearnerStartandAssessment,
                         CompStatus = CompletionState.IsOngoing
                     }
                 }
@@ -171,7 +171,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
                     {
                         ConRefNumber = testConRefNumber,
                         LearnStartDate = new DateTime(2017, 9, 1),
-                        LearnAimRef = TypeOfAim.References.ESFLearnerStartandAssessment,
+                        LearnAimRef = AimTypes.References.ESFLearnerStartandAssessment,
                         CompStatus = CompletionState.HasCompleted
                     }
                 }
@@ -179,7 +179,7 @@ namespace ESFA.DC.ILR.ValidationService.Rules.Tests.Derived
 
             var mockAge = 20;
             var dateTimeServiceMock = new Mock<IDateTimeQueryService>();
-            dateTimeServiceMock.Setup(m => m.AgeAtGivenDate(learner.DateOfBirthNullable.Value, It.IsAny<DateTime>())).Returns(mockAge);
+            dateTimeServiceMock.Setup(m => m.YearsBetween(learner.DateOfBirthNullable.Value, It.IsAny<DateTime>())).Returns(mockAge);
 
             var rule = NewRule(dateTimeServiceMock.Object);
 
